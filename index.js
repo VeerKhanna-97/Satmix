@@ -317,10 +317,10 @@ document.addEventListener('DOMContentLoaded', () => {
       
       if (GOOGLE_SCRIPT_URL) {
         const formData = new URLSearchParams();
-        // Keys must exactly match Google Sheet column headers
-        formData.append('Name', name);
-        formData.append('Email', email);
-        formData.append('Phone', phone);
+        // Keys must exactly match what the Google Apps Script expects (data.name, data.email)
+        formData.append('name', name);
+        formData.append('email', email);
+        formData.append('phone', phone);
 
         // Send data to Google Apps Script
         fetch(GOOGLE_SCRIPT_URL, {
