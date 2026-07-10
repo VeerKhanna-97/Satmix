@@ -316,13 +316,15 @@ document.addEventListener('DOMContentLoaded', () => {
       submitTxt.textContent = 'Joining...';
       
       if (GOOGLE_SCRIPT_URL) {
+        const formData = new URLSearchParams();
+        formData.append('name', name);
+        formData.append('email', email);
+        formData.append('phone', phone);
+
         // Send data to Google Apps Script
         fetch(GOOGLE_SCRIPT_URL, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'text/plain;charset=utf-8'
-          },
-          body: JSON.stringify({ name, email, phone })
+          body: formData
         })
         .then(response => {
           if (!response.ok) {
