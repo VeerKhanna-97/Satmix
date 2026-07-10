@@ -1659,7 +1659,17 @@ footer {
   }
 
   .section-padding {
-    padding: 60px 0;
+    padding: 40px 0;
+  }
+  
+  .calc-grid {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 20px;
+  }
+  
+  .calc-card, .calc-results-pane {
+    padding: 20px;
   }
   
   .hero {
