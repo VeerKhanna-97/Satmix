@@ -1718,11 +1718,11 @@ footer {
 
 @media (max-width: 480px) {
   .nav-container {
-    flex-direction: column;
-    height: auto;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
     padding: 16px 24px;
-    gap: 12px;
-    justify-content: center;
+    height: auto;
   }
 
   .hero-ctas {
