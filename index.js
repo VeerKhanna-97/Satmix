@@ -317,53 +317,47 @@ document.addEventListener('DOMContentLoaded', () => {
       
       if (GOOGLE_SCRIPT_URL) {
         const formData = new URLSearchParams();
-        formData.append('name', name);
-        formData.append('email', email);
-        formData.append('phone', phone);
+        // Keys must exactly match Google Sheet column headers
+        formData.append('Name', name);
+        formData.append('Email', email);
+        formData.append('Phone', phone);
 
         // Send data to Google Apps Script
         fetch(GOOGLE_SCRIPT_URL, {
           method: 'POST',
+          mode: 'no-cors',
           body: formData
         })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          return response.json();
-        })
-        .then(data => {
-          if (data.status === 'success') {
-            // Save submission to localStorage
-            const waitlistDB = JSON.parse(localStorage.getItem('satmix_waitlist') || '[]');
-            waitlistDB.push({
-              name,
-              email,
-              phone,
-              timestamp: new Date().toISOString()
-            });
-            localStorage.setItem('satmix_waitlist', JSON.stringify(waitlistDB));
-            
-            // Show success toast
-            showToast('Welcome to Satmix!', "You've successfully joined the waitlist.", 'success');
-            
-            // Reset form
-            waitlistForm.reset();
-            
-            // Open Success Thank You Popup
-            if (successModal) {
-              successModal.classList.add('active');
-            }
-          } else {
-            throw new Error(data.message || 'Unknown server error');
-          }
+        .then(() => {
+          // With no-cors, response is opaque so we assume success if no network error
+          
+          // Save submission to localStorage
+          const waitlistDB = JSON.parse(localStorage.getItem('satmix_waitlist') || '[]');
+          waitlistDB.push({
+            name,
+            email,
+            phone,
+            timestamp: new Date().toISOString()
+          });
+          localStorage.setItem('satmix_waitlist', JSON.stringify(waitlistDB));
+          
+          // Show success modal
+          successModal.classList.add('active');
+          document.body.style.overflow = 'hidden'; // Prevent scrolling
+          
+          // Reset form
+          waitlistForm.reset();
+          
+          // Reset button
+          submitBtn.disabled = false;
+          submitBtn.classList.remove('loading');
+          submitTxt.textContent = 'Get Early Access';
         })
         .catch(error => {
-          console.error('Waitlist submission error:', error);
+          console.error('Error:', error);
           showToast('Submission Error', 'Failed to join waitlist. Please try again.', 'error');
-        })
-        .finally(() => {
-          // Reset loading state
+          
+          // Reset button
           submitBtn.disabled = false;
           submitBtn.classList.remove('loading');
           submitTxt.textContent = 'Get Early Access';
