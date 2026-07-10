@@ -1649,7 +1649,13 @@ footer {
 
 @media (max-width: 767px) {
   .social-links {
-    display: none; /* Hide header socials to prevent nav overflow on mobile */
+    display: flex;
+    gap: 8px;
+  }
+  
+  .social-icon {
+    width: 32px;
+    height: 32px;
   }
 
   .section-padding {
