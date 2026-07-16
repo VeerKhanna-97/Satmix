@@ -2,6 +2,157 @@
 const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzZXuSM4K79NVAAgsxtq9Z3G5qr7Tsma1zDss8t53xwDhQ3Dohj6JG5YuayepI44A6Sng/exec';
 
 document.addEventListener('DOMContentLoaded', () => {
+  // ==========================================
+  // DARK MODE CONTROLLER (PREFER SYSTEM DEFAULT)
+  // ==========================================
+  const themeToggleBtn = document.getElementById('theme-toggle');
+  
+  function getPreferredTheme() {
+    const savedTheme = localStorage.getItem('satmix_theme');
+    if (savedTheme) {
+      return savedTheme;
+    }
+    const userPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    return userPrefersDark ? 'dark' : 'light';
+  }
+
+  function setTheme(theme) {
+    if (theme === 'dark') {
+      document.body.classList.add('dark-theme');
+      localStorage.setItem('satmix_theme', 'dark');
+      if (themeToggleBtn) {
+        themeToggleBtn.innerHTML = '<i data-lucide="sun" style="width: 18px; height: 18px;"></i>';
+      }
+    } else {
+      document.body.classList.remove('dark-theme');
+      localStorage.setItem('satmix_theme', 'light');
+      if (themeToggleBtn) {
+        themeToggleBtn.innerHTML = '<i data-lucide="moon" style="width: 18px; height: 18px;"></i>';
+      }
+    }
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons();
+    }
+  }
+
+  // Initialize
+  setTheme(getPreferredTheme());
+
+  if (window.matchMedia) {
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+      if (!localStorage.getItem('satmix_theme')) {
+        setTheme(e.matches ? 'dark' : 'light');
+      }
+    });
+  }
+
+  if (themeToggleBtn) {
+    themeToggleBtn.addEventListener('click', () => {
+      const isDark = document.body.classList.contains('dark-theme');
+      setTheme(isDark ? 'light' : 'dark');
+    });
+  }
+
+  // ==========================================
+  // PATH NAV HIGHLIGHTING
+  // ==========================================
+  const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+  const navLinks = document.querySelectorAll('.nav-link');
+  navLinks.forEach(link => {
+    const linkPath = link.getAttribute('href');
+    if (linkPath === currentPath) {
+      link.classList.add('active');
+    } else {
+      link.classList.remove('active');
+    }
+  });
+
+  // ==========================================
+  // LIVE REAL-MARKET CRYPTO PRICE TICKER
+  // ==========================================
+  const tickerTrack = document.querySelector('.ticker-track');
+  let previousPrices = {};
+
+  async function fetchCryptoPrices() {
+    try {
+      const response = await fetch('https://api.coincap.io/v2/assets?ids=bitcoin,ethereum,solana,tether');
+      const json = await response.json();
+      if (json && json.data) {
+        renderTicker(json.data);
+      }
+    } catch (err) {
+      console.warn("Using offline ticker fallback data", err);
+      renderTicker(getFallbackPrices());
+    }
+  }
+
+  function getFallbackPrices() {
+    return [
+      { id: 'bitcoin', symbol: 'BTC', priceUsd: (58000 + (Math.random() - 0.5) * 120).toString(), changePercent24Hr: '1.24' },
+      { id: 'ethereum', symbol: 'ETH', priceUsd: (3100 + (Math.random() - 0.5) * 15).toString(), changePercent24Hr: '-0.45' },
+      { id: 'solana', symbol: 'SOL', priceUsd: (145 + (Math.random() - 0.5) * 2.5).toString(), changePercent24Hr: '3.12' },
+      { id: 'tether', symbol: 'USDT', priceUsd: '1.00', changePercent24Hr: '0.05' }
+    ];
+  }
+
+  function renderTicker(data) {
+    if (!tickerTrack) return;
+    const order = ['bitcoin', 'ethereum', 'solana', 'tether'];
+    data.sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
+
+    let tickerHTML = '';
+    data.forEach(coin => {
+      const priceUsd = parseFloat(coin.priceUsd);
+      const priceInr = priceUsd * 88.00;
+      const change = parseFloat(coin.changePercent24Hr);
+      const isUp = change >= 0;
+      const changeSign = isUp ? '+' : '';
+      const changeClass = isUp ? 'price-up' : 'price-down';
+      
+      let priceText = '';
+      if (coin.symbol === 'USDT') {
+        priceText = `₹${priceInr.toFixed(2)}`;
+      } else if (priceInr >= 100000) {
+        priceText = `₹${(priceInr / 100000).toFixed(2)}L`;
+      } else {
+        priceText = `₹${new Intl.NumberFormat('en-IN').format(Math.round(priceInr))}`;
+      }
+
+      let flashClass = '';
+      if (previousPrices[coin.id]) {
+        if (priceUsd > previousPrices[coin.id]) {
+          flashClass = 'price-up';
+        } else if (priceUsd < previousPrices[coin.id]) {
+          flashClass = 'price-down';
+        }
+      }
+      previousPrices[coin.id] = priceUsd;
+
+      tickerHTML += `
+        <div class="ticker-item" id="ticker-${coin.id}">
+          <span>${coin.symbol}/INR</span>
+          <span class="ticker-price ${flashClass}">${priceText}</span>
+          <span class="ticker-change ${changeClass}">${changeSign}${change.toFixed(2)}%</span>
+        </div>
+      `;
+    });
+
+    tickerTrack.innerHTML = tickerHTML + tickerHTML;
+
+    setTimeout(() => {
+      data.forEach(coin => {
+        const itemPrice = document.querySelector(`#ticker-${coin.id} .ticker-price`);
+        if (itemPrice) {
+          itemPrice.classList.remove('price-up', 'price-down');
+        }
+      });
+    }, 1000);
+  }
+
+  // Run immediately and poll
+  fetchCryptoPrices();
+  setInterval(fetchCryptoPrices, 10000);
+
   // Initialize Lucide Icons
   if (typeof lucide !== 'undefined') {
     lucide.createIcons();
@@ -21,6 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const totalSlides = slides.length;
 
   function updateSlidePosition() {
+    if (!slideTrack) return;
     // Slide the track
     slideTrack.style.transform = `translateX(-${currentSlide * 100}%)`;
     
@@ -141,6 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const calcRange = document.getElementById('calc-range');
   const calcAmountVal = document.getElementById('calc-amount-val');
   const stratLowBtn = document.getElementById('calc-strat-low');
+  const stratMedBtn = document.getElementById('calc-strat-med');
   const stratHighBtn = document.getElementById('calc-strat-high');
   
   const resultTotalVal = document.getElementById('result-total');
@@ -148,10 +301,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const resultGainVal = document.getElementById('result-gain');
   
   let dailySavings = 50;
-  let selectedStrategy = 'high'; // 'low' or 'high'
+  let selectedStrategy = 'high'; // 'low', 'med', or 'high'
   
   const strategyRates = {
     low: 0.08,  // 8% annual yield for stablecoins
+    med: 0.16,  // 16% Balanced Growth yield
     high: 0.26  // 26% annual yield average for top assets index
   };
 
@@ -217,6 +371,64 @@ document.addEventListener('DOMContentLoaded', () => {
     requestAnimationFrame(updateNumber);
   }
 
+  function updateSavingsGoals() {
+    const dailyInput = dailySavings;
+    const annualRate = strategyRates[selectedStrategy];
+
+    // Helper to calculate days to reach target using compound interest
+    function calculateDaysToTarget(target, daily, rate) {
+      if (rate === 0) return target / daily;
+      const dailyRate = rate / 365;
+      const val = (target * dailyRate) / (daily * (1 + dailyRate));
+      return Math.log(1 + val) / Math.log(1 + dailyRate);
+    }
+
+    // 1. Emergency Shield (Target ₹15,000)
+    const emEtaElement = document.getElementById('goal-em-eta');
+    if (emEtaElement) {
+      const emergencyDays = Math.round(calculateDaysToTarget(15000, dailyInput, annualRate));
+      emEtaElement.innerHTML = `Time to complete: <span>${emergencyDays} days</span>`;
+    }
+    
+    // 2. Gadget Upgrade (Target ₹60,000)
+    const gaEtaElement = document.getElementById('goal-ga-eta');
+    if (gaEtaElement) {
+      const gadgetDays = Math.round(calculateDaysToTarget(60000, dailyInput, annualRate));
+      const totalMonths = Math.round(gadgetDays / 30);
+      let gadgetStr = '';
+      if (totalMonths < 12) {
+        gadgetStr = `${totalMonths} month${totalMonths !== 1 ? 's' : ''}`;
+      } else {
+        const years = Math.floor(totalMonths / 12);
+        const months = totalMonths % 12;
+        gadgetStr = `${years} year${years !== 1 ? 's' : ''}`;
+        if (months > 0) {
+          gadgetStr += ` & ${months} month${months !== 1 ? 's' : ''}`;
+        }
+      }
+      gaEtaElement.innerHTML = `Time to complete: <span>${gadgetStr}</span>`;
+    }
+    
+    // 3. Wealth Accelerator (Target ₹2,50,000)
+    const weEtaElement = document.getElementById('goal-we-eta');
+    if (weEtaElement) {
+      const wealthDays = Math.round(calculateDaysToTarget(250000, dailyInput, annualRate));
+      const totalMonths = Math.round(wealthDays / 30);
+      let wealthStr = '';
+      if (totalMonths < 12) {
+        wealthStr = `${totalMonths} month${totalMonths !== 1 ? 's' : ''}`;
+      } else {
+        const years = Math.floor(totalMonths / 12);
+        const months = totalMonths % 12;
+        wealthStr = `${years} year${years !== 1 ? 's' : ''}`;
+        if (months > 0) {
+          wealthStr += ` & ${months} month${months !== 1 ? 's' : ''}`;
+        }
+      }
+      weEtaElement.innerHTML = `Time to complete: <span>${wealthStr}</span>`;
+    }
+  }
+
   if (calcRange) {
     calcRange.addEventListener('input', (e) => {
       dailySavings = parseInt(e.target.value, 10);
@@ -225,10 +437,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  if (stratLowBtn && stratHighBtn) {
+  if (stratLowBtn && stratMedBtn && stratHighBtn) {
     stratLowBtn.addEventListener('click', () => {
       selectedStrategy = 'low';
       stratLowBtn.classList.add('active');
+      stratMedBtn.classList.remove('active');
+      stratHighBtn.classList.remove('active');
+      calculateReturns();
+    });
+
+    stratMedBtn.addEventListener('click', () => {
+      selectedStrategy = 'med';
+      stratMedBtn.classList.add('active');
+      stratLowBtn.classList.remove('active');
       stratHighBtn.classList.remove('active');
       calculateReturns();
     });
@@ -237,9 +458,17 @@ document.addEventListener('DOMContentLoaded', () => {
       selectedStrategy = 'high';
       stratHighBtn.classList.add('active');
       stratLowBtn.classList.remove('active');
+      stratMedBtn.classList.remove('active');
       calculateReturns();
     });
   }
+
+  // Wrap calculation run to also update goals
+  const originalCalculateReturns = calculateReturns;
+  calculateReturns = function() {
+    originalCalculateReturns();
+    updateSavingsGoals();
+  };
 
   // Initial calculation run
   if (calcRange) {
@@ -460,5 +689,69 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const revealElements = document.querySelectorAll('.scroll-reveal');
   revealElements.forEach(el => revealObserver.observe(el));
+
+  // ==========================================
+  // 7. STEPS SCROLL ANIMATION
+  // ==========================================
+  const stepsSection = document.getElementById('steps-animation');
+  const phones = [
+    document.getElementById('phone-ui-1'),
+    document.getElementById('phone-ui-2'),
+    document.getElementById('phone-ui-3')
+  ];
+  const nodes = [
+    document.getElementById('node-container-1'),
+    document.getElementById('node-container-2'),
+    document.getElementById('node-container-3')
+  ];
+  const timelineFill = document.getElementById('timeline-fill');
+
+  if (stepsSection) {
+    window.addEventListener('scroll', () => {
+      const rect = stepsSection.getBoundingClientRect();
+      const totalScrollable = rect.height - window.innerHeight;
+      
+      let progress = 0;
+      if (totalScrollable > 0) {
+        progress = -rect.top / totalScrollable;
+      }
+      
+      if (progress < 0) progress = 0;
+      if (progress > 1) progress = 1;
+
+      if (timelineFill) {
+        timelineFill.style.width = `${progress * 100}%`;
+      }
+
+      let stepIndex = 0;
+      if (progress > 0.33) stepIndex = 1;
+      if (progress > 0.66) stepIndex = 2;
+
+      phones.forEach((phone, idx) => {
+        if (phone) {
+          if (idx === stepIndex) {
+            phone.classList.add('active');
+          } else {
+            phone.classList.remove('active');
+          }
+        }
+      });
+
+      nodes.forEach((node, idx) => {
+        if (node) {
+          if (idx <= stepIndex) {
+            node.classList.add('active');
+          } else {
+            node.classList.remove('active');
+          }
+        }
+      });
+    });
+    
+    // Trigger once on load
+    setTimeout(() => {
+      window.dispatchEvent(new Event('scroll'));
+    }, 100);
+  }
 });
 
