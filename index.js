@@ -753,5 +753,51 @@ document.addEventListener('DOMContentLoaded', () => {
       window.dispatchEvent(new Event('scroll'));
     }, 100);
   }
+
+  // ==========================================
+  // 8. FLEXIBLE SAVINGS SCROLL ANIMATION
+  // ==========================================
+  const flexSection = document.getElementById('flex-savings');
+  const flexTabs = document.querySelectorAll('.flex-tab');
+  const flexCards = document.querySelectorAll('.flex-card');
+  const flexTexts = document.querySelectorAll('.flex-text-group');
+  const flexScrollThumb = document.getElementById('flex-scroll-thumb');
+
+  if (flexSection) {
+    window.addEventListener('scroll', () => {
+      const rect = flexSection.getBoundingClientRect();
+      const totalScrollable = rect.height - window.innerHeight;
+      
+      let progress = 0;
+      if (totalScrollable > 0) {
+        progress = -rect.top / totalScrollable;
+      }
+      
+      if (progress < 0) progress = 0;
+      if (progress > 1) progress = 1;
+
+      if (flexScrollThumb) {
+        flexScrollThumb.style.top = `${progress * 120}px`;
+      }
+
+      let stepIndex = 0;
+      if (progress > 0.25) stepIndex = 1;
+      if (progress > 0.50) stepIndex = 2;
+      if (progress > 0.75) stepIndex = 3;
+
+      flexTabs.forEach((tab, idx) => {
+        tab.classList.toggle('active', idx === stepIndex);
+      });
+
+      flexCards.forEach((card, idx) => {
+        card.classList.toggle('active', idx === stepIndex);
+      });
+
+      flexTexts.forEach((text, idx) => {
+        text.classList.toggle('active', idx === stepIndex);
+      });
+    });
+  }
 });
+
 
