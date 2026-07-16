@@ -1939,14 +1939,14 @@ footer {
 /* REAL-TIME CRYPTO PRICE TICKER BAR */
 /* ------------------------------------------------ */
 .price-ticker-bar {
-  background-color: #0c0d14;
-  color: #FFFFFF;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
   font-size: 12px;
   font-family: var(--font-mono);
   padding: 8px 0;
   overflow: hidden;
   white-space: nowrap;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--border-color);
   display: flex;
   position: relative;
   z-index: 101;
@@ -1973,7 +1973,7 @@ footer {
 }
 
 .ticker-price {
-  color: #FFFFFF;
+  color: var(--text-primary);
   transition: color 0.3s;
 }
 
