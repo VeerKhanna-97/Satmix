@@ -710,7 +710,9 @@ header {
 }
 
 .qb-allocation {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
+  font-weight: 800;
+  letter-spacing: -0.5px;
   font-size: 11px;
   color: var(--text-secondary);
   margin-top: 2px;
@@ -1236,8 +1238,10 @@ header {
 }
 
 .alloc-label {
-  font-family: var(--font-mono);
-  font-size: 12px;
+  font-family: var(--font-sans);
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  font-size: 13px;
   color: var(--text-primary);
 }
 
@@ -2188,8 +2192,10 @@ footer {
 
 .goal-target-group {
   margin: 16px 0;
-  font-family: var(--font-mono);
-  font-size: 13px;
+  font-family: var(--font-sans);
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  font-size: 14px;
   color: var(--text-secondary);
   display: flex;
   justify-content: space-between;
