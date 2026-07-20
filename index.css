@@ -1948,17 +1948,19 @@ footer {
     display: none;
     position: absolute;
     top: calc(100% + 12px);
-    left: 16px;
-    width: calc(100% - 32px);
-    background-color: rgba(8, 9, 15, 0.92);
-    backdrop-filter: blur(32px);
-    -webkit-backdrop-filter: blur(32px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 92%;
+    max-width: 380px;
+    background-color: rgba(18, 19, 28, 0.75);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
     flex-direction: column;
     align-items: flex-start;
-    padding: 24px;
-    border-radius: 28px;
-    border: 1px solid var(--border-color);
-    box-shadow: 0 24px 48px rgba(0,0,0,0.4);
+    padding: 8px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
   }
   
   .nav-links.mobile-open {
@@ -1966,10 +1968,16 @@ footer {
   }
   
   .nav-link {
-    font-size: 16px;
+    font-size: 15px;
     width: 100%;
-    padding: 12px 0;
-    border-bottom: 1px solid rgba(150, 150, 150, 0.1);
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    transition: background-color 0.2s ease;
+  }
+  
+  .nav-link:active {
+    background-color: rgba(255, 255, 255, 0.08);
   }
   
   .nav-link:last-child {
@@ -1980,12 +1988,23 @@ footer {
     width: 100%;
     flex-direction: column;
     align-items: flex-start;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   }
   
-  .nav-dropdown-trigger .nav-link {
+  .nav-dropdown-trigger:last-child {
+    border-bottom: none;
+  }
+  
+  .nav-dropdown-trigger > .nav-link {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     width: 100%;
+    border-bottom: none;
+  }
+  
+  .nav-dropdown-trigger.mobile-active > .nav-link {
+    background-color: rgba(255, 255, 255, 0.08);
   }
 
   .mega-dropdown,
@@ -1997,7 +2016,7 @@ footer {
     max-width: 100%;
     box-shadow: none;
     border: none;
-    padding: 10px 0 10px 16px;
+    padding: 8px 16px 12px 16px;
     background: transparent;
     opacity: 1 !important;
     pointer-events: auto !important;
@@ -2024,11 +2043,14 @@ footer {
     align-items: center;
     text-align: left;
     gap: 12px;
-    padding: 8px 0;
+    padding: 10px 12px;
+    border-radius: 10px;
+    transition: background-color 0.2s ease;
   }
   
-  .mega-col:hover {
-    background-color: transparent;
+  .mega-col:hover,
+  .mega-col:active {
+    background-color: rgba(255, 255, 255, 0.08);
   }
   
   .mega-icon {
