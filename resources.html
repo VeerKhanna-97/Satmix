@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- SEO Meta Tags -->
+  <title>Resources & Guides — Satmix Education Center</title>
+  <meta name="description" content="Access learning materials, detailed crypto investment guides, and articles about daily savings, Rupee Cost Averaging, and asset safety.">
+  <link rel="stylesheet" href="index.css">
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.344.0/dist/umd/lucide.min.js"></script>
+</head>
+<body>
+
+  <!-- Live Crypto Price Ticker -->
+  <div class="price-ticker-bar">
+    <div class="ticker-wrap">
+      <div class="ticker-track">
+        <!-- Populated via Javascript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation Bar -->
+  <header>
+    <div class="container nav-container">
+      <a href="index.html" class="logo-link">
+        <img src="https://i.ibb.co/9kPTLdGW/satmix.jpg" alt="Satmix Logo" class="logo-img">
+        <span class="text-gradient-purple-violet">Satmix</span>
+      </a>
+      
+      <nav class="nav-links">
+        <a href="index.html" class="nav-link">Home</a>
+        <div class="nav-dropdown-trigger">
+          <a href="#" class="nav-link" onclick="event.preventDefault()" style="display: inline-flex; align-items: center; gap: 4px;">
+            Features <i data-lucide="chevron-down" style="width: 14px; height: 14px;"></i>
+          </a>
+          <!-- Mega Menu Dropdown -->
+          <div class="mega-dropdown">
+            <div class="mega-dropdown-container">
+              
+              <!-- Column 1: Daily Saving -->
+              <div class="mega-col">
+                <div class="mega-icon" style="color: #8B5CF6; background: rgba(139, 92, 246, 0.05);"><i data-lucide="calendar"></i></div>
+                <h4 class="mega-title">Daily Saving</h4>
+                <p class="mega-desc">Automatic, effortless saving per day. Start with just ₹10.</p>
+              </div>
+              
+              <!-- Column 2: Weekly Saving -->
+              <div class="mega-col">
+                <div class="mega-icon" style="color: #10B981; background: rgba(16, 185, 129, 0.05);"><i data-lucide="calendar-range"></i></div>
+                <h4 class="mega-title">Weekly Saving</h4>
+                <p class="mega-desc">Automatic, effortless saving per week. Start with just ₹50.</p>
+              </div>
+              
+              <!-- Column 3: Monthly Saving -->
+              <div class="mega-col">
+                <div class="mega-icon" style="color: #F59E0B; background: rgba(245, 158, 11, 0.05);"><i data-lucide="check-square"></i></div>
+                <h4 class="mega-title">Monthly Saving</h4>
+                <p class="mega-desc">Automatic, effortless saving per month. Start with just ₹100.</p>
+              </div>
+              
+              <!-- Column 4: Instant Saving -->
+              <div class="mega-col">
+                <div class="mega-icon" style="color: #3B82F6; background: rgba(59, 130, 246, 0.05);"><i data-lucide="zap"></i></div>
+                <h4 class="mega-title">Instant Saving</h4>
+                <p class="mega-desc">Save any amount anytime as per your needs.</p>
+              </div>
+              
+              <!-- Column 5: Curated Baskets -->
+              <div class="mega-col">
+                <div class="mega-icon" style="color: #EC4899; background: rgba(236, 72, 153, 0.05);"><i data-lucide="layout-grid"></i></div>
+                <h4 class="mega-title">Curated Baskets</h4>
+                <p class="mega-desc">Invest in diversified, compliance-approved portfolios.</p>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+        <div class="nav-dropdown-trigger relative-trigger">
+          <a href="#" class="nav-link" onclick="event.preventDefault()" style="display: inline-flex; align-items: center; gap: 4px;">
+            Resources <i data-lucide="chevron-down" style="width: 14px; height: 14px;"></i>
+          </a>
+          <!-- Resources Dropdown -->
+          <div class="resources-dropdown">
+            <div class="resources-dropdown-container">
+              <!-- Column 1: Compound Calculator -->
+              <a href="index.html#calc-section" class="mega-col" style="text-decoration: none;">
+                <div class="mega-icon" style="color: #8B5CF6; background: rgba(139, 92, 246, 0.05);"><i data-lucide="calculator"></i></div>
+                <h4 class="mega-title">Compound Calculator</h4>
+                <p class="mega-desc">Calculate future wealth projections and milestone schedules.</p>
+              </a>
+              <!-- Column 2: DCA & RCA Guides -->
+              <a href="resources.html" class="mega-col" style="text-decoration: none;">
+                <div class="mega-icon" style="color: #10B981; background: rgba(16, 185, 129, 0.05);"><i data-lucide="trending-up"></i></div>
+                <h4 class="mega-title">DCA & RCA Guides</h4>
+                <p class="mega-desc">Learn how Rupee Cost Averaging beats lump-sum market entries.</p>
+              </a>
+              <!-- Column 3: Stablecoins & Safety -->
+              <a href="resources.html" class="mega-col" style="text-decoration: none;">
+                <div class="mega-icon" style="color: #F59E0B; background: rgba(245, 158, 11, 0.05);"><i data-lucide="shield"></i></div>
+                <h4 class="mega-title">Stablecoins & Safety</h4>
+                <p class="mega-desc">Understand why dollar-pegged assets provide a secure cushion.</p>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="nav-dropdown-trigger relative-trigger">
+          <a href="#" class="nav-link" onclick="event.preventDefault()" style="display: inline-flex; align-items: center; gap: 4px;">
+            About us <i data-lucide="chevron-down" style="width: 14px; height: 14px;"></i>
+          </a>
+          <!-- About Dropdown -->
+          <div class="about-dropdown">
+            <div class="about-dropdown-container">
+              <!-- Column 1: About Satmix -->
+              <a href="about.html" class="mega-col" style="text-decoration: none;">
+                <div class="mega-icon" style="color: #8B5CF6; background: rgba(139, 92, 246, 0.05);"><i data-lucide="info"></i></div>
+                <h4 class="mega-title">About Satmix</h4>
+                <p class="mega-desc">Learn about our story, mission and vision.</p>
+              </a>
+              <!-- Column 2: Leaders -->
+              <a href="about.html#leaders" class="mega-col" style="text-decoration: none;">
+                <div class="mega-icon" style="color: #10B981; background: rgba(16, 185, 129, 0.05);"><i data-lucide="users"></i></div>
+                <h4 class="mega-title">Leaders</h4>
+                <p class="mega-desc">Meet the leadership team behind Satmix.</p>
+              </a>
+            </div>
+          </div>
+        </div>
+        <a href="contact.html" class="nav-link">Contact</a>
+      </nav>
+
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle Theme">
+          <i data-lucide="moon" style="width: 18px; height: 18px;"></i>
+        </button>
+        <div class="social-links">
+          <a href="https://www.instagram.com/satmix.app?igsh=MW03NzVmdXM5emJsZA==" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Instagram">
+            <i data-lucide="instagram"></i>
+          </a>
+          <a href="https://www.linkedin.com/company/satmix-app/" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="LinkedIn">
+            <i data-lucide="linkedin"></i>
+          </a>
+          <a href="https://chat.whatsapp.com/G6EDcuMTq9oBHv6uHYfqJo" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="WhatsApp">
+            <i data-lucide="message-square"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Resources Hero -->
+  <section class="page-hero">
+    <div class="accent-glow-1"></div>
+    <div class="container">
+      <span class="section-tag">Guides & Education</span>
+      <h1 class="section-title">Knowledge Hub</h1>
+      <p class="section-desc" style="max-width: 600px; margin: 0 auto;">Master cryptocurrency investing with simple, bite-sized guides. Learn how compound interest and daily DCA works.</p>
+    </div>
+  </section>
+
+  <!-- Resources Grid -->
+  <section class="section-padding" style="padding-top: 20px;">
+    <div class="container">
+      
+      <div class="resources-grid">
+        
+        <!-- Resource 1 -->
+        <div class="resource-card scroll-reveal delay-100">
+          <div class="resource-img-placeholder">
+            <i data-lucide="trending-up"></i>
+          </div>
+          <div class="resource-content">
+            <span class="resource-tag">Investment Math</span>
+            <h3 class="resource-title">Understanding Rupee Cost Averaging (RCA)</h3>
+            <p class="resource-desc">Discover how split purchases over daily intervals help mitigate standard cryptocurrency market dips without manual trading.</p>
+            <a href="#" class="resource-link">Read Article <i data-lucide="chevron-right" style="width: 14px; height: 14px;"></i></a>
+          </div>
+        </div>
+        
+        <!-- Resource 2 -->
+        <div class="resource-card scroll-reveal delay-200">
+          <div class="resource-img-placeholder" style="background: linear-gradient(135deg, #10B981, #34D399);">
+            <i data-lucide="shield"></i>
+          </div>
+          <div class="resource-content">
+            <span class="resource-tag">Asset Safety</span>
+            <h3 class="resource-title">Stablecoins Explained: USDT & USDC</h3>
+            <p class="resource-desc">New to crypto? Learn why dollar-pegged stablecoins provide a low-volatility interest cushion for savings portfolios.</p>
+            <a href="#" class="resource-link">Read Article <i data-lucide="chevron-right" style="width: 14px; height: 14px;"></i></a>
+          </div>
+        </div>
+        
+        <!-- Resource 3 -->
+        <div class="resource-card scroll-reveal delay-300">
+          <div class="resource-img-placeholder" style="background: linear-gradient(135deg, #F59E0B, #FFD166);">
+            <i data-lucide="calculator"></i>
+          </div>
+          <div class="resource-content">
+            <span class="resource-tag">DCA vs Lump-Sum</span>
+            <h3 class="resource-title">Why Micro-Savings Wins Long-Term</h3>
+            <p class="resource-desc">A side-by-side comparison of daily UPI micro-savings plans against standard high-risk lump-sum market entries.</p>
+            <a href="#" class="resource-link">Read Article <i data-lucide="chevron-right" style="width: 14px; height: 14px;"></i></a>
+          </div>
+        </div>
+        
+      </div>
+      
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-top">
+        <a href="index.html" class="footer-logo">
+          <img src="https://i.ibb.co/9kPTLdGW/satmix.jpg" alt="Satmix Logo" class="footer-logo-img">
+          <span>Satmix</span>
+        </a>
+        <div class="footer-socials">
+          <a href="https://www.instagram.com/satmix.app?igsh=MW03NzVmdXM5emJsZA==" target="_blank" rel="noopener noreferrer" class="footer-social-icon" aria-label="Instagram">
+            <i data-lucide="instagram"></i>
+          </a>
+          <a href="https://www.linkedin.com/company/satmix-app/" target="_blank" rel="noopener noreferrer" class="footer-social-icon" aria-label="LinkedIn">
+            <i data-lucide="linkedin"></i>
+          </a>
+          <a href="https://chat.whatsapp.com/G6EDcuMTq9oBHv6uHYfqJo" target="_blank" rel="noopener noreferrer" class="footer-social-icon" aria-label="WhatsApp">
+            <i data-lucide="message-square"></i>
+          </a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 Satmix. All rights reserved. Registered with FIU India.</p>
+        <p class="footer-disclaimer">
+          Disclaimer: Cryptocurrencies are unregulated in India and highly volatile. Investing involves risk of capital loss. Past performance does not guarantee future results.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="index.js"></script>
+</body>
+</html>

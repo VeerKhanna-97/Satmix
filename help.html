@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- SEO Meta Tags -->
+  <title>Help Center & Support — Satmix Help Desk</title>
+  <meta name="description" content="Find answers to all your questions regarding account creation, Aadhaar KYC, UPI mandates, withdrawals, and cryptocurrency baskets on Satmix.">
+  <link rel="stylesheet" href="index.css">
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.344.0/dist/umd/lucide.min.js"></script>
+</head>
+<body>
+
+  <!-- Live Crypto Price Ticker -->
+  <div class="price-ticker-bar">
+    <div class="ticker-wrap">
+      <div class="ticker-track">
+        <!-- Populated via Javascript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation Bar -->
+  <header>
+    <div class="container nav-container">
+      <a href="index.html" class="logo-link">
+        <img src="https://i.ibb.co/9kPTLdGW/satmix.jpg" alt="Satmix Logo" class="logo-img">
+        <span class="text-gradient-purple-violet">Satmix</span>
+      </a>
+      
+      <nav class="nav-links">
+        <a href="index.html" class="nav-link">Home</a>
+        <div class="nav-dropdown-trigger">
+          <a href="#" class="nav-link" onclick="event.preventDefault()" style="display: inline-flex; align-items: center; gap: 4px;">
+            Features <i data-lucide="chevron-down" style="width: 14px; height: 14px;"></i>
+          </a>
+          <!-- Mega Menu Dropdown -->
+          <div class="mega-dropdown">
+            <div class="mega-dropdown-container">
+              
+              <!-- Column 1: Daily Saving -->
+              <div class="mega-col">
+                <div class="mega-icon" style="color: #8B5CF6; background: rgba(139, 92, 246, 0.05);"><i data-lucide="calendar"></i></div>
+                <h4 class="mega-title">Daily Saving</h4>
+                <p class="mega-desc">Automatic, effortless saving per day. Start with just ₹10.</p>
+              </div>
+              
+              <!-- Column 2: Weekly Saving -->
+              <div class="mega-col">
+                <div class="mega-icon" style="color: #10B981; background: rgba(16, 185, 129, 0.05);"><i data-lucide="calendar-range"></i></div>
+                <h4 class="mega-title">Weekly Saving</h4>
+                <p class="mega-desc">Automatic, effortless saving per week. Start with just ₹50.</p>
+              </div>
+              
+              <!-- Column 3: Monthly Saving -->
+              <div class="mega-col">
+                <div class="mega-icon" style="color: #F59E0B; background: rgba(245, 158, 11, 0.05);"><i data-lucide="check-square"></i></div>
+                <h4 class="mega-title">Monthly Saving</h4>
+                <p class="mega-desc">Automatic, effortless saving per month. Start with just ₹100.</p>
+              </div>
+              
+              <!-- Column 4: Instant Saving -->
+              <div class="mega-col">
+                <div class="mega-icon" style="color: #3B82F6; background: rgba(59, 130, 246, 0.05);"><i data-lucide="zap"></i></div>
+                <h4 class="mega-title">Instant Saving</h4>
+                <p class="mega-desc">Save any amount anytime as per your needs.</p>
+              </div>
+              
+              <!-- Column 5: Curated Baskets -->
+              <div class="mega-col">
+                <div class="mega-icon" style="color: #EC4899; background: rgba(236, 72, 153, 0.05);"><i data-lucide="layout-grid"></i></div>
+                <h4 class="mega-title">Curated Baskets</h4>
+                <p class="mega-desc">Invest in diversified, compliance-approved portfolios.</p>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+        <div class="nav-dropdown-trigger relative-trigger">
+          <a href="#" class="nav-link" onclick="event.preventDefault()" style="display: inline-flex; align-items: center; gap: 4px;">
+            Resources <i data-lucide="chevron-down" style="width: 14px; height: 14px;"></i>
+          </a>
+          <!-- Resources Dropdown -->
+          <div class="resources-dropdown">
+            <div class="resources-dropdown-container">
+              <!-- Column 1: Compound Calculator -->
+              <a href="index.html#calc-section" class="mega-col" style="text-decoration: none;">
+                <div class="mega-icon" style="color: #8B5CF6; background: rgba(139, 92, 246, 0.05);"><i data-lucide="calculator"></i></div>
+                <h4 class="mega-title">Compound Calculator</h4>
+                <p class="mega-desc">Calculate future wealth projections and milestone schedules.</p>
+              </a>
+              <!-- Column 2: DCA & RCA Guides -->
+              <a href="resources.html" class="mega-col" style="text-decoration: none;">
+                <div class="mega-icon" style="color: #10B981; background: rgba(16, 185, 129, 0.05);"><i data-lucide="trending-up"></i></div>
+                <h4 class="mega-title">DCA & RCA Guides</h4>
+                <p class="mega-desc">Learn how Rupee Cost Averaging beats lump-sum market entries.</p>
+              </a>
+              <!-- Column 3: Stablecoins & Safety -->
+              <a href="resources.html" class="mega-col" style="text-decoration: none;">
+                <div class="mega-icon" style="color: #F59E0B; background: rgba(245, 158, 11, 0.05);"><i data-lucide="shield"></i></div>
+                <h4 class="mega-title">Stablecoins & Safety</h4>
+                <p class="mega-desc">Understand why dollar-pegged assets provide a secure cushion.</p>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="nav-dropdown-trigger relative-trigger">
+          <a href="#" class="nav-link" onclick="event.preventDefault()" style="display: inline-flex; align-items: center; gap: 4px;">
+            About us <i data-lucide="chevron-down" style="width: 14px; height: 14px;"></i>
+          </a>
+          <!-- About Dropdown -->
+          <div class="about-dropdown">
+            <div class="about-dropdown-container">
+              <!-- Column 1: About Satmix -->
+              <a href="about.html" class="mega-col" style="text-decoration: none;">
+                <div class="mega-icon" style="color: #8B5CF6; background: rgba(139, 92, 246, 0.05);"><i data-lucide="info"></i></div>
+                <h4 class="mega-title">About Satmix</h4>
+                <p class="mega-desc">Learn about our story, mission and vision.</p>
+              </a>
+              <!-- Column 2: Leaders -->
+              <a href="about.html#leaders" class="mega-col" style="text-decoration: none;">
+                <div class="mega-icon" style="color: #10B981; background: rgba(16, 185, 129, 0.05);"><i data-lucide="users"></i></div>
+                <h4 class="mega-title">Leaders</h4>
+                <p class="mega-desc">Meet the leadership team behind Satmix.</p>
+              </a>
+            </div>
+          </div>
+        </div>
+        <a href="contact.html" class="nav-link">Contact</a>
+      </nav>
+
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle Theme">
+          <i data-lucide="moon" style="width: 18px; height: 18px;"></i>
+        </button>
+        <div class="social-links">
+          <a href="https://www.instagram.com/satmix.app?igsh=MW03NzVmdXM5emJsZA==" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Instagram">
+            <i data-lucide="instagram"></i>
+          </a>
+          <a href="https://www.linkedin.com/company/satmix-app/" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="LinkedIn">
+            <i data-lucide="linkedin"></i>
+          </a>
+          <a href="https://chat.whatsapp.com/G6EDcuMTq9oBHv6uHYfqJo" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="WhatsApp">
+            <i data-lucide="message-square"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Help Hero -->
+  <section class="page-hero">
+    <div class="accent-glow-2"></div>
+    <div class="container">
+      <span class="section-tag">Help Desk</span>
+      <h1 class="section-title">How can we help?</h1>
+      <p class="section-desc" style="max-width: 600px; margin: 0 auto 30px;">Search topics, browse documentation, or get in touch with our live support team.</p>
+      
+      <div class="help-search-box">
+        <input type="text" class="help-search-input" placeholder="Search keywords (e.g. KYC, Withdraw, Mandates)...">
+        <i data-lucide="search" class="help-search-icon" style="width: 18px; height: 18px;"></i>
+      </div>
+    </div>
+  </section>
+
+  <!-- Help Categories -->
+  <section class="section-padding" style="padding-top: 10px;">
+    <div class="container">
+      
+      <div class="help-categories-grid">
+        
+        <div class="help-category-card scroll-reveal delay-100">
+          <div class="help-cat-icon"><i data-lucide="user-plus"></i></div>
+          <h3 class="help-cat-title">Account & KYC</h3>
+          <p class="help-cat-desc">How to set up accounts, verify Aadhaar, link bank profiles, and edit profiles.</p>
+        </div>
+        
+        <div class="help-category-card scroll-reveal delay-200">
+          <div class="help-cat-icon"><i data-lucide="smartphone"></i></div>
+          <h3 class="help-cat-title">UPI Mandate Autopays</h3>
+          <p class="help-cat-desc">Setting up daily Autopay via Google Pay, PhonePe, Paytm, or BHIM.</p>
+        </div>
+        
+        <div class="help-category-card scroll-reveal delay-300">
+          <div class="help-cat-icon"><i data-lucide="wallet"></i></div>
+          <h3 class="help-cat-title">Withdrawals & Trades</h3>
+          <p class="help-cat-desc">Redeeming baskets, withdrawal settlement cycles, and tax queries.</p>
+        </div>
+        
+      </div>
+
+      <div style="text-align: center; margin-top: 40px;" class="scroll-reveal reveal-scale">
+        <h3 style="font-size: 20px; font-weight: 800; color: var(--text-primary); margin-bottom: 12px;">Still have questions?</h3>
+        <p style="color: var(--text-secondary); margin-bottom: 24px;">Our community chat is active 24/7. Join our WhatsApp or raise a support request directly.</p>
+        <div style="display: inline-flex; gap: 16px;">
+          <a href="https://chat.whatsapp.com/G6EDcuMTq9oBHv6uHYfqJo" target="_blank" rel="noopener noreferrer" class="nav-btn" style="background: #25D366; box-shadow: 0 4px 15px rgba(37,211,102,0.2);"><i data-lucide="message-square"></i> WhatsApp Support</a>
+          <a href="contact.html" class="nav-btn" style="background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-color); box-shadow: none;">Contact Form</a>
+        </div>
+      </div>
+      
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-top">
+        <a href="index.html" class="footer-logo">
+          <img src="https://i.ibb.co/9kPTLdGW/satmix.jpg" alt="Satmix Logo" class="footer-logo-img">
+          <span>Satmix</span>
+        </a>
+        <div class="footer-socials">
+          <a href="https://www.instagram.com/satmix.app?igsh=MW03NzVmdXM5emJsZA==" target="_blank" rel="noopener noreferrer" class="footer-social-icon" aria-label="Instagram">
+            <i data-lucide="instagram"></i>
+          </a>
+          <a href="https://www.linkedin.com/company/satmix-app/" target="_blank" rel="noopener noreferrer" class="footer-social-icon" aria-label="LinkedIn">
+            <i data-lucide="linkedin"></i>
+          </a>
+          <a href="https://chat.whatsapp.com/G6EDcuMTq9oBHv6uHYfqJo" target="_blank" rel="noopener noreferrer" class="footer-social-icon" aria-label="WhatsApp">
+            <i data-lucide="message-square"></i>
+          </a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 Satmix. All rights reserved. Registered with FIU India.</p>
+        <p class="footer-disclaimer">
+          Disclaimer: Cryptocurrencies are unregulated in India and highly volatile. Investing involves risk of capital loss. Past performance does not guarantee future results.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="index.js"></script>
+</body>
+</html>
