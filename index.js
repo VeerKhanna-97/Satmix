@@ -798,6 +798,32 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
   }
+
+  // ==========================================
+  // 9. TIMELINE SCROLL ANIMATION
+  // ==========================================
+  const goalsSection = document.getElementById('goals-section');
+  const timelineTrack = document.getElementById('timeline-track');
+  
+  if (goalsSection && timelineTrack) {
+    window.addEventListener('scroll', () => {
+      const rect = goalsSection.getBoundingClientRect();
+      const totalScrollable = rect.height - window.innerHeight;
+      
+      let progress = 0;
+      if (totalScrollable > 0) {
+        progress = -rect.top / totalScrollable;
+      }
+      
+      if (progress < 0) progress = 0;
+      if (progress > 1) progress = 1;
+      
+      const maxTranslate = timelineTrack.scrollWidth - window.innerWidth;
+      if (maxTranslate > 0) {
+        timelineTrack.style.transform = `translateX(-${progress * maxTranslate}px)`;
+      }
+    });
+  }
 });
 
 
