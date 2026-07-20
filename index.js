@@ -817,15 +817,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const subject = document.getElementById('c-subject').value;
       const message = document.getElementById('c-message').value;
 
-      // REPLACE THIS URL with your deployed Google Apps Script Web App URL
-      const scriptURL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL';
-
-      if (scriptURL === 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL') {
-        alert('Please update the scriptURL in index.js with your deployed Apps Script URL.');
-        submitBtn.innerHTML = originalBtnText;
-        submitBtn.disabled = false;
-        return;
-      }
+      // Your deployed Google Apps Script Web App URL
+      const scriptURL = 'https://script.google.com/macros/s/AKfycbwHMH4gKZDN6HQv44W2mL0fghVZb0t85EOtSMeqtCJwibNNLaKN36vyERIrf5Ao6CSQhA/exec';
 
       try {
         const formData = new FormData();
