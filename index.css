@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
 
 :root {
   /* White Theme / Light Theme variables */
@@ -32,7 +32,7 @@
   --shadow-mint-glow: 0 0 30px rgba(0, 245, 160, 0.2);
   
   --font-sans: 'Outfit', sans-serif;
-  --font-mono: 'Space Mono', monospace;
+  --font-mono: 'JetBrains Mono', monospace;
   --transition-fast: 0.2s ease;
   --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
