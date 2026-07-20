@@ -3413,7 +3413,7 @@ footer {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  padding: 40px 0;
+  padding: 100px 0 20px 0;
   z-index: 2;
 }
 
