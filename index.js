@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function fetchCryptoPrices() {
     try {
-      const response = await fetch('https://api.coincap.io/v2/assets?ids=bitcoin,ethereum,solana,tether');
+      const response = await fetch('/api/ticker');
       const json = await response.json();
       if (json && json.data) {
         renderTicker(json.data);
@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let tickerHTML = '';
     data.forEach(coin => {
       const priceUsd = parseFloat(coin.priceUsd);
-      const priceInr = priceUsd * 88.00;
+      const priceInr = coin.priceInr ? parseFloat(coin.priceInr) : (priceUsd * 88.00);
       const change = parseFloat(coin.changePercent24Hr);
       const isUp = change >= 0;
       const changeSign = isUp ? '+' : '';
