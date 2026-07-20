@@ -76,9 +76,14 @@ document.addEventListener('DOMContentLoaded', () => {
   async function fetchCryptoPrices() {
     try {
       const response = await fetch('/api/ticker');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const json = await response.json();
       if (json && json.data) {
         renderTicker(json.data);
+      } else {
+        throw new Error("Invalid response format");
       }
     } catch (err) {
       console.warn("Using offline ticker fallback data", err);
