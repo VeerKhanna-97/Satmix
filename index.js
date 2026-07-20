@@ -800,4 +800,58 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+// Contact Form Handler
+document.addEventListener('DOMContentLoaded', () => {
+  const contactForm = document.getElementById('support-contact-form');
+  if (contactForm) {
+    contactForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const submitBtn = contactForm.querySelector('button[type="submit"]');
+      const originalBtnText = submitBtn.innerHTML;
+      submitBtn.innerHTML = 'Sending...';
+      submitBtn.disabled = true;
 
+      const name = document.getElementById('c-name').value;
+      const email = document.getElementById('c-email').value;
+      const subject = document.getElementById('c-subject').value;
+      const message = document.getElementById('c-message').value;
+
+      // REPLACE THIS URL with your deployed Google Apps Script Web App URL
+      const scriptURL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL';
+
+      if (scriptURL === 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL') {
+        alert('Please update the scriptURL in index.js with your deployed Apps Script URL.');
+        submitBtn.innerHTML = originalBtnText;
+        submitBtn.disabled = false;
+        return;
+      }
+
+      try {
+        const formData = new FormData();
+        formData.append('name', name);
+        formData.append('email', email);
+        formData.append('subject', subject);
+        formData.append('message', message);
+
+        const response = await fetch(scriptURL, {
+          method: 'POST',
+          body: formData
+        });
+
+        if (response.ok) {
+          alert('Thank you for contacting Satmix! Our support team will get in touch with you shortly.');
+          contactForm.reset();
+        } else {
+          alert('Oops! Something went wrong. Please try again later.');
+        }
+      } catch (error) {
+        console.error('Error!', error.message);
+        alert('Oops! Something went wrong. Please try again later.');
+      } finally {
+        submitBtn.innerHTML = originalBtnText;
+        submitBtn.disabled = false;
+      }
+    });
+  }
+});
