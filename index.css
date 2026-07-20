@@ -412,20 +412,20 @@ header {
   width: 100%;
   min-width: 100%;
   flex-shrink: 0; /* Prevent slide from shrinking and leaking other slides on the side */
-  padding: 30px 24px 40px;
+  padding: 24px 20px 28px;
   display: flex;
   flex-direction: column;
 }
 
 @media (min-width: 480px) {
   .slide-item {
-    padding: 40px 36px 48px;
+    padding: 28px 28px 32px;
   }
 }
 
 /* Slide 1: Waitlist Form */
 .slide-title-wrapper {
-  margin-bottom: 24px;
+  margin-bottom: 16px;
   text-align: center;
 }
 
@@ -444,7 +444,7 @@ header {
 .waitlist-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 }
 
 .form-group {
@@ -488,8 +488,8 @@ header {
 
 .form-input {
   width: 100%;
-  padding: 12px 14px 12px 42px;
-  border-radius: 12px;
+  padding: 10px 14px 10px 40px;
+  border-radius: 10px;
   border: 1px solid var(--border-color);
   background-color: var(--bg-secondary);
   color: var(--text-primary);
@@ -560,7 +560,7 @@ header {
 .timeline {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 12px;
 }
 
 .timeline-item {
@@ -623,17 +623,17 @@ header {
 .slide-baskets {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 }
 
 .quick-basket-card {
   border: 1px solid var(--border-color);
-  border-radius: 16px;
-  padding: 16px;
+  border-radius: 12px;
+  padding: 12px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 12px;
   transition: var(--transition-fast);
   background-color: var(--bg-secondary);
 }
@@ -652,13 +652,13 @@ header {
 }
 
 .qb-icon {
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: 16px;
 }
 
 .qb-icon.low {
@@ -718,14 +718,14 @@ header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 24px;
+  padding: 12px 20px;
   background-color: var(--bg-secondary);
   border-top: 1px solid var(--border-color);
 }
 
 @media (min-width: 480px) {
   .slide-controls {
-    padding: 16px 36px;
+    padding: 12px 28px;
   }
 }
 
