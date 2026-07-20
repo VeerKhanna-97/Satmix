@@ -96,13 +96,17 @@ document.addEventListener('DOMContentLoaded', () => {
       { id: 'bitcoin', symbol: 'BTC', priceUsd: (58000 + (Math.random() - 0.5) * 120).toString(), changePercent24Hr: '1.24' },
       { id: 'ethereum', symbol: 'ETH', priceUsd: (3100 + (Math.random() - 0.5) * 15).toString(), changePercent24Hr: '-0.45' },
       { id: 'solana', symbol: 'SOL', priceUsd: (145 + (Math.random() - 0.5) * 2.5).toString(), changePercent24Hr: '3.12' },
+      { id: 'ripple', symbol: 'XRP', priceUsd: (0.50 + (Math.random() - 0.5) * 0.05).toString(), changePercent24Hr: '0.80' },
+      { id: 'cardano', symbol: 'ADA', priceUsd: (0.40 + (Math.random() - 0.5) * 0.03).toString(), changePercent24Hr: '-1.10' },
+      { id: 'dogecoin', symbol: 'DOGE', priceUsd: (0.12 + (Math.random() - 0.5) * 0.01).toString(), changePercent24Hr: '2.50' },
+      { id: 'polkadot', symbol: 'DOT', priceUsd: (6.00 + (Math.random() - 0.5) * 0.20).toString(), changePercent24Hr: '-0.25' },
       { id: 'tether', symbol: 'USDT', priceUsd: '1.00', changePercent24Hr: '0.05' }
     ];
   }
 
   function renderTicker(data) {
     if (!tickerTrack) return;
-    const order = ['bitcoin', 'ethereum', 'solana', 'tether'];
+    const order = ['bitcoin', 'ethereum', 'solana', 'ripple', 'cardano', 'dogecoin', 'polkadot', 'tether'];
     data.sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
 
     let tickerHTML = '';
@@ -142,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
     });
 
-    tickerTrack.innerHTML = tickerHTML + tickerHTML;
+    tickerTrack.innerHTML = tickerHTML.repeat(4);
 
     setTimeout(() => {
       data.forEach(coin => {

@@ -7,7 +7,7 @@ class handler(BaseHTTPRequestHandler):
         try:
             # Fetch Crypto Data from CoinCap
             crypto_req = urllib.request.Request(
-                'https://api.coincap.io/v2/assets?ids=bitcoin,ethereum,solana,tether', 
+                'https://api.coincap.io/v2/assets?ids=bitcoin,ethereum,solana,tether,ripple,cardano,dogecoin,polkadot', 
                 headers={'User-Agent': 'Mozilla/5.0'}
             )
             with urllib.request.urlopen(crypto_req) as response:
