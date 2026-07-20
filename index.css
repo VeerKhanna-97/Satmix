@@ -1955,7 +1955,7 @@ footer {
   background-color: var(--bg-secondary);
   color: var(--text-primary);
   font-size: 12px;
-  font-family: var(--font-mono);
+  font-family: 'JetBrains Mono', monospace;
   padding: 8px 0;
   overflow: hidden;
   white-space: nowrap;
