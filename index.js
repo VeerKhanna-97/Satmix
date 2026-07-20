@@ -809,6 +809,55 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+// ==========================================
+// CUSTOM TOAST NOTIFICATION
+// ==========================================
+window.showToast = function(title, message, isError = false) {
+  let container = document.querySelector('.custom-toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.className = 'custom-toast-container';
+    document.body.appendChild(container);
+  }
+
+  const toast = document.createElement('div');
+  toast.className = 'custom-toast';
+  
+  const iconName = isError ? 'alert-circle' : 'check-circle';
+  const iconClass = isError ? 'custom-toast-icon error' : 'custom-toast-icon';
+
+  toast.innerHTML = `
+    <div class="${iconClass}">
+      <i data-lucide="${iconName}"></i>
+    </div>
+    <div class="custom-toast-content">
+      <div class="custom-toast-title">${title}</div>
+      <div class="custom-toast-message">${message}</div>
+    </div>
+    <div class="custom-toast-close">
+      <i data-lucide="x" style="width: 16px; height: 16px;"></i>
+    </div>
+  `;
+
+  container.appendChild(toast);
+  
+  if (typeof lucide !== 'undefined') {
+    lucide.createIcons({ root: toast });
+  }
+
+  toast.offsetHeight; // force reflow
+  toast.classList.add('show');
+
+  const removeToast = () => {
+    toast.classList.remove('show');
+    setTimeout(() => {
+      if (toast.parentNode) toast.parentNode.removeChild(toast);
+    }, 400);
+  };
+
+  toast.querySelector('.custom-toast-close').addEventListener('click', removeToast);
+  setTimeout(removeToast, 5000);
+};
 // Contact Form Handler
 document.addEventListener('DOMContentLoaded', () => {
   const contactForm = document.getElementById('support-contact-form');
@@ -842,14 +891,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         if (response.ok) {
-          alert('Thank you for contacting Satmix! Our support team will get in touch with you shortly.');
+          window.showToast('Message Sent', 'Thank you for contacting Satmix! Our support team will get in touch with you shortly.');
           contactForm.reset();
         } else {
-          alert('Oops! Something went wrong. Please try again later.');
+          window.showToast('Error', 'Oops! Something went wrong. Please try again later.', true);
         }
       } catch (error) {
         console.error('Error!', error.message);
-        alert('Oops! Something went wrong. Please try again later.');
+        window.showToast('Error', 'Oops! Something went wrong. Please try again later.', true);
       } finally {
         submitBtn.innerHTML = originalBtnText;
         submitBtn.disabled = false;
