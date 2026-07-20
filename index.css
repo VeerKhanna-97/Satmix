@@ -874,8 +874,9 @@ header {
 }
 
 .calc-val {
-  font-family: var(--font-mono);
-  font-weight: 700;
+  font-family: var(--font-sans);
+  font-weight: 800;
+  letter-spacing: -0.5px;
   font-size: 18px;
   color: var(--color-purple);
 }
@@ -1036,8 +1037,9 @@ header {
 }
 
 .calc-stat-val {
-  font-family: var(--font-mono);
-  font-weight: 700;
+  font-family: var(--font-sans);
+  font-weight: 800;
+  letter-spacing: -0.5px;
   font-size: 18px;
 }
 
