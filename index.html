@@ -762,95 +762,94 @@
   </section>
 
   <!-- Savings Goals Section (Jar/Gullak-inspired) -->
-  <section class="goals-scroll-container" id="goals-section">
-    <div class="timeline-sticky-wrapper">
-      <div class="container" style="padding-top: 100px; padding-bottom: 50px;">
-        <div class="section-title-wrapper">
-          <span class="section-tag">Savings goals</span>
-          <h2 class="section-title">Reach Milestones on Autopilot</h2>
-          <p class="section-desc">See how small daily amounts grow into meaningful assets. Adjust the slider in the calculator above to see completion rates change.</p>
-        </div>
+  <section class="section-padding goals-section" id="goals-section">
+    <div class="container">
+      
+      <div class="section-title-wrapper scroll-reveal">
+        <span class="section-tag">Savings goals</span>
+        <h2 class="section-title">Reach Milestones on Autopilot</h2>
+        <p class="section-desc">See how small daily amounts grow into meaningful assets. Adjust the slider in the calculator above to see completion rates change.</p>
       </div>
       
-      <div class="timeline-viewport">
-        <div class="timeline-track" id="timeline-track">
-          <!-- The horizontal line connecting the nodes -->
-          <div class="timeline-line"></div>
-          
-          <!-- Node 1: Emergency Shield -->
-          <div class="timeline-node">
-            <div class="node-marker emergency-marker"></div>
-            <div class="node-content">
-              <div class="goal-header">
-                <div class="goal-title-group">
-                  <span class="goal-category">Conservative Goal</span>
-                  <h3 class="goal-name">Emergency Shield</h3>
-                </div>
-                <div class="goal-icon emergency-icon">
-                  <i data-lucide="shield"></i>
-                </div>
+      <div class="goals-grid">
+        
+        <!-- Goal 1: Emergency Shield -->
+        <div class="goal-card emergency scroll-reveal delay-100">
+          <div>
+            <div class="goal-header">
+              <div class="goal-title-group">
+                <span class="goal-category">Conservative Goal</span>
+                <h3 class="goal-name">Emergency Shield</h3>
               </div>
-              <p class="slide-desc" style="text-align: left; margin-bottom: 20px;">Protect yourself against unexpected expenses using stable value assets.</p>
-              
-              <div class="goal-target-group">
-                Target: <strong>₹15,000</strong>
-              </div>
-              <div class="goal-eta" id="goal-em-eta">
-                Time to complete: <span>---</span>
+              <div class="goal-icon">
+                <i data-lucide="shield"></i>
               </div>
             </div>
+            <p class="slide-desc" style="text-align: left; margin-bottom: 20px;">Protect yourself against unexpected expenses using stable value assets.</p>
           </div>
           
-          <!-- Node 2: Next Gadget -->
-          <div class="timeline-node">
-            <div class="node-marker gadget-marker"></div>
-            <div class="node-content">
-              <div class="goal-header">
-                <div class="goal-title-group">
-                  <span class="goal-category">Moderate Goal</span>
-                  <h3 class="goal-name">Next Gadget/Trip</h3>
-                </div>
-                <div class="goal-icon gadget-icon">
-                  <i data-lucide="smartphone"></i>
-                </div>
-              </div>
-              <p class="slide-desc" style="text-align: left; margin-bottom: 20px;">Save up for a new phone, laptop, or holiday with a balanced, optimized basket.</p>
-              
-              <div class="goal-target-group">
-                Target: <strong>₹60,000</strong>
-              </div>
-              <div class="goal-eta" id="goal-ga-eta">
-                Time to complete: <span>---</span>
-              </div>
+          <div>
+            <div class="goal-target-group">
+              Target: <strong>₹15,000</strong>
+            </div>
+            <div class="goal-eta" id="goal-em-eta">
+              Time to complete: <span>---</span>
             </div>
           </div>
-          
-          <!-- Node 3: Wealth Accelerator -->
-          <div class="timeline-node">
-            <div class="node-marker wealth-marker"></div>
-            <div class="node-content">
-              <div class="goal-header">
-                <div class="goal-title-group">
-                  <span class="goal-category">Aggressive Goal</span>
-                  <h3 class="goal-name">Wealth Accelerator</h3>
-                </div>
-                <div class="goal-icon wealth-icon">
-                  <i data-lucide="rocket"></i>
-                </div>
-              </div>
-              <p class="slide-desc" style="text-align: left; margin-bottom: 20px;">Supercharge long-term wealth using a high-performing growth index basket.</p>
-              
-              <div class="goal-target-group">
-                Target: <strong>₹2,50,000</strong>
-              </div>
-              <div class="goal-eta" id="goal-we-eta">
-                Time to complete: <span>---</span>
-              </div>
-            </div>
-          </div>
-          
         </div>
+        
+        <!-- Goal 2: Next Gadget -->
+        <div class="goal-card gadget scroll-reveal delay-200">
+          <div>
+            <div class="goal-header">
+              <div class="goal-title-group">
+                <span class="goal-category">Moderate Goal</span>
+                <h3 class="goal-name">Next Gadget/Trip</h3>
+              </div>
+              <div class="goal-icon">
+                <i data-lucide="smartphone"></i>
+              </div>
+            </div>
+            <p class="slide-desc" style="text-align: left; margin-bottom: 20px;">Save up for a new phone, laptop, or holiday with a balanced, optimized basket.</p>
+          </div>
+          
+          <div>
+            <div class="goal-target-group">
+              Target: <strong>₹60,000</strong>
+            </div>
+            <div class="goal-eta" id="goal-ga-eta">
+              Time to complete: <span>---</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Goal 3: Wealth Accelerator -->
+        <div class="goal-card wealth scroll-reveal delay-300">
+          <div>
+            <div class="goal-header">
+              <div class="goal-title-group">
+                <span class="goal-category">Aggressive Goal</span>
+                <h3 class="goal-name">Wealth Accelerator</h3>
+              </div>
+              <div class="goal-icon">
+                <i data-lucide="rocket"></i>
+              </div>
+            </div>
+            <p class="slide-desc" style="text-align: left; margin-bottom: 20px;">Supercharge long-term wealth using a high-performing growth index basket.</p>
+          </div>
+          
+          <div>
+            <div class="goal-target-group">
+              Target: <strong>₹2,50,000</strong>
+            </div>
+            <div class="goal-eta" id="goal-we-eta">
+              Time to complete: <span>---</span>
+            </div>
+          </div>
+        </div>
+        
       </div>
+      
     </div>
   </section>
 
@@ -937,22 +936,22 @@
           
           <div class="flex-text-group active" id="flex-text-1">
             <h3 class="flex-heading">Daily Savings</h3>
-            <p class="flex-desc">Save any preferred amount Every Day, automatically.</p>
+            <p class="flex-desc">Every Day, automatically.</p>
           </div>
           
           <div class="flex-text-group" id="flex-text-2">
             <h3 class="flex-heading">Weekly Savings</h3>
-            <p class="flex-desc">Set an amount to be put aside Once a Week.</p>
+            <p class="flex-desc">Once a Week.</p>
           </div>
           
           <div class="flex-text-group" id="flex-text-3">
             <h3 class="flex-heading">Monthly Savings</h3>
-            <p class="flex-desc">Set up option to save one amount, Every Month, with ease.</p>
+            <p class="flex-desc">Every Month, with ease.</p>
           </div>
           
           <div class="flex-text-group" id="flex-text-4">
             <h3 class="flex-heading">Instant Savings</h3>
-            <p class="flex-desc">Save any amount, Anytime.</p>
+            <p class="flex-desc">Anytime.</p>
           </div>
         </div>
         
