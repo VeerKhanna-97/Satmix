@@ -3898,9 +3898,7 @@ footer {
 }
 
 /* Custom Cursor Styles */
-body, a, button, input, select, textarea, .nav-link, .crypto-segment, [role="button"],
-input[type="range"]::-webkit-slider-thumb,
-input[type="range"]::-moz-range-thumb {
+*, *::before, *::after {
   cursor: none !important;
 }
 
@@ -3981,12 +3979,10 @@ input[type="range"]::-moz-range-thumb {
   .cursor-dot, .cursor-ring {
     display: none !important;
   }
-  body, a, button, input, select, textarea, .nav-link, .crypto-segment, [role="button"],
-  input[type="range"]::-webkit-slider-thumb,
-  input[type="range"]::-moz-range-thumb {
+  *, *::before, *::after {
     cursor: auto !important;
   }
-  a:hover, button:hover {
+  a:hover, button:hover, .nav-link:hover, .slide-tab-btn:hover {
     cursor: pointer !important;
   }
 }
