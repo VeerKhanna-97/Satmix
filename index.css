@@ -3898,7 +3898,7 @@ footer {
 }
 
 /* Custom Cursor Styles */
-*, *::before, *::after,
+html, body, *, *::before, *::after,
 input[type="range"],
 input[type="range"]::-webkit-slider-thumb,
 input[type="range"]::-webkit-slider-runnable-track,
