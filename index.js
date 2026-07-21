@@ -75,35 +75,55 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function fetchCryptoPrices() {
     try {
-      // Fetch crypto data directly from CoinGecko API (returns both USD and INR)
-      const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,tether,ripple,cardano,dogecoin,polkadot&vs_currencies=inr,usd&include_24hr_change=true');
-      if (!res.ok) throw new Error(`API error! status: ${res.status}`);
-      const data = await res.json();
-      
-      const coins = [
-        { id: 'bitcoin', symbol: 'BTC' },
-        { id: 'ethereum', symbol: 'ETH' },
-        { id: 'solana', symbol: 'SOL' },
-        { id: 'tether', symbol: 'USDT' },
-        { id: 'ripple', symbol: 'XRP' },
-        { id: 'cardano', symbol: 'ADA' },
-        { id: 'dogecoin', symbol: 'DOGE' },
-        { id: 'polkadot', symbol: 'DOT' }
-      ];
+      let backendData = null;
+      let usingBackend = false;
+      try {
+        // First try the backend proxy (bypasses browser adblockers on live site)
+        const res = await fetch('/api/ticker');
+        if (res.ok) {
+          const json = await res.json();
+          if (json && json.data && json.data.length > 0) {
+            backendData = json.data;
+            usingBackend = true;
+          }
+        }
+      } catch (e) {
+        // Backend failed (e.g. testing locally offline without Vercel CLI)
+      }
 
-      const compiledData = coins.map(coin => {
-        const coinData = data[coin.id];
-        if (!coinData) throw new Error(`Missing data for ${coin.id}`);
-        return {
-          id: coin.id,
-          symbol: coin.symbol,
-          priceUsd: coinData.usd,
-          priceInr: coinData.inr,
-          changePercent24Hr: coinData.usd_24h_change
-        };
-      });
+      if (usingBackend && backendData) {
+        renderTicker(backendData);
+      } else {
+        // Fallback: Fetch crypto data directly from CoinGecko API client-side
+        const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,tether,ripple,cardano,dogecoin,polkadot&vs_currencies=inr,usd&include_24hr_change=true');
+        if (!res.ok) throw new Error(`API error! status: ${res.status}`);
+        const data = await res.json();
+        
+        const coins = [
+          { id: 'bitcoin', symbol: 'BTC' },
+          { id: 'ethereum', symbol: 'ETH' },
+          { id: 'solana', symbol: 'SOL' },
+          { id: 'tether', symbol: 'USDT' },
+          { id: 'ripple', symbol: 'XRP' },
+          { id: 'cardano', symbol: 'ADA' },
+          { id: 'dogecoin', symbol: 'DOGE' },
+          { id: 'polkadot', symbol: 'DOT' }
+        ];
 
-      renderTicker(compiledData);
+        const compiledData = coins.map(coin => {
+          const coinData = data[coin.id];
+          if (!coinData) throw new Error(`Missing data for ${coin.id}`);
+          return {
+            id: coin.id,
+            symbol: coin.symbol,
+            priceUsd: coinData.usd,
+            priceInr: coinData.inr,
+            changePercent24Hr: coinData.usd_24h_change
+          };
+        });
+
+        renderTicker(compiledData);
+      }
     } catch (err) {
       console.warn("Using offline ticker fallback data", err);
       renderTicker(getFallbackPrices());

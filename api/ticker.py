@@ -5,36 +5,35 @@ import json
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
         try:
-            # Fetch Crypto Data from CoinCap
-            crypto_req = urllib.request.Request(
-                'https://api.coincap.io/v2/assets?ids=bitcoin,ethereum,solana,tether,ripple,cardano,dogecoin,polkadot', 
-                headers={'User-Agent': 'Mozilla/5.0'}
-            )
-            with urllib.request.urlopen(crypto_req) as response:
-                crypto_data = json.loads(response.read().decode())['data']
+            # Fetch Crypto Data from CoinGecko
+            req_url = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,tether,ripple,cardano,dogecoin,polkadot&vs_currencies=inr,usd&include_24hr_change=true'
+            req = urllib.request.Request(req_url, headers={'User-Agent': 'Mozilla/5.0'})
             
-            # Fetch Exchange Rate Data from Frankfurter
-            rate_req = urllib.request.Request(
-                'https://api.frankfurter.app/latest?from=USD&to=INR', 
-                headers={'User-Agent': 'Mozilla/5.0'}
-            )
-            with urllib.request.urlopen(rate_req) as response:
-                rate_data = json.loads(response.read().decode())
-                inr_rate = rate_data['rates']['INR']
+            with urllib.request.urlopen(req) as response:
+                data = json.loads(response.read().decode())
             
-            # Combine data and calculate INR prices securely on backend
+            coins = [
+                {'id': 'bitcoin', 'symbol': 'BTC'},
+                {'id': 'ethereum', 'symbol': 'ETH'},
+                {'id': 'solana', 'symbol': 'SOL'},
+                {'id': 'tether', 'symbol': 'USDT'},
+                {'id': 'ripple', 'symbol': 'XRP'},
+                {'id': 'cardano', 'symbol': 'ADA'},
+                {'id': 'dogecoin', 'symbol': 'DOGE'},
+                {'id': 'polkadot', 'symbol': 'DOT'}
+            ]
+            
             compiled_data = []
-            for coin in crypto_data:
-                price_usd = float(coin['priceUsd'])
-                price_inr = price_usd * inr_rate
-                
-                compiled_data.append({
-                    'id': coin['id'],
-                    'symbol': coin['symbol'],
-                    'priceUsd': price_usd,
-                    'priceInr': price_inr,
-                    'changePercent24Hr': coin['changePercent24Hr']
-                })
+            for coin in coins:
+                coin_data = data.get(coin['id'])
+                if coin_data:
+                    compiled_data.append({
+                        'id': coin['id'],
+                        'symbol': coin['symbol'],
+                        'priceUsd': coin_data.get('usd'),
+                        'priceInr': coin_data.get('inr'),
+                        'changePercent24Hr': coin_data.get('usd_24h_change')
+                    })
                 
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
