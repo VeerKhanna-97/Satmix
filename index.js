@@ -1069,9 +1069,32 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   // Add listeners to existing interactive elements
-  const interactables = document.querySelectorAll('a, button, input, select, textarea, .nav-link, .crypto-segment, [role="button"], .slide-tab-btn');
+  const interactables = document.querySelectorAll('a, button, input:not([type="range"]), select, textarea, .nav-link, .crypto-segment, [role="button"], .slide-tab-btn');
   interactables.forEach(el => {
     el.addEventListener('mouseenter', addHoverState);
     el.addEventListener('mouseleave', removeHoverState);
+  });
+
+  // Slider Morph State
+  const sliders = document.querySelectorAll('input[type="range"]');
+  sliders.forEach(slider => {
+    slider.addEventListener('mouseenter', () => {
+      cursorDot.classList.add('drag');
+      cursorRing.classList.add('drag');
+    });
+    slider.addEventListener('mouseleave', () => {
+      cursorDot.classList.remove('drag');
+      cursorRing.classList.remove('drag');
+    });
+  });
+
+  // Click States
+  window.addEventListener('mousedown', () => {
+    cursorDot.classList.add('active');
+    cursorRing.classList.add('active');
+  });
+  window.addEventListener('mouseup', () => {
+    cursorDot.classList.remove('active');
+    cursorRing.classList.remove('active');
   });
 });

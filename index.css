@@ -3898,7 +3898,9 @@ footer {
 }
 
 /* Custom Cursor Styles */
-body, a, button, input, select, textarea, .nav-link, .crypto-segment, [role="button"] {
+body, a, button, input, select, textarea, .nav-link, .crypto-segment, [role="button"],
+input[type="range"]::-webkit-slider-thumb,
+input[type="range"]::-moz-range-thumb {
   cursor: none !important;
 }
 
@@ -3944,12 +3946,44 @@ body, a, button, input, select, textarea, .nav-link, .crypto-segment, [role="but
   background-color: rgba(93, 47, 232, 0.05);
 }
 
+/* Click State */
+.cursor-dot.active {
+  width: 4px;
+  height: 4px;
+  background-color: var(--color-mint);
+}
+
+.cursor-ring.active {
+  width: 26px;
+  height: 26px;
+  border-width: 2.5px;
+  border-color: var(--color-mint);
+  background-color: transparent;
+}
+
+/* Drag/Slider State */
+.cursor-dot.drag {
+  width: 12px;
+  height: 12px;
+  background-color: var(--color-mint);
+}
+
+.cursor-ring.drag {
+  width: 64px;
+  height: 32px;
+  border-radius: 16px;
+  border-color: rgba(52, 211, 153, 0.4);
+  background-color: rgba(52, 211, 153, 0.1);
+}
+
 /* Hide on Touch Devices */
 @media (pointer: coarse) {
   .cursor-dot, .cursor-ring {
     display: none !important;
   }
-  body, a, button, input, select, textarea, .nav-link, .crypto-segment, [role="button"] {
+  body, a, button, input, select, textarea, .nav-link, .crypto-segment, [role="button"],
+  input[type="range"]::-webkit-slider-thumb,
+  input[type="range"]::-moz-range-thumb {
     cursor: auto !important;
   }
   a:hover, button:hover {
