@@ -348,7 +348,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const resultInvestedVal = document.getElementById('result-invested');
   const resultGainVal = document.getElementById('result-gain');
   
-  let dailySavings = 100;
+  let dailySavings = 10;
   let selectedStrategy = 'low'; // 'low', 'med', or 'high'
   
   const strategyRates = {
@@ -486,8 +486,15 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (stratLowBtn && stratMedBtn && stratHighBtn) {
+    function updateSlider(val) {
+      dailySavings = val;
+      if (calcRange) calcRange.value = val;
+      if (calcAmountVal) calcAmountVal.textContent = `₹${val}`;
+    }
+
     stratLowBtn.addEventListener('click', () => {
       selectedStrategy = 'low';
+      updateSlider(10);
       stratLowBtn.classList.add('active');
       stratMedBtn.classList.remove('active');
       stratHighBtn.classList.remove('active');
@@ -496,6 +503,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     stratMedBtn.addEventListener('click', () => {
       selectedStrategy = 'med';
+      updateSlider(30);
       stratMedBtn.classList.add('active');
       stratLowBtn.classList.remove('active');
       stratHighBtn.classList.remove('active');
@@ -504,6 +512,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     stratHighBtn.addEventListener('click', () => {
       selectedStrategy = 'high';
+      updateSlider(50);
       stratHighBtn.classList.add('active');
       stratLowBtn.classList.remove('active');
       stratMedBtn.classList.remove('active');
