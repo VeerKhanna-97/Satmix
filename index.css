@@ -3992,10 +3992,15 @@ input[type="range"]::-moz-range-track {
   .cursor-dot, .cursor-ring {
     display: none !important;
   }
-  *, *::before, *::after {
+  *, *::before, *::after,
+  input[type="range"],
+  input[type="range"]::-webkit-slider-thumb,
+  input[type="range"]::-webkit-slider-runnable-track,
+  input[type="range"]::-moz-range-thumb,
+  input[type="range"]::-moz-range-track {
     cursor: auto !important;
   }
-  a:hover, button:hover, .nav-link:hover, .slide-tab-btn:hover {
+  a:hover, button:hover, .nav-link:hover, .slide-tab-btn:hover, .crypto-segment:hover {
     cursor: pointer !important;
   }
 }
