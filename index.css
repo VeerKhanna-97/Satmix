@@ -3860,7 +3860,7 @@ footer {
   max-width: 250px;
   z-index: 9999;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-  transform: translate(-50%, -10px);
+  transform: translate(15px, calc(-100% - 5px));
   transition: opacity 0.2s ease, transform 0.2s ease;
   line-height: 1.4;
   font-family: var(--font-sans);
@@ -3868,7 +3868,7 @@ footer {
 
 .crypto-tooltip.visible {
   opacity: 1;
-  transform: translate(-50%, -20px);
+  transform: translate(15px, calc(-100% - 15px));
 }
 
 .crypto-segment {
