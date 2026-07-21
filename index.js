@@ -1026,11 +1026,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Custom Cursor Logic
 document.addEventListener('DOMContentLoaded', () => {
-  const cursorDot = document.querySelector('.cursor-dot');
-  const cursorRing = document.querySelector('.cursor-ring');
+  // Only initialize if device supports hover (pointer: fine)
+  if (window.matchMedia('(pointer: coarse)').matches) return;
+
+  let cursorDot = document.querySelector('.cursor-dot');
+  let cursorRing = document.querySelector('.cursor-ring');
   
-  // Only initialize if elements exist and device supports hover (pointer: fine)
-  if (!cursorDot || !cursorRing || window.matchMedia('(pointer: coarse)').matches) return;
+  // Dynamically inject cursor elements if they are missing on this page
+  if (!cursorDot || !cursorRing) {
+    cursorDot = document.createElement('div');
+    cursorDot.className = 'cursor-dot';
+    document.body.appendChild(cursorDot);
+    
+    cursorRing = document.createElement('div');
+    cursorRing.className = 'cursor-ring';
+    document.body.appendChild(cursorRing);
+  }
   
   let mouseX = window.innerWidth / 2;
   let mouseY = window.innerHeight / 2;
