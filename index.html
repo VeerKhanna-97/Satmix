@@ -520,9 +520,9 @@
           <div class="calc-group">
             <div class="calc-label-val">
               <span class="calc-label">Daily Savings Amount</span>
-              <span class="calc-val" id="calc-amount-val">₹50</span>
+              <span class="calc-val" id="calc-amount-val">₹100</span>
             </div>
-            <input type="range" id="calc-range" min="10" max="1000" step="10" value="50" class="range-slider">
+            <input type="range" id="calc-range" min="10" max="1000" step="10" value="100" class="range-slider">
             <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); margin-top: 8px; font-family: var(--font-sans); font-weight: 600;">
               <span>₹10/day</span>
               <span>₹500/day</span>
@@ -535,13 +535,13 @@
               <span class="calc-label">Select Strategy Basket</span>
             </div>
             <div class="calc-strategy-select">
-              <button class="calc-strat-btn" id="calc-strat-low">
+              <button class="calc-strat-btn active" id="calc-strat-low">
                 Stable & Safe (8% p.a.)
               </button>
               <button class="calc-strat-btn" id="calc-strat-med">
                 Balanced Growth (16% p.a.)
               </button>
-              <button class="calc-strat-btn active" id="calc-strat-high">
+              <button class="calc-strat-btn" id="calc-strat-high">
                 Growth Mode (26% p.a.)
               </button>
             </div>
@@ -1142,6 +1142,6 @@
   <div id="crypto-tooltip" class="crypto-tooltip"></div>
 
   <!-- Core JavaScript -->
-  <script src="index.js?v=9"></script>
+  <script src="index.js?v=10"></script>
 </body>
 </html>

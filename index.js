@@ -348,8 +348,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const resultInvestedVal = document.getElementById('result-invested');
   const resultGainVal = document.getElementById('result-gain');
   
-  let dailySavings = 50;
-  let selectedStrategy = 'high'; // 'low', 'med', or 'high'
+  let dailySavings = 100;
+  let selectedStrategy = 'low'; // 'low', 'med', or 'high'
   
   const strategyRates = {
     low: 0.08,  // 8% annual yield for stablecoins
