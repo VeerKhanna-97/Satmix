@@ -379,7 +379,7 @@ header {
   font-weight: 600;
   font-size: 13px;
   color: var(--text-secondary);
-  cursor: pointer;
+  cursor: none !important;
   border-radius: 16px;
   transition: var(--transition-fast);
 }
@@ -533,7 +533,7 @@ header {
   border-radius: 12px;
   font-weight: 700;
   font-size: 16px;
-  cursor: pointer;
+  cursor: none !important;
   box-shadow: 0 4px 15px rgba(93, 47, 232, 0.2);
   transition: var(--transition-fast);
 }
@@ -545,7 +545,7 @@ header {
 
 .submit-btn:disabled {
   opacity: 0.7;
-  cursor: not-allowed;
+  cursor: none !important;
   transform: none;
 }
 
@@ -748,7 +748,7 @@ header {
   align-items: center;
   justify-content: center;
   color: var(--text-secondary);
-  cursor: pointer;
+  cursor: none !important;
   transition: var(--transition-fast);
   background-color: var(--card-bg);
 }
@@ -761,7 +761,7 @@ header {
 
 .slide-nav-btn:disabled {
   opacity: 0.4;
-  cursor: not-allowed;
+  cursor: none !important;
 }
 
 .slide-nav-btn:disabled:hover {
@@ -781,7 +781,7 @@ header {
   border-radius: 50%;
   background-color: var(--text-muted);
   opacity: 0.5;
-  cursor: pointer;
+  cursor: none !important;
   transition: var(--transition-fast);
 }
 
@@ -900,7 +900,7 @@ header {
   height: 22px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--color-purple), var(--color-violet));
-  cursor: pointer;
+  cursor: none !important;
   box-shadow: 0 0 10px rgba(93, 47, 232, 0.4);
   transition: transform 0.1s;
 }
@@ -914,7 +914,7 @@ header {
   height: 22px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--color-purple), var(--color-violet));
-  cursor: pointer;
+  cursor: none !important;
   box-shadow: 0 0 10px rgba(93, 47, 232, 0.4);
   border: none;
   transition: transform 0.1s;
@@ -942,7 +942,7 @@ header {
   font-weight: 600;
   font-size: 13px;
   color: var(--text-secondary);
-  cursor: pointer;
+  cursor: none !important;
   border-radius: 8px;
   transition: var(--transition-fast);
 }
@@ -1321,7 +1321,7 @@ header {
   font-weight: 700;
   font-size: 16px;
   color: var(--text-primary);
-  cursor: pointer;
+  cursor: none !important;
 }
 
 .faq-trigger i {
@@ -1534,7 +1534,7 @@ footer {
   background: none;
   border: none;
   color: var(--text-muted);
-  cursor: pointer;
+  cursor: none !important;
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -1638,7 +1638,7 @@ footer {
   border-radius: 12px;
   font-weight: 600;
   font-size: 14px;
-  cursor: pointer;
+  cursor: none !important;
   transition: var(--transition-fast);
 }
 
@@ -1943,7 +1943,7 @@ footer {
   background: none;
   border: none;
   color: var(--text-primary);
-  cursor: pointer;
+  cursor: none !important;
   padding: 4px;
 }
 
@@ -2170,7 +2170,7 @@ footer {
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
+  cursor: none !important;
   transition: var(--transition-fast);
 }
 
@@ -3605,7 +3605,7 @@ footer {
   border-radius: 8px;
   transition: all 0.3s ease;
   background: transparent;
-  cursor: pointer;
+  cursor: none !important;
 }
 
 #flex-tab-1.active { background: #5D2FE8; color: #fff; box-shadow: 0 4px 15px rgba(93, 47, 232, 0.3); }
@@ -3849,7 +3849,7 @@ footer {
 
 .custom-toast-close {
   color: var(--text-muted);
-  cursor: pointer;
+  cursor: none !important;
   transition: color 0.2s;
   flex-shrink: 0;
   margin-top: 2px;
@@ -3886,7 +3886,7 @@ footer {
 }
 
 .crypto-segment {
-  cursor: pointer;
+  cursor: none !important;
   transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.2s ease;
   pointer-events: stroke;
   transform-origin: center;
