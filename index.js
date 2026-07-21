@@ -75,13 +75,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function fetchCryptoPrices() {
     try {
-      const response = await fetch('/api/ticker');
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const json = await response.json();
-      if (json && json.data) {
-        renderTicker(json.data);
+      // Fetch crypto data directly from CoinCap API
+      const cryptoRes = await fetch('https://api.coincap.io/v2/assets?ids=bitcoin,ethereum,solana,tether,ripple,cardano,dogecoin,polkadot');
+      if (!cryptoRes.ok) throw new Error(`Crypto API error! status: ${cryptoRes.status}`);
+      const cryptoJson = await cryptoRes.json();
+      
+      // Fetch exchange rate data from Frankfurter API
+      const rateRes = await fetch('https://api.frankfurter.app/latest?from=USD&to=INR');
+      if (!rateRes.ok) throw new Error(`Rate API error! status: ${rateRes.status}`);
+      const rateJson = await rateRes.json();
+      const inrRate = rateJson.rates.INR;
+
+      if (cryptoJson && cryptoJson.data && inrRate) {
+        const compiledData = cryptoJson.data.map(coin => {
+          const priceUsd = parseFloat(coin.priceUsd);
+          const priceInr = priceUsd * inrRate;
+          return {
+            id: coin.id,
+            symbol: coin.symbol,
+            priceUsd: priceUsd,
+            priceInr: priceInr,
+            changePercent24Hr: coin.changePercent24Hr
+          };
+        });
+        renderTicker(compiledData);
       } else {
         throw new Error("Invalid response format");
       }
