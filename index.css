@@ -3873,12 +3873,12 @@ footer {
 
 .crypto-segment {
   cursor: pointer;
-  transition: stroke-width 0.2s ease, filter 0.2s ease;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.2s ease;
   pointer-events: stroke;
+  transform-origin: center;
 }
 
 .crypto-segment:hover {
-  stroke-width: 24;
+  transform: scale(1.08);
   filter: brightness(1.2);
-  z-index: 10;
 }
