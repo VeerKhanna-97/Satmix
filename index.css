@@ -3896,3 +3896,63 @@ footer {
   transform: scale(1.08);
   filter: brightness(1.2);
 }
+
+/* Custom Cursor Styles */
+body, a, button, input, select, textarea, .nav-link, .crypto-segment, [role="button"] {
+  cursor: none !important;
+}
+
+.cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  background-color: var(--color-mint);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 10000;
+  transform: translate(-50%, -50%);
+  transition: transform 0.1s ease, background-color 0.2s ease, width 0.2s ease, height 0.2s ease;
+}
+
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid rgba(52, 211, 153, 0.6);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: width 0.2s ease, height 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+/* Hover States for Interactive Elements */
+.cursor-dot.hover {
+  background-color: var(--color-purple);
+  width: 10px;
+  height: 10px;
+}
+
+.cursor-ring.hover {
+  width: 52px;
+  height: 52px;
+  border-color: rgba(93, 47, 232, 0.4);
+  background-color: rgba(93, 47, 232, 0.05);
+}
+
+/* Hide on Touch Devices */
+@media (pointer: coarse) {
+  .cursor-dot, .cursor-ring {
+    display: none !important;
+  }
+  body, a, button, input, select, textarea, .nav-link, .crypto-segment, [role="button"] {
+    cursor: auto !important;
+  }
+  a:hover, button:hover {
+    cursor: pointer !important;
+  }
+}

@@ -1023,3 +1023,55 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+// Custom Cursor Logic
+document.addEventListener('DOMContentLoaded', () => {
+  const cursorDot = document.querySelector('.cursor-dot');
+  const cursorRing = document.querySelector('.cursor-ring');
+  
+  // Only initialize if elements exist and device supports hover (pointer: fine)
+  if (!cursorDot || !cursorRing || window.matchMedia('(pointer: coarse)').matches) return;
+  
+  let mouseX = window.innerWidth / 2;
+  let mouseY = window.innerHeight / 2;
+  
+  let ringX = mouseX;
+  let ringY = mouseY;
+  
+  window.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    
+    // Update dot immediately for instant responsiveness
+    cursorDot.style.transform = `translate(calc(${mouseX}px - 50%), calc(${mouseY}px - 50%))`;
+  });
+  
+  // Animation loop for smooth ring trailing (lerp)
+  function renderCursor() {
+    ringX += (mouseX - ringX) * 0.15;
+    ringY += (mouseY - ringY) * 0.15;
+    
+    cursorRing.style.transform = `translate(calc(${ringX}px - 50%), calc(${ringY}px - 50%))`;
+    
+    requestAnimationFrame(renderCursor);
+  }
+  requestAnimationFrame(renderCursor);
+  
+  // Interactive Hover States
+  const addHoverState = () => {
+    cursorDot.classList.add('hover');
+    cursorRing.classList.add('hover');
+  };
+  
+  const removeHoverState = () => {
+    cursorDot.classList.remove('hover');
+    cursorRing.classList.remove('hover');
+  };
+
+  // Add listeners to existing interactive elements
+  const interactables = document.querySelectorAll('a, button, input, select, textarea, .nav-link, .crypto-segment, [role="button"], .slide-tab-btn');
+  interactables.forEach(el => {
+    el.addEventListener('mouseenter', addHoverState);
+    el.addEventListener('mouseleave', removeHoverState);
+  });
+});
