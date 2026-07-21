@@ -1009,3 +1009,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+// Calc Results Pane Cursor Glow Tracker
+document.addEventListener('DOMContentLoaded', () => {
+  const calcPane = document.querySelector('.calc-results-pane');
+  if (calcPane) {
+    calcPane.addEventListener('mousemove', (e) => {
+      const rect = calcPane.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      calcPane.style.setProperty('--mouse-x', `${x}px`);
+      calcPane.style.setProperty('--mouse-y', `${y}px`);
+    });
+  }
+});
