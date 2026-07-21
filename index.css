@@ -3844,3 +3844,41 @@ footer {
 .custom-toast-close:hover {
   color: var(--text-primary);
 }
+
+/* Tooltip Styles for Crypto Segments */
+.crypto-tooltip {
+  position: fixed;
+  pointer-events: none;
+  opacity: 0;
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #F1F5F9;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  max-width: 250px;
+  z-index: 9999;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  transform: translate(-50%, -10px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  line-height: 1.4;
+  font-family: var(--font-sans);
+}
+
+.crypto-tooltip.visible {
+  opacity: 1;
+  transform: translate(-50%, -20px);
+}
+
+.crypto-segment {
+  cursor: pointer;
+  transition: stroke-width 0.2s ease, filter 0.2s ease;
+  pointer-events: stroke;
+}
+
+.crypto-segment:hover {
+  stroke-width: 24;
+  filter: brightness(1.2);
+  z-index: 10;
+}

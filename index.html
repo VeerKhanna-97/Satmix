@@ -211,6 +211,9 @@
           <div class="slide-container">
             <div class="slide-track">
               
+              <!-- Dynamic Tooltip for Crypto Segments -->
+              <div id="crypto-tooltip" class="crypto-tooltip"></div>
+
               <!-- Slide 1: Waitlist Form -->
               <div class="slide-item">
                 <div class="slide-title-wrapper">
@@ -608,9 +611,9 @@
             <svg class="donut-svg" width="90" height="90" viewBox="0 0 74 74">
               <circle class="donut-bg" cx="37" cy="37" r="15.9"></circle>
               <!-- 60% USDT -->
-              <circle class="donut-segment-1" cx="37" cy="37" r="15.9" stroke-dasharray="60 40" stroke-dashoffset="25"></circle>
+              <circle class="donut-segment-1 crypto-segment" cx="37" cy="37" r="15.9" stroke-dasharray="60 40" stroke-dashoffset="25" data-crypto-desc="USDT (Tether): A stablecoin pegged to the US Dollar."></circle>
               <!-- 40% USDC -->
-              <circle class="donut-segment-2" cx="37" cy="37" r="15.9" stroke-dasharray="40 60" stroke-dashoffset="65"></circle>
+              <circle class="donut-segment-2 crypto-segment" cx="37" cy="37" r="15.9" stroke-dasharray="40 60" stroke-dashoffset="65" data-crypto-desc="USDC (USD Coin): A regulated stablecoin pegged to the US Dollar."></circle>
             </svg>
             
             <div class="donut-allocations">
@@ -658,11 +661,11 @@
             <svg class="donut-svg" width="90" height="90" viewBox="0 0 74 74">
               <circle class="donut-bg" cx="37" cy="37" r="15.9"></circle>
               <!-- 40% BTC -->
-              <circle class="donut-segment-1" cx="37" cy="37" r="15.9" stroke-dasharray="40 60" stroke-dashoffset="25"></circle>
+              <circle class="donut-segment-1 crypto-segment" cx="37" cy="37" r="15.9" stroke-dasharray="40 60" stroke-dashoffset="25" data-crypto-desc="BTC (Bitcoin): The pioneer cryptocurrency, acts as digital gold."></circle>
               <!-- 30% ETH -->
-              <circle class="donut-segment-2" cx="37" cy="37" r="15.9" stroke-dasharray="30 70" stroke-dashoffset="85"></circle>
+              <circle class="donut-segment-2 crypto-segment" cx="37" cy="37" r="15.9" stroke-dasharray="30 70" stroke-dashoffset="85" data-crypto-desc="ETH (Ethereum): The leading smart contract and decentralized app platform."></circle>
               <!-- 30% USDT -->
-              <circle class="donut-segment-3" cx="37" cy="37" r="15.9" stroke-dasharray="30 70" stroke-dashoffset="55"></circle>
+              <circle class="donut-segment-3 crypto-segment" cx="37" cy="37" r="15.9" stroke-dasharray="30 70" stroke-dashoffset="55" data-crypto-desc="USDT (Tether): A stablecoin pegged to the US Dollar."></circle>
             </svg>
             
             <div class="donut-allocations">
@@ -714,11 +717,11 @@
             <svg class="donut-svg" width="90" height="90" viewBox="0 0 74 74">
               <circle class="donut-bg" cx="37" cy="37" r="15.9"></circle>
               <!-- 50% BTC -->
-              <circle class="donut-segment-1" cx="37" cy="37" r="15.9" stroke-dasharray="50 50" stroke-dashoffset="25"></circle>
+              <circle class="donut-segment-1 crypto-segment" cx="37" cy="37" r="15.9" stroke-dasharray="50 50" stroke-dashoffset="25" data-crypto-desc="BTC (Bitcoin): The pioneer cryptocurrency, acts as digital gold."></circle>
               <!-- 30% ETH -->
-              <circle class="donut-segment-2" cx="37" cy="37" r="15.9" stroke-dasharray="30 70" stroke-dashoffset="75"></circle>
+              <circle class="donut-segment-2 crypto-segment" cx="37" cy="37" r="15.9" stroke-dasharray="30 70" stroke-dashoffset="75" data-crypto-desc="ETH (Ethereum): The leading smart contract and decentralized app platform."></circle>
               <!-- 20% SOL -->
-              <circle class="donut-segment-3" cx="37" cy="37" r="15.9" stroke-dasharray="20 80" stroke-dashoffset="45"></circle>
+              <circle class="donut-segment-3 crypto-segment" cx="37" cy="37" r="15.9" stroke-dasharray="20 80" stroke-dashoffset="45" data-crypto-desc="SOL (Solana): A high-performance blockchain for fast and cheap transactions."></circle>
             </svg>
             
             <div class="donut-allocations">
