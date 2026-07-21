@@ -3898,7 +3898,12 @@ footer {
 }
 
 /* Custom Cursor Styles */
-*, *::before, *::after {
+*, *::before, *::after,
+input[type="range"],
+input[type="range"]::-webkit-slider-thumb,
+input[type="range"]::-webkit-slider-runnable-track,
+input[type="range"]::-moz-range-thumb,
+input[type="range"]::-moz-range-track {
   cursor: none !important;
 }
 
@@ -3961,17 +3966,25 @@ footer {
 
 /* Drag/Slider State */
 .cursor-dot.drag {
-  width: 12px;
-  height: 12px;
-  background-color: var(--color-mint);
+  opacity: 0;
 }
 
 .cursor-ring.drag {
-  width: 64px;
-  height: 32px;
-  border-radius: 16px;
-  border-color: rgba(52, 211, 153, 0.4);
-  background-color: rgba(52, 211, 153, 0.1);
+  width: 44px;
+  height: 44px;
+  background-color: var(--card-bg);
+  border-color: var(--color-mint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cursor-ring.drag::after {
+  content: '↔';
+  color: var(--color-mint);
+  font-size: 20px;
+  line-height: 1;
+  font-weight: 700;
 }
 
 /* Hide on Touch Devices */
