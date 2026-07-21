@@ -978,7 +978,7 @@ header {
   position: absolute;
   inset: 0;
   background: radial-gradient(
-    250px circle at var(--mouse-x, 80%) var(--mouse-y, 20%),
+    120px circle at var(--mouse-x, 80%) var(--mouse-y, 20%),
     rgba(93, 47, 232, 0.45) 0%,
     transparent 70%
   );
