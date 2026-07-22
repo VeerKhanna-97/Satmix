@@ -840,22 +840,6 @@ header {
   color: var(--text-secondary);
 }
 
-.calc-grid, .baskets-grid {
-  --bg-primary: #08090F;
-  --bg-secondary: #12131A;
-  --bg-tertiary: #1A1C26;
-  --text-primary: #FFFFFF;
-  --text-secondary: #94A3B8;
-  --text-muted: #64748B;
-  --border-color: rgba(255, 255, 255, 0.08);
-  --border-focus: #8B5CF6;
-  --card-bg: #12131C;
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.2);
-  --shadow-md: 0 10px 20px -5px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 20px 40px -10px rgba(0, 0, 0, 0.4);
-  --color-mint-text: var(--color-mint);
-}
-
 .calc-grid {
   display: grid;
   grid-template-columns: 1fr;
