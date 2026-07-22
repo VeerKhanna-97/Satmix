@@ -21,6 +21,7 @@
   /* Brand colors (specified by user) */
   --color-bg-dark: #08090F;
   --color-mint: #00F5A0;
+  --color-mint-text: #059669;
   --color-purple: #5D2FE8;
   --color-violet: #8B5CF6;
   --color-blue: #6EE7FF;
@@ -61,6 +62,8 @@
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.2);
   --shadow-md: 0 10px 20px -5px rgba(0, 0, 0, 0.3);
   --shadow-lg: 0 20px 40px -10px rgba(0, 0, 0, 0.4);
+  
+  --color-mint-text: var(--color-mint);
 }
 
 /* Reset & Base Styles */
@@ -958,7 +961,7 @@ header {
 .calc-results-pane {
   background-color: var(--card-bg);
   border: 1px solid var(--border-color);
-  color: #FFFFFF;
+  color: var(--text-primary);
   border-radius: 24px;
   padding: 40px;
   box-shadow: var(--shadow-md);
@@ -994,14 +997,14 @@ header {
 
 .calc-results-header {
   margin-bottom: 30px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--border-color);
   padding-bottom: 20px;
 }
 
 .calc-results-tag {
   font-family: var(--font-mono);
   font-size: 11px;
-  color: var(--color-mint);
+  color: var(--color-mint-text);
   text-transform: uppercase;
   font-weight: 700;
   letter-spacing: 1px;
@@ -1019,7 +1022,7 @@ header {
 
 .main-result-label {
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--text-secondary);
   margin-bottom: 4px;
 }
 
@@ -1028,7 +1031,7 @@ header {
   font-weight: 800;
   letter-spacing: -1px;
   line-height: 1.1;
-  background: linear-gradient(135deg, #FFFFFF, var(--color-mint));
+  background: linear-gradient(135deg, var(--text-primary), var(--color-mint-text));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -1041,15 +1044,15 @@ header {
 }
 
 .calc-stat-card {
-  background-color: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
   border-radius: 16px;
   padding: 16px;
 }
 
 .calc-stat-label {
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-secondary);
   margin-bottom: 4px;
 }
 
@@ -1061,16 +1064,16 @@ header {
 }
 
 .calc-stat-val.invested {
-  color: #FFFFFF;
+  color: var(--text-primary);
 }
 
 .calc-stat-val.return {
-  color: var(--color-mint);
+  color: var(--color-mint-text);
 }
 
 .calc-disclaimer {
   font-size: 11px;
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--text-muted);
   line-height: 1.4;
 }
 
