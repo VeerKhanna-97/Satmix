@@ -1,202 +1,128 @@
 export function initAnimations() {
+  // ==========================================
+  // 6. BIDIRECTIONAL SCROLL REVEAL ANIMATIONS
+  // ==========================================
+  const revealObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('reveal-active');
+        observer.unobserve(entry.target); // Stop observing once revealed for better performance
+      }
+    });
+  }, {
+    threshold: 0.1, // Trigger when 10% of the element is visible
+    rootMargin: '0px 0px -40px 0px' // Offset bottom trigger slightly for organic entry
+  });
 
-  // 2. INVESTMENT CALCULATOR
-  
+  const revealElements = document.querySelectorAll('.scroll-reveal');
+  revealElements.forEach(el => revealObserver.observe(el));
 
-  const calcRange = document.getElementById('calc-range');
-  const calcAmountVal = document.getElementById('calc-amount-val');
-  const stratLowBtn = document.getElementById('calc-strat-low');
-  const stratMedBtn = document.getElementById('calc-strat-med');
-  const stratHighBtn = document.getElementById('calc-strat-high');
-  
-  const resultTotalVal = document.getElementById('result-total');
-  const resultInvestedVal = document.getElementById('result-invested');
-  const resultGainVal = document.getElementById('result-gain');
-  
-  let dailySavings = 10;
-  let selectedStrategy = 'low'; // 'low', 'med', or 'high'
-  
-  const strategyRates = {
-    low: 0.08,  // 8% annual yield for stablecoins
-    med: 0.16,  // 16% Balanced Growth yield
-    high: 0.26  // 26% annual yield average for top assets index
-  };
+  // ==========================================
+  // 7. STEPS SCROLL ANIMATION
+  // ==========================================
+  const stepsSection = document.getElementById('steps-animation');
+  const phones = [
+    document.getElementById('phone-ui-1'),
+    document.getElementById('phone-ui-2'),
+    document.getElementById('phone-ui-3')
+  ];
+  const nodes = [
+    document.getElementById('node-container-1'),
+    document.getElementById('node-container-2'),
+    document.getElementById('node-container-3')
+  ];
+  const timelineFill = document.getElementById('timeline-fill');
 
-  function formatCurrency(amount) {
-    return new Intl.NumberFormat('en-IN', {
-      maximumFractionDigits: 0
-    }).format(amount);
-  }
-
-  function calculateReturns() {
-    const annualRate = strategyRates[selectedStrategy];
-    const dailyRate = annualRate / 365;
-    const days = 365; // 1 year simulation
-    
-    let totalInvested = 0;
-    let accumulatedValue = 0;
-    
-    // Simulate day-by-day auto-savings and compound growth
-    for (let day = 0; day < days; day++) {
-      totalInvested += dailySavings;
-      accumulatedValue += dailySavings;
-      accumulatedValue *= (1 + dailyRate);
-    }
-    
-    const totalGains = accumulatedValue - totalInvested;
-    
-    // Animate the values counting up smoothly
-    animateValue(resultTotalVal, parseInt(resultTotalVal.dataset.value || 0), Math.round(accumulatedValue), '₹');
-    animateValue(resultInvestedVal, parseInt(resultInvestedVal.dataset.value || 0), totalInvested, '₹');
-    animateValue(resultGainVal, parseInt(resultGainVal.dataset.value || 0), Math.round(totalGains), '₹');
-    
-    resultTotalVal.dataset.value = Math.round(accumulatedValue);
-    resultInvestedVal.dataset.value = totalInvested;
-    resultGainVal.dataset.value = Math.round(totalGains);
-  }
-
-  // Smooth number counting animation
-  function animateValue(element, start, end, prefix = '') {
-    if (start === end) {
-      element.textContent = `${prefix}${formatCurrency(end)}`;
-      return;
-    }
-    
-    const duration = 400; // ms
-    const startTime = performance.now();
-    
-    function updateNumber(now) {
-      const elapsed = now - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      // Ease out quad formula
-      const easeProgress = progress * (2 - progress);
-      const current = Math.round(start + (end - start) * easeProgress);
+  if (stepsSection) {
+    window.addEventListener('scroll', () => {
+      const rect = stepsSection.getBoundingClientRect();
+      const totalScrollable = rect.height - window.innerHeight;
       
-      element.textContent = `${prefix}${formatCurrency(current)}`;
+      let progress = 0;
+      if (totalScrollable > 0) {
+        progress = -rect.top / totalScrollable;
+      }
       
-      if (progress < 1) {
-        requestAnimationFrame(updateNumber);
-      } else {
-        element.textContent = `${prefix}${formatCurrency(end)}`;
+      if (progress < 0) progress = 0;
+      if (progress > 1) progress = 1;
+
+      if (timelineFill) {
+        timelineFill.style.width = `${progress * 100}%`;
       }
-    }
-    
-    requestAnimationFrame(updateNumber);
-  }
 
-  function updateSavingsGoals() {
-    const dailyInput = dailySavings;
-    const annualRate = strategyRates[selectedStrategy];
+      let stepIndex = 0;
+      if (progress > 0.33) stepIndex = 1;
+      if (progress > 0.66) stepIndex = 2;
 
-    // Helper to calculate days to reach target using compound interest
-    function calculateDaysToTarget(target, daily, rate) {
-      if (rate === 0) return target / daily;
-      const dailyRate = rate / 365;
-      const val = (target * dailyRate) / (daily * (1 + dailyRate));
-      return Math.log(1 + val) / Math.log(1 + dailyRate);
-    }
-
-    // 1. Emergency Shield (Target ₹15,000)
-    const emEtaElement = document.getElementById('goal-em-eta');
-    if (emEtaElement) {
-      const emergencyDays = Math.round(calculateDaysToTarget(15000, dailyInput, annualRate));
-      emEtaElement.innerHTML = `Time to complete: <span>${emergencyDays} days</span>`;
-    }
-    
-    // 2. Gadget Upgrade (Target ₹60,000)
-    const gaEtaElement = document.getElementById('goal-ga-eta');
-    if (gaEtaElement) {
-      const gadgetDays = Math.round(calculateDaysToTarget(60000, dailyInput, annualRate));
-      const totalMonths = Math.round(gadgetDays / 30);
-      let gadgetStr = '';
-      if (totalMonths < 12) {
-        gadgetStr = `${totalMonths} month${totalMonths !== 1 ? 's' : ''}`;
-      } else {
-        const years = Math.floor(totalMonths / 12);
-        const months = totalMonths % 12;
-        gadgetStr = `${years} year${years !== 1 ? 's' : ''}`;
-        if (months > 0) {
-          gadgetStr += ` & ${months} month${months !== 1 ? 's' : ''}`;
+      phones.forEach((phone, idx) => {
+        if (phone) {
+          if (idx === stepIndex) {
+            phone.classList.add('active');
+          } else {
+            phone.classList.remove('active');
+          }
         }
-      }
-      gaEtaElement.innerHTML = `Time to complete: <span>${gadgetStr}</span>`;
-    }
-    
-    // 3. Wealth Accelerator (Target ₹2,50,000)
-    const weEtaElement = document.getElementById('goal-we-eta');
-    if (weEtaElement) {
-      const wealthDays = Math.round(calculateDaysToTarget(250000, dailyInput, annualRate));
-      const totalMonths = Math.round(wealthDays / 30);
-      let wealthStr = '';
-      if (totalMonths < 12) {
-        wealthStr = `${totalMonths} month${totalMonths !== 1 ? 's' : ''}`;
-      } else {
-        const years = Math.floor(totalMonths / 12);
-        const months = totalMonths % 12;
-        wealthStr = `${years} year${years !== 1 ? 's' : ''}`;
-        if (months > 0) {
-          wealthStr += ` & ${months} month${months !== 1 ? 's' : ''}`;
+      });
+
+      nodes.forEach((node, idx) => {
+        if (node) {
+          if (idx <= stepIndex) {
+            node.classList.add('active');
+          } else {
+            node.classList.remove('active');
+          }
         }
+      });
+    });
+    
+    // Trigger once on load
+    setTimeout(() => {
+      window.dispatchEvent(new Event('scroll'));
+    }, 100);
+  }
+
+  // ==========================================
+  // 8. FLEXIBLE SAVINGS SCROLL ANIMATION
+  // ==========================================
+  const flexSection = document.getElementById('flex-savings');
+  const flexTabs = document.querySelectorAll('.flex-tab');
+  const flexCards = document.querySelectorAll('.flex-card');
+  const flexTexts = document.querySelectorAll('.flex-text-group');
+  const flexScrollThumb = document.getElementById('flex-scroll-thumb');
+
+  if (flexSection) {
+    window.addEventListener('scroll', () => {
+      const rect = flexSection.getBoundingClientRect();
+      const totalScrollable = rect.height - window.innerHeight;
+      
+      let progress = 0;
+      if (totalScrollable > 0) {
+        progress = -rect.top / totalScrollable;
       }
-      weEtaElement.innerHTML = `Time to complete: <span>${wealthStr}</span>`;
-    }
-  }
+      
+      if (progress < 0) progress = 0;
+      if (progress > 1) progress = 1;
 
-  if (calcRange) {
-    calcRange.addEventListener('input', (e) => {
-      dailySavings = parseInt(e.target.value, 10);
-      calcAmountVal.textContent = `₹${dailySavings}`;
-      calculateReturns();
+      if (flexScrollThumb) {
+        flexScrollThumb.style.top = `${progress * 120}px`;
+      }
+
+      let stepIndex = 0;
+      if (progress > 0.25) stepIndex = 1;
+      if (progress > 0.50) stepIndex = 2;
+      if (progress > 0.75) stepIndex = 3;
+
+      flexTabs.forEach((tab, idx) => {
+        tab.classList.toggle('active', idx === stepIndex);
+      });
+
+      flexCards.forEach((card, idx) => {
+        card.classList.toggle('active', idx === stepIndex);
+      });
+
+      flexTexts.forEach((text, idx) => {
+        text.classList.toggle('active', idx === stepIndex);
+      });
     });
   }
-
-  if (stratLowBtn && stratMedBtn && stratHighBtn) {
-    function updateSlider(val) {
-      dailySavings = val;
-      if (calcRange) calcRange.value = val;
-      if (calcAmountVal) calcAmountVal.textContent = `₹${val}`;
-    }
-
-    stratLowBtn.addEventListener('click', () => {
-      selectedStrategy = 'low';
-      updateSlider(10);
-      stratLowBtn.classList.add('active');
-      stratMedBtn.classList.remove('active');
-      stratHighBtn.classList.remove('active');
-      calculateReturns();
-    });
-
-    stratMedBtn.addEventListener('click', () => {
-      selectedStrategy = 'med';
-      updateSlider(30);
-      stratMedBtn.classList.add('active');
-      stratLowBtn.classList.remove('active');
-      stratHighBtn.classList.remove('active');
-      calculateReturns();
-    });
-
-    stratHighBtn.addEventListener('click', () => {
-      selectedStrategy = 'high';
-      updateSlider(50);
-      stratHighBtn.classList.add('active');
-      stratLowBtn.classList.remove('active');
-      stratMedBtn.classList.remove('active');
-      calculateReturns();
-    });
-  }
-
-  // Wrap calculation run to also update goals
-  const originalCalculateReturns = calculateReturns;
-  calculateReturns = function() {
-    originalCalculateReturns();
-    updateSavingsGoals();
-  };
-
-  // Initial calculation run
-  if (calcRange) {
-    calculateReturns();
-  }
-
-
-  
 }
