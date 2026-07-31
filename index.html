@@ -16,23 +16,23 @@
   <meta property="og:url" content="https://satmix.in/">
   <meta property="og:title" content="Satmix — Daily Crypto Savings via UPI">
   <meta property="og:description" content="Automate your crypto savings with daily UPI investments from just ₹10/day. FIU-compliant and fully automated.">
-  <meta property="og:image" content="https://i.ibb.co/9kPTLdGW/satmix.jpg">
+  <meta property="og:image" content="assets/images/satmix-logo.jpg">
 
   <!-- Twitter -->
   <meta property="twitter:card" content="summary_large_image">
   <meta property="twitter:url" content="https://satmix.in/">
   <meta property="twitter:title" content="Satmix — Daily Crypto Savings via UPI">
   <meta property="twitter:description" content="Automate your crypto savings with daily UPI investments from just ₹10/day. FIU-compliant and fully automated.">
-  <meta property="twitter:image" content="https://i.ibb.co/9kPTLdGW/satmix.jpg">
+  <meta property="twitter:image" content="assets/images/satmix-logo.jpg">
   
   <!-- Favicon -->
-  <link rel="shortcut icon" href="https://i.ibb.co/9kPTLdGW/satmix.jpg" type="image/jpeg">
+  <link rel="shortcut icon" href="assets/images/satmix-logo.jpg" type="image/jpeg">
 
   <!-- Fonts & Stylesheet -->
-  <link rel="stylesheet" href="index.css?v=5">
+  <link rel="stylesheet" href="src/css/index.css">
   
   <!-- Lucide Icons CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/lucide@0.344.0/dist/umd/lucide.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.344.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
   <!-- Custom Cursor Elements -->
@@ -52,7 +52,7 @@
   <header>
     <div class="container nav-container">
       <a href="index.html" class="logo-link">
-        <img src="https://i.ibb.co/9kPTLdGW/satmix.jpg" alt="Satmix Logo" class="logo-img">
+        <img src="assets/images/satmix-logo.jpg" alt="Satmix Logo" class="logo-img">
         <span class="text-gradient-purple-violet">Satmix</span>
       </a>
       
@@ -432,9 +432,9 @@
               <div class="phone-screen dark-theme-screen mock-phone-2">
                 <div class="mock-header">Select UPI Payment Method</div>
                 <div class="mock-payment-grid">
-                  <div class="mock-pay-icon"><img src="https://upload.wikimedia.org/wikipedia/commons/7/71/PhonePe_Logo.svg" alt="PhonePe" class="pay-logo"> PhonePe</div>
-                  <div class="mock-pay-icon active-pay"><img src="https://upload.wikimedia.org/wikipedia/commons/2/24/Paytm_Logo_%28standalone%29.svg" alt="Paytm" class="pay-logo"> Paytm<div class="check-circle"><i data-lucide="check"></i></div></div>
-                  <div class="mock-pay-icon"><img src="https://upload.wikimedia.org/wikipedia/commons/f/f2/Google_Pay_Logo.svg" alt="GPay" class="pay-logo"> GPay</div>
+                  <div class="mock-pay-icon"><img src="assets/images/phonepe.svg" alt="PhonePe" class="pay-logo"> PhonePe</div>
+                  <div class="mock-pay-icon active-pay"><img src="assets/images/paytm.svg" alt="Paytm" class="pay-logo"> Paytm<div class="check-circle"><i data-lucide="check"></i></div></div>
+                  <div class="mock-pay-icon"><img src="assets/images/gpay.svg" alt="GPay" class="pay-logo"> GPay</div>
                   <div class="mock-pay-icon"><div class="upi-logo-mock">UPI</div>Other UPI</div>
                 </div>
                 <div class="mock-btn-primary">Proceed for Payment</div>
@@ -451,7 +451,7 @@
               <div class="phone-screen dark-theme-screen mock-phone-3">
                 <div class="mock-header">Crypto Is Saved In Basket</div>
                 <div class="mock-basket-preview">
-                  <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" style="width:40px; margin-bottom: 8px;" alt="BTC">
+                  <img src="assets/images/btc-logo.png" style="width:40px; margin-bottom: 8px;" alt="BTC">
                   <div class="mock-basket-title">Alpha Hunter</div>
                   <div class="mock-basket-risk">High Risk Basket</div>
                 </div>
@@ -1060,7 +1060,7 @@
       
       <div class="footer-top">
         <a href="#" class="footer-logo">
-          <img src="https://i.ibb.co/9kPTLdGW/satmix.jpg" alt="Satmix Logo" class="footer-logo-img">
+          <img src="assets/images/satmix-logo.jpg" alt="Satmix Logo" class="footer-logo-img">
           <span>Satmix</span>
         </a>
         
@@ -1142,6 +1142,6 @@
   <div id="crypto-tooltip" class="crypto-tooltip"></div>
 
   <!-- Core JavaScript -->
-  <script src="index.js?v=11"></script>
+  <script type="module" src="src/js/index.js"></script>
 </body>
 </html>

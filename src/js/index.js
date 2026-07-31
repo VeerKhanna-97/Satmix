@@ -730,13 +730,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // ==========================================
   // 6. BIDIRECTIONAL SCROLL REVEAL ANIMATIONS
   // ==========================================
-  const revealObserver = new IntersectionObserver((entries) => {
+  const revealObserver = new IntersectionObserver((entries, observer) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('reveal-active');
-      } else {
-        // Removing the class when leaving viewport allows it to trigger again when scrolling back up
-        entry.target.classList.remove('reveal-active');
+        observer.unobserve(entry.target); // Stop observing once revealed for better performance
       }
     });
   }, {
