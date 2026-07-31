@@ -1217,7 +1217,7 @@ header {
 }
 
 .basket-card.low-risk .donut-segment-2 {
-  stroke: var(--color-blue);
+  stroke: var(--color-purple);
 }
 
 .basket-card.high-risk .donut-segment-2 {
