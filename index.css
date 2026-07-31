@@ -1203,11 +1203,11 @@ header {
 }
 
 .basket-card.low-risk .donut-segment-1 {
-  stroke: var(--color-mint);
+  stroke: #10B981;
 }
 
 .basket-card.high-risk .donut-segment-1 {
-  stroke: var(--color-gold);
+  stroke: var(--color-purple);
 }
 
 .donut-segment-2 {
@@ -1221,7 +1221,7 @@ header {
 }
 
 .basket-card.high-risk .donut-segment-2 {
-  stroke: var(--color-purple);
+  stroke: var(--color-violet);
 }
 
 .donut-segment-3 {
@@ -2208,15 +2208,15 @@ footer {
 }
 
 .basket-card.med-risk .donut-segment-1 {
-  stroke: var(--color-gold);
-}
-
-.basket-card.med-risk .donut-segment-2 {
   stroke: var(--color-purple);
 }
 
+.basket-card.med-risk .donut-segment-2 {
+  stroke: var(--color-violet);
+}
+
 .basket-card.med-risk .donut-segment-3 {
-  stroke: var(--color-mint);
+  stroke: #10B981;
 }
 
 .basket-card.med-risk .basket-bullet i {
