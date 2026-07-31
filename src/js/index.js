@@ -1,5 +1,5 @@
-// Google Apps Script Web App URL for Google Sheets integration
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzZXuSM4K79NVAAgsxtq9Z3G5qr7Tsma1zDss8t53xwDhQ3Dohj6JG5YuayepI44A6Sng/exec';
+// Internal Vercel API proxy for Waitlist Form
+const WAITLIST_API_URL = '/api/waitlist';
 
 document.addEventListener('DOMContentLoaded', () => {
   // ==========================================
@@ -601,21 +601,23 @@ document.addEventListener('DOMContentLoaded', () => {
       submitBtn.classList.add('loading');
       submitTxt.textContent = 'Joining...';
       
-      if (GOOGLE_SCRIPT_URL) {
+      if (WAITLIST_API_URL) {
         const formData = new URLSearchParams();
-        // Keys must exactly match what the Google Apps Script expects (data.name, data.email)
         formData.append('name', name);
         formData.append('email', email);
         formData.append('phone', phone);
 
-        // Send data to Google Apps Script
-        fetch(GOOGLE_SCRIPT_URL, {
+        fetch(WAITLIST_API_URL, {
           method: 'POST',
-          mode: 'no-cors',
-          body: formData
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: formData.toString()
         })
-        .then(() => {
-          // With no-cors, response is opaque so we assume success if no network error
+        .then(async res => {
+          if (!res.ok) throw new Error('Network response was not ok');
+          const json = await res.json();
+          if (!json.success) throw new Error(json.error || 'Submission failed');
           
           // Save submission to localStorage
           const waitlistDB = JSON.parse(localStorage.getItem('satmix_waitlist') || '[]');

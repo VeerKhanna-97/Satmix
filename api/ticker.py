@@ -38,6 +38,7 @@ class handler(BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.send_header('Access-Control-Allow-Origin', '*')
+            self.send_header('Cache-Control', 's-maxage=60, stale-while-revalidate=120')
             self.end_headers()
             self.wfile.write(json.dumps({'data': compiled_data}).encode())
             
