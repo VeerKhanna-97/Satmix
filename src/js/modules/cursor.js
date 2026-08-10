@@ -37,12 +37,16 @@ document.addEventListener('DOMContentLoaded', () => {
   let ringX = mouseX;
   let ringY = mouseY;
   
+  // Set initial position
+  cursorDot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
+  cursorRing.style.transform = `translate3d(${ringX}px, ${ringY}px, 0) translate(-50%, -50%)`;
+  
   window.addEventListener('mousemove', (e) => {
     mouseX = e.clientX;
     mouseY = e.clientY;
     
     // Update dot immediately for instant responsiveness
-    cursorDot.style.transform = `translate(calc(${mouseX}px - 50%), calc(${mouseY}px - 50%))`;
+    cursorDot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
   });
   
   // Animation loop for smooth ring trailing (lerp)
@@ -50,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ringX += (mouseX - ringX) * 0.15;
     ringY += (mouseY - ringY) * 0.15;
     
-    cursorRing.style.transform = `translate(calc(${ringX}px - 50%), calc(${ringY}px - 50%))`;
+    cursorRing.style.transform = `translate3d(${ringX}px, ${ringY}px, 0) translate(-50%, -50%)`;
     
     requestAnimationFrame(renderCursor);
   }
