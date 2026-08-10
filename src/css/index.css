@@ -1,4 +1,45 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('../fonts/outfit-300.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/outfit-400.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('../fonts/outfit-500.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../fonts/outfit-600.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../fonts/outfit-700.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('../fonts/outfit-800.ttf') format('truetype');
+}
 
 @font-face {
   font-family: 'Porto Buena';
@@ -4006,5 +4047,25 @@ input[type="range"]::-moz-range-track {
   }
   a:hover, button:hover, .nav-link:hover, .slide-tab-btn:hover, .crypto-segment:hover {
     cursor: pointer !important;
+  }
+}
+/* Ultra-Wide Screen Scaling for 4K+ Monitors */
+@media (min-width: 1600px) {
+  .container {
+    max-width: 1536px;
+  }
+  .hero-title { font-size: 72px; }
+  .hero-subtitle { font-size: 20px; max-width: 700px; }
+  .slide-deck { transform: scale(1.1); transform-origin: center right; }
+  .nav-container { height: 90px; }
+  .logo-img { width: 40px; height: 40px; }
+  .logo-link { font-size: 28px; }
+  .nav-link { font-size: 16px; }
+}
+
+@media (min-width: 2000px) {
+  /* For massive 4K/5K displays, use the zoom property in supported browsers to instantly scale the entire UI */
+  html {
+    zoom: 1.5;
   }
 }
