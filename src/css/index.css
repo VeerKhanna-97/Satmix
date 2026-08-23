@@ -1,45 +1,4 @@
-@font-face {
-  font-family: 'Outfit';
-  font-style: normal;
-  font-weight: 300;
-  font-display: swap;
-  src: url('../fonts/outfit-300.ttf') format('truetype');
-}
-@font-face {
-  font-family: 'Outfit';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('../fonts/outfit-400.ttf') format('truetype');
-}
-@font-face {
-  font-family: 'Outfit';
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: url('../fonts/outfit-500.ttf') format('truetype');
-}
-@font-face {
-  font-family: 'Outfit';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url('../fonts/outfit-600.ttf') format('truetype');
-}
-@font-face {
-  font-family: 'Outfit';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url('../fonts/outfit-700.ttf') format('truetype');
-}
-@font-face {
-  font-family: 'Outfit';
-  font-style: normal;
-  font-weight: 800;
-  font-display: swap;
-  src: url('../fonts/outfit-800.ttf') format('truetype');
-}
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
 
 @font-face {
   font-family: 'Porto Buena';
@@ -1135,7 +1094,7 @@ header {
 
 @media (min-width: 992px) {
   .baskets-grid {
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
   }
 }
 
@@ -2232,38 +2191,7 @@ footer {
   color: var(--color-gold);
 }
 
-/* ------------------------------------------------ */
-/* BALANCED GROWTH STRATEGY STYLING */
-/* ------------------------------------------------ */
-.basket-card.med-risk:hover {
-  border-color: rgba(139, 92, 246, 0.3);
-}
 
-.basket-card.med-risk .basket-icon-wrapper {
-  background-color: rgba(139, 92, 246, 0.08);
-  border: 1px solid rgba(139, 92, 246, 0.15);
-  color: var(--color-violet);
-}
-
-.basket-card.med-risk .basket-risk-tag {
-  color: var(--color-violet);
-}
-
-.basket-card.med-risk .donut-segment-1 {
-  stroke: var(--color-purple);
-}
-
-.basket-card.med-risk .donut-segment-2 {
-  stroke: var(--color-violet);
-}
-
-.basket-card.med-risk .donut-segment-3 {
-  stroke: #10B981;
-}
-
-.basket-card.med-risk .basket-bullet i {
-  color: var(--color-violet);
-}
 
 /* ------------------------------------------------ */
 /* SAVINGS GOALS (JAR & GULLAK STYLE) */
@@ -3166,13 +3094,13 @@ footer {
 
 .steps-sticky-container {
   position: sticky;
-  top: 0;
-  height: 100vh;
+  top: 72px;
+  height: calc(100vh - 72px);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  padding: 80px 0;
+  padding: 40px 0;
 }
 
 .steps-sticky-container .container {
@@ -4068,5 +3996,183 @@ input[type="range"]::-moz-range-track {
   /* For massive 4K/5K displays, use the zoom property in supported browsers to instantly scale the entire UI */
   html {
     zoom: 1.5;
+  }
+}
+
+/* ==========================================================================
+   OFFLINE SANDBOX CUSTOM OVERRIDES (Website 3.0)
+   ========================================================================== */
+
+/* Custom Cursor Elements */
+.cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  background-color: var(--color-mint);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 10000;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.15s ease, transform 0.1s ease, background-color 0.2s ease, width 0.2s ease, height 0.2s ease;
+}
+
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid rgba(52, 211, 153, 0.6);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.15s ease, width 0.2s ease, height 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+/* Hover States for Interactive Elements */
+.cursor-dot.hover {
+  background-color: var(--color-purple);
+  width: 10px;
+  height: 10px;
+}
+
+.cursor-ring.hover {
+  width: 52px;
+  height: 52px;
+  border-color: rgba(93, 47, 232, 0.4);
+  background-color: rgba(93, 47, 232, 0.05);
+}
+
+/* Click State */
+.cursor-dot.active {
+  width: 4px;
+  height: 4px;
+  background-color: var(--color-mint);
+}
+
+.cursor-ring.active {
+  width: 26px;
+  height: 26px;
+  border-width: 2.5px;
+  border-color: var(--color-mint);
+  background-color: transparent;
+}
+
+/* Drag/Slider State */
+.cursor-dot.drag {
+  opacity: 0;
+}
+
+.cursor-ring.drag {
+  width: 44px;
+  height: 44px;
+  background-color: var(--card-bg);
+  border-color: var(--color-mint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cursor-ring.drag::after {
+  content: '↔';
+  color: var(--color-mint);
+  font-size: 20px;
+  line-height: 1;
+  font-weight: 700;
+}
+
+/* Hide on Touch Devices */
+@media (pointer: coarse) {
+  .cursor-dot, .cursor-ring {
+    display: none !important;
+  }
+  *, *::before, *::after,
+  input[type="range"],
+  input[type="range"]::-webkit-slider-thumb,
+  input[type="range"]::-webkit-slider-runnable-track,
+  input[type="range"]::-moz-range-thumb,
+  input[type="range"]::-moz-range-track {
+    cursor: auto !important;
+  }
+  a:hover, button:hover, .nav-link:hover, .slide-tab-btn:hover, .crypto-segment:hover {
+    cursor: pointer !important;
+  }
+}
+
+/* High-Resolution Media Query Override for Steps Pinned Offset */
+@media (min-width: 1600px) {
+  .steps-sticky-container {
+    top: 90px;
+    height: calc(100vh - 90px);
+  }
+}
+
+/* Media Queries for shorter viewports to prevent steps section clipping */
+@media (max-height: 850px) and (min-width: 992px) {
+  .steps-sticky-container .container {
+    transform: scale(0.85);
+    transform-origin: center center;
+  }
+}
+
+@media (max-height: 740px) and (min-width: 992px) {
+  .steps-sticky-container .container {
+    transform: scale(0.72);
+    transform-origin: center center;
+  }
+}
+
+@media (max-height: 620px) and (min-width: 992px) {
+  .steps-sticky-container .container {
+    transform: scale(0.62);
+    transform-origin: center center;
+  }
+}
+
+/* Mobile Step Descriptions (shown only on mobile/tablet viewports) */
+.step-mobile-desc {
+  display: none;
+}
+
+@media (max-width: 991px) {
+  .step-mobile-desc {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-top: 20px;
+    max-width: 280px;
+    padding: 0 10px;
+  }
+  
+  .step-num-badge {
+    width: 36px;
+    height: 36px;
+    background-color: var(--color-purple);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 14px;
+    margin-bottom: 12px;
+    box-shadow: 0 0 10px rgba(93, 47, 232, 0.3);
+  }
+  
+  .step-mobile-desc h3 {
+    font-size: 18px;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+    font-weight: 700;
+  }
+  
+  .step-mobile-desc p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.4;
   }
 }

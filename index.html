@@ -38,7 +38,6 @@
   <!-- Custom Cursor Elements -->
   <div class="cursor-dot"></div>
   <div class="cursor-ring"></div>
-
   <!-- Live Crypto Price Ticker -->
   <div class="price-ticker-bar">
     <div class="ticker-wrap">
@@ -324,26 +323,7 @@
                     </div>
                   </div>
 
-                  <!-- Balanced Growth -->
-                  <div class="quick-basket-card">
-                    <div class="qb-left">
-                      <div class="qb-icon med">
-                        <i data-lucide="scale" style="width: 20px; height: 20px;"></i>
-                      </div>
-                      <div class="qb-title-group">
-                        <span class="qb-label med">Moderate Risk</span>
-                        <span class="qb-name">Balanced Growth</span>
-                        <span class="qb-allocation">40% BTC · 30% ETH · 30% USDT</span>
-                      </div>
-                    </div>
-                    <div class="qb-chart-mini">
-                      <!-- Mini SVG Indicator -->
-                      <svg width="24" height="24" viewBox="0 0 24 24">
-                        <circle cx="12" cy="12" r="10" fill="none" stroke="#F1F5F9" stroke-width="3"></circle>
-                        <circle cx="12" cy="12" r="10" fill="none" stroke="#8B5CF6" stroke-width="3" stroke-dasharray="40 23" stroke-dashoffset="12" stroke-linecap="round"></circle>
-                      </svg>
-                    </div>
-                  </div>
+
                   
                   <!-- Growth Mode -->
                   <div class="quick-basket-card">
@@ -423,6 +403,11 @@
                 <div class="mock-bottom-fade"></div>
               </div>
             </div>
+            <div class="step-mobile-desc">
+              <div class="step-num-badge">1</div>
+              <h3>Select Your Amount</h3>
+              <p>Choose an amount you want to save daily.</p>
+            </div>
           </div>
 
           <!-- Phone 2 -->
@@ -432,15 +417,20 @@
               <div class="phone-screen dark-theme-screen mock-phone-2">
                 <div class="mock-header">Select UPI Payment Method</div>
                 <div class="mock-payment-grid">
-                  <div class="mock-pay-icon"><img src="assets/images/phonepe.svg" alt="PhonePe" class="pay-logo"> PhonePe</div>
-                  <div class="mock-pay-icon active-pay"><img src="assets/images/paytm.svg" alt="Paytm" class="pay-logo"> Paytm<div class="check-circle"><i data-lucide="check"></i></div></div>
-                  <div class="mock-pay-icon"><img src="assets/images/gpay.svg" alt="GPay" class="pay-logo"> GPay</div>
+                  <div class="mock-pay-icon"><img src="assets/images/phonepe.svg" alt="PhonePe" class="pay-logo" loading="lazy"> PhonePe</div>
+                  <div class="mock-pay-icon active-pay"><img src="assets/images/paytm.svg" alt="Paytm" class="pay-logo" loading="lazy"> Paytm<div class="check-circle"><i data-lucide="check"></i></div></div>
+                  <div class="mock-pay-icon"><img src="assets/images/gpay.svg" alt="GPay" class="pay-logo" loading="lazy"> GPay</div>
                   <div class="mock-pay-icon"><div class="upi-logo-mock">UPI</div>Other UPI</div>
                 </div>
                 <div class="mock-btn-primary">Proceed for Payment</div>
                 <div class="mock-secure-tag"><i data-lucide="shield-check"></i> 100% SECURE</div>
                 <div class="mock-bottom-fade"></div>
               </div>
+            </div>
+            <div class="step-mobile-desc">
+              <div class="step-num-badge">2</div>
+              <h3>Choose Savings Option</h3>
+              <p>Select Daily, Weekly, or Monthly Savings.</p>
             </div>
           </div>
 
@@ -451,8 +441,8 @@
               <div class="phone-screen dark-theme-screen mock-phone-3">
                 <div class="mock-header">Crypto Is Saved In Basket</div>
                 <div class="mock-basket-preview">
-                  <img src="assets/images/btc-logo.png" style="width:40px; margin-bottom: 8px;" alt="BTC">
-                  <div class="mock-basket-title">Alpha Hunter</div>
+                  <img src="assets/images/btc-logo.png" style="width:40px; margin-bottom: 8px;" alt="BTC" loading="lazy">
+                  <div class="mock-basket-title">Growth Basket</div>
                   <div class="mock-basket-risk">High Risk Basket</div>
                 </div>
                 <div class="mock-tags">
@@ -462,6 +452,11 @@
                 </div>
                 <div class="mock-bottom-fade"></div>
               </div>
+            </div>
+            <div class="step-mobile-desc">
+              <div class="step-num-badge">3</div>
+              <h3>Enjoy Savings in Crypto</h3>
+              <p>Watch your savings grow safely with automated investing.</p>
             </div>
           </div>
         </div>
@@ -538,9 +533,7 @@
               <button class="calc-strat-btn active" id="calc-strat-low">
                 Stable & Safe (8% p.a.)
               </button>
-              <button class="calc-strat-btn" id="calc-strat-med">
-                Balanced Growth (16% p.a.)
-              </button>
+
               <button class="calc-strat-btn" id="calc-strat-high">
                 Growth Mode (26% p.a.)
               </button>
@@ -592,7 +585,7 @@
         <p class="section-desc">We match you with a basket tailored to your risk profile, but you always maintain 100% control to adjust or switch at any time.</p>
       </div>
       
-      <div class="baskets-grid" style="max-width: 1200px;">
+      <div class="baskets-grid" style="max-width: 840px;">
         
         <!-- Basket 1: Low Risk -->
         <div class="basket-card low-risk scroll-reveal reveal-left delay-100">
@@ -644,61 +637,7 @@
           </div>
         </div>
 
-        <!-- Basket 2: Moderate Risk -->
-        <div class="basket-card med-risk scroll-reveal delay-200">
-          <div class="basket-header">
-            <div class="basket-icon-wrapper">
-              <i data-lucide="scale"></i>
-            </div>
-            <div class="basket-meta">
-              <span class="basket-risk-tag">Moderate Risk Strategy</span>
-              <h3 class="basket-name">Balanced Growth</h3>
-            </div>
-          </div>
-          
-          <div class="donut-box">
-            <!-- SVG Donut Chart -->
-            <svg class="donut-svg" width="90" height="90" viewBox="0 0 74 74">
-              <circle class="donut-bg" cx="37" cy="37" r="15.9"></circle>
-              <!-- 40% BTC -->
-              <circle class="donut-segment-1 crypto-segment" cx="37" cy="37" r="15.9" stroke-dasharray="40 60" stroke-dashoffset="25" data-crypto-desc="BTC (Bitcoin): The pioneer cryptocurrency, acts as digital gold."></circle>
-              <!-- 30% ETH -->
-              <circle class="donut-segment-2 crypto-segment" cx="37" cy="37" r="15.9" stroke-dasharray="30 70" stroke-dashoffset="85" data-crypto-desc="ETH (Ethereum): The leading smart contract and decentralized app platform."></circle>
-              <!-- 30% USDT -->
-              <circle class="donut-segment-3 crypto-segment" cx="37" cy="37" r="15.9" stroke-dasharray="30 70" stroke-dashoffset="55" data-crypto-desc="USDT (Tether): A stablecoin pegged to the US Dollar."></circle>
-            </svg>
-            
-            <div class="donut-allocations">
-              <div class="allocation-item">
-                <span class="alloc-color-dot" style="background-color: var(--color-purple);"></span>
-                <span class="alloc-label">40% BTC</span>
-              </div>
-              <div class="allocation-item">
-                <span class="alloc-color-dot" style="background-color: var(--color-violet);"></span>
-                <span class="alloc-label">30% ETH</span>
-              </div>
-              <div class="allocation-item">
-                <span class="alloc-color-dot" style="background-color: #10B981;"></span>
-                <span class="alloc-label">30% USDT</span>
-              </div>
-            </div>
-          </div>
-          
-          <div class="basket-details">
-            <div class="basket-bullet">
-              <i data-lucide="check-circle"></i>
-              <span><strong>Optimized Asset Mix:</strong> Combines blue-chip volatility protection with growth exposure.</span>
-            </div>
-            <div class="basket-bullet">
-              <i data-lucide="check-circle"></i>
-              <span><strong>USDT Cushion:</strong> Keeps 30% in stable assets to dynamically buy dips and mitigate downward swings.</span>
-            </div>
-            <div class="basket-bullet">
-              <i data-lucide="check-circle"></i>
-              <span><strong>Balanced Yielding:</strong> Combines interest earnings with capital appreciation for a smooth growth curve.</span>
-            </div>
-          </div>
-        </div>
+
         
         <!-- Basket 3: High Risk -->
         <div class="basket-card high-risk scroll-reveal reveal-right delay-100">
@@ -953,7 +892,7 @@
       
       <div class="footer-top">
         <a href="#" class="footer-logo">
-          <img src="assets/images/satmix-logo.jpg" alt="Satmix Logo" class="footer-logo-img">
+          <img src="assets/images/satmix-logo.jpg" alt="Satmix Logo" class="footer-logo-img" loading="lazy">
           <span>Satmix</span>
         </a>
         

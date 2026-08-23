@@ -5,7 +5,6 @@ export function initCalculator() {
   const calcRange = document.getElementById('calc-range');
   const calcAmountVal = document.getElementById('calc-amount-val');
   const stratLowBtn = document.getElementById('calc-strat-low');
-  const stratMedBtn = document.getElementById('calc-strat-med');
   const stratHighBtn = document.getElementById('calc-strat-high');
   
   const resultTotalVal = document.getElementById('result-total');
@@ -13,11 +12,10 @@ export function initCalculator() {
   const resultGainVal = document.getElementById('result-gain');
   
   let dailySavings = 10;
-  let selectedStrategy = 'low'; // 'low', 'med', or 'high'
+  let selectedStrategy = 'low'; // 'low' or 'high'
   
   const strategyRates = {
     low: 0.08,  // 8% annual yield for stablecoins
-    med: 0.16,  // 16% Balanced Growth yield
     high: 0.26  // 26% annual yield average for top assets index
   };
 
@@ -149,7 +147,7 @@ export function initCalculator() {
     });
   }
 
-  if (stratLowBtn && stratMedBtn && stratHighBtn) {
+  if (stratLowBtn && stratHighBtn) {
     function updateSlider(val) {
       dailySavings = val;
       if (calcRange) calcRange.value = val;
@@ -158,28 +156,25 @@ export function initCalculator() {
 
     stratLowBtn.addEventListener('click', () => {
       selectedStrategy = 'low';
-      updateSlider(10);
+      if (dailySavings < 10) {
+        updateSlider(10);
+      } else {
+        updateSlider(dailySavings);
+      }
       stratLowBtn.classList.add('active');
-      stratMedBtn.classList.remove('active');
-      stratHighBtn.classList.remove('active');
-      calculateReturns();
-    });
-
-    stratMedBtn.addEventListener('click', () => {
-      selectedStrategy = 'med';
-      updateSlider(30);
-      stratMedBtn.classList.add('active');
-      stratLowBtn.classList.remove('active');
       stratHighBtn.classList.remove('active');
       calculateReturns();
     });
 
     stratHighBtn.addEventListener('click', () => {
       selectedStrategy = 'high';
-      updateSlider(50);
+      if (dailySavings < 30) {
+        updateSlider(30);
+      } else {
+        updateSlider(dailySavings);
+      }
       stratHighBtn.classList.add('active');
       stratLowBtn.classList.remove('active');
-      stratMedBtn.classList.remove('active');
       calculateReturns();
     });
   }

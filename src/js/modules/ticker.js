@@ -58,19 +58,21 @@ export function initTicker() {
       }
     } catch (err) {
       console.warn("Using offline ticker fallback data", err);
-      renderTicker(getFallbackPrices());
+      if (tickerTrack && !tickerTrack.innerHTML.trim()) {
+        renderTicker(getFallbackPrices());
+      }
     }
   }
 
   function getFallbackPrices() {
     return [
-      { id: 'bitcoin', symbol: 'BTC', priceUsd: (65000 + (Math.random() - 0.5) * 120).toString(), changePercent24Hr: '1.24' },
-      { id: 'ethereum', symbol: 'ETH', priceUsd: (3400 + (Math.random() - 0.5) * 15).toString(), changePercent24Hr: '-0.45' },
-      { id: 'solana', symbol: 'SOL', priceUsd: (145 + (Math.random() - 0.5) * 2.5).toString(), changePercent24Hr: '3.12' },
-      { id: 'ripple', symbol: 'XRP', priceUsd: (0.50 + (Math.random() - 0.5) * 0.05).toString(), changePercent24Hr: '0.80' },
-      { id: 'cardano', symbol: 'ADA', priceUsd: (0.40 + (Math.random() - 0.5) * 0.03).toString(), changePercent24Hr: '-1.10' },
-      { id: 'dogecoin', symbol: 'DOGE', priceUsd: (0.08 + (Math.random() - 0.5) * 0.005).toString(), changePercent24Hr: '2.50' },
-      { id: 'polkadot', symbol: 'DOT', priceUsd: (6.00 + (Math.random() - 0.5) * 0.20).toString(), changePercent24Hr: '-0.25' },
+      { id: 'bitcoin', symbol: 'BTC', priceUsd: (63650 + (Math.random() - 0.5) * 150).toString(), changePercent24Hr: '1.24' },
+      { id: 'ethereum', symbol: 'ETH', priceUsd: (1885 + (Math.random() - 0.5) * 10).toString(), changePercent24Hr: '-0.45' },
+      { id: 'solana', symbol: 'SOL', priceUsd: (76 + (Math.random() - 0.5) * 1.5).toString(), changePercent24Hr: '3.12' },
+      { id: 'ripple', symbol: 'XRP', priceUsd: (1.02 + (Math.random() - 0.5) * 0.02).toString(), changePercent24Hr: '0.80' },
+      { id: 'cardano', symbol: 'ADA', priceUsd: (0.19 + (Math.random() - 0.5) * 0.005).toString(), changePercent24Hr: '-1.10' },
+      { id: 'dogecoin', symbol: 'DOGE', priceUsd: (0.072 + (Math.random() - 0.5) * 0.002).toString(), changePercent24Hr: '2.50' },
+      { id: 'polkadot', symbol: 'DOT', priceUsd: (0.80 + (Math.random() - 0.5) * 0.01).toString(), changePercent24Hr: '-0.25' },
       { id: 'tether', symbol: 'USDT', priceUsd: '1.00', changePercent24Hr: '0.05' }
     ];
   }
@@ -131,7 +133,7 @@ export function initTicker() {
 
   // Run immediately and poll
   fetchCryptoPrices();
-  setInterval(fetchCryptoPrices, 10000);
+  setInterval(fetchCryptoPrices, 30000);
 
   // Initialize Lucide Icons
   if (typeof lucide !== 'undefined') {
