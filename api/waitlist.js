@@ -15,27 +15,48 @@ export default async function handler(req, res) {
   }
 
   try {
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzZXuSM4K79NVAAgsxtq9Z3G5qr7Tsma1zDss8t53xwDhQ3Dohj6JG5YuayepI44A6Sng/exec';
+    const GOOGLE_SCRIPT_URL = process.env.GOOGLE_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbzZXuSM4K79NVAAgsxtq9Z3G5qr7Tsma1zDss8t53xwDhQ3Dohj6JG5YuayepI44A6Sng/exec';
     
-    // We expect urlencoded form data from the frontend
-    const body = new URLSearchParams(req.body).toString();
-    
+    // Parse body regardless of whether it's JSON or urlencoded string/object
+    let payload = req.body;
+    if (typeof payload === 'string') {
+      try {
+        payload = JSON.parse(payload);
+      } catch (e) {
+        const parsed = new URLSearchParams(payload);
+        payload = Object.fromEntries(parsed.entries());
+      }
+    }
+
+    const { name, email, phone, referralCode, ref, source } = payload || {};
+
+    const formData = new URLSearchParams();
+    formData.append('name', name || '');
+    formData.append('email', email || '');
+    formData.append('phone', phone || '');
+    formData.append('referralCode', referralCode || ref || '');
+    formData.append('source', source || 'Website 3.0');
+
     const response = await fetch(GOOGLE_SCRIPT_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: body,
+      body: formData.toString(),
     });
 
     const data = await response.json().catch(() => ({}));
 
-    if (response.ok) {
+    if (response.ok && data.success !== false) {
       res.status(200).json({ success: true, data });
     } else {
-      res.status(response.status).json({ success: false, error: 'Failed to submit' });
+      res.status(response.status >= 400 ? response.status : 400).json({ 
+        success: false, 
+        error: data.error || 'Failed to record waitlist submission.' 
+      });
     }
   } catch (error) {
+    console.error('Website 3.0 Waitlist API Handler Error:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 }
