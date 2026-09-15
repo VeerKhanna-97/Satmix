@@ -47,20 +47,8 @@ function captureAndPersistReferral() {
 export function initWaitlist() {
   const WAITLIST_API_URL = '/api/waitlist';
   
-  // 1. Capture referral code on page load
-  const activeReferralCode = captureAndPersistReferral();
-
-  // 2. Render subtle referral badge if a code is present
-  if (activeReferralCode) {
-    const titleWrapper = document.querySelector('.slide-item .slide-title-wrapper');
-    if (titleWrapper && !document.getElementById('referral-pill-badge')) {
-      const pill = document.createElement('div');
-      pill.id = 'referral-pill-badge';
-      pill.style.cssText = 'display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; margin-bottom: 8px; border-radius: 20px; font-size: 11px; font-weight: 700; font-family: monospace; background: rgba(93, 47, 232, 0.12); color: #8B5CF6; border: 1px solid rgba(93, 47, 232, 0.3);';
-      pill.innerHTML = `<span>✨ REF: ${activeReferralCode}</span>`;
-      titleWrapper.prepend(pill);
-    }
-  }
+  // 1. Capture and persist referral code in background (invisible to user)
+  captureAndPersistReferral();
 
   // ==========================================
   // 3. WAITLIST FORM HANDLER
@@ -128,11 +116,6 @@ export function initWaitlist() {
           
           // Show success modal
           if (successModal) {
-            // Optional: update referral confirmation in modal
-            const modalDesc = successModal.querySelector('.modal-desc');
-            if (modalDesc && referralCode) {
-              modalDesc.textContent = `Thanks for joining! Your spot is secured with referral code ${referralCode}. We'll notify you as soon as early access opens.`;
-            }
             successModal.classList.add('active');
             document.body.style.overflow = 'hidden'; // Prevent scrolling
           }
