@@ -5,56 +5,23 @@ import { FadeIn } from '../ui';
 
 export const StepsSection: React.FC = () => {
   const { colors } = useApp();
-  const sectionRef = useRef<HTMLDivElement>(null);
-
   const [activeStep, setActiveStep] = useState(0);
-  const [scrollProgress, setScrollProgress] = useState(0);
-
-  // Scroll event listener for sticky scroll progress (PRESERVED FUNCTIONALITY)
-  useEffect(() => {
-    const handleScroll = () => {
-      if (!sectionRef.current) return;
-      const rect = sectionRef.current.getBoundingClientRect();
-      const totalScrollable = rect.height - window.innerHeight;
-
-      if (totalScrollable <= 0) return;
-
-      let progress = -rect.top / totalScrollable;
-      progress = Math.max(0, Math.min(1, progress));
-
-      setScrollProgress(progress);
-
-      if (progress < 0.33) {
-        setActiveStep(0);
-      } else if (progress < 0.66) {
-        setActiveStep(1);
-      } else {
-        setActiveStep(2);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   const handleStepClick = (idx: number) => {
     setActiveStep(idx);
-    setScrollProgress(idx === 0 ? 0.15 : idx === 1 ? 0.5 : 0.9);
   };
+
+  const progressPercent = activeStep === 0 ? 0 : activeStep === 1 ? 50 : 100;
 
   return (
     <section
-      ref={sectionRef}
       id="steps-animation"
-      className="relative md:min-h-[140vh] border-t border-b"
+      className="py-16 md:py-24 border-t border-b relative overflow-hidden"
       style={{ backgroundColor: colors.bg, borderColor: colors.borderDim }}
     >
-      {/* Sticky Container */}
-      <div className="md:sticky md:top-16 md:h-[calc(100vh-64px)] flex flex-col justify-center py-6 md:py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* ── 1. SECTION HEADER ───────────────────────────────── */}
-        <FadeIn delay={0.05} direction="up" className="text-center max-w-2xl mx-auto mb-5 md:mb-6 space-y-1.5">
+        <FadeIn delay={0.05} direction="up" className="text-center max-w-2xl mx-auto mb-10 md:mb-14 space-y-2">
           <div
             className="inline-flex items-center gap-2 px-3 py-1 rounded-md border text-[11px] font-mono font-medium tracking-wider uppercase"
             style={{
@@ -65,10 +32,10 @@ export const StepsSection: React.FC = () => {
           >
             <span>HOW IT WORKS</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight pt-0.5" style={{ color: colors.textPrimary }}>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight pt-0.5" style={{ color: colors.textPrimary }}>
             Savings Made Simple in 3 Steps
           </h2>
-          <p className="text-xs sm:text-sm max-w-xl mx-auto leading-relaxed" style={{ color: colors.textSecondary }}>
+          <p className="text-sm sm:text-base max-w-xl mx-auto leading-relaxed" style={{ color: colors.textSecondary }}>
             Disciplined daily micro-accumulation engineered for compliant, diversified digital assets.
           </p>
         </FadeIn>
@@ -345,7 +312,7 @@ export const StepsSection: React.FC = () => {
           <div className="absolute top-1/2 -translate-y-1/2 left-[16.666%] right-[16.666%] h-0.5 rounded-full overflow-hidden z-0 pointer-events-none" style={{ backgroundColor: colors.borderDim }}>
             <div
               className="h-full transition-all duration-300"
-              style={{ backgroundColor: colors.accent, width: `${Math.max(0, Math.min(100, scrollProgress * 100))}%` }}
+              style={{ backgroundColor: colors.accent, width: `${progressPercent}%` }}
             />
           </div>
 

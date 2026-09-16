@@ -13,7 +13,7 @@ export const DeviceFrame: React.FC<{ children: React.ReactNode }> = ({ children 
     <div className="min-h-screen py-10 px-4 flex flex-col items-center justify-center transition-colors" style={{ backgroundColor: colors.bg }}>
       {/* Device Frame Top Controls */}
       <div className="mb-4 flex items-center gap-3 px-4 py-2 rounded-2xl shadow-xl border" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
-        <span className="text-xs font-bold" style={{ color: colors.textPrimary }}>Previewing: iPhone 16 Pro Mockup (393 × 852)</span>
+        <span className="text-xs font-bold" style={{ color: colors.textPrimary }}>Mobile Viewport Preview</span>
         <button
           onClick={() => setDeviceFrame('full')}
           className="text-xs font-bold hover:underline flex items-center gap-1 pl-2 border-l"

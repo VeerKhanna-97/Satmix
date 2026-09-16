@@ -95,7 +95,7 @@ export const Header: React.FC = () => {
 
             {activeDropdown === 'features' && (
               <div
-                className="absolute top-full -left-44 w-[780px] p-4 rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.6)] border backdrop-blur-2xl animate-fade-in z-50"
+                className="absolute top-full -left-44 w-[780px] p-4 rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.6)] border backdrop-blur-2xl animate-fade-in z-50 before:absolute before:-top-3 before:left-0 before:right-0 before:h-3"
                 style={{
                   backgroundColor: themeMode === 'dark' ? 'rgba(18, 20, 28, 0.96)' : 'rgba(255, 255, 255, 0.98)',
                   borderColor: colors.cardBorder,
@@ -237,7 +237,7 @@ export const Header: React.FC = () => {
 
             {activeDropdown === 'resources' && (
               <div
-                className="absolute top-full -left-12 w-[420px] p-3 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.6)] border backdrop-blur-2xl animate-fade-in z-50"
+                className="absolute top-full -left-12 w-[420px] p-3 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.6)] border backdrop-blur-2xl animate-fade-in z-50 before:absolute before:-top-3 before:left-0 before:right-0 before:h-3"
                 style={{
                   backgroundColor: themeMode === 'dark' ? 'rgba(18, 20, 28, 0.96)' : 'rgba(255, 255, 255, 0.98)',
                   borderColor: colors.cardBorder,
@@ -312,7 +312,7 @@ export const Header: React.FC = () => {
 
             {activeDropdown === 'about' && (
               <div
-                className="absolute top-full -left-12 w-[420px] p-3 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.6)] border backdrop-blur-2xl animate-fade-in z-50"
+                className="absolute top-full -left-12 w-[420px] p-3 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.6)] border backdrop-blur-2xl animate-fade-in z-50 before:absolute before:-top-3 before:left-0 before:right-0 before:h-3"
                 style={{
                   backgroundColor: themeMode === 'dark' ? 'rgba(18, 20, 28, 0.96)' : 'rgba(255, 255, 255, 0.98)',
                   borderColor: colors.cardBorder,
