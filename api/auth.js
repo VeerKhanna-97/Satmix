@@ -1,4 +1,4 @@
-﻿// ============================================================
+// ============================================================
 // FILE: api/auth.js
 // PURPOSE: Serverless Cloud Authentication & Multi-Device Session Persistence
 //          Allows users who signed up on one device (e.g. laptop)
@@ -18,7 +18,7 @@ export default async function handler(req, res) {
     return;
   }
 
-  const GOOGLE_SCRIPT_URL = process.env.GOOGLE_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbzZXuSM4K79NVAAgsxtq9Z3G5qr7Tsma1zDss8t53xwDhQ3Dohj6JG5YuayepI44A6Sng/exec';
+  const GOOGLE_SCRIPT_URL = process.env.GOOGLE_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbzje2Z8r5uvQBpLwOxfxjZvDNGsIrClczK7IQATXkM_WiChW6ZnIZriH4fPBRA91sd0Qg/exec';
 
   try {
     let payload = req.body;

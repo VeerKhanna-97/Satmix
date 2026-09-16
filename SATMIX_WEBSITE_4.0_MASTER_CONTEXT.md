@@ -378,7 +378,7 @@ export function generateGrowthPoints(daily: number, years: number, rate: number,
 ```
 
 ### 9.2 Waitlist & Lead Capture Webhook (`/api/waitlist`)
-* **Google Apps Script Target URL:** `https://script.google.com/macros/s/AKfycbzZXuSM4K79NVAAgsxtq9Z3G5qr7Tsma1zDss8t53xwDhQ3Dohj6JG5YuayepI44A6Sng/exec`
+* **Google Apps Script Target URL:** `https://script.google.com/macros/s/AKfycbzje2Z8r5uvQBpLwOxfxjZvDNGsIrClczK7IQATXkM_WiChW6ZnIZriH4fPBRA91sd0Qg/exec`
 * **Method:** `POST`
 * **Form Encoding:** `application/x-www-form-urlencoded` or JSON payload passing `{ name, email, phone, referralSource }`.
 
