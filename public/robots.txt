@@ -1,0 +1,16 @@
+# Satmix Robots.txt
+# https://satmix.app
+
+User-agent: *
+Allow: /
+Allow: /privacy
+Allow: /terms
+Allow: /refund
+Allow: /cookies
+Allow: /about
+Allow: /faq
+
+Disallow: /api/
+Disallow: /app/private/
+
+Sitemap: https://satmix.app/sitemap.xml

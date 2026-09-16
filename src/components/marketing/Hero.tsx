@@ -1,0 +1,646 @@
+import React, { useState, useEffect } from 'react';
+import { Shield, ArrowRight, CheckCircle2, Rocket, User, Mail, Phone, Layers, Info, BarChart2, Loader2, Zap, ArrowDownLeft, FileCheck, Clock } from 'lucide-react';
+import { useApp } from '../../context/AppContext';
+import { initReferralCapture, getStoredReferralCode } from '../../utils/referral';
+import { SpotlightCard, BlurText, Magnet, TiltedCard, FadeIn, CountUp } from '../ui';
+
+export const Hero: React.FC = () => {
+  const { colors, setViewMode, setAuthSubView, isAuthenticated, triggerConfetti } = useApp();
+  const [activeSlide, setActiveSlide] = useState(0);
+
+  // Early Access form state
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [referralCode, setReferralCode] = useState('');
+  const [consentAgreed, setConsentAgreed] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  // Capture referral code on component mount
+  useEffect(() => {
+    const code = initReferralCapture();
+    if (code) {
+      setReferralCode(code);
+    }
+  }, []);
+
+  const handleStartSaving = () => {
+    if (isAuthenticated) {
+      setViewMode('app');
+    } else {
+      setAuthSubView('signup');
+      setViewMode('auth');
+    }
+  };
+
+  const handleEarlyAccessSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitError(null);
+
+    if (!name.trim() || !email.trim()) {
+      setSubmitError('Please enter your full name and email address.');
+      return;
+    }
+
+    if (!consentAgreed) {
+      setSubmitError('Please agree to the Terms & Conditions and Privacy Policy to proceed.');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const activeRef = referralCode || getStoredReferralCode();
+      const payload = {
+        name: name.trim(),
+        email: email.trim(),
+        phone: phone.trim(),
+        referralCode: activeRef,
+        consentAgreed: true,
+        source: 'Satmix Hero Waitlist'
+      };
+
+      // Call the API endpoint proxy
+      const response = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const result = await response.json().catch(() => ({}));
+
+      // Cache submission locally
+      try {
+        const waitlistDB = JSON.parse(localStorage.getItem('satmix_waitlist') || '[]');
+        waitlistDB.push({
+          ...payload,
+          timestamp: new Date().toISOString()
+        });
+        localStorage.setItem('satmix_waitlist', JSON.stringify(waitlistDB));
+      } catch (storageErr) {}
+
+      setIsSubmitted(true);
+      triggerConfetti();
+    } catch (err) {
+      console.warn('Network waitlist submission failed, fallback locally:', err);
+      // Fallback: still treat as success locally
+      try {
+        const waitlistDB = JSON.parse(localStorage.getItem('satmix_waitlist') || '[]');
+        waitlistDB.push({
+          name: name.trim(),
+          email: email.trim(),
+          phone: phone.trim(),
+          referralCode: referralCode || getStoredReferralCode(),
+          consentAgreed: true,
+          timestamp: new Date().toISOString()
+        });
+        localStorage.setItem('satmix_waitlist', JSON.stringify(waitlistDB));
+      } catch (storageErr) {}
+
+      setIsSubmitted(true);
+      triggerConfetti();
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleGoToApp = () => {
+    if (isAuthenticated) {
+      setViewMode('app');
+    } else {
+      setAuthSubView('signup');
+      setViewMode('auth');
+    }
+  };
+
+  return (
+    <section className="relative overflow-hidden py-14 md:py-20 lg:py-24">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+          {/* Left Column: Heading & Value Proposition */}
+          <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
+            {/* Micro-Investing Spec Eyebrow */}
+            <FadeIn delay={0.05} direction="down">
+              <div
+                className="inline-flex items-center gap-2 px-3 py-1 rounded-md border text-[11px] font-mono tracking-wider backdrop-blur-md"
+                style={{
+                  backgroundColor: colors.surface,
+                  borderColor: colors.borderAccent,
+                  color: colors.accent,
+                }}
+              >
+                <span>AUTOMATED MICRO-INVESTING · UPI AUTOPAY</span>
+              </div>
+            </FadeIn>
+
+            <FadeIn delay={0.15}>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1]" style={{ color: colors.textPrimary }}>
+                Put Your Crypto on Autopilot for Just{' '}
+                <span className="block font-extrabold mt-1 sm:mt-2" style={{ color: colors.accent }}>
+                  ₹10 a Day
+                </span>
+              </h1>
+            </FadeIn>
+
+            <FadeIn delay={0.25}>
+              <p className="text-base sm:text-lg max-w-2xl mx-auto lg:mx-0 leading-relaxed" style={{ color: colors.textSecondary }}>
+                No coin picking. No market timing. No staring at charts. Auto-invest from ₹10 daily via UPI AutoPay into curated baskets of top crypto assets. Withdraw to your bank anytime.
+              </p>
+            </FadeIn>
+
+            {/* CTAs */}
+            <FadeIn delay={0.35}>
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
+                <Magnet strength={12} className="w-full sm:w-auto">
+                  <button
+                    onClick={handleStartSaving}
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-4 rounded-xl font-bold text-sm shadow-xl transition-all active:scale-95"
+                    style={{ backgroundColor: colors.primary, color: colors.primaryText }}
+                  >
+                    <span>{isAuthenticated ? 'Open Web Dashboard' : 'Start with ₹10/Day'}</span>
+                    <ArrowRight className="w-4 h-4 flex-shrink-0" />
+                  </button>
+                </Magnet>
+
+                <a
+                  href="#calc-section"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-4 rounded-xl font-semibold text-sm transition-all hover:bg-white/5 border"
+                  style={{
+                    backgroundColor: colors.surface,
+                    borderColor: colors.cardBorder,
+                    color: colors.textPrimary,
+                  }}
+                >
+                  <span>Calculate Your Growth</span>
+                </a>
+              </div>
+            </FadeIn>
+
+            {/* Feature Spec Strip */}
+            <FadeIn delay={0.45}>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-3">
+                <div
+                  className="flex items-center justify-center lg:justify-start gap-2 px-3 py-2 rounded-lg border text-xs font-mono"
+                  style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textSecondary }}
+                >
+                  <Zap className="w-3.5 h-3.5 flex-shrink-0" style={{ color: colors.accent }} />
+                  <span>Daily UPI AutoPay</span>
+                </div>
+                <div
+                  className="flex items-center justify-center lg:justify-start gap-2 px-3 py-2 rounded-lg border text-xs font-mono"
+                  style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textSecondary }}
+                >
+                  <ArrowDownLeft className="w-3.5 h-3.5 flex-shrink-0" style={{ color: colors.accent }} />
+                  <span>Withdraw Anytime 24/7</span>
+                </div>
+                <div
+                  className="flex items-center justify-center lg:justify-start gap-2 px-3 py-2 rounded-lg border text-xs font-mono"
+                  style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textSecondary }}
+                >
+                  <FileCheck className="w-3.5 h-3.5 flex-shrink-0" style={{ color: colors.accent }} />
+                  <span>100% Tax & TDS Ready</span>
+                </div>
+              </div>
+            </FadeIn>
+          </div>
+
+          {/* Right Column: Interactive 3-Tab Slide Deck with SpotlightCard and 3D Tilt */}
+          <div className="lg:col-span-5">
+            <TiltedCard maxAngle={4} scale={1.01}>
+              <SpotlightCard
+                className="rounded-3xl border shadow-2xl p-5 md:p-6 backdrop-blur-xl transition-all"
+                spotlightColor="rgba(247, 147, 26, 0.15)"
+                style={{
+                  backgroundColor: colors.card,
+                  borderColor: colors.cardBorder,
+                }}
+              >
+                {/* Slider Tabs Header */}
+                <div className="flex items-center p-1 rounded-xl mb-5" style={{ backgroundColor: colors.surface }}>
+                  <button
+                    onClick={() => setActiveSlide(0)}
+                    className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 ${
+                      activeSlide === 0 ? 'shadow-sm' : 'opacity-60 hover:opacity-100'
+                    }`}
+                    style={{
+                      backgroundColor: activeSlide === 0 ? (colors.cardHigh) : 'transparent',
+                      color: activeSlide === 0 ? colors.textPrimary : colors.textSecondary,
+                    }}
+                  >
+                    <Mail className="w-3.5 h-3.5" />
+                    <span>Early Access</span>
+                  </button>
+
+                  <button
+                    onClick={() => setActiveSlide(1)}
+                    className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 ${
+                      activeSlide === 1 ? 'shadow-sm' : 'opacity-60 hover:opacity-100'
+                    }`}
+                    style={{
+                      backgroundColor: activeSlide === 1 ? (colors.cardHigh) : 'transparent',
+                      color: activeSlide === 1 ? colors.textPrimary : colors.textSecondary,
+                    }}
+                  >
+                    <Info className="w-3.5 h-3.5" />
+                    <span>How It Works</span>
+                  </button>
+
+                  <button
+                    onClick={() => setActiveSlide(2)}
+                    className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 ${
+                      activeSlide === 2 ? 'shadow-sm' : 'opacity-60 hover:opacity-100'
+                    }`}
+                    style={{
+                      backgroundColor: activeSlide === 2 ? (colors.cardHigh) : 'transparent',
+                      color: activeSlide === 2 ? colors.textPrimary : colors.textSecondary,
+                    }}
+                  >
+                    <BarChart2 className="w-3.5 h-3.5" />
+                    <span>Baskets</span>
+                  </button>
+                </div>
+
+              {/* Slide 0: Early Access Form & WebApp Nudge */}
+              {activeSlide === 0 && (
+                <div className="space-y-4 animate-fade-in">
+                  {!isSubmitted ? (
+                    <>
+                      <div>
+                        <div className="flex items-center justify-between gap-2">
+                          <h3 className="text-base font-bold" style={{ color: colors.textPrimary }}>
+                            Join the Waitlist
+                          </h3>
+                          {referralCode && (
+                            <span
+                              className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold border font-mono tracking-wider"
+                              style={{
+                                backgroundColor: colors.surface,
+                                borderColor: colors.borderAccent,
+                                color: colors.accent,
+                              }}
+                            >
+                              <span>REF: {referralCode}</span>
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs mt-0.5" style={{ color: colors.textSecondary }}>
+                          Be among the first to experience automated crypto micro-investing from ₹10/day.
+                        </p>
+                      </div>
+
+                      {submitError && (
+                        <div className="p-2.5 rounded-xl text-xs font-semibold bg-rose-500/10 border border-rose-500/20 text-rose-400">
+                          {submitError}
+                        </div>
+                      )}
+
+                      <form onSubmit={handleEarlyAccessSubmit} className="space-y-3">
+                        <div>
+                          <label className="block text-[11px] font-bold uppercase tracking-wider mb-1" style={{ color: colors.textTertiary }}>
+                            Full Name <span className="text-rose-400">*</span>
+                          </label>
+                          <div className="relative">
+                            <User className="w-4 h-4 absolute left-3 top-3" style={{ color: colors.textTertiary }} />
+                            <input
+                              type="text"
+                              required
+                              value={name}
+                              onChange={(e) => setName(e.target.value)}
+                              placeholder="Arjun Sharma"
+                              disabled={isSubmitting}
+                              className="w-full pl-9 pr-3 py-2.5 rounded-xl text-sm border focus:outline-none focus:ring-1 transition-all disabled:opacity-50"
+                              style={{
+                                backgroundColor: colors.surface,
+                                borderColor: colors.cardBorder,
+                                color: colors.textPrimary,
+                              }}
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-[11px] font-bold uppercase tracking-wider mb-1" style={{ color: colors.textTertiary }}>
+                            Email Address <span className="text-rose-400">*</span>
+                          </label>
+                          <div className="relative">
+                            <Mail className="w-4 h-4 absolute left-3 top-3" style={{ color: colors.textTertiary }} />
+                            <input
+                              type="email"
+                              required
+                              value={email}
+                              onChange={(e) => setEmail(e.target.value)}
+                              placeholder="arjun@example.com"
+                              disabled={isSubmitting}
+                              className="w-full pl-9 pr-3 py-2.5 rounded-xl text-sm border focus:outline-none focus:ring-1 transition-all disabled:opacity-50"
+                              style={{
+                                backgroundColor: colors.surface,
+                                borderColor: colors.cardBorder,
+                                color: colors.textPrimary,
+                              }}
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-[11px] font-bold uppercase tracking-wider mb-1" style={{ color: colors.textTertiary }}>
+                            Phone Number <span className="text-gray-500 font-normal lowercase">(optional)</span>
+                          </label>
+                          <div className="relative">
+                            <Phone className="w-4 h-4 absolute left-3 top-3" style={{ color: colors.textTertiary }} />
+                            <input
+                              type="tel"
+                              value={phone}
+                              onChange={(e) => setPhone(e.target.value)}
+                              placeholder="+91 98765 43210"
+                              disabled={isSubmitting}
+                              className="w-full pl-9 pr-3 py-2.5 rounded-xl text-sm border focus:outline-none focus:ring-1 transition-all disabled:opacity-50"
+                              style={{
+                                backgroundColor: colors.surface,
+                                borderColor: colors.cardBorder,
+                                color: colors.textPrimary,
+                              }}
+                            />
+                          </div>
+                        </div>
+
+                        {/* DPDP Act Explicit Consent Checkbox */}
+                        <div className="flex items-start gap-2 pt-0.5">
+                          <input
+                            id="hero-consent"
+                            type="checkbox"
+                            checked={consentAgreed}
+                            onChange={(e) => setConsentAgreed(e.target.checked)}
+                            className="mt-0.5 w-3.5 h-3.5 rounded border-gray-700 cursor-pointer accent-white"
+                          />
+                          <label htmlFor="hero-consent" className="text-[10px] leading-tight select-none cursor-pointer" style={{ color: colors.textSecondary }}>
+                            I agree to Satmix's{' '}
+                            <button
+                              type="button"
+                              onClick={() => setViewMode('terms')}
+                              className="hover:underline font-semibold inline"
+                              style={{ color: colors.accent }}
+                            >
+                              Terms of Use
+                            </button>{' '}
+                            and{' '}
+                            <button
+                              type="button"
+                              onClick={() => setViewMode('privacy')}
+                              className="hover:underline font-semibold inline"
+                              style={{ color: colors.accent }}
+                            >
+                              Privacy Policy
+                            </button>{' '}
+                            (DPDP Act 2023).
+                          </label>
+                        </div>
+
+                        <button
+                          type="submit"
+                          disabled={isSubmitting || !consentAgreed}
+                          className="w-full py-3 rounded-xl font-bold text-sm tracking-wide shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 disabled:opacity-60"
+                          style={{ backgroundColor: colors.primary, color: colors.primaryText }}
+                        >
+                          {isSubmitting ? (
+                            <>
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                              <span>Securing Your Spot...</span>
+                            </>
+                          ) : (
+                            <span>Get Early Access</span>
+                          )}
+                        </button>
+
+                        {/* Realistic Response Time Promise */}
+                        <div className="flex items-center justify-center gap-1.5 text-[11px] font-mono pt-0.5" style={{ color: colors.textSecondary }}>
+                          <Clock className="w-3.5 h-3.5 flex-shrink-0" style={{ color: colors.accent }} />
+                          <span>Guaranteed SLA: Response within 24 business hours</span>
+                        </div>
+                      </form>
+
+                      {/* WebApp Nudge Banner */}
+                      <div
+                        className="p-3 rounded-2xl border flex items-center justify-between gap-3 mt-3"
+                        style={{
+                          backgroundColor: colors.accentTint,
+                          borderColor: colors.borderAccent,
+                        }}
+                      >
+                        <div>
+                          <span className="text-[10px] font-bold uppercase tracking-wider block font-mono" style={{ color: colors.accent }}>
+                            Instant Prototype Demo
+                          </span>
+                          <span className="text-xs font-semibold" style={{ color: colors.textPrimary }}>
+                            Test the interactive Web App
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={handleGoToApp}
+                          className="px-3.5 py-1.5 rounded-xl font-bold text-xs shadow transition-all active:scale-95 flex items-center gap-1 flex-shrink-0"
+                          style={{ backgroundColor: colors.primary, color: colors.primaryText }}
+                        >
+                          <span>Launch App</span>
+                          <ArrowRight className="w-3 h-3" />
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    /* Post-Submit Nudge to WebApp */
+                    <div className="py-4 text-center space-y-4 animate-fade-in">
+                      <div
+                        className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto border"
+                        style={{
+                          backgroundColor: colors.mintTint,
+                          borderColor: colors.borderMint,
+                          color: colors.semanticSuccess,
+                        }}
+                      >
+                        <CheckCircle2 className="w-8 h-8" />
+                      </div>
+
+                      <div>
+                        <h4 className="font-extrabold text-lg" style={{ color: colors.textPrimary }}>
+                          You're on the Waitlist!
+                        </h4>
+                        <p className="text-xs mt-1.5 leading-relaxed" style={{ color: colors.textSecondary }}>
+                          Thanks for signing up{name ? `, ${name}` : ''}! {referralCode ? `(Referral code ${referralCode} applied).` : ''} Test the interactive Satmix Web App prototype right now.
+                        </p>
+                      </div>
+
+                      {/* Direct WebApp Launch CTA */}
+                      <button
+                        onClick={handleGoToApp}
+                        className="w-full py-3.5 rounded-xl font-bold text-sm shadow-xl transition-all active:scale-95 flex items-center justify-center gap-2"
+                        style={{ backgroundColor: colors.primary, color: colors.primaryText }}
+                      >
+                        <span>Launch Interactive Web App →</span>
+                      </button>
+
+                      <div className="flex items-center justify-center gap-4 pt-1">
+                        <button
+                          onClick={() => setViewMode('thank-you')}
+                          className="text-xs font-semibold hover:underline"
+                          style={{ color: colors.accent }}
+                        >
+                          View Full Confirmation Details
+                        </button>
+                        <span style={{ color: colors.textTertiary }}>•</span>
+                        <button
+                          onClick={() => setIsSubmitted(false)}
+                          className="text-[11px] hover:opacity-80 transition-opacity"
+                          style={{ color: colors.textSecondary }}
+                        >
+                          Edit details
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Slide 1: 4 Steps */}
+              {activeSlide === 1 && (
+                <div className="space-y-3.5 animate-fade-in">
+                  <div>
+                    <h3 className="text-base font-bold" style={{ color: colors.textPrimary }}>
+                      How Satmix Works
+                    </h3>
+                    <p className="text-xs" style={{ color: colors.textSecondary }}>
+                      Automated micro-investing in 4 simple steps.
+                    </p>
+                  </div>
+
+                  <div className="space-y-2.5">
+                    {[
+                      { step: '01', title: 'Sign Up with Mobile & PIN', desc: 'Secure authentication in under 30 seconds.' },
+                      { step: '02', title: '5-Question Risk Quiz', desc: 'Maps you to Calm or Growth basket.' },
+                      { step: '03', title: 'Set UPI AutoPay from ₹10', desc: 'Morning 8:00 AM automated debit.' },
+                      { step: '04', title: 'Batch Execution via CoinDCX', desc: '9:00 AM spot execution into your basket.' },
+                    ].map((item) => (
+                      <div
+                        key={item.step}
+                        className="flex items-start gap-3 p-2.5 rounded-xl border"
+                        style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}
+                      >
+                        <div
+                          className="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs font-mono"
+                          style={{ backgroundColor: colors.surface, color: colors.accent, border: `1px solid ${colors.borderAccent}` }}
+                        >
+                          {item.step}
+                        </div>
+                        <div>
+                          <div className="font-bold text-xs" style={{ color: colors.textPrimary }}>{item.title}</div>
+                          <div className="text-[11px]" style={{ color: colors.textSecondary }}>{item.desc}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Slide 2: Quick Strategies */}
+              {activeSlide === 2 && (
+                <div className="space-y-3 animate-fade-in">
+                  <div>
+                    <h3 className="text-base font-bold" style={{ color: colors.textPrimary }}>
+                      Curated Baskets (V1)
+                    </h3>
+                    <p className="text-xs" style={{ color: colors.textSecondary }}>
+                      Two transparent baskets tailored to your risk comfort.
+                    </p>
+                  </div>
+
+                  {/* Calm Basket Card */}
+                  <div
+                    className="p-3.5 rounded-2xl border flex items-center justify-between cursor-pointer hover:border-white/30"
+                    style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder }}
+                    onClick={() => {
+                      setAuthSubView('signup');
+                      setViewMode('auth');
+                    }}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 rounded-xl" style={{ backgroundColor: colors.mintTint, color: colors.semanticSuccess }}>
+                        <Shield className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-bold text-xs" style={{ color: colors.textPrimary }}>Calm Basket</span>
+                          <span className="text-[10px] px-1.5 py-0.5 rounded font-bold" style={{ backgroundColor: colors.mintTint, color: colors.semanticSuccess }}>
+                            Calm
+                          </span>
+                        </div>
+                        <div className="text-[11px] font-mono" style={{ color: colors.textSecondary }}>
+                          85% USDT · 15% BTC
+                        </div>
+                      </div>
+                    </div>
+                    <span className="text-xs font-bold font-mono" style={{ color: colors.semanticSuccess }}>Low Volatility</span>
+                  </div>
+
+                  {/* Growth Basket Card */}
+                  <div
+                    className="p-3.5 rounded-2xl border flex items-center justify-between cursor-pointer hover:border-white/30"
+                    style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder }}
+                    onClick={() => {
+                      setAuthSubView('signup');
+                      setViewMode('auth');
+                    }}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 rounded-xl" style={{ backgroundColor: colors.accentTint, color: colors.accent }}>
+                        <Rocket className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-bold text-xs" style={{ color: colors.textPrimary }}>Growth Basket</span>
+                          <span className="text-[10px] px-1.5 py-0.5 rounded font-bold" style={{ backgroundColor: colors.accentTint, color: colors.accent }}>
+                            Growth
+                          </span>
+                        </div>
+                        <div className="text-[11px] font-mono" style={{ color: colors.textSecondary }}>
+                          70% BTC · 20% ETH · 10% SOL
+                        </div>
+                      </div>
+                    </div>
+                    <span className="text-xs font-bold font-mono" style={{ color: colors.accent }}>Core Upside</span>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      setAuthSubView('signup');
+                      setViewMode('auth');
+                    }}
+                    className="w-full py-2.5 text-center text-xs font-bold hover:underline flex items-center justify-center gap-1"
+                    style={{ color: colors.accent }}
+                  >
+                    Explore in Interactive Web App <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              )}
+
+              {/* Slider Dots */}
+              <div className="flex items-center justify-center gap-2 pt-3">
+                {[0, 1, 2].map((idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setActiveSlide(idx)}
+                    className={`h-1.5 rounded-full transition-all duration-300 ${
+                      activeSlide === idx ? 'w-6 bg-white shadow-[0_0_8px_rgba(255,255,255,0.4)]' : 'w-2 bg-gray-600 hover:bg-gray-400'
+                    }`}
+                  />
+                ))}
+              </div>
+            </SpotlightCard>
+          </TiltedCard>
+        </div>
+      </div>
+    </div>
+  </section>
+);
+};

@@ -1,0 +1,203 @@
+import React, { useState } from 'react';
+import {
+  Shield,
+  TrendingUp,
+  CheckCircle2,
+  ArrowRight,
+  Sparkles,
+  ArrowLeftRight,
+} from 'lucide-react';
+import { useApp } from '../../context/AppContext';
+import { BasketId } from '../../types';
+import { BASKETS, getBasketById } from '../../data/baskets';
+import { SpotlightCard, Magnet, ShinyText } from '../ui';
+import { motion } from 'motion/react';
+
+interface RecommendScreenProps {
+  suggestedBasketId: BasketId;
+  quizScore: number;
+  onProceed: (chosenBasketId: BasketId) => void;
+}
+
+export const RecommendScreen: React.FC<RecommendScreenProps> = ({
+  suggestedBasketId,
+  quizScore,
+  onProceed,
+}) => {
+  const { colors, triggerConfetti } = useApp();
+  const [selectedId, setSelectedId] = useState<BasketId>(suggestedBasketId);
+
+  const activeBasket = getBasketById(selectedId);
+  const isSuggested = selectedId === suggestedBasketId;
+
+  const handleSwitch = (newId: BasketId) => {
+    setSelectedId(newId);
+    triggerConfetti();
+  };
+
+  const handleContinue = () => {
+    triggerConfetti();
+    onProceed(selectedId);
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center p-4 py-12 relative overflow-hidden" style={{ backgroundColor: colors.bg }}>
+      {/* Background glow */}
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] rounded-full blur-[140px] pointer-events-none opacity-20 animate-ambient-glow"
+        style={{ background: `radial-gradient(circle, ${colors.accent} 0%, transparent 70%)` }}
+      />
+
+      <div
+        className="w-full max-w-xl rounded-3xl border shadow-2xl p-6 sm:p-8 backdrop-blur-2xl relative z-10 animate-fade-in"
+        style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
+      >
+        {/* Top Header */}
+        <div className="text-center mb-6">
+          <div
+            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md border text-[11px] font-mono font-bold tracking-wider uppercase mb-2"
+            style={{
+              backgroundColor: colors.accentTint,
+              borderColor: colors.borderAccent,
+              color: colors.accent,
+            }}
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Quiz Score: {quizScore}/6 · Basket Fit Recommendation</span>
+          </div>
+
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight" style={{ color: colors.textPrimary }}>
+            Your Recommended Strategy
+          </h1>
+          <p className="text-xs sm:text-sm mt-1" style={{ color: colors.textSecondary }}>
+            Based on your answers, we recommend starting with <strong>{getBasketById(suggestedBasketId).name}</strong>.
+          </p>
+        </div>
+
+        {/* Suggested Basket Card */}
+        <SpotlightCard
+          spotlightColor={colors.accentTint}
+          className="p-6 sm:p-7 rounded-2xl border shadow-xl mb-6 relative overflow-hidden"
+          style={{
+            backgroundColor: colors.surface,
+            borderColor: colors.accent,
+          }}
+        >
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div
+                className="p-3 rounded-2xl"
+                style={{
+                  backgroundColor: colors.accentTint,
+                  color: colors.accent,
+                }}
+              >
+                {selectedId === 'stable' ? <Shield className="w-6 h-6" /> : <TrendingUp className="w-6 h-6" />}
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span
+                    className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md border font-mono"
+                    style={{
+                      backgroundColor: colors.accentTint,
+                      borderColor: colors.borderAccent,
+                      color: colors.accent,
+                    }}
+                  >
+                    {activeBasket.riskLabel}
+                  </span>
+                  {isSuggested && (
+                    <span className="text-[10px] font-bold text-emerald-400 font-mono">
+                      ✓ Best Quiz Fit
+                    </span>
+                  )}
+                </div>
+                <h3 className="text-xl font-extrabold mt-0.5" style={{ color: colors.textPrimary }}>
+                  {activeBasket.name}
+                </h3>
+              </div>
+            </div>
+
+            <div className="text-right font-mono">
+              <span className="text-[10px] font-sans block" style={{ color: colors.textTertiary }}>Min Amount</span>
+              <span className="text-lg font-extrabold" style={{ color: colors.accent }}>
+                ₹{activeBasket.minDailyAmount}/day
+              </span>
+            </div>
+          </div>
+
+          <p className="text-xs leading-relaxed mb-5" style={{ color: colors.textSecondary }}>
+            {activeBasket.tagline}
+          </p>
+
+          {activeBasket.disclosure && (
+            <div
+              className="p-3 rounded-xl border text-[11px] font-medium mb-5"
+              style={{
+                backgroundColor: colors.card,
+                borderColor: colors.borderDim,
+                color: colors.textTertiary,
+              }}
+            >
+              🔒 <strong>Transparency Note:</strong> {activeBasket.disclosure}
+            </div>
+          )}
+
+          {/* Allocation Breakdown */}
+          <div className="space-y-3">
+            <span className="text-[11px] font-bold uppercase tracking-wider block" style={{ color: colors.textTertiary }}>
+              Target Portfolio Allocation
+            </span>
+            {activeBasket.allocation.map((item) => (
+              <div key={item.ticker} className="space-y-1">
+                <div className="flex justify-between text-xs font-semibold">
+                  <span style={{ color: colors.textPrimary }}>{item.label} ({item.ticker})</span>
+                  <span className="font-mono" style={{ color: colors.textTertiary }}>{item.pct}%</span>
+                </div>
+                <div className="h-1.5 w-full rounded-full overflow-hidden" style={{ backgroundColor: colors.card }}>
+                  <motion.div
+                    className="h-full rounded-full"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${item.pct}%` }}
+                    transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                    style={{ backgroundColor: colors[item.colorKey] || colors.primary }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </SpotlightCard>
+
+        {/* Option to Switch Basket */}
+        <div className="mb-6 p-3.5 rounded-2xl border flex items-center justify-between" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+          <div className="flex items-center gap-2">
+            <ArrowLeftRight className="w-4 h-4" style={{ color: colors.accent }} />
+            <span className="text-xs font-semibold" style={{ color: colors.textSecondary }}>
+              Prefer the {selectedId === 'stable' ? 'Growth Basket' : 'Stable Basket'} instead?
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={() => handleSwitch(selectedId === 'stable' ? 'growth' : 'stable')}
+            className="text-xs font-bold hover:underline"
+            style={{ color: colors.accent }}
+          >
+            Switch to {selectedId === 'stable' ? 'Growth' : 'Stable'} →
+          </button>
+        </div>
+
+        {/* Continue Action */}
+        <Magnet strength={0.15} className="w-full block">
+          <button
+            onClick={handleContinue}
+            className="w-full py-4 px-6 rounded-xl font-bold text-sm shadow-xl transition-all hover:scale-[1.01] active:scale-95 flex items-center justify-center gap-2"
+            style={{ backgroundColor: colors.primary, color: colors.primaryText }}
+          >
+            <span>Confirm & Set Daily Amount (from ₹{activeBasket.minDailyAmount}/day)</span>
+            <ArrowRight className="w-4 h-4 flex-shrink-0" />
+          </button>
+        </Magnet>
+      </div>
+    </div>
+  );
+};
