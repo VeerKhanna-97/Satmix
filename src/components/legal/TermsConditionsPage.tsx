@@ -40,7 +40,7 @@ export const TermsConditionsPage: React.FC = () => {
             Last Updated: August 15, 2026 · Effective Date: August 15, 2026
           </p>
           <p className="text-xs sm:text-sm leading-relaxed max-w-3xl pt-1" style={{ color: colors.textSecondary }}>
-            Please read these Terms and Conditions ("Terms") carefully. By accessing or using the website, applications, or automated workflows provided by Satmix Technologies ("Satmix", "we", "us"), you agree to be bound by these Terms. If you do not agree, do not access or use our services.
+            Please read these Terms and Conditions ("Terms") carefully. By accessing or using the website, applications, or automated workflows provided by Satmix ("we", "us"), you agree to be bound by these Terms. If you do not agree, do not access or use our services.
           </p>
         </div>
 
@@ -55,7 +55,7 @@ export const TermsConditionsPage: React.FC = () => {
               <h2 className="text-lg font-bold" style={{ color: colors.textPrimary }}>1. Nature of Software: Non-Custodial Technology Platform</h2>
             </div>
             <p>
-              Satmix Technologies operates strictly as a <strong>financial software and technological infrastructure layer</strong>. Satmix is <strong>NOT</strong>:
+              Satmix operates strictly as a <strong>financial software and technological infrastructure layer</strong>. Satmix is <strong>NOT</strong>:
             </p>
             <ul className="space-y-1.5 pl-4 list-disc" style={{ accentColor: colors.accent }}>
               <li>A registered investment adviser (RIA) under the Securities and Exchange Board of India (SEBI).</li>
@@ -87,7 +87,7 @@ export const TermsConditionsPage: React.FC = () => {
               <h2 className="text-lg font-bold" style={{ color: colors.textPrimary }}>3. Absolute Limitation of Liability & Founder Legal Immunity</h2>
             </div>
             <p className="text-xs sm:text-sm leading-relaxed">
-              TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE INDIAN LAW, IN NO EVENT SHALL <strong>SATMIX TECHNOLOGIES</strong>, NOR ITS FOUNDERS (INCLUDING BUT NOT LIMITED TO <strong>SHEIDEN BORGES, VEER KHANNA, AND SHASHANK JAJODIA</strong>), DIRECTORS, OFFICERS, EMPLOYEES, AGENTS, AFFILIATES, OR LICENSORS BE LIABLE FOR ANY INDIRECT, PUNITIVE, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR EXEMPLARY DAMAGES, INCLUDING WITHOUT LIMITATION DAMAGES FOR LOSS OF PROFITS, REVENUE, DATA, GOODWILL, MARKET LOSSES, CRYPTO DEPRECIATION, OR DOWNTIME ARISING OUT OF OR IN CONNECTION WITH THE USE OR INABILITY TO USE THE SERVICE.
+              TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE INDIAN LAW, IN NO EVENT SHALL <strong>SATMIX</strong>, NOR ITS FOUNDERS (INCLUDING BUT NOT LIMITED TO <strong>SHEIDEN BORGES, VEER KHANNA, AND SHASHANK JAJODIA</strong>), DIRECTORS, OFFICERS, EMPLOYEES, AGENTS, AFFILIATES, OR LICENSORS BE LIABLE FOR ANY INDIRECT, PUNITIVE, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR EXEMPLARY DAMAGES, INCLUDING WITHOUT LIMITATION DAMAGES FOR LOSS OF PROFITS, REVENUE, DATA, GOODWILL, MARKET LOSSES, CRYPTO DEPRECIATION, OR DOWNTIME ARISING OUT OF OR IN CONNECTION WITH THE USE OR INABILITY TO USE THE SERVICE.
             </p>
             <p className="text-xs sm:text-sm leading-relaxed">
               SATMIX’S TOTAL AGGREGATE LIABILITY TO YOU FOR ALL CLAIMS OF ANY KIND ARISING UNDER OR RELATED TO THESE TERMS SHALL BE CAPPED AT AND NOT EXCEED THE TOTAL FEES ACTUALLY PAID BY YOU TO SATMIX FOR USE OF THE SOFTWARE PLATFORM IN THE THIRTY (30) DAYS PRECEDING THE CLAIM, OR ₹0 (ZERO RUPEES) IF NO SOFTWARE FEES WERE PAID.
@@ -98,7 +98,7 @@ export const TermsConditionsPage: React.FC = () => {
           <section className="p-6 rounded-3xl border space-y-3" style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}>
             <h2 className="text-lg font-bold" style={{ color: colors.textPrimary }}>4. Comprehensive User Indemnification</h2>
             <p>
-              You agree to defend, indemnify, and hold harmless Satmix Technologies, its founders (Sheiden Borges, Veer Khanna, Shashank Jajodia), officers, directors, contractors, and agents from and against any and all claims, damages, obligations, losses, liabilities, costs, debts, and legal expenses arising from:
+              You agree to defend, indemnify, and hold harmless Satmix, its founders (Sheiden Borges, Veer Khanna, Shashank Jajodia), officers, directors, contractors, and agents from and against any and all claims, damages, obligations, losses, liabilities, costs, debts, and legal expenses arising from:
             </p>
             <ul className="space-y-2 pl-4 list-disc text-xs sm:text-sm" style={{ accentColor: colors.accent }}>
               <li>Your use of and access to the Satmix platform and automated UPI AutoPay workflows.</li>

@@ -40,7 +40,7 @@ export const PrivacyPolicyPage: React.FC = () => {
             Last Updated: August 15, 2026 · Effective Date: August 15, 2026
           </p>
           <p className="text-xs sm:text-sm leading-relaxed max-w-3xl pt-1" style={{ color: colors.textSecondary }}>
-            Satmix Technologies ("Satmix", "we", "us", or "our") is dedicated to protecting your privacy. This policy explains how we process and safeguard your personal data when you use our website, web application, and automated micro-investing software under the <strong>Digital Personal Data Protection Act, 2023 (DPDP Act)</strong> and the <strong>Information Technology Act, 2000</strong>.
+            Satmix ("we", "us", or "our") is dedicated to protecting your privacy. This policy explains how we process and safeguard your personal data when you use our website, web application, and automated micro-investing software under the <strong>Digital Personal Data Protection Act, 2023 (DPDP Act)</strong> and the <strong>Information Technology Act, 2000</strong>.
           </p>
         </div>
 

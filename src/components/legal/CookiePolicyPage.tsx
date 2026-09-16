@@ -40,7 +40,7 @@ export const CookiePolicyPage: React.FC = () => {
             Last Updated: August 15, 2026 · Effective Date: August 15, 2026
           </p>
           <p className="text-xs sm:text-sm leading-relaxed max-w-3xl pt-1" style={{ color: colors.textSecondary }}>
-            This Cookie Policy explains how Satmix Technologies ("Satmix", "we", "us") utilizes cookies, local storage objects, and session technologies on our website and web application in compliance with the <strong>Digital Personal Data Protection Act, 2023 (DPDP Act)</strong>.
+            This Cookie Policy explains how Satmix ("we", "us") utilizes cookies, local storage objects, and session technologies on our website and web application in compliance with the <strong>Digital Personal Data Protection Act, 2023 (DPDP Act)</strong>.
           </p>
         </div>
 

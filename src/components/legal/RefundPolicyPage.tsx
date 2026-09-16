@@ -40,7 +40,7 @@ export const RefundPolicyPage: React.FC = () => {
             Last Updated: August 15, 2026 · Effective Date: August 15, 2026
           </p>
           <p className="text-xs sm:text-sm leading-relaxed max-w-3xl pt-1" style={{ color: colors.textSecondary }}>
-            At Satmix Technologies ("Satmix"), we are committed to complete financial transparency and liquidity. Because digital asset investments represent real-time market purchases, this policy clarifies our instant withdrawal rights, cancellation procedures for automated UPI mandates, and fee reversal protocols.
+            At Satmix, we are committed to complete financial transparency and liquidity. Because digital asset investments represent real-time market purchases, this policy clarifies our instant withdrawal rights, cancellation procedures for automated UPI mandates, and fee reversal protocols.
           </p>
         </div>
 

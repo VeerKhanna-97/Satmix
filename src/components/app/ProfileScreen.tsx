@@ -104,7 +104,7 @@ export const ProfileScreen: React.FC = () => {
     if (!user) return;
     const tdsContent = `SATMIX 1% TDS CERTIFICATE (UNDER SECTION 194S)\n` +
       `PAN: ${user.panNumberMasked}\n` +
-      `Deductor: Satmix Technologies India Pvt Ltd (TAN: BLRS99281F)\n` +
+      `Deductor: Satmix (TAN: BLRS99281F)\n` +
       `Financial Year: ${selectedFy}\n` +
       `Total TDS Deducted: ₹${Math.round(portfolioSummary.totalInvested * 0.01)}\n` +
       `Status: Deposited with Income Tax Department (TRACES Form 16A Compliant)\n`;

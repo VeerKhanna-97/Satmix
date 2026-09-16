@@ -277,12 +277,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       marketing: 'Satmix : Automated Daily Crypto Micro-Investing via UPI (Start with ₹10/Day)',
       auth: 'Satmix : Secure Authentication & Risk Profile Quiz',
       app: 'Satmix Dashboard : Automated Crypto Micro-Savings & Rupee Cost Averaging',
-      privacy: 'Privacy Policy : Satmix Technologies (DPDP Act 2023 Compliant)',
-      terms: 'Terms & Conditions : Satmix Technologies (Legal & Regulatory Framework)',
-      refund: 'Refund & Cancellation Policy : Satmix Technologies (Zero Lock-in)',
-      cookies: 'Cookie Policy & Consent Settings : Satmix Technologies',
+      privacy: 'Privacy Policy : Satmix (DPDP Act 2023 Compliant)',
+      terms: 'Terms & Conditions : Satmix (Legal & Regulatory Framework)',
+      refund: 'Refund & Cancellation Policy : Satmix (Zero Lock-in)',
+      cookies: 'Cookie Policy & Consent Settings : Satmix',
       'thank-you': 'Early Access Confirmed : Welcome to Satmix',
-      '404': '404 Page Not Found : Satmix Technologies',
+      '404': '404 Page Not Found : Satmix',
     };
 
     document.title = titleMap[viewMode] || 'Satmix : Automated Daily Crypto Micro-Investing';
