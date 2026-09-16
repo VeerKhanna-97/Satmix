@@ -175,6 +175,13 @@ export const DashboardScreen: React.FC = () => {
   const isStableActive = !prototypeState.habits.stable.paused;
   const isGrowthActive = !prototypeState.habits.growth.paused;
 
+  const tickerItems = useMemo(() => [
+    { symbol: 'BTC', inr: `₹${Math.round(livePrices.BTC).toLocaleString('en-IN')}`, usd: `$${Math.round(btcUsd).toLocaleString('en-US')}` },
+    { symbol: 'ETH', inr: `₹${Math.round(livePrices.ETH).toLocaleString('en-IN')}`, usd: `$${Math.round(ethUsd).toLocaleString('en-US')}` },
+    { symbol: 'SOL', inr: `₹${Math.round(livePrices.SOL).toLocaleString('en-IN')}`, usd: `$${Math.round(solUsd).toLocaleString('en-US')}` },
+    { symbol: 'USDT', inr: `₹${livePrices.USDT.toFixed(2)}`, usd: '$1.00' },
+  ], [livePrices, btcUsd, ethUsd, solUsd]);
+
   return (
     <div className="space-y-7 animate-fade-in max-w-5xl mx-auto pb-12">
       {/* ── TOP GREETING & KYC STATUS ─────────────────────────── */}
@@ -241,42 +248,40 @@ export const DashboardScreen: React.FC = () => {
         </div>
       </div>
 
-      {/* ── LIVE COINBASE SPOT TICKER BAR ─────────────────────── */}
+      {/* ── LIVE SPOT TICKER BAR (HORIZONTAL MARQUEE SCROLLER) ── */}
       <div
-        className="p-2.5 rounded-2xl border flex items-center justify-between gap-3 overflow-x-auto text-xs font-mono scrollbar-none"
+        className="p-2.5 rounded-2xl border flex items-center gap-3 overflow-hidden text-xs font-mono select-none"
         style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}
       >
-        <div className="flex items-center gap-4 min-w-max">
-          <div className="flex items-center gap-1.5 pr-2 border-r" style={{ borderColor: colors.borderDim }}>
-            <RefreshCw className={`w-3.5 h-3.5 text-amber-400 ${isPricesLoading ? 'animate-spin' : ''}`} />
-            <span className="text-[10px] font-bold tracking-wider uppercase" style={{ color: colors.textTertiary }}>
-              LIVE SPOT TICKER
-            </span>
-          </div>
+        <div
+          className="flex items-center gap-1.5 pr-2.5 border-r flex-shrink-0 z-10"
+          style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}
+        >
+          <RefreshCw className={`w-3.5 h-3.5 text-amber-400 flex-shrink-0 ${isPricesLoading ? 'animate-spin' : ''}`} />
+          <span className="text-[10px] font-bold tracking-wider uppercase whitespace-nowrap" style={{ color: colors.textTertiary }}>
+            LIVE SPOT TICKER
+          </span>
+        </div>
 
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-1.5">
-              <span className="font-bold" style={{ color: colors.textPrimary }}>BTC</span>
-              <span style={{ color: colors.textSecondary }}>₹{Math.round(livePrices.BTC).toLocaleString('en-IN')}</span>
-              <span className="text-[10px]" style={{ color: colors.textTertiary }}>(${Math.round(btcUsd).toLocaleString('en-US')})</span>
-            </div>
+        <div className="flex-1 overflow-hidden relative">
+          {/* Subtle edge fade overlays */}
+          <div
+            className="absolute left-0 top-0 bottom-0 w-3 z-10 pointer-events-none"
+            style={{ background: `linear-gradient(to right, ${colors.surface}, transparent)` }}
+          />
+          <div
+            className="absolute right-0 top-0 bottom-0 w-3 z-10 pointer-events-none"
+            style={{ background: `linear-gradient(to left, ${colors.surface}, transparent)` }}
+          />
 
-            <div className="flex items-center gap-1.5">
-              <span className="font-bold" style={{ color: colors.textPrimary }}>ETH</span>
-              <span style={{ color: colors.textSecondary }}>₹{Math.round(livePrices.ETH).toLocaleString('en-IN')}</span>
-              <span className="text-[10px]" style={{ color: colors.textTertiary }}>(${Math.round(ethUsd).toLocaleString('en-US')})</span>
-            </div>
-
-            <div className="flex items-center gap-1.5">
-              <span className="font-bold" style={{ color: colors.textPrimary }}>SOL</span>
-              <span style={{ color: colors.textSecondary }}>₹{Math.round(livePrices.SOL).toLocaleString('en-IN')}</span>
-              <span className="text-[10px]" style={{ color: colors.textTertiary }}>(${Math.round(solUsd).toLocaleString('en-US')})</span>
-            </div>
-
-            <div className="flex items-center gap-1.5">
-              <span className="font-bold" style={{ color: colors.textPrimary }}>USDT</span>
-              <span style={{ color: colors.textSecondary }}>₹{livePrices.USDT.toFixed(2)}</span>
-            </div>
+          <div className="flex animate-ticker whitespace-nowrap gap-6 items-center">
+            {[...tickerItems, ...tickerItems, ...tickerItems, ...tickerItems].map((item, idx) => (
+              <div key={`${item.symbol}-${idx}`} className="inline-flex items-center gap-1.5 flex-shrink-0">
+                <span className="font-bold" style={{ color: colors.textPrimary }}>{item.symbol}</span>
+                <span style={{ color: colors.textSecondary }}>{item.inr}</span>
+                <span className="text-[10px]" style={{ color: colors.textTertiary }}>({item.usd})</span>
+              </div>
+            ))}
           </div>
         </div>
       </div>
