@@ -270,23 +270,9 @@ export const Hero: React.FC = () => {
                   {!isSubmitted ? (
                     <>
                       <div>
-                        <div className="flex items-center justify-between gap-2">
-                          <h3 className="text-base font-bold" style={{ color: colors.textPrimary }}>
-                            Join the Waitlist
-                          </h3>
-                          {referralCode && (
-                            <span
-                              className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold border font-mono tracking-wider"
-                              style={{
-                                backgroundColor: colors.surface,
-                                borderColor: colors.borderAccent,
-                                color: colors.accent,
-                              }}
-                            >
-                              <span>REF: {referralCode}</span>
-                            </span>
-                          )}
-                        </div>
+                        <h3 className="text-base font-bold" style={{ color: colors.textPrimary }}>
+                          Join the Waitlist
+                        </h3>
                         <p className="text-xs mt-0.5" style={{ color: colors.textSecondary }}>
                           Be among the first to experience automated crypto micro-investing from ₹10/day.
                         </p>
@@ -462,7 +448,7 @@ export const Hero: React.FC = () => {
                           You're on the Waitlist!
                         </h4>
                         <p className="text-xs mt-1.5 leading-relaxed" style={{ color: colors.textSecondary }}>
-                          Thanks for signing up{name ? `, ${name}` : ''}! {referralCode ? `(Referral code ${referralCode} applied).` : ''} Experience the interactive Satmix WebApp right now.
+                          Thanks for signing up{name ? `, ${name}` : ''}! Experience the interactive Satmix WebApp right now.
                         </p>
                       </div>
 
