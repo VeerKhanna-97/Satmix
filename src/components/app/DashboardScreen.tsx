@@ -15,6 +15,7 @@ import {
   Clock,
   Sparkles,
   ChevronRight,
+  ChevronDown,
   X,
   Play,
   Pause,
@@ -68,6 +69,7 @@ export const DashboardScreen: React.FC = () => {
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [selectedGuide, setSelectedGuide] = useState<typeof EDUCATIONAL_GUIDES[0] | null>(null);
   const [selectedAssetModal, setSelectedAssetModal] = useState<any | null>(null);
+  const [holdingsExpanded, setHoldingsExpanded] = useState(false);
 
   const stableBasket = getBasketById('stable');
   const growthBasket = getBasketById('growth');
@@ -461,21 +463,27 @@ export const DashboardScreen: React.FC = () => {
         </SpotlightCard>
       </FadeIn>
 
-      {/* ── CRYPTO ASSETS & WALLET HOLDINGS (EXPANDED TRANSPARENCY) ─ */}
+      {/* ── CRYPTO ASSETS & WALLET HOLDINGS (EXPANDABLE ACCORDION) ─ */}
       <SpotlightCard
         spotlightColor={colors.accentTint}
-        className="rounded-3xl p-6 sm:p-7 border shadow-lg space-y-6"
+        className="rounded-3xl p-5 sm:p-7 border shadow-lg transition-all duration-300"
         style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
       >
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b" style={{ borderColor: colors.borderDim }}>
+        {/* Interactive Expandable Header */}
+        <div
+          onClick={() => setHoldingsExpanded((prev) => !prev)}
+          className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 cursor-pointer select-none group"
+          role="button"
+          tabIndex={0}
+          aria-expanded={holdingsExpanded}
+        >
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl border flex items-center justify-center shadow-sm" style={{ backgroundColor: colors.accentTint, borderColor: colors.borderAccent, color: colors.accent }}>
+            <div className="w-10 h-10 rounded-2xl border flex items-center justify-center shadow-sm transition-transform duration-200 group-hover:scale-105" style={{ backgroundColor: colors.accentTint, borderColor: colors.borderAccent, color: colors.accent }}>
               <Wallet className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-bold text-base" style={{ color: colors.textPrimary }}>
+                <h3 className="font-bold text-base group-hover:opacity-90 transition-opacity" style={{ color: colors.textPrimary }}>
                   Crypto Wallet & Asset Holdings
                 </h3>
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded-md border font-bold uppercase tracking-wider" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim, color: colors.accent }}>
@@ -493,182 +501,209 @@ export const DashboardScreen: React.FC = () => {
               <Coins className="w-3.5 h-3.5" style={{ color: colors.accent }} />
               <span>{holdingsList.filter((h) => h.units > 0).length || holdingsList.length} Active Assets</span>
             </div>
+            <div
+              className="p-1.5 rounded-xl border flex items-center justify-center transition-all duration-300"
+              style={{
+                backgroundColor: holdingsExpanded ? colors.accentTint : colors.surface,
+                borderColor: holdingsExpanded ? colors.borderAccent : colors.borderDim,
+                color: holdingsExpanded ? colors.accent : colors.textSecondary,
+              }}
+            >
+              <ChevronDown
+                className={`w-4 h-4 transition-transform duration-300 ${holdingsExpanded ? 'rotate-180' : ''}`}
+              />
+            </div>
           </div>
         </div>
 
-        {/* ── ASSET ALLOCATION VISUALIZER BAR ── */}
-        {tabMetrics.marketValue > 0 && (
-          <div className="space-y-2.5 p-4 rounded-2xl border" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
-            <div className="flex justify-between items-center text-xs">
-              <span className="font-bold uppercase tracking-wider text-[10px]" style={{ color: colors.textTertiary }}>
-                Asset Weighting & Portfolio Distribution
-              </span>
-              <span className="font-mono font-bold text-xs" style={{ color: colors.textPrimary }}>
-                Total: ₹{tabMetrics.marketValue.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              </span>
-            </div>
-
-            {/* Stacked Proportional Distribution Bar */}
-            <div className="h-3 w-full rounded-full overflow-hidden flex gap-1 p-0.5" style={{ backgroundColor: colors.card }}>
-              {holdingsList.map((item) => {
-                const pct = tabMetrics.marketValue > 0 ? (item.inrValue / tabMetrics.marketValue) * 100 : 0;
-                if (pct <= 0) return null;
-                return (
-                  <div
-                    key={item.coin}
-                    className="h-full rounded-full transition-all hover:opacity-90"
-                    style={{
-                      width: `${pct}%`,
-                      backgroundColor: item.meta.color,
-                    }}
-                    title={`${item.label} (${item.coin}): ${pct.toFixed(1)}%`}
-                  />
-                );
-              })}
-            </div>
-
-            {/* Distribution Badges */}
-            <div className="flex flex-wrap items-center gap-3 pt-1 text-[11px] font-mono">
-              {holdingsList.map((item) => {
-                const pct = tabMetrics.marketValue > 0 ? ((item.inrValue / tabMetrics.marketValue) * 100).toFixed(1) : '0.0';
-                return (
-                  <div key={item.coin} className="flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-full inline-block" style={{ backgroundColor: item.meta.color }} />
-                    <span className="font-bold" style={{ color: colors.textPrimary }}>{item.coin}:</span>
-                    <span style={{ color: colors.textSecondary }}>{pct}%</span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* ── ASSET CARDS LIST ── */}
-        {holdingsList.length > 0 ? (
-          <div className="space-y-3">
-            {holdingsList.map((item) => {
-              const allocationPct = tabMetrics.marketValue > 0
-                ? Number(((item.inrValue / tabMetrics.marketValue) * 100).toFixed(1))
-                : 0;
-              const isProfit = item.gainRupees >= 0;
-
-              return (
-                <div
-                  key={item.coin}
-                  onClick={() => setSelectedAssetModal(item)}
-                  className="p-4 sm:p-5 rounded-2xl border transition-all duration-200 cursor-pointer hover:scale-[1.008] hover:shadow-md flex flex-col md:flex-row md:items-center justify-between gap-4"
-                  style={{
-                    backgroundColor: colors.surface,
-                    borderColor: colors.borderDim,
-                  }}
-                >
-                  {/* Left: Coin Badge & Unit Quantity */}
-                  <div className="flex items-center gap-3.5">
-                    <div
-                      className="w-12 h-12 rounded-2xl border flex items-center justify-center font-extrabold text-sm font-mono shadow-sm flex-shrink-0"
-                      style={{
-                        backgroundColor: item.meta.bg,
-                        borderColor: item.meta.border,
-                        color: item.meta.color,
-                      }}
-                    >
-                      {item.coin}
-                    </div>
-
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-extrabold text-sm sm:text-base" style={{ color: colors.textPrimary }}>
-                          {item.label}
-                        </span>
-                        <span
-                          className="text-[10px] font-mono px-2 py-0.5 rounded-md border font-semibold"
-                          style={{
-                            backgroundColor: item.meta.bg,
-                            borderColor: item.meta.border,
-                            color: item.meta.color,
-                          }}
-                        >
-                          {item.meta.tag}
-                        </span>
-                      </div>
-
-                      {/* Exact Fractional Crypto Units */}
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className="text-xs font-mono font-bold" style={{ color: colors.accent }}>
-                          {item.units === 0
-                            ? `0.00 ${item.coin}`
-                            : item.coin === 'BTC'
-                            ? `${item.units.toFixed(8)} BTC`
-                            : item.coin === 'ETH'
-                            ? `${item.units.toFixed(6)} ETH`
-                            : item.coin === 'SOL'
-                            ? `${item.units.toFixed(4)} SOL`
-                            : `${item.units.toFixed(2)} USDT`}
-                        </span>
-                        {item.usdValue > 0 && (
-                          <span className="text-[11px] font-mono" style={{ color: colors.textTertiary }}>
-                            (≈ ${item.usdValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD)
-                          </span>
-                        )}
-                      </div>
-                    </div>
+        {/* ── EXPANDABLE CONTENT ── */}
+        <AnimatePresence initial={false}>
+          {holdingsExpanded && (
+            <motion.div
+              key="holdings-expanded-body"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+              className="overflow-hidden space-y-6 pt-5 border-t mt-4"
+              style={{ borderColor: colors.borderDim }}
+            >
+              {/* ── ASSET ALLOCATION VISUALIZER BAR ── */}
+              {tabMetrics.marketValue > 0 && (
+                <div className="space-y-2.5 p-4 rounded-2xl border" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="font-bold uppercase tracking-wider text-[10px]" style={{ color: colors.textTertiary }}>
+                      Asset Weighting & Portfolio Distribution
+                    </span>
+                    <span className="font-mono font-bold text-xs" style={{ color: colors.textPrimary }}>
+                      Total: ₹{tabMetrics.marketValue.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </span>
                   </div>
 
-                  {/* Middle / Right: Financial PnL & Valuation */}
-                  <div className="flex items-center justify-between md:justify-end gap-6 pt-3 md:pt-0 border-t md:border-t-0 font-mono" style={{ borderColor: colors.borderDim }}>
-                    {/* Cost Basis & Performance */}
-                    <div className="text-left md:text-right text-xs">
-                      <div className="text-[11px]" style={{ color: colors.textTertiary }}>
-                        Invested Cost Basis
-                      </div>
-                      <div className="font-bold text-xs sm:text-sm mt-0.5" style={{ color: colors.textPrimary }}>
-                        ₹{item.investedInr.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                      </div>
-                      {item.investedInr > 0 && (
+                  {/* Stacked Proportional Distribution Bar */}
+                  <div className="h-3 w-full rounded-full overflow-hidden flex gap-1 p-0.5" style={{ backgroundColor: colors.card }}>
+                    {holdingsList.map((item) => {
+                      const pct = tabMetrics.marketValue > 0 ? (item.inrValue / tabMetrics.marketValue) * 100 : 0;
+                      if (pct <= 0) return null;
+                      return (
                         <div
-                          className="text-[10px] font-bold mt-0.5 inline-flex items-center gap-0.5"
-                          style={{ color: isProfit ? colors.semanticSuccess : colors.semanticDanger }}
-                        >
-                          <span>{isProfit ? '+' : ''}₹{item.gainRupees.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                          <span>({isProfit ? '+' : ''}{item.gainPercentage}%)</span>
+                          key={item.coin}
+                          className="h-full rounded-full transition-all hover:opacity-90"
+                          style={{
+                            width: `${pct}%`,
+                            backgroundColor: item.meta.color,
+                          }}
+                          title={`${item.label} (${item.coin}): ${pct.toFixed(1)}%`}
+                        />
+                      );
+                    })}
+                  </div>
+
+                  {/* Distribution Badges */}
+                  <div className="flex flex-wrap items-center gap-3 pt-1 text-[11px] font-mono">
+                    {holdingsList.map((item) => {
+                      const pct = tabMetrics.marketValue > 0 ? ((item.inrValue / tabMetrics.marketValue) * 100).toFixed(1) : '0.0';
+                      return (
+                        <div key={item.coin} className="flex items-center gap-1.5">
+                          <span className="w-2.5 h-2.5 rounded-full inline-block" style={{ backgroundColor: item.meta.color }} />
+                          <span className="font-bold" style={{ color: colors.textPrimary }}>{item.coin}:</span>
+                          <span style={{ color: colors.textSecondary }}>{pct}%</span>
                         </div>
-                      )}
-                    </div>
-
-                    {/* Current Market Value */}
-                    <div className="text-right">
-                      <div className="text-[11px]" style={{ color: colors.textTertiary }}>
-                        Current Valuation
-                      </div>
-                      <div className="font-extrabold text-sm sm:text-base" style={{ color: colors.textPrimary }}>
-                        ₹{item.inrValue.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                      </div>
-                      <div className="text-[10px] font-semibold mt-0.5 flex items-center justify-end gap-1.5" style={{ color: colors.accent }}>
-                        <span>Spot: ₹{item.priceInr >= 100000 ? `${(item.priceInr / 100000).toFixed(2)}L` : item.priceInr.toLocaleString('en-IN')}</span>
-                        <span>· {allocationPct}%</span>
-                      </div>
-                    </div>
-
-                    <ChevronRight className="w-4 h-4 hidden md:block text-slate-500" />
+                      );
+                    })}
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        ) : (
-          <div className="p-8 text-center text-xs border rounded-2xl border-dashed" style={{ color: colors.textTertiary, borderColor: colors.borderDim }}>
-            No crypto holdings in this tab yet. Set up a daily habit in <strong style={{ color: colors.textPrimary }}>Invest</strong> or deposit funds to start accumulating fractional crypto.
-          </div>
-        )}
+              )}
 
-        {/* Footer Custody Note */}
-        <div className="pt-2 flex items-center justify-between text-[11px] font-mono text-slate-400" style={{ color: colors.textTertiary }}>
-          <div className="flex items-center gap-1.5">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-            <span>100% Non-Custodial · Direct Spot Execution via CoinDCX API</span>
-          </div>
-          <span className="hidden sm:inline">Tap any asset to inspect on-chain balance & cost basis</span>
-        </div>
+              {/* ── ASSET CARDS LIST ── */}
+              {holdingsList.length > 0 ? (
+                <div className="space-y-3">
+                  {holdingsList.map((item) => {
+                    const allocationPct = tabMetrics.marketValue > 0
+                      ? Number(((item.inrValue / tabMetrics.marketValue) * 100).toFixed(1))
+                      : 0;
+                    const isProfit = item.gainRupees >= 0;
+
+                    return (
+                      <div
+                        key={item.coin}
+                        onClick={() => setSelectedAssetModal(item)}
+                        className="p-4 sm:p-5 rounded-2xl border transition-all duration-200 cursor-pointer hover:scale-[1.008] hover:shadow-md flex flex-col md:flex-row md:items-center justify-between gap-4"
+                        style={{
+                          backgroundColor: colors.surface,
+                          borderColor: colors.borderDim,
+                        }}
+                      >
+                        {/* Left: Coin Badge & Unit Quantity */}
+                        <div className="flex items-center gap-3.5">
+                          <div
+                            className="w-12 h-12 rounded-2xl border flex items-center justify-center font-extrabold text-sm font-mono shadow-sm flex-shrink-0"
+                            style={{
+                              backgroundColor: item.meta.bg,
+                              borderColor: item.meta.border,
+                              color: item.meta.color,
+                            }}
+                          >
+                            {item.coin}
+                          </div>
+
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className="font-extrabold text-sm sm:text-base" style={{ color: colors.textPrimary }}>
+                                {item.label}
+                              </span>
+                              <span
+                                className="text-[10px] font-mono px-2 py-0.5 rounded-md border font-semibold"
+                                style={{
+                                  backgroundColor: item.meta.bg,
+                                  borderColor: item.meta.border,
+                                  color: item.meta.color,
+                                }}
+                              >
+                                {item.meta.tag}
+                              </span>
+                            </div>
+
+                            {/* Exact Fractional Crypto Units */}
+                            <div className="flex items-center gap-2 mt-1">
+                              <span className="text-xs font-mono font-bold" style={{ color: colors.accent }}>
+                                {item.units === 0
+                                  ? `0.00 ${item.coin}`
+                                  : item.coin === 'BTC'
+                                  ? `${item.units.toFixed(8)} BTC`
+                                  : item.coin === 'ETH'
+                                  ? `${item.units.toFixed(6)} ETH`
+                                  : item.coin === 'SOL'
+                                  ? `${item.units.toFixed(4)} SOL`
+                                  : `${item.units.toFixed(2)} USDT`}
+                              </span>
+                              {item.usdValue > 0 && (
+                                <span className="text-[11px] font-mono" style={{ color: colors.textTertiary }}>
+                                  (≈ ${item.usdValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD)
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Middle / Right: Financial PnL & Valuation */}
+                        <div className="flex items-center justify-between md:justify-end gap-6 pt-3 md:pt-0 border-t md:border-t-0 font-mono" style={{ borderColor: colors.borderDim }}>
+                          {/* Cost Basis & Performance */}
+                          <div className="text-left md:text-right text-xs">
+                            <div className="text-[11px]" style={{ color: colors.textTertiary }}>
+                              Invested Cost Basis
+                            </div>
+                            <div className="font-bold text-xs sm:text-sm mt-0.5" style={{ color: colors.textPrimary }}>
+                              ₹{item.investedInr.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </div>
+                            {item.investedInr > 0 && (
+                              <div
+                                className="text-[10px] font-bold mt-0.5 inline-flex items-center gap-0.5"
+                                style={{ color: isProfit ? colors.semanticSuccess : colors.semanticDanger }}
+                              >
+                                <span>{isProfit ? '+' : ''}₹{item.gainRupees.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                                <span>({isProfit ? '+' : ''}{item.gainPercentage}%)</span>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Current Market Value */}
+                          <div className="text-right">
+                            <div className="text-[11px]" style={{ color: colors.textTertiary }}>
+                              Current Valuation
+                            </div>
+                            <div className="font-extrabold text-sm sm:text-base" style={{ color: colors.textPrimary }}>
+                              ₹{item.inrValue.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </div>
+                            <div className="text-[10px] font-semibold mt-0.5 flex items-center justify-end gap-1.5" style={{ color: colors.accent }}>
+                              <span>Spot: ₹{item.priceInr >= 100000 ? `${(item.priceInr / 100000).toFixed(2)}L` : item.priceInr.toLocaleString('en-IN')}</span>
+                              <span>· {allocationPct}%</span>
+                            </div>
+                          </div>
+
+                          <ChevronRight className="w-4 h-4 hidden md:block text-slate-500" />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="p-8 text-center text-xs border rounded-2xl border-dashed" style={{ color: colors.textTertiary, borderColor: colors.borderDim }}>
+                  No crypto holdings in this tab yet. Set up a daily habit in <strong style={{ color: colors.textPrimary }}>Invest</strong> or deposit funds to start accumulating fractional crypto.
+                </div>
+              )}
+
+              {/* Footer Custody Note */}
+              <div className="pt-2 flex items-center justify-between text-[11px] font-mono text-slate-400" style={{ color: colors.textTertiary }}>
+                <div className="flex items-center gap-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>100% Non-Custodial · Direct Spot Execution via CoinDCX API</span>
+                </div>
+                <span className="hidden sm:inline">Tap any asset to inspect on-chain balance & cost basis</span>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </SpotlightCard>
 
       {/* ── DUAL HABITS / AUTOPAY STATUS ROW ─────────────────── */}

@@ -22,12 +22,13 @@ import {
   Wallet,
   Coins,
   ShieldCheck,
+  ChevronDown,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { generateTaxStatement, downloadCsvFile } from '../../utils/taxGenerator';
 import { ACHIEVEMENTS } from '../../data/mockData';
 import { SpotlightCard, CountUp, Magnet, FadeIn, ShinyText } from '../ui';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 
 export const ProfileScreen: React.FC = () => {
   const {
@@ -51,6 +52,7 @@ export const ProfileScreen: React.FC = () => {
 
   const [reminderToggle, setReminderToggle] = useState(true);
   const [biometricToggle, setBiometricToggle] = useState(true);
+  const [inventoryExpanded, setInventoryExpanded] = useState(false);
 
   // Tax Statement State
   const [taxModalOpen, setTaxModalOpen] = useState(false);
@@ -201,109 +203,151 @@ export const ProfileScreen: React.FC = () => {
         </SpotlightCard>
       </div>
 
-      {/* ── MY CRYPTO ASSET INVENTORY & WALLET BALANCES ─────────── */}
+      {/* ── MY CRYPTO ASSET INVENTORY & WALLET BALANCES (EXPANDABLE) ─────────── */}
       <SpotlightCard
         spotlightColor={colors.accentTint}
-        className="rounded-3xl p-6 sm:p-7 border shadow-lg space-y-4"
+        className="rounded-3xl p-5 sm:p-7 border shadow-lg transition-all duration-300"
         style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
       >
-        <div className="flex items-center justify-between pb-3 border-b" style={{ borderColor: colors.borderDim }}>
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl border" style={{ backgroundColor: colors.accentTint, borderColor: colors.borderAccent, color: colors.accent }}>
-              <Wallet className="w-4 h-4" />
+        <div
+          onClick={() => setInventoryExpanded((prev) => !prev)}
+          className="flex items-center justify-between gap-3 cursor-pointer select-none group"
+          role="button"
+          tabIndex={0}
+          aria-expanded={inventoryExpanded}
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl border flex items-center justify-center shadow-sm transition-transform duration-200 group-hover:scale-105" style={{ backgroundColor: colors.accentTint, borderColor: colors.borderAccent, color: colors.accent }}>
+              <Wallet className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="font-bold text-sm" style={{ color: colors.textPrimary }}>
-                My Crypto Asset Inventory
-              </h3>
-              <p className="text-[11px] font-mono" style={{ color: colors.textSecondary }}>
+              <div className="flex items-center gap-2">
+                <h3 className="font-bold text-sm sm:text-base group-hover:opacity-90 transition-opacity" style={{ color: colors.textPrimary }}>
+                  My Crypto Asset Inventory
+                </h3>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-md border font-semibold" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim, color: colors.accent }}>
+                  4 Assets
+                </span>
+              </div>
+              <p className="text-[11px] font-mono mt-0.5" style={{ color: colors.textSecondary }}>
                 Non-custodial spot execution via CoinDCX API · Linked: {user?.bankName || 'HDFC Bank'}
               </p>
             </div>
           </div>
 
-          <button
-            onClick={() => setActiveTab('dashboard')}
-            className="text-xs font-bold font-mono px-3 py-1.5 rounded-xl border transition-opacity hover:opacity-80"
-            style={{ backgroundColor: colors.surface, borderColor: colors.borderDim, color: colors.accent }}
-          >
-            Open Dashboard →
-          </button>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          {[
-            {
-              coin: 'BTC',
-              name: 'Bitcoin',
-              units: tabMetrics.holdings.BTC.units,
-              inrValue: tabMetrics.holdings.BTC.inrValue,
-              color: '#F7931A',
-              bg: 'rgba(247, 147, 26, 0.1)',
-              border: 'rgba(247, 147, 26, 0.25)',
-              formatted: tabMetrics.holdings.BTC.units === 0 ? '0.00 BTC' : `${tabMetrics.holdings.BTC.units.toFixed(8)} BTC`,
-            },
-            {
-              coin: 'ETH',
-              name: 'Ethereum',
-              units: tabMetrics.holdings.ETH.units,
-              inrValue: tabMetrics.holdings.ETH.inrValue,
-              color: '#627EEA',
-              bg: 'rgba(98, 126, 234, 0.1)',
-              border: 'rgba(98, 126, 234, 0.25)',
-              formatted: tabMetrics.holdings.ETH.units === 0 ? '0.00 ETH' : `${tabMetrics.holdings.ETH.units.toFixed(6)} ETH`,
-            },
-            {
-              coin: 'SOL',
-              name: 'Solana',
-              units: tabMetrics.holdings.SOL.units,
-              inrValue: tabMetrics.holdings.SOL.inrValue,
-              color: '#14F195',
-              bg: 'rgba(20, 241, 149, 0.1)',
-              border: 'rgba(20, 241, 149, 0.25)',
-              formatted: tabMetrics.holdings.SOL.units === 0 ? '0.00 SOL' : `${tabMetrics.holdings.SOL.units.toFixed(4)} SOL`,
-            },
-            {
-              coin: 'USDT',
-              name: 'Tether USD',
-              units: tabMetrics.holdings.USDT.units,
-              inrValue: tabMetrics.holdings.USDT.inrValue,
-              color: '#26A17B',
-              bg: 'rgba(38, 161, 123, 0.1)',
-              border: 'rgba(38, 161, 123, 0.25)',
-              formatted: `${tabMetrics.holdings.USDT.units.toFixed(2)} USDT`,
-            },
-          ].map((asset) => (
-            <div
-              key={asset.coin}
-              className="p-3.5 rounded-2xl border flex flex-col justify-between"
-              style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setActiveTab('dashboard');
+              }}
+              className="text-xs font-bold font-mono px-3 py-1.5 rounded-xl border transition-opacity hover:opacity-80 hidden sm:inline-flex"
+              style={{ backgroundColor: colors.surface, borderColor: colors.borderDim, color: colors.accent }}
             >
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <span
-                    className="w-7 h-7 rounded-lg border flex items-center justify-center font-bold text-xs font-mono"
-                    style={{ backgroundColor: asset.bg, borderColor: asset.border, color: asset.color }}
-                  >
-                    {asset.coin}
-                  </span>
-                  <span className="font-bold text-xs" style={{ color: colors.textPrimary }}>
-                    {asset.name}
-                  </span>
-                </div>
-              </div>
-
-              <div>
-                <div className="text-xs font-bold font-mono truncate" style={{ color: colors.accent }}>
-                  {asset.formatted}
-                </div>
-                <div className="text-[11px] font-mono mt-0.5" style={{ color: colors.textSecondary }}>
-                  ₹{asset.inrValue.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                </div>
-              </div>
+              Open Dashboard →
+            </button>
+            <div
+              className="p-1.5 rounded-xl border flex items-center justify-center transition-all duration-300"
+              style={{
+                backgroundColor: inventoryExpanded ? colors.accentTint : colors.surface,
+                borderColor: inventoryExpanded ? colors.borderAccent : colors.borderDim,
+                color: inventoryExpanded ? colors.accent : colors.textSecondary,
+              }}
+            >
+              <ChevronDown
+                className={`w-4 h-4 transition-transform duration-300 ${inventoryExpanded ? 'rotate-180' : ''}`}
+              />
             </div>
-          ))}
+          </div>
         </div>
+
+        <AnimatePresence initial={false}>
+          {inventoryExpanded && (
+            <motion.div
+              key="inventory-expanded-body"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+              className="overflow-hidden pt-4 border-t mt-3"
+              style={{ borderColor: colors.borderDim }}
+            >
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                {[
+                  {
+                    coin: 'BTC',
+                    name: 'Bitcoin',
+                    units: tabMetrics.holdings.BTC.units,
+                    inrValue: tabMetrics.holdings.BTC.inrValue,
+                    color: '#F7931A',
+                    bg: 'rgba(247, 147, 26, 0.1)',
+                    border: 'rgba(247, 147, 26, 0.25)',
+                    formatted: tabMetrics.holdings.BTC.units === 0 ? '0.00 BTC' : `${tabMetrics.holdings.BTC.units.toFixed(8)} BTC`,
+                  },
+                  {
+                    coin: 'ETH',
+                    name: 'Ethereum',
+                    units: tabMetrics.holdings.ETH.units,
+                    inrValue: tabMetrics.holdings.ETH.inrValue,
+                    color: '#627EEA',
+                    bg: 'rgba(98, 126, 234, 0.1)',
+                    border: 'rgba(98, 126, 234, 0.25)',
+                    formatted: tabMetrics.holdings.ETH.units === 0 ? '0.00 ETH' : `${tabMetrics.holdings.ETH.units.toFixed(6)} ETH`,
+                  },
+                  {
+                    coin: 'SOL',
+                    name: 'Solana',
+                    units: tabMetrics.holdings.SOL.units,
+                    inrValue: tabMetrics.holdings.SOL.inrValue,
+                    color: '#14F195',
+                    bg: 'rgba(20, 241, 149, 0.1)',
+                    border: 'rgba(20, 241, 149, 0.25)',
+                    formatted: tabMetrics.holdings.SOL.units === 0 ? '0.00 SOL' : `${tabMetrics.holdings.SOL.units.toFixed(4)} SOL`,
+                  },
+                  {
+                    coin: 'USDT',
+                    name: 'Tether USD',
+                    units: tabMetrics.holdings.USDT.units,
+                    inrValue: tabMetrics.holdings.USDT.inrValue,
+                    color: '#26A17B',
+                    bg: 'rgba(38, 161, 123, 0.1)',
+                    border: 'rgba(38, 161, 123, 0.25)',
+                    formatted: `${tabMetrics.holdings.USDT.units.toFixed(2)} USDT`,
+                  },
+                ].map((asset) => (
+                  <div
+                    key={asset.coin}
+                    className="p-3.5 rounded-2xl border flex flex-col justify-between"
+                    style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <span
+                          className="w-7 h-7 rounded-lg border flex items-center justify-center font-bold text-xs font-mono"
+                          style={{ backgroundColor: asset.bg, borderColor: asset.border, color: asset.color }}
+                        >
+                          {asset.coin}
+                        </span>
+                        <span className="font-bold text-xs" style={{ color: colors.textPrimary }}>
+                          {asset.name}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="text-xs font-bold font-mono truncate" style={{ color: colors.accent }}>
+                        {asset.formatted}
+                      </div>
+                      <div className="text-[11px] font-mono mt-0.5" style={{ color: colors.textSecondary }}>
+                        ₹{asset.inrValue.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </SpotlightCard>
 
       {/* ── GAMIFICATION & XP PROGRESS ────────────────────────── */}
