@@ -148,9 +148,9 @@ export const CookiePolicyPage: React.FC = () => {
 
           {/* Section 4: Contact Details */}
           <section className="p-6 rounded-2xl border space-y-3" style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}>
-            <h2 className="text-lg font-bold" style={{ color: colors.textPrimary }}>4. Questions & Privacy Officer</h2>
-            <p className="text-xs sm:text-sm">
-              For questions regarding our cookie practices, please contact our Data Protection and Grievance Officer at <a href="mailto:grievance@satmix.app" className="font-mono font-bold hover:underline" style={{ color: colors.accent }}>grievance@satmix.app</a>.
+            <h2 className="text-lg font-bold" style={{ color: colors.textPrimary }}>4. Questions & Policy Inquiries</h2>
+            <p className="text-xs sm:text-sm leading-relaxed" style={{ color: colors.textSecondary }}>
+              For questions regarding our privacy practices or cookie policies, reach out directly through our verified WhatsApp Community and official LinkedIn channels.
             </p>
           </section>
 

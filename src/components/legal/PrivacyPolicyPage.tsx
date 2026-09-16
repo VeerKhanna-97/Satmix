@@ -133,45 +133,21 @@ export const PrivacyPolicyPage: React.FC = () => {
             </div>
           </section>
 
-          {/* Section 6: Grievance Officer & Contact Details */}
+          {/* Section 6: Privacy Inquiries */}
           <section className="p-6 sm:p-7 rounded-3xl border space-y-4" style={{ backgroundColor: colors.cardHigh, borderColor: colors.borderAccent }}>
             <div className="flex items-center gap-2.5">
               <div className="p-2 rounded-xl" style={{ backgroundColor: colors.purpleTint, color: colors.accent }}>
                 <Building className="w-5 h-5" />
               </div>
               <div>
-                <h2 className="text-lg font-bold" style={{ color: colors.textPrimary }}>6. Grievance Officer & Redressal Mechanism</h2>
-                <p className="text-xs" style={{ color: colors.textSecondary }}>Pursuant to the DPDP Act 2023 and Rule 3(2) of the Information Technology Rules, 2011</p>
+                <h2 className="text-lg font-bold" style={{ color: colors.textPrimary }}>6. Privacy Inquiries & Communications</h2>
+                <p className="text-xs" style={{ color: colors.textSecondary }}>Reach our team regarding data rights and privacy queries</p>
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl border space-y-2 text-xs" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
-              <div className="flex justify-between">
-                <span style={{ color: colors.textSecondary }}>Designation:</span>
-                <span className="font-bold" style={{ color: colors.textPrimary }}>Grievance Redressal Officer</span>
-              </div>
-              <div className="flex justify-between">
-                <span style={{ color: colors.textSecondary }}>Entity:</span>
-                <span className="font-bold" style={{ color: colors.textPrimary }}>Satmix Technologies</span>
-              </div>
-              <div className="flex justify-between">
-                <span style={{ color: colors.textSecondary }}>Location:</span>
-                <span className="font-bold" style={{ color: colors.textPrimary }}>Bengaluru, Karnataka 560029, India</span>
-              </div>
-              <div className="flex justify-between">
-                <span style={{ color: colors.textSecondary }}>Grievance Email:</span>
-                <a href="mailto:grievance@satmix.app" className="font-mono font-bold hover:underline" style={{ color: colors.accent }}>grievance@satmix.app</a>
-              </div>
-              <div className="flex justify-between">
-                <span style={{ color: colors.textSecondary }}>General Support Email:</span>
-                <a href="mailto:support@satmix.app" className="font-mono font-bold hover:underline" style={{ color: colors.accent }}>support@satmix.app</a>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 text-xs font-semibold pt-1" style={{ color: colors.accent }}>
-              <Clock className="w-4 h-4 flex-shrink-0" />
-              <span>Response Commitment: Grievances acknowledged within 24–48 business hours and resolved within 30 days.</span>
-            </div>
+            <p className="text-xs sm:text-sm leading-relaxed" style={{ color: colors.textSecondary }}>
+              Satmix is built with privacy-first principles. We do not sell, rent, or monetize your personal information. For any data protection questions or rights requests, you can connect directly with the team via our verified WhatsApp Community or official LinkedIn channels.
+            </p>
           </section>
 
           {/* Action Back to Top / Home */}

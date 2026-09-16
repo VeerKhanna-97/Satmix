@@ -82,9 +82,9 @@ export const ThankYouPage: React.FC = () => {
           >
             <Clock className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: colors.accent }} />
             <div className="space-y-1">
-              <strong className="block font-semibold" style={{ color: colors.textPrimary }}>Our Realistic Support Commitment</strong>
+              <strong className="block font-semibold" style={{ color: colors.textPrimary }}>Join Our Early Access Community</strong>
               <p className="text-xs leading-relaxed" style={{ color: colors.textSecondary }}>
-                Our core engineering and onboarding team responds to all waitlist questions within <strong>24 business hours</strong>. Reach us directly at <a href="mailto:support@satmix.app" className="font-mono font-bold hover:underline" style={{ color: colors.accent }}>support@satmix.app</a>.
+                Connect directly with the founders and fellow early users in our WhatsApp Community to get updates, preview upcoming features, and share feedback.
               </p>
             </div>
           </div>

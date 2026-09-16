@@ -71,36 +71,6 @@ export const Footer: React.FC = () => {
           </div>
         </div>
 
-        {/* Business Entity, Support Promise & Grievance Info */}
-        <div className="py-8 grid grid-cols-1 md:grid-cols-3 gap-6 border-b text-xs" style={{ borderColor: colors.borderDim }}>
-          <div>
-            <span className="font-bold block mb-1" style={{ color: colors.textPrimary }}>Corporate Entity & Architecture</span>
-            <p className="leading-relaxed" style={{ color: colors.textSecondary }}>
-              Satmix Technologies<br />
-              Bengaluru, Karnataka 560029, India<br />
-              Non-Custodial DCA Engine • CoinDCX API Routing
-            </p>
-          </div>
-
-          <div>
-            <span className="font-bold block mb-1" style={{ color: colors.textPrimary }}>Support & Response Guarantee</span>
-            <p className="leading-relaxed" style={{ color: colors.textSecondary }}>
-              Inquiries addressed within <strong style={{ color: colors.textPrimary }}>24 business hours</strong>.<br />
-              Direct Support: <a href="mailto:support@satmix.app" className="hover:underline font-mono font-medium" style={{ color: colors.accent }}>support@satmix.app</a><br />
-              Press / Partnership: <a href="mailto:partners@satmix.app" className="hover:underline font-mono font-medium" style={{ color: colors.accent }}>partners@satmix.app</a>
-            </p>
-          </div>
-
-          <div>
-            <span className="font-bold block mb-1" style={{ color: colors.textPrimary }}>Grievance Redressal (DPDP Act 2023)</span>
-            <p className="leading-relaxed" style={{ color: colors.textSecondary }}>
-              Grievance Officer: Satmix Technologies<br />
-              Email: <a href="mailto:grievance@satmix.app" className="hover:underline font-mono font-medium" style={{ color: colors.accent }}>grievance@satmix.app</a><br />
-              Resolution within statutory 30-day timeline.
-            </p>
-          </div>
-        </div>
-
         {/* Legal & Compliance Disclaimer */}
         <div className="pt-8 text-center md:text-left flex flex-col md:flex-row items-center justify-between gap-4 text-xs" style={{ color: colors.textTertiary }}>
           <div className="space-y-1">

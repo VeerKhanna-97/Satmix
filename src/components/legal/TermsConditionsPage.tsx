@@ -145,18 +145,12 @@ export const TermsConditionsPage: React.FC = () => {
             </p>
           </section>
 
-          {/* Section 8: Support & Business Inquiries */}
+          {/* Section 8: Support & Community Contact */}
           <section className="p-6 rounded-3xl border space-y-3" style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder }}>
-            <h2 className="text-lg font-bold" style={{ color: colors.textPrimary }}>8. Business Identity & Support Contact</h2>
-            <p className="text-xs sm:text-sm">
-              For any questions regarding these Terms or the platform:
+            <h2 className="text-lg font-bold" style={{ color: colors.textPrimary }}>8. Inquiries & Community Support</h2>
+            <p className="text-xs sm:text-sm leading-relaxed" style={{ color: colors.textSecondary }}>
+              For questions regarding these Terms or the platform, users can reach out directly via our verified WhatsApp Community and official LinkedIn channels.
             </p>
-            <div className="p-4 rounded-2xl border space-y-1.5 text-xs font-mono" style={{ backgroundColor: colors.card, borderColor: colors.borderDim }}>
-              <div><strong style={{ color: colors.textPrimary }}>Entity:</strong> Satmix Technologies</div>
-              <div><strong style={{ color: colors.textPrimary }}>Location:</strong> Bengaluru, Karnataka 560029, India</div>
-              <div><strong style={{ color: colors.textPrimary }}>Official Support:</strong> <a href="mailto:support@satmix.app" className="hover:underline" style={{ color: colors.accent }}>support@satmix.app</a> (Response within 24 business hours)</div>
-              <div><strong style={{ color: colors.textPrimary }}>Legal Inquiries:</strong> <a href="mailto:legal@satmix.app" className="hover:underline" style={{ color: colors.accent }}>legal@satmix.app</a></div>
-            </div>
           </section>
 
           {/* Action Back to Top / Home */}

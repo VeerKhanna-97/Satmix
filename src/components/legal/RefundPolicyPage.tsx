@@ -117,23 +117,21 @@ export const RefundPolicyPage: React.FC = () => {
           </section>
 
           {/* Section 5: Support & Grievance Contact */}
+          {/* Section 5: Payout & Settlement Inquiries */}
           <section className="p-6 rounded-2xl border space-y-4" style={{ backgroundColor: colors.cardHigh, borderColor: colors.borderAccent }}>
             <div className="flex items-center gap-2.5">
               <div className="p-2 rounded-xl" style={{ backgroundColor: colors.purpleTint, color: colors.accent }}>
                 <Building2 className="w-5 h-5" />
               </div>
               <div>
-                <h2 className="text-lg font-bold" style={{ color: colors.textPrimary }}>5. Payout Support & Grievance Redressal</h2>
-                <p className="text-xs" style={{ color: colors.textSecondary }}>Contact our dedicated support team for withdrawal inquiries</p>
+                <h2 className="text-lg font-bold" style={{ color: colors.textPrimary }}>5. Payout Support & Settlement Inquiries</h2>
+                <p className="text-xs" style={{ color: colors.textSecondary }}>Assistance for withdrawal status and bank settlement</p>
               </div>
             </div>
 
-            <div className="p-4 rounded-xl border space-y-2 text-xs font-mono" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
-              <div><strong style={{ color: colors.textPrimary }}>Entity:</strong> Satmix Technologies</div>
-              <div><strong style={{ color: colors.textPrimary }}>Address:</strong> Bengaluru, Karnataka 560029, India</div>
-              <div><strong style={{ color: colors.textPrimary }}>Payout Support:</strong> <a href="mailto:support@satmix.app" className="hover:underline font-medium" style={{ color: colors.accent }}>support@satmix.app</a> (24 business hours response guarantee)</div>
-              <div><strong style={{ color: colors.textPrimary }}>Grievance Escalation:</strong> <a href="mailto:grievance@satmix.app" className="hover:underline font-medium" style={{ color: colors.accent }}>grievance@satmix.app</a></div>
-            </div>
+            <p className="text-xs sm:text-sm leading-relaxed" style={{ color: colors.textSecondary }}>
+              All withdrawal redemptions execute via instant IMPS bank rail settlements directly to your verified primary bank account. If you require assistance regarding settlement status, reach out directly to the core team through our official WhatsApp Community.
+            </p>
           </section>
 
           {/* Action Back to Top / Home */}
