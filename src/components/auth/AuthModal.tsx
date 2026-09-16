@@ -134,7 +134,7 @@ export const AuthModal: React.FC = () => {
         {/* Brand Header */}
         <div className="text-center mb-6">
           <div className="w-12 h-12 rounded-2xl mx-auto mb-3 overflow-hidden border p-0.5" style={{ borderColor: colors.borderDim }}>
-            <img src="/src/assets/images/satmix-logo.jpg" alt="Satmix Logo" className="w-full h-full object-cover rounded-xl" />
+            <img src="/assets/images/satmix-logo.jpg" alt="Satmix Logo" className="w-full h-full object-cover rounded-xl" />
           </div>
           <h2 className="text-2xl font-extrabold tracking-tight" style={{ color: colors.textPrimary }}>
             {isLogin ? 'Welcome Back to Satmix' : 'Create Your Satmix Account'}

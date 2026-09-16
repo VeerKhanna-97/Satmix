@@ -194,7 +194,7 @@ export const StepsSection: React.FC = () => {
                   {/* PhonePe (Active) */}
                   <div className="p-2 rounded-xl border border-white/40 bg-white/10 flex items-center justify-between shadow-sm">
                     <div className="flex items-center gap-1.5">
-                      <img src="/src/assets/images/phonepe.svg" alt="PhonePe" className="w-4 h-4 object-contain" />
+                      <img src="/assets/images/phonepe.svg" alt="PhonePe" className="w-4 h-4 object-contain" />
                       <span className="text-[11px] font-bold text-white">PhonePe</span>
                     </div>
                     <div className="w-3.5 h-3.5 rounded-full bg-white flex items-center justify-center shadow">
@@ -204,13 +204,13 @@ export const StepsSection: React.FC = () => {
 
                   {/* Paytm */}
                   <div className="p-2 rounded-xl border border-gray-800 bg-black/20 flex items-center gap-1.5 transition-colors hover:border-gray-700">
-                    <img src="/src/assets/images/paytm.svg" alt="Paytm" className="w-4 h-4 object-contain" />
+                    <img src="/assets/images/paytm.svg" alt="Paytm" className="w-4 h-4 object-contain" />
                     <span className="text-[11px] font-medium text-gray-300">Paytm</span>
                   </div>
 
                   {/* GPay */}
                   <div className="p-2 rounded-xl border border-gray-800 bg-black/20 flex items-center gap-1.5 transition-colors hover:border-gray-700">
-                    <img src="/src/assets/images/gpay.svg" alt="GPay" className="w-4 h-4 object-contain" />
+                    <img src="/assets/images/gpay.svg" alt="GPay" className="w-4 h-4 object-contain" />
                     <span className="text-[11px] font-medium text-gray-300">GPay</span>
                   </div>
 
@@ -291,7 +291,7 @@ export const StepsSection: React.FC = () => {
 
                 {/* Basket Card Preview */}
                 <div className="p-2 rounded-xl border border-white/15 bg-white/5 text-center space-y-0.5">
-                  <img src="/src/assets/images/btc-logo.png" alt="BTC" className="w-6 h-6 mx-auto object-contain transition-transform duration-300 hover:scale-110" />
+                  <img src="/assets/images/btc-logo.png" alt="BTC" className="w-6 h-6 mx-auto object-contain transition-transform duration-300 hover:scale-110" />
                   <div className="font-extrabold text-xs text-white">Growth Basket (70:20:10)</div>
                   <div className="text-[9px] text-gray-400 font-mono">70% BTC · 20% ETH · 10% SOL</div>
                 </div>

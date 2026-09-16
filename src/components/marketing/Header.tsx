@@ -63,7 +63,7 @@ export const Header: React.FC = () => {
         {/* Brand Logo */}
         <div className="flex items-center gap-3 cursor-pointer group" onClick={() => setViewMode('marketing')}>
           <div className="w-9 h-9 rounded-xl overflow-hidden shadow-sm flex items-center justify-center border transition-transform duration-300 group-hover:scale-105" style={{ borderColor: colors.borderDim }}>
-            <img src="/src/assets/images/satmix-logo.jpg" alt="Satmix Logo" className="w-full h-full object-cover" />
+            <img src="/assets/images/satmix-logo.jpg" alt="Satmix Logo" className="w-full h-full object-cover" />
           </div>
           <span className="font-extrabold text-xl tracking-tight" style={{ color: colors.textPrimary }}>
             Satmix

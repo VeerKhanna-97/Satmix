@@ -60,7 +60,7 @@ export const AppShell: React.FC = () => {
 
             <div className="flex items-center gap-2.5 cursor-pointer group" onClick={() => setActiveTab('dashboard')}>
               <div className="w-8 h-8 rounded-xl overflow-hidden border flex items-center justify-center transition-transform duration-300 group-hover:scale-105" style={{ borderColor: colors.borderDim }}>
-                <img src="/src/assets/images/satmix-logo.jpg" alt="Satmix Logo" className="w-full h-full object-cover" />
+                <img src="/assets/images/satmix-logo.jpg" alt="Satmix Logo" className="w-full h-full object-cover" />
               </div>
               <span className="font-extrabold text-lg tracking-tight" style={{ color: colors.textPrimary }}>Satmix App</span>
             </div>

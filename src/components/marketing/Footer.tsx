@@ -24,7 +24,7 @@ export const Footer: React.FC = () => {
           {/* Logo & Tagline */}
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-xl overflow-hidden border flex items-center justify-center" style={{ borderColor: colors.borderDim }}>
-              <img src="/src/assets/images/satmix-logo.jpg" alt="Satmix Logo" className="w-full h-full object-cover" />
+              <img src="/assets/images/satmix-logo.jpg" alt="Satmix Logo" className="w-full h-full object-cover" />
             </div>
             <div>
               <span className="font-extrabold text-lg tracking-tight" style={{ color: colors.primary }}>
