@@ -42,7 +42,7 @@ export function initTicker() {
           { id: 'polkadot', symbol: 'DOT' }
         ];
 
-        const RETAIL_MARKUP = 1.10; // 10% retail markup for 1% TDS & platform spread
+        const RETAIL_MARKUP = 1.025; // 2.5% retail markup for 1% TDS & platform spread
         const compiledData = coins.map(coin => {
           const coinData = data[coin.id];
           if (!coinData) throw new Error(`Missing data for ${coin.id}`);
@@ -66,7 +66,7 @@ export function initTicker() {
   }
 
   function getFallbackPrices() {
-    const RETAIL_MARKUP = 1.10;
+    const RETAIL_MARKUP = 1.025;
     return [
       { id: 'bitcoin', symbol: 'BTC', priceUsd: ((96250 + (Math.random() - 0.5) * 150) * RETAIL_MARKUP).toString(), changePercent24Hr: '1.24' },
       { id: 'ethereum', symbol: 'ETH', priceUsd: ((2840 + (Math.random() - 0.5) * 10) * RETAIL_MARKUP).toString(), changePercent24Hr: '-0.45' },

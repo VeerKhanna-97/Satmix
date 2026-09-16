@@ -10,7 +10,7 @@ export default async function handler(req) {
     if (!response.ok) throw new Error(`CoinGecko status: ${response.status}`);
     const data = await response.json();
     
-    const RETAIL_MARKUP = 1.10; // 10% retail markup accounting for 1% TDS (Sec 194S) and platform spread
+    const RETAIL_MARKUP = 1.025; // 2.5% retail markup accounting for 1% TDS (Sec 194S) and platform spread
 
     const coins = [
       { id: 'bitcoin', symbol: 'BTC' },
