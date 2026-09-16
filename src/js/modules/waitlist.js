@@ -30,9 +30,9 @@ export function initWaitlist() {
       if (submitBtn) submitBtn.classList.add('loading');
       if (submitTxt) submitTxt.textContent = 'Joining...';
       
-      // Extract referral code if present in URL or localStorage
+      // Extract referral code strictly if present in URL or active session
       const urlParams = new URLSearchParams(window.location.search);
-      const refCode = (urlParams.get('ref') || urlParams.get('referral') || localStorage.getItem('satmix_referral_code') || '').toUpperCase().trim();
+      const refCode = (urlParams.get('ref') || urlParams.get('referral') || urlParams.get('affiliate') || sessionStorage.getItem('satmix_referral_code') || '').toUpperCase().trim();
 
       if (WAITLIST_API_URL) {
         const formData = new URLSearchParams();

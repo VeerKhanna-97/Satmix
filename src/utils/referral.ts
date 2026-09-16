@@ -5,7 +5,7 @@
 // ============================================================
 
 const STORAGE_KEY = 'satmix_referral_code';
-const PARAM_KEYS = ['ref', 'referral', 'code', 'creator', 'affiliate', 'influencer', 'partner', 'ref_code', 'utm_source'];
+const PARAM_KEYS = ['ref', 'referral', 'affiliate', 'ref_code'];
 
 /**
  * Normalizes referral codes to uppercase alphanumeric format
@@ -20,7 +20,7 @@ export function sanitizeReferralCode(code: string | null | undefined): string {
 
 /**
  * Extracts referral code from the current URL query parameters.
- * Checks for ?ref=..., ?referral=..., ?code=..., etc.
+ * Checks for ?ref=..., ?referral=..., ?affiliate=..., ?ref_code=...
  */
 export function extractReferralFromUrl(): string {
   if (typeof window === 'undefined') return '';
@@ -41,8 +41,8 @@ export function extractReferralFromUrl(): string {
 }
 
 /**
- * Captures referral code from URL and persists it to both localStorage
- * and sessionStorage so it is never lost across route navigation.
+ * Captures referral code strictly when present in URL and stores in sessionStorage
+ * for the active browsing session. Direct organic visits to satmix.in remain unassigned.
  */
 export function initReferralCapture(): string {
   if (typeof window === 'undefined') return '';
@@ -50,19 +50,19 @@ export function initReferralCapture(): string {
   const urlCode = extractReferralFromUrl();
   if (urlCode) {
     try {
-      localStorage.setItem(STORAGE_KEY, urlCode);
       sessionStorage.setItem(STORAGE_KEY, urlCode);
-    } catch (e) {
-      // Ignore storage quota errors in private browsing
-    }
+      // Clean up legacy persistent localStorage if present
+      localStorage.removeItem(STORAGE_KEY);
+    } catch (e) {}
     return urlCode;
   }
 
+  // Only retain code within the same tab session if previously set via URL
   return getStoredReferralCode();
 }
 
 /**
- * Retrieves the active referral code from session or local storage.
+ * Retrieves the active referral code strictly from session storage.
  */
 export function getStoredReferralCode(): string {
   if (typeof window === 'undefined') return '';
@@ -70,12 +70,7 @@ export function getStoredReferralCode(): string {
   try {
     const sessionCode = sessionStorage.getItem(STORAGE_KEY);
     if (sessionCode) return sanitizeReferralCode(sessionCode);
-
-    const localCode = localStorage.getItem(STORAGE_KEY);
-    if (localCode) return sanitizeReferralCode(localCode);
-  } catch (e) {
-    // Fallback if storage access is restricted
-  }
+  } catch (e) {}
   return '';
 }
 
