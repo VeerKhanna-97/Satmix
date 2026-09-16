@@ -35,3 +35,7 @@ __pycache__/
 
 # Vercel
 .vercel
+
+# Local screenshot references
+*.jpeg
+*.png

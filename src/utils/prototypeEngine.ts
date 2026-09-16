@@ -52,14 +52,14 @@ export function createInitialPrototypeState(): PrototypeState {
       stable: {
         setupAt: null,
         dailyAmount: 10,
-        paused: false,
+        paused: true,
         streakStartedAt: null,
         holdings: { BTC: 0, ETH: 0, SOL: 0, USDT: 0 },
       },
       growth: {
         setupAt: null,
         dailyAmount: 30,
-        paused: false,
+        paused: true,
         streakStartedAt: null,
         holdings: { BTC: 0, ETH: 0, SOL: 0, USDT: 0 },
       },
@@ -416,10 +416,13 @@ export function calculateTabMetrics(
   let usdtInvested = 0;
 
   if (tab === 'all') {
-    btcUnits = (state.habits.stable?.holdings?.BTC || 0) + (state.habits.growth?.holdings?.BTC || 0);
-    ethUnits = (state.habits.stable?.holdings?.ETH || 0) + (state.habits.growth?.holdings?.ETH || 0);
-    solUnits = (state.habits.stable?.holdings?.SOL || 0) + (state.habits.growth?.holdings?.SOL || 0);
-    usdtUnits = (state.habits.stable?.holdings?.USDT || 0) + (state.habits.growth?.holdings?.USDT || 0);
+    const isStableConfigured = state.habits.stable?.setupAt !== null;
+    const isGrowthConfigured = state.habits.growth?.setupAt !== null;
+
+    btcUnits = (isStableConfigured ? state.habits.stable?.holdings?.BTC || 0 : 0) + (isGrowthConfigured ? state.habits.growth?.holdings?.BTC || 0 : 0);
+    ethUnits = (isStableConfigured ? state.habits.stable?.holdings?.ETH || 0 : 0) + (isGrowthConfigured ? state.habits.growth?.holdings?.ETH || 0 : 0);
+    solUnits = (isStableConfigured ? state.habits.stable?.holdings?.SOL || 0 : 0) + (isGrowthConfigured ? state.habits.growth?.holdings?.SOL || 0 : 0);
+    usdtUnits = (isStableConfigured ? state.habits.stable?.holdings?.USDT || 0 : 0) + (isGrowthConfigured ? state.habits.growth?.holdings?.USDT || 0 : 0);
 
     totalInvested = state.activity.reduce((sum, act) => sum + act.amount, 0);
 
@@ -433,10 +436,12 @@ export function calculateTabMetrics(
     });
   } else {
     const habit = state.habits[tab];
-    btcUnits = habit?.holdings?.BTC || 0;
-    ethUnits = habit?.holdings?.ETH || 0;
-    solUnits = habit?.holdings?.SOL || 0;
-    usdtUnits = habit?.holdings?.USDT || 0;
+    const isConfigured = habit?.setupAt !== null;
+
+    btcUnits = isConfigured ? habit?.holdings?.BTC || 0 : 0;
+    ethUnits = isConfigured ? habit?.holdings?.ETH || 0 : 0;
+    solUnits = isConfigured ? habit?.holdings?.SOL || 0 : 0;
+    usdtUnits = isConfigured ? habit?.holdings?.USDT || 0 : 0;
 
     const filtered = state.activity.filter((act) => act.basketId === tab);
     totalInvested = filtered.reduce((sum, act) => sum + act.amount, 0);

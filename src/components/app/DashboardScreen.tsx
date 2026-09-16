@@ -170,12 +170,16 @@ export const DashboardScreen: React.FC = () => {
     return entries.filter((e) => e.units > 0 || tabMetrics.marketValue === 0);
   }, [tabMetrics.holdings, tabMetrics.marketValue]);
 
-  const btcUsd = livePrices.USD_INR > 0 ? livePrices.BTC / livePrices.USD_INR : livePrices.BTC / 87.85;
-  const ethUsd = livePrices.USD_INR > 0 ? livePrices.ETH / livePrices.USD_INR : livePrices.ETH / 87.85;
-  const solUsd = livePrices.USD_INR > 0 ? livePrices.SOL / livePrices.USD_INR : livePrices.SOL / 87.85;
+  const isStableConfigured = prototypeState.habits.stable?.setupAt !== null;
+  const isStableActive = isStableConfigured && !prototypeState.habits.stable.paused;
 
-  const isStableActive = !prototypeState.habits.stable.paused;
-  const isGrowthActive = !prototypeState.habits.growth.paused;
+  const isGrowthConfigured = prototypeState.habits.growth?.setupAt !== null;
+  const isGrowthActive = isGrowthConfigured && !prototypeState.habits.growth.paused;
+
+  const fxRate = livePrices.USD_INR > 0 ? livePrices.USD_INR : 87.85 * 1.025;
+  const btcUsd = livePrices.BTC / fxRate;
+  const ethUsd = livePrices.ETH / fxRate;
+  const solUsd = livePrices.SOL / fxRate;
 
   const tickerItems = useMemo(() => [
     { symbol: 'BTC', inr: `₹${Math.round(livePrices.BTC).toLocaleString('en-IN')}`, usd: `$${Math.round(btcUsd).toLocaleString('en-US')}` },
@@ -717,18 +721,18 @@ export const DashboardScreen: React.FC = () => {
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Shield className="w-4 h-4" style={{ color: colors.semanticSuccess }} />
+                <Shield className="w-4 h-4" style={{ color: isStableConfigured ? colors.semanticSuccess : colors.textTertiary }} />
                 <h3 className="font-bold text-sm" style={{ color: colors.textPrimary }}>Calm Basket Habit</h3>
               </div>
               <span
                 className="px-2 py-0.5 rounded-md text-[10px] font-bold font-mono border tracking-wider"
                 style={{
-                  backgroundColor: isStableActive ? colors.mintTint : colors.surface,
-                  color: isStableActive ? colors.semanticSuccess : colors.textTertiary,
-                  borderColor: isStableActive ? colors.borderMint : colors.borderDim,
+                  backgroundColor: !isStableConfigured ? colors.surface : isStableActive ? colors.mintTint : 'rgba(245, 158, 11, 0.1)',
+                  color: !isStableConfigured ? colors.textTertiary : isStableActive ? colors.semanticSuccess : colors.semanticWarning,
+                  borderColor: !isStableConfigured ? colors.borderDim : isStableActive ? colors.borderMint : 'rgba(245, 158, 11, 0.3)',
                 }}
               >
-                {isStableActive ? 'AUTOPAY ACTIVE' : 'PAUSED'}
+                {!isStableConfigured ? 'NOT CONFIGURED' : isStableActive ? 'AUTOPAY ACTIVE' : 'PAUSED'}
               </span>
             </div>
 
@@ -736,34 +740,50 @@ export const DashboardScreen: React.FC = () => {
               85% USDT / 15% BTC. <em>"A calmer way to start."</em>
             </p>
 
-            <div className="p-4 rounded-2xl border flex items-center justify-between" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
-              <div>
-                <span className="text-xs block" style={{ color: colors.textTertiary }}>Daily SIP Rate</span>
-                <span className="text-2xl font-extrabold font-mono" style={{ color: colors.textPrimary }}>
-                  ₹{prototypeState.habits.stable.dailyAmount}/day
-                </span>
+            {isStableConfigured ? (
+              <div className="p-4 rounded-2xl border flex items-center justify-between" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+                <div>
+                  <span className="text-xs block" style={{ color: colors.textTertiary }}>Daily SIP Rate</span>
+                  <span className="text-2xl font-extrabold font-mono" style={{ color: colors.textPrimary }}>
+                    ₹{prototypeState.habits.stable.dailyAmount}/day
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => toggleHabitPause('stable')}
+                    className="px-3 py-1.5 rounded-xl text-xs font-bold border transition-opacity hover:opacity-80"
+                    style={{
+                      backgroundColor: isStableActive ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)',
+                      borderColor: isStableActive ? 'rgba(239, 68, 68, 0.3)' : 'rgba(16, 185, 129, 0.3)',
+                      color: isStableActive ? colors.semanticDanger : colors.semanticSuccess,
+                    }}
+                  >
+                    {isStableActive ? 'Pause' : 'Resume'}
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('invest')}
+                    className="px-3 py-1.5 rounded-xl text-xs font-bold transition-opacity hover:opacity-80"
+                    style={{ backgroundColor: colors.accentTint, color: colors.accent }}
+                  >
+                    Adjust →
+                  </button>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => toggleHabitPause('stable')}
-                  className="px-3 py-1.5 rounded-xl text-xs font-bold border transition-opacity hover:opacity-80"
-                  style={{
-                    backgroundColor: isStableActive ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)',
-                    borderColor: isStableActive ? 'rgba(239, 68, 68, 0.3)' : 'rgba(16, 185, 129, 0.3)',
-                    color: isStableActive ? colors.semanticDanger : colors.semanticSuccess,
-                  }}
-                >
-                  {isStableActive ? 'Pause' : 'Resume'}
-                </button>
+            ) : (
+              <div className="p-4 rounded-2xl border flex items-center justify-between" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+                <div>
+                  <span className="text-xs block" style={{ color: colors.textTertiary }}>Min Allocation</span>
+                  <span className="text-lg font-bold font-mono" style={{ color: colors.textPrimary }}>From ₹10/day</span>
+                </div>
                 <button
                   onClick={() => setActiveTab('invest')}
-                  className="px-3 py-1.5 rounded-xl text-xs font-bold transition-opacity hover:opacity-80"
-                  style={{ backgroundColor: colors.accentTint, color: colors.accent }}
+                  className="px-3.5 py-2 rounded-xl text-xs font-bold transition-opacity hover:opacity-90 shadow-sm"
+                  style={{ backgroundColor: colors.primary, color: colors.primaryText }}
                 >
-                  Adjust →
+                  + Setup Habit →
                 </button>
               </div>
-            </div>
+            )}
 
             <div className="text-[11px] font-mono flex items-center justify-between" style={{ color: colors.textSecondary }}>
               <span>Batch Buy: <strong>09:00 AM Daily</strong></span>
@@ -781,18 +801,18 @@ export const DashboardScreen: React.FC = () => {
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Zap className="w-4 h-4" style={{ color: colors.accent }} />
+                <Zap className="w-4 h-4" style={{ color: isGrowthConfigured ? colors.accent : colors.textTertiary }} />
                 <h3 className="font-bold text-sm" style={{ color: colors.textPrimary }}>Growth Basket Habit</h3>
               </div>
               <span
                 className="px-2 py-0.5 rounded-md text-[10px] font-bold font-mono border tracking-wider"
                 style={{
-                  backgroundColor: isGrowthActive ? colors.accentTint : colors.surface,
-                  color: isGrowthActive ? colors.accent : colors.textTertiary,
-                  borderColor: isGrowthActive ? colors.borderAccent : colors.borderDim,
+                  backgroundColor: !isGrowthConfigured ? colors.surface : isGrowthActive ? colors.accentTint : 'rgba(245, 158, 11, 0.1)',
+                  color: !isGrowthConfigured ? colors.textTertiary : isGrowthActive ? colors.accent : colors.semanticWarning,
+                  borderColor: !isGrowthConfigured ? colors.borderDim : isGrowthActive ? colors.borderAccent : 'rgba(245, 158, 11, 0.3)',
                 }}
               >
-                {isGrowthActive ? 'AUTOPAY ACTIVE' : 'PAUSED'}
+                {!isGrowthConfigured ? 'NOT CONFIGURED' : isGrowthActive ? 'AUTOPAY ACTIVE' : 'PAUSED'}
               </span>
             </div>
 
@@ -800,34 +820,50 @@ export const DashboardScreen: React.FC = () => {
               70% BTC / 20% ETH / 10% SOL. <em>"Long-term crypto, built a little every day."</em>
             </p>
 
-            <div className="p-4 rounded-2xl border flex items-center justify-between" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
-              <div>
-                <span className="text-xs block" style={{ color: colors.textTertiary }}>Daily SIP Rate</span>
-                <span className="text-2xl font-extrabold font-mono" style={{ color: colors.textPrimary }}>
-                  ₹{prototypeState.habits.growth.dailyAmount}/day
-                </span>
+            {isGrowthConfigured ? (
+              <div className="p-4 rounded-2xl border flex items-center justify-between" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+                <div>
+                  <span className="text-xs block" style={{ color: colors.textTertiary }}>Daily SIP Rate</span>
+                  <span className="text-2xl font-extrabold font-mono" style={{ color: colors.textPrimary }}>
+                    ₹{prototypeState.habits.growth.dailyAmount}/day
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => toggleHabitPause('growth')}
+                    className="px-3 py-1.5 rounded-xl text-xs font-bold border transition-opacity hover:opacity-80"
+                    style={{
+                      backgroundColor: isGrowthActive ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)',
+                      borderColor: isGrowthActive ? 'rgba(239, 68, 68, 0.3)' : 'rgba(16, 185, 129, 0.3)',
+                      color: isGrowthActive ? colors.semanticDanger : colors.semanticSuccess,
+                    }}
+                  >
+                    {isGrowthActive ? 'Pause' : 'Resume'}
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('invest')}
+                    className="px-3 py-1.5 rounded-xl text-xs font-bold transition-opacity hover:opacity-80"
+                    style={{ backgroundColor: colors.accentTint, color: colors.accent }}
+                  >
+                    Adjust →
+                  </button>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => toggleHabitPause('growth')}
-                  className="px-3 py-1.5 rounded-xl text-xs font-bold border transition-opacity hover:opacity-80"
-                  style={{
-                    backgroundColor: isGrowthActive ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)',
-                    borderColor: isGrowthActive ? 'rgba(239, 68, 68, 0.3)' : 'rgba(16, 185, 129, 0.3)',
-                    color: isGrowthActive ? colors.semanticDanger : colors.semanticSuccess,
-                  }}
-                >
-                  {isGrowthActive ? 'Pause' : 'Resume'}
-                </button>
+            ) : (
+              <div className="p-4 rounded-2xl border flex items-center justify-between" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+                <div>
+                  <span className="text-xs block" style={{ color: colors.textTertiary }}>Min Allocation</span>
+                  <span className="text-lg font-bold font-mono" style={{ color: colors.textPrimary }}>From ₹30/day</span>
+                </div>
                 <button
                   onClick={() => setActiveTab('invest')}
-                  className="px-3 py-1.5 rounded-xl text-xs font-bold transition-opacity hover:opacity-80"
-                  style={{ backgroundColor: colors.accentTint, color: colors.accent }}
+                  className="px-3.5 py-2 rounded-xl text-xs font-bold transition-opacity hover:opacity-90 shadow-sm"
+                  style={{ backgroundColor: colors.primary, color: colors.primaryText }}
                 >
-                  Adjust →
+                  + Setup Habit →
                 </button>
               </div>
-            </div>
+            )}
 
             <div className="text-[11px] font-mono flex items-center justify-between" style={{ color: colors.textSecondary }}>
               <span>Batch Buy: <strong>09:00 AM Daily</strong></span>

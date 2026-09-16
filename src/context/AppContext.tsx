@@ -345,13 +345,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setDailyAmountState(amount);
   }, []);
 
-  // Authentication: Sign Up with Strict Credential Capture
+  // Authentication: Sign Up with Strict Credential Capture & Cloud Persistence
   const signUp = useCallback(
     async (name: string, email: string, password = '', phone = ''): Promise<{ success: boolean; error?: string }> => {
       const cleanEmail = email.trim().toLowerCase();
       const cleanDigits = phone ? phone.replace(/\D/g, '').slice(-10) : '';
 
-      // Check if email or phone already registered
+      // Check if email or phone already registered locally
       const exists = prototypeState.users.some(
         (u) =>
           u.email.toLowerCase() === cleanEmail ||
@@ -379,8 +379,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         createdAt: new Date().toISOString(),
       };
 
-      // Background webhook: register lead centrally in Google Sheets roster
+      // Background cloud persistence: register user in central auth repository & Google Sheets
       try {
+        fetch('/api/auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'signup',
+            user: newUser,
+          }),
+        }).catch(() => {});
+
         fetch('/api/waitlist', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -401,6 +410,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         users: [...prev.users, newUser],
         tutorialDone: false,
         quizCompleted: false,
+        suggestedBasketId: null,
+        setupBasketId: null,
       }));
 
       // Route to tutorial
@@ -412,17 +423,53 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     [prototypeState.users, updateStateAndPersist]
   );
 
-  // Authentication: Strict Login by Email or Phone
+  // Authentication: Strict Cross-Device Login by Email or Phone
   const login = useCallback(
     async (identifier: string, password = ''): Promise<{ success: boolean; error?: string }> => {
       const cleanIdentifier = identifier.trim().toLowerCase();
       const cleanDigits = identifier.replace(/\D/g, '').slice(-10);
 
-      const targetUser = prototypeState.users.find((u) => {
+      // 1. Check local storage first
+      let targetUser = prototypeState.users.find((u) => {
         const matchEmail = u.email.toLowerCase() === cleanIdentifier;
         const matchPhone = cleanDigits && u.phone && u.phone.replace(/\D/g, '').slice(-10) === cleanDigits;
         return matchEmail || matchPhone;
       });
+
+      // 2. If not found locally on this device, look up in central cloud database
+      if (!targetUser) {
+        try {
+          const res = await fetch('/api/auth', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'login',
+              identifier: cleanIdentifier,
+            }),
+          });
+          if (res.ok) {
+            const json = await res.json();
+            if (json?.found && json?.user) {
+              targetUser = json.user;
+              // Hydrate local state with user found from another device
+              updateStateAndPersist((prev) => {
+                const userExists = prev.users.some(
+                  (u) => u.id === targetUser!.id || u.email.toLowerCase() === targetUser!.email.toLowerCase()
+                );
+                const updatedUsers = userExists ? prev.users : [...prev.users, targetUser!];
+                return {
+                  ...prev,
+                  ...(json.userState || {}),
+                  users: updatedUsers,
+                  sessionUserId: targetUser!.id,
+                };
+              });
+            }
+          }
+        } catch (err) {
+          console.warn('Cross-device cloud auth check note:', err);
+        }
+      }
 
       if (!targetUser) {
         return {
@@ -444,7 +491,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
       updateStateAndPersist((prev) => ({
         ...prev,
-        sessionUserId: targetUser.id,
+        sessionUserId: targetUser!.id,
       }));
 
       // Session Gate check:
@@ -580,18 +627,39 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
         const updatedActivity = [initialEntry, ...prev.activity];
 
+        const updatedHabits = {
+          ...prev.habits,
+          [basketId]: {
+            setupAt: currentHabit?.setupAt || nowIso,
+            dailyAmount: amount,
+            paused: false,
+            streakStartedAt: currentHabit?.streakStartedAt || nowIso,
+            holdings: newHoldings,
+          },
+        };
+
+        // Sync to central cloud in background
+        try {
+          fetch('/api/auth', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'sync',
+              userId: prev.sessionUserId,
+              userState: {
+                setupBasketId: basketId,
+                habits: updatedHabits,
+                quizCompleted: true,
+              },
+            }),
+          }).catch(() => {});
+        } catch {
+          // Non-blocking
+        }
+
         return {
           ...prev,
-          habits: {
-            ...prev.habits,
-            [basketId]: {
-              setupAt: currentHabit.setupAt || nowIso,
-              dailyAmount: amount,
-              paused: false,
-              streakStartedAt: currentHabit.streakStartedAt || nowIso,
-              holdings: newHoldings,
-            },
-          },
+          habits: updatedHabits,
           activity: updatedActivity,
           lastAccruedDate: todayKey,
         };
@@ -606,16 +674,32 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Toggle Habit Pause / Resume
   const toggleHabitPause = useCallback(
     (basketId: BasketId) => {
-      updateStateAndPersist((prev) => ({
-        ...prev,
-        habits: {
+      updateStateAndPersist((prev) => {
+        const nextHabits = {
           ...prev.habits,
           [basketId]: {
             ...prev.habits[basketId],
             paused: !prev.habits[basketId].paused,
           },
-        },
-      }));
+        };
+
+        try {
+          fetch('/api/auth', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'sync',
+              userId: prev.sessionUserId,
+              userState: { habits: nextHabits },
+            }),
+          }).catch(() => {});
+        } catch {}
+
+        return {
+          ...prev,
+          habits: nextHabits,
+        };
+      });
     },
     [updateStateAndPersist]
   );

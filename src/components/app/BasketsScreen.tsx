@@ -48,6 +48,8 @@ export const BasketsScreen: React.FC = () => {
           const isSelected = selectedBasketId === basket.id;
           const isStable = basket.id === 'stable';
           const habitStatus = isStable ? prototypeState.habits.stable : prototypeState.habits.growth;
+          const isConfigured = habitStatus?.setupAt !== null;
+          const isRunning = isConfigured && !habitStatus.paused;
 
           return (
             <FadeIn key={basket.id} delay={index * 0.1}>
@@ -61,7 +63,7 @@ export const BasketsScreen: React.FC = () => {
               >
                 <div>
                   {/* Habit Active Status Header */}
-                  {!habitStatus.paused ? (
+                  {isRunning ? (
                     <div className="flex items-center justify-between text-xs font-bold mb-4 pb-3 border-b" style={{ color: colors.semanticSuccess, borderColor: colors.borderDim }}>
                       <div className="flex items-center gap-1.5">
                         <CheckCircle2 className="w-4 h-4" />
@@ -69,6 +71,16 @@ export const BasketsScreen: React.FC = () => {
                       </div>
                       <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded font-bold" style={{ backgroundColor: colors.mintTint, borderColor: colors.borderMint }}>
                         RUNNING
+                      </span>
+                    </div>
+                  ) : isConfigured && habitStatus.paused ? (
+                    <div className="flex items-center justify-between text-xs font-bold mb-4 pb-3 border-b" style={{ color: colors.semanticWarning, borderColor: colors.borderDim }}>
+                      <div className="flex items-center gap-1.5">
+                        <CheckCircle2 className="w-4 h-4" />
+                        <span>Daily Habit Paused · ₹{habitStatus.dailyAmount}/day</span>
+                      </div>
+                      <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded font-bold" style={{ backgroundColor: 'rgba(245, 158, 11, 0.1)', borderColor: 'rgba(245, 158, 11, 0.3)' }}>
+                        PAUSED
                       </span>
                     </div>
                   ) : isSelected ? (
@@ -184,7 +196,7 @@ export const BasketsScreen: React.FC = () => {
                         border: `1px solid ${isSelected ? 'transparent' : colors.cardBorder}`,
                       }}
                     >
-                      <span>{!habitStatus.paused ? `Adjust ${basket.name} (₹${habitStatus.dailyAmount}/day)` : `Set Up Daily AutoPay (from ₹${basket.minDailyAmount})`}</span>
+                      <span>{isConfigured ? `Adjust ${basket.name} (₹${habitStatus.dailyAmount}/day)` : `Set Up Daily AutoPay (from ₹${basket.minDailyAmount})`}</span>
                       <ArrowRight className="w-3.5 h-3.5 flex-shrink-0" />
                     </button>
                   </Magnet>
