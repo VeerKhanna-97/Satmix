@@ -23,7 +23,8 @@ const CONFIG = {
     SUBMISSIONS: 'Waitlist_Submissions',
     ROSTER: 'Affiliate_Creator_Roster',
     LEADERBOARD: 'Leaderboard_Dashboard',
-    AUDIT: 'Fraud_Audit_Log'
+    AUDIT: 'Fraud_Audit_Log',
+    USERS: 'User_Accounts'
   },
   
   CATEGORIES: {
@@ -62,6 +63,18 @@ function doPost(e) {
 
     // 1. Bulletproof payload extraction supporting JSON, urlencoded, and query parameters
     const payload = extractRequestPayload(e);
+
+    // 2. Route auth requests (cross-device user authentication & state persistence)
+    const action = String(payload.action || '').trim().toLowerCase();
+    if (action === 'auth_signup' || action === 'signup') {
+      return handleAuthSignup(ss, payload);
+    }
+    if (action === 'auth_lookup' || action === 'login' || action === 'lookup') {
+      return handleAuthLookup(ss, payload);
+    }
+    if (action === 'auth_sync' || action === 'sync') {
+      return handleAuthSync(ss, payload);
+    }
 
     const rawName = payload.name || payload.fullName || payload.w_name || '';
     const rawEmail = payload.email || payload.w_email || '';
@@ -581,8 +594,213 @@ function upgradeExistingSheet() {
   auditSheet.setFrozenRows(1);
   auditSheet.setColumnWidth(1, 170); auditSheet.setColumnWidth(2, 160); auditSheet.setColumnWidth(3, 220); auditSheet.setColumnWidth(4, 140); auditSheet.setColumnWidth(5, 130); auditSheet.setColumnWidth(6, 170); auditSheet.setColumnWidth(7, 280);
 
+  // 5. User_Accounts Tab (Cross-Device Auth & Persistence)
+  getUserAccountsSheet(ss);
+
   ss.setActiveSheet(dashSheet);
-  SpreadsheetApp.getUi().alert(`🎉 Existing Satmix Sheet upgraded successfully!\n\n• Preserved all ${lastRow - 1} existing waitlist signups.\n• Extended Columns E–J for referral tracking.\n• Added Affiliate Roster, Dashboard & Audit tabs.`);
+  SpreadsheetApp.getUi().alert(`🎉 Existing Satmix Sheet upgraded successfully!\n\n• Preserved all ${lastRow - 1} existing waitlist signups.\n• Extended Columns E–J for referral tracking.\n• Added Affiliate Roster, Dashboard, User Accounts & Audit tabs.`);
+}
+
+/**
+ * ==============================================================================
+ * 3. CROSS-DEVICE AUTHENTICATION & USER STATE PERSISTENCE ENGINE
+ * ==============================================================================
+ */
+function getUserAccountsSheet(ss) {
+  let sheet = ss.getSheetByName(CONFIG.SHEET_NAMES.USERS);
+  if (!sheet) {
+    sheet = ss.insertSheet(CONFIG.SHEET_NAMES.USERS);
+    const headers = [
+      'User ID',
+      'Full Name',
+      'Email Address',
+      'Phone Number',
+      'Password Hash (SHA-256)',
+      'Created At',
+      'Last Active At',
+      'User State JSON'
+    ];
+    sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+    formatHeaderRow(sheet, headers.length, '#1E293B', '#F8FAFC');
+    sheet.setFrozenRows(1);
+    sheet.setColumnWidth(1, 180);
+    sheet.setColumnWidth(2, 160);
+    sheet.setColumnWidth(3, 220);
+    sheet.setColumnWidth(4, 140);
+    sheet.setColumnWidth(5, 240);
+    sheet.setColumnWidth(6, 170);
+    sheet.setColumnWidth(7, 170);
+    sheet.setColumnWidth(8, 320);
+  }
+  return sheet;
+}
+
+function handleAuthSignup(ss, payload) {
+  const usersSheet = getUserAccountsSheet(ss);
+  const rawEmail = payload.email || '';
+  const rawPhone = payload.phone || '';
+  const email = String(rawEmail).trim().toLowerCase();
+  const phone = String(rawPhone).trim().replace(/[^\d+]/g, '');
+  const cleanPhone = phone.replace(/\D/g, '').slice(-10);
+  const name = String(payload.name || '').trim();
+  const userId = String(payload.userId || ('usr_' + Date.now())).trim();
+  const passwordHash = String(payload.passwordHash || payload.password || '').trim();
+  const userState = payload.userState ? (typeof payload.userState === 'string' ? payload.userState : JSON.stringify(payload.userState)) : '{}';
+  const now = new Date();
+
+  if (!email && !cleanPhone) {
+    return createJsonResponse({ success: false, error: 'Email or phone required for signup.' }, 400);
+  }
+
+  // Check if user already exists
+  const lastRow = usersSheet.getLastRow();
+  let existingRow = -1;
+  if (lastRow > 1) {
+    const data = usersSheet.getRange(2, 1, lastRow - 1, 5).getValues();
+    for (let i = 0; i < data.length; i++) {
+      const rowEmail = String(data[i][2] || '').trim().toLowerCase();
+      const rowPhone = String(data[i][3] || '').replace(/\D/g, '').slice(-10);
+      if ((email && rowEmail === email) || (cleanPhone && cleanPhone.length >= 10 && rowPhone === cleanPhone)) {
+        existingRow = i + 2;
+        break;
+      }
+    }
+  }
+
+  if (existingRow > 0) {
+    if (name) usersSheet.getRange(existingRow, 2).setValue(name);
+    if (email) usersSheet.getRange(existingRow, 3).setValue(email);
+    if (phone) usersSheet.getRange(existingRow, 4).setValue(phone);
+    if (passwordHash) usersSheet.getRange(existingRow, 5).setValue(passwordHash);
+    usersSheet.getRange(existingRow, 7).setValue(now);
+    if (userState && userState !== '{}') usersSheet.getRange(existingRow, 8).setValue(userState);
+    return createJsonResponse({
+      success: true,
+      updated: true,
+      userId: usersSheet.getRange(existingRow, 1).getValue(),
+      message: 'Account updated successfully.'
+    }, 200);
+  }
+
+  usersSheet.appendRow([
+    userId,
+    name,
+    email,
+    phone,
+    passwordHash,
+    now,
+    now,
+    userState
+  ]);
+  const newLastRow = usersSheet.getLastRow();
+  usersSheet.getRange(newLastRow, 6).setNumberFormat('yyyy-mm-dd hh:mm:ss');
+  usersSheet.getRange(newLastRow, 7).setNumberFormat('yyyy-mm-dd hh:mm:ss');
+
+  return createJsonResponse({
+    success: true,
+    created: true,
+    userId: userId,
+    message: 'Account registered successfully.'
+  }, 200);
+}
+
+function handleAuthLookup(ss, payload) {
+  const usersSheet = getUserAccountsSheet(ss);
+  const rawId = payload.identifier || payload.email || payload.phone || '';
+  const cleanId = String(rawId).trim().toLowerCase();
+  const cleanPhone = cleanId.replace(/\D/g, '').slice(-10);
+
+  if (!cleanId && !cleanPhone) {
+    return createJsonResponse({ success: false, error: 'Identifier (email or phone) is required.' }, 400);
+  }
+
+  const lastRow = usersSheet.getLastRow();
+  if (lastRow <= 1) {
+    return createJsonResponse({ success: true, found: false, message: 'No accounts registered.' }, 200);
+  }
+
+  const data = usersSheet.getRange(2, 1, lastRow - 1, 8).getValues();
+  for (let i = 0; i < data.length; i++) {
+    const rowUserId = String(data[i][0] || '').trim();
+    const rowName = String(data[i][1] || '').trim();
+    const rowEmail = String(data[i][2] || '').trim().toLowerCase();
+    const rawRowPhone = String(data[i][3] || '').trim();
+    const rowPhone = rawRowPhone.replace(/\D/g, '').slice(-10);
+    const rowPasswordHash = String(data[i][4] || '').trim();
+    const rowStateJson = data[i][7];
+
+    const matchEmail = cleanId && (cleanId === rowEmail || cleanId === rowUserId);
+    const matchPhone = cleanPhone && cleanPhone.length >= 10 && rowPhone === cleanPhone;
+
+    if (matchEmail || matchPhone) {
+      let parsedState = null;
+      if (rowStateJson) {
+        try {
+          parsedState = typeof rowStateJson === 'string' ? JSON.parse(rowStateJson) : rowStateJson;
+        } catch (e) {}
+      }
+
+      return createJsonResponse({
+        success: true,
+        found: true,
+        user: {
+          id: rowUserId,
+          name: rowName,
+          email: rowEmail,
+          phone: rawRowPhone,
+          password: rowPasswordHash,
+        },
+        userState: parsedState
+      }, 200);
+    }
+  }
+
+  return createJsonResponse({ success: true, found: false, message: 'User not found in cloud database.' }, 200);
+}
+
+function handleAuthSync(ss, payload) {
+  const usersSheet = getUserAccountsSheet(ss);
+  const targetUserId = String(payload.userId || '').trim();
+  const rawId = payload.identifier || '';
+  const cleanId = String(rawId).trim().toLowerCase();
+  const cleanPhone = cleanId.replace(/\D/g, '').slice(-10);
+  const userState = payload.userState ? (typeof payload.userState === 'string' ? payload.userState : JSON.stringify(payload.userState)) : null;
+
+  if (!targetUserId && !cleanId && !cleanPhone) {
+    return createJsonResponse({ success: false, error: 'Missing userId or identifier for state sync.' }, 400);
+  }
+
+  const lastRow = usersSheet.getLastRow();
+  if (lastRow <= 1) {
+    return createJsonResponse({ success: true, synced: false, message: 'No accounts to sync.' }, 200);
+  }
+
+  const data = usersSheet.getRange(2, 1, lastRow - 1, 8).getValues();
+  for (let i = 0; i < data.length; i++) {
+    const rowUserId = String(data[i][0] || '').trim();
+    const rowEmail = String(data[i][2] || '').trim().toLowerCase();
+    const rowPhone = String(data[i][3] || '').replace(/\D/g, '').slice(-10);
+
+    const matchUser = (targetUserId && rowUserId === targetUserId) ||
+                      (cleanId && (cleanId === rowEmail || cleanId === rowUserId)) ||
+                      (cleanPhone && cleanPhone.length >= 10 && rowPhone === cleanPhone);
+
+    if (matchUser) {
+      const rowIdx = i + 2;
+      usersSheet.getRange(rowIdx, 7).setValue(new Date());
+      if (userState) {
+        let currentState = {};
+        try {
+          currentState = JSON.parse(data[i][7] || '{}');
+        } catch (e) {}
+        const newState = typeof payload.userState === 'object' ? { ...currentState, ...payload.userState } : userState;
+        usersSheet.getRange(rowIdx, 8).setValue(typeof newState === 'string' ? newState : JSON.stringify(newState));
+      }
+      return createJsonResponse({ success: true, synced: true, message: 'User state updated.' }, 200);
+    }
+  }
+
+  return createJsonResponse({ success: true, synced: false, message: 'User not found for sync.' }, 200);
 }
 
 function formatHeaderRow(sheet, numCols, bgColor, fontColor, rowNum = 1) {
