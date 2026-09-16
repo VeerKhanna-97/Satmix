@@ -6,10 +6,18 @@ export const FloatingScrollbar: React.FC = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [opacity, setOpacity] = useState(0.4);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
 
   const thumbRef = useRef<HTMLDivElement | null>(null);
   const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const animFrameRef = useRef<number>(0);
+
+  // Detect touch devices
+  useEffect(() => {
+    if (window.matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window) {
+      setIsTouchDevice(true);
+    }
+  }, []);
 
   // Position tracking (target vs current for smooth 60/120fps lerp)
   const currentY = useRef(12);
@@ -142,11 +150,11 @@ export const FloatingScrollbar: React.FC = () => {
     };
   }, [isDragging, thumbHeight]);
 
-  if (!isScrollable) return null;
+  if (isTouchDevice || !isScrollable) return null;
 
   return (
     <div
-      className="fixed top-0 right-1.5 bottom-0 z-[9998] pointer-events-none flex flex-col justify-start select-none transition-opacity duration-300"
+      className="hidden md:flex fixed top-0 right-1.5 bottom-0 z-[9998] pointer-events-none flex-col justify-start select-none transition-opacity duration-300"
       style={{
         width: '14px',
         opacity: isHovered || isDragging ? 1 : opacity,

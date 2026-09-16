@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, ArrowRight, CheckCircle2, Rocket, User, Mail, Phone, Layers, Info, BarChart2, Loader2, Zap, ArrowDownLeft, FileCheck, Clock } from 'lucide-react';
+import { Shield, ArrowRight, CheckCircle2, Rocket, User, Mail, Phone, Layers, Info, BarChart2, Loader2, Zap, ArrowDownLeft, FileCheck } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { initReferralCapture, getStoredReferralCode } from '../../utils/referral';
 import { SpotlightCard, BlurText, Magnet, TiltedCard, FadeIn, CountUp } from '../ui';
@@ -414,12 +414,6 @@ export const Hero: React.FC = () => {
                             <span>Get Early Access</span>
                           )}
                         </button>
-
-                        {/* Realistic Response Time Promise */}
-                        <div className="flex items-center justify-center gap-1.5 text-[11px] font-mono pt-0.5" style={{ color: colors.textSecondary }}>
-                          <Clock className="w-3.5 h-3.5 flex-shrink-0" style={{ color: colors.accent }} />
-                          <span>Guaranteed SLA: Response within 24 business hours</span>
-                        </div>
                       </form>
 
                       {/* WebApp Nudge Banner */}
@@ -432,10 +426,10 @@ export const Hero: React.FC = () => {
                       >
                         <div>
                           <span className="text-[10px] font-bold uppercase tracking-wider block font-mono" style={{ color: colors.accent }}>
-                            Instant Prototype Demo
+                            Live Interactive WebApp
                           </span>
                           <span className="text-xs font-semibold" style={{ color: colors.textPrimary }}>
-                            Test the interactive Web App
+                            Experience the Satmix WebApp
                           </span>
                         </div>
                         <button
@@ -468,7 +462,7 @@ export const Hero: React.FC = () => {
                           You're on the Waitlist!
                         </h4>
                         <p className="text-xs mt-1.5 leading-relaxed" style={{ color: colors.textSecondary }}>
-                          Thanks for signing up{name ? `, ${name}` : ''}! {referralCode ? `(Referral code ${referralCode} applied).` : ''} Test the interactive Satmix Web App prototype right now.
+                          Thanks for signing up{name ? `, ${name}` : ''}! {referralCode ? `(Referral code ${referralCode} applied).` : ''} Experience the interactive Satmix WebApp right now.
                         </p>
                       </div>
 
@@ -478,7 +472,7 @@ export const Hero: React.FC = () => {
                         className="w-full py-3.5 rounded-xl font-bold text-sm shadow-xl transition-all active:scale-95 flex items-center justify-center gap-2"
                         style={{ backgroundColor: colors.primary, color: colors.primaryText }}
                       >
-                        <span>Launch Interactive Web App →</span>
+                        <span>Launch Web App →</span>
                       </button>
 
                       <div className="flex items-center justify-center gap-4 pt-1">

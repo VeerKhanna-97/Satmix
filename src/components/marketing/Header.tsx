@@ -247,7 +247,7 @@ export const Header: React.FC = () => {
                   {/* Column 1: Compound Calculator */}
                   <a
                     href="#calc-section"
-                    onClick={() => setActiveDropdown(null)}
+                    onClick={() => { setViewMode('marketing'); setActiveDropdown(null); }}
                     className="p-3 rounded-xl border transition-all duration-200 hover:scale-[1.02] flex flex-col justify-between no-underline block"
                     style={{
                       backgroundColor: colors.surface,
@@ -271,7 +271,7 @@ export const Header: React.FC = () => {
                   {/* Column 2: Knowledge Hub */}
                   <a
                     href="#baskets-section"
-                    onClick={() => setActiveDropdown(null)}
+                    onClick={() => { setViewMode('marketing'); setActiveDropdown(null); }}
                     className="p-3 rounded-xl border transition-all duration-200 hover:scale-[1.02] flex flex-col justify-between no-underline block"
                     style={{
                       backgroundColor: colors.surface,
@@ -322,7 +322,7 @@ export const Header: React.FC = () => {
                   {/* Column 1: About Satmix */}
                   <a
                     href="#about-section"
-                    onClick={() => setActiveDropdown(null)}
+                    onClick={() => { setViewMode('marketing'); setActiveDropdown(null); }}
                     className="p-3 rounded-xl border transition-all duration-200 hover:scale-[1.02] flex flex-col justify-between no-underline block"
                     style={{
                       backgroundColor: colors.surface,
@@ -346,7 +346,7 @@ export const Header: React.FC = () => {
                   {/* Column 2: Leaders */}
                   <a
                     href="#about-section"
-                    onClick={() => setActiveDropdown(null)}
+                    onClick={() => { setViewMode('marketing'); setActiveDropdown(null); }}
                     className="p-3 rounded-xl border transition-all duration-200 hover:scale-[1.02] flex flex-col justify-between no-underline block"
                     style={{
                       backgroundColor: colors.surface,
@@ -371,7 +371,7 @@ export const Header: React.FC = () => {
             )}
           </div>
 
-          <a href="#faq-section" className="hover:opacity-80 transition-opacity" style={{ color: colors.textSecondary }}>
+          <a href="#faq-section" onClick={() => setViewMode('marketing')} className="hover:opacity-80 transition-opacity" style={{ color: colors.textSecondary }}>
             FAQ
           </a>
         </nav>
@@ -533,7 +533,7 @@ export const Header: React.FC = () => {
               <span className="text-[10px] font-bold uppercase tracking-wider block px-2" style={{ color: colors.textTertiary }}>Resources</span>
               <a
                 href="#calc-section"
-                onClick={() => setMobileMenuOpen(false)}
+                onClick={() => { setViewMode('marketing'); setMobileMenuOpen(false); }}
                 className="p-2.5 rounded-xl border flex items-center gap-3 no-underline transition-colors"
                 style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}
               >
@@ -548,7 +548,7 @@ export const Header: React.FC = () => {
 
               <a
                 href="#baskets-section"
-                onClick={() => setMobileMenuOpen(false)}
+                onClick={() => { setViewMode('marketing'); setMobileMenuOpen(false); }}
                 className="p-2.5 rounded-xl border flex items-center gap-3 no-underline transition-colors"
                 style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}
               >
@@ -567,7 +567,7 @@ export const Header: React.FC = () => {
               <span className="text-[10px] font-bold uppercase tracking-wider block px-2" style={{ color: colors.textTertiary }}>About us</span>
               <a
                 href="#about-section"
-                onClick={() => setMobileMenuOpen(false)}
+                onClick={() => { setViewMode('marketing'); setMobileMenuOpen(false); }}
                 className="p-2.5 rounded-xl border flex items-center gap-3 no-underline transition-colors"
                 style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}
               >
@@ -582,7 +582,7 @@ export const Header: React.FC = () => {
 
               <a
                 href="#about-section"
-                onClick={() => setMobileMenuOpen(false)}
+                onClick={() => { setViewMode('marketing'); setMobileMenuOpen(false); }}
                 className="p-2.5 rounded-xl border flex items-center gap-3 no-underline transition-colors"
                 style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}
               >
@@ -598,7 +598,7 @@ export const Header: React.FC = () => {
 
             <a
               href="#faq-section"
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={() => { setViewMode('marketing'); setMobileMenuOpen(false); }}
               className="py-2 px-3 rounded-xl font-bold text-sm block hover:bg-white/5"
               style={{ color: colors.textSecondary }}
             >
