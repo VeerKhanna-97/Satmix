@@ -137,63 +137,53 @@ export const AppShell: React.FC = () => {
         </AnimatePresence>
       </main>
 
-      {/* ── MOBILE BOTTOM TAB BAR ─── */}
+      {/* ── MOBILE FLOATING NAVIGATION DOCK ─── */}
       <nav
-        className="md:hidden fixed bottom-0 left-0 right-0 z-40 border-t backdrop-blur-xl px-4 pt-2 pb-[max(0.6rem,env(safe-area-inset-bottom,0px))] flex items-center justify-around"
-        style={{
-          backgroundColor: themeMode === 'dark' ? 'rgba(18, 20, 28, 0.95)' : 'rgba(255, 255, 255, 0.95)',
-          borderColor: colors.borderDim,
-        }}
+        className="md:hidden fixed bottom-[max(1rem,env(safe-area-inset-bottom,16px))] left-1/2 -translate-x-1/2 z-50 pointer-events-auto"
+        role="navigation"
+        aria-label="Mobile Navigation"
       >
-        <button
-          onClick={() => setActiveTab('dashboard')}
-          className="flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition-all"
-          style={{ color: activeTab === 'dashboard' ? colors.accent : colors.textTertiary }}
+        <div
+          className="flex items-center gap-0.5 sm:gap-1 p-1.5 rounded-full border backdrop-blur-2xl transition-all duration-300 shadow-2xl"
+          style={{
+            backgroundColor: themeMode === 'dark' ? 'rgba(14, 16, 23, 0.92)' : 'rgba(255, 255, 255, 0.92)',
+            borderColor: colors.cardBorder,
+            boxShadow: themeMode === 'dark'
+              ? '0 12px 36px -4px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.06)'
+              : '0 12px 36px -4px rgba(15, 23, 42, 0.14), 0 0 0 1px rgba(15, 23, 42, 0.05)',
+          }}
         >
-          <Home className="w-5 h-5" />
-          <span className="text-[10px] tracking-tight font-medium">Home</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('baskets')}
-          className="flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition-all"
-          style={{ color: activeTab === 'baskets' ? colors.accent : colors.textTertiary }}
-        >
-          <Layers className="w-5 h-5" />
-          <span className="text-[10px] tracking-tight font-medium">Baskets</span>
-        </button>
-
-        {/* Center Promoted Invest Action */}
-        <button
-          onClick={() => setActiveTab('invest')}
-          className="flex flex-col items-center -mt-6"
-        >
-          <div
-            className="w-12 h-12 rounded-full flex items-center justify-center shadow-xl border-2 transition-transform active:scale-95"
-            style={{
-              backgroundColor: activeTab === 'invest' ? colors.primary : colors.surface,
-              borderColor: activeTab === 'invest' ? colors.accent : colors.cardBorder,
-              color: activeTab === 'invest' ? colors.primaryText : colors.textPrimary,
-            }}
-          >
-            <TrendingUp className="w-5 h-5" />
-          </div>
-          <span
-            className="text-[10px] font-bold mt-1"
-            style={{ color: activeTab === 'invest' ? colors.accent : colors.textTertiary }}
-          >
-            Invest
-          </span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('profile')}
-          className="flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition-all"
-          style={{ color: activeTab === 'profile' ? colors.accent : colors.textTertiary }}
-        >
-          <User className="w-5 h-5" />
-          <span className="text-[10px] tracking-tight font-medium">Profile</span>
-        </button>
+          {tabs.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className="relative flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-full transition-all duration-200 select-none active:scale-95"
+                style={{
+                  color: isActive ? colors.primaryText : colors.textSecondary,
+                }}
+                aria-current={isActive ? 'page' : undefined}
+              >
+                {isActive && (
+                  <motion.div
+                    layoutId="activeMobileDockPill"
+                    className="absolute inset-0 rounded-full shadow-md z-0"
+                    style={{ backgroundColor: colors.primary }}
+                    transition={{ type: 'spring', stiffness: 450, damping: 32 }}
+                  />
+                )}
+                <span className="relative z-10 flex items-center gap-1.5">
+                  <Icon className="w-4 h-4 flex-shrink-0" strokeWidth={isActive ? 2.5 : 2} />
+                  <span className={`text-[12px] sm:text-[13px] tracking-tight ${isActive ? 'font-bold' : 'font-semibold'}`}>
+                    {tab.label}
+                  </span>
+                </span>
+              </button>
+            );
+          })}
+        </div>
       </nav>
       {/* ── 4-STEP FIRST-RUN TUTORIAL MODAL ────────────────── */}
       <TutorialModal isOpen={tutorialOpen} onFinish={completeTutorial} />
