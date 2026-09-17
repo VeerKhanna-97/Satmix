@@ -1,7 +1,7 @@
 import React, { useState, useRef, useMemo, useCallback } from 'react';
 import { useApp } from '../../context/AppContext';
 import { ChartSeriesResult, ChartDataPoint } from '../../utils/chartSeries';
-import { TrendingUp, TrendingDown, Calendar, Layers } from 'lucide-react';
+import { TrendingUp, Calendar } from 'lucide-react';
 
 interface LineChartProps {
   series?: ChartSeriesResult;
@@ -52,7 +52,7 @@ export const LineChart: React.FC<LineChartProps> = ({
   className = '',
 }) => {
   const { colors } = useApp();
-  const svgRef = useRef<SVGSVGElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
 
@@ -115,13 +115,13 @@ export const LineChart: React.FC<LineChartProps> = ({
     const stepX = dataPoints.length > 1 ? usableWidth / (dataPoints.length - 1) : usableWidth;
 
     const valCoords = dataPoints.map((d, i) => {
-      const x = paddingX + i * stepX;
+      const x = paddingX + (dataPoints.length > 1 ? i * stepX : usableWidth / 2);
       const y = paddingTop + usableHeight - ((d.value - min) / range) * usableHeight;
       return { x, y };
     });
 
     const invCoords = dataPoints.map((d, i) => {
-      const x = paddingX + i * stepX;
+      const x = paddingX + (dataPoints.length > 1 ? i * stepX : usableWidth / 2);
       const y = paddingTop + usableHeight - ((d.invested - min) / range) * usableHeight;
       return { x, y };
     });
@@ -145,19 +145,21 @@ export const LineChart: React.FC<LineChartProps> = ({
     };
   }, [dataPoints, usableHeight, usableWidth, paddingX, paddingTop, height, width]);
 
-  // Interactive mouse/touch scrubber handling
+  // Interactive mouse/touch scrubber handling with precise padding offset alignment
   const handlePointerMove = useCallback(
-    (e: React.MouseEvent<SVGSVGElement> | React.TouchEvent<SVGSVGElement>) => {
-      if (!interactive || !svgRef.current || dataPoints.length === 0) return;
-      const rect = svgRef.current.getBoundingClientRect();
+    (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
+      if (!interactive || !containerRef.current || dataPoints.length === 0) return;
+      const rect = containerRef.current.getBoundingClientRect();
       const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
       const relativeX = clientX - rect.left;
-      const normalizedRatio = Math.max(0, Math.min(1, relativeX / rect.width));
+      const svgX = (relativeX / rect.width) * width;
+      const clampedX = Math.max(paddingX, Math.min(width - paddingX, svgX));
+      const normalizedRatio = usableWidth > 0 ? (clampedX - paddingX) / usableWidth : 0;
 
       const nearestIdx = Math.round(normalizedRatio * (dataPoints.length - 1));
       setHoverIndex(Math.max(0, Math.min(dataPoints.length - 1, nearestIdx)));
     },
-    [interactive, dataPoints]
+    [interactive, dataPoints, usableWidth, paddingX, width]
   );
 
   const handlePointerLeave = useCallback(() => {
@@ -173,7 +175,7 @@ export const LineChart: React.FC<LineChartProps> = ({
   const endDateLabel = dataPoints[dataPoints.length - 1]?.date || '';
 
   return (
-    <div className={`w-full relative flex flex-col justify-between ${className}`}>
+    <div className={`w-full relative flex flex-col justify-between select-none ${className}`}>
       {/* ── 1. ACTIVE HOVER / SCRUBBER BANNER TOOLTIP ── */}
       {interactive && (
         <div className="h-7 mb-2 flex items-center justify-between text-xs px-1 font-mono transition-all">
@@ -189,8 +191,8 @@ export const LineChart: React.FC<LineChartProps> = ({
                 <span style={{ color: colors.textPrimary }}>
                   Val: ₹{activePoint.value.toLocaleString('en-IN')}{Number.isInteger(activePoint.value) ? '.00' : ''}
                 </span>
-                <span className={activePoint.gain >= 0 ? 'text-emerald-400' : 'text-rose-400'}>
-                  {activePoint.gain >= 0 ? '+' : ''}₹{activePoint.gain.toFixed(2)} ({activePoint.gainPercentage >= 0 ? '+' : ''}{activePoint.gainPercentage}%)
+                <span style={{ color: activePoint.gain >= 0 ? colors.semanticSuccess : colors.semanticDanger }}>
+                  {activePoint.gain >= 0 ? '+' : '-'}₹{Math.abs(activePoint.gain).toFixed(2)} ({activePoint.gainPercentage >= 0 ? '+' : ''}{activePoint.gainPercentage}%)
                 </span>
               </div>
             </>
@@ -208,17 +210,20 @@ export const LineChart: React.FC<LineChartProps> = ({
         </div>
       )}
 
-      {/* ── 2. SVG FINANCIAL CHART ── */}
-      <div className="w-full relative overflow-hidden" style={{ height: `${height}px` }}>
+      {/* ── 2. SVG FINANCIAL CHART WITH ACCURATE HTML SCRUBBER OVERLAY ── */}
+      <div
+        ref={containerRef}
+        className="w-full relative overflow-hidden touch-none cursor-crosshair"
+        style={{ height: `${height}px` }}
+        onMouseMove={handlePointerMove}
+        onMouseLeave={handlePointerLeave}
+        onTouchMove={handlePointerMove}
+        onTouchEnd={handlePointerLeave}
+      >
         <svg
-          ref={svgRef}
           viewBox={`0 0 ${width} ${height}`}
-          className="w-full h-full cursor-crosshair select-none overflow-visible"
+          className="w-full h-full pointer-events-none overflow-visible"
           preserveAspectRatio="none"
-          onMouseMove={handlePointerMove}
-          onMouseLeave={handlePointerLeave}
-          onTouchMove={handlePointerMove}
-          onTouchEnd={handlePointerLeave}
         >
           <defs>
             <linearGradient id="chartGradientVal" x1="0" y1="0" x2="0" y2="1">
@@ -232,29 +237,32 @@ export const LineChart: React.FC<LineChartProps> = ({
             </filter>
           </defs>
 
-          {/* Grid lines */}
+          {/* Grid lines (Theme-aware) */}
           <line
             x1={paddingX}
             y1={paddingTop}
             x2={width - paddingX}
             y2={paddingTop}
-            stroke="rgba(255, 255, 255, 0.05)"
+            stroke={colors.borderDim}
             strokeDasharray="3 3"
+            strokeOpacity="0.6"
           />
           <line
             x1={paddingX}
             y1={paddingTop + usableHeight / 2}
             x2={width - paddingX}
             y2={paddingTop + usableHeight / 2}
-            stroke="rgba(255, 255, 255, 0.05)"
+            stroke={colors.borderDim}
             strokeDasharray="3 3"
+            strokeOpacity="0.6"
           />
           <line
             x1={paddingX}
             y1={paddingTop + usableHeight}
             x2={width - paddingX}
             y2={paddingTop + usableHeight}
-            stroke="rgba(255, 255, 255, 0.08)"
+            stroke={colors.borderDim}
+            strokeOpacity="0.8"
           />
 
           {/* Shaded Area under smooth trajectory */}
@@ -287,47 +295,23 @@ export const LineChart: React.FC<LineChartProps> = ({
             />
           )}
 
-          {/* Interactive Scrubber Crosshair & Pulsating Dot */}
+          {/* Interactive Vertical Dashed Crosshair */}
           {activeCoord && activePoint && (
-            <g>
-              {/* Vertical Dashed Scrubber Line */}
-              <line
-                x1={activeCoord.x}
-                y1={paddingTop}
-                x2={activeCoord.x}
-                y2={paddingTop + usableHeight}
-                stroke="#34D399"
-                strokeWidth="1.2"
-                strokeDasharray="3 3"
-                opacity="0.85"
-              />
-
-              {/* Pulsating Halo Circle */}
-              <circle
-                cx={activeCoord.x}
-                cy={activeCoord.y}
-                r="7"
-                fill="#059669"
-                fillOpacity="0.3"
-                className="animate-ping"
-              />
-
-              {/* Center Dot */}
-              <circle
-                cx={activeCoord.x}
-                cy={activeCoord.y}
-                r="4.5"
-                fill="#FFFFFF"
-                stroke="#059669"
-                strokeWidth="2.5"
-                className="shadow-md"
-              />
-            </g>
+            <line
+              x1={activeCoord.x}
+              y1={paddingTop}
+              x2={activeCoord.x}
+              y2={paddingTop + usableHeight}
+              stroke="#34D399"
+              strokeWidth="1.2"
+              strokeDasharray="3 3"
+              opacity="0.85"
+            />
           )}
 
           {/* X-Axis Date Reference Labels (SVG Text) */}
           {showAxisLabels && dataPoints.length > 1 && (
-            <g className="text-[10px] font-mono fill-slate-500 select-none">
+            <g className="text-[10px] font-mono select-none" fill={colors.textTertiary}>
               <text x={paddingX} y={height - 4} textAnchor="start">
                 {startDateLabel}
               </text>
@@ -340,6 +324,23 @@ export const LineChart: React.FC<LineChartProps> = ({
             </g>
           )}
         </svg>
+
+        {/* ── PERFECT CIRCULAR SCRUBBER DOT (HTML Overlay avoids SVG non-uniform aspect warping) ── */}
+        {activeCoord && activePoint && (
+          <div
+            className="absolute pointer-events-none transition-transform duration-75"
+            style={{
+              left: `${(activeCoord.x / width) * 100}%`,
+              top: `${(activeCoord.y / height) * 100}%`,
+              transform: 'translate(-50%, -50%)',
+            }}
+          >
+            <div className="relative flex items-center justify-center">
+              <span className="absolute w-5 h-5 rounded-full bg-emerald-500/30 animate-ping" />
+              <span className="w-3.5 h-3.5 rounded-full border-2 border-emerald-400 bg-white shadow-[0_0_10px_rgba(16,185,129,0.8)]" />
+            </div>
+          </div>
+        )}
       </div>
 
       {/* ── 3. DUAL-LINE LEGEND ── */}
@@ -367,4 +368,5 @@ export const LineChart: React.FC<LineChartProps> = ({
     </div>
   );
 };
+
 export default LineChart;

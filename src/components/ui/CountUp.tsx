@@ -33,12 +33,25 @@ export const CountUp: React.FC<CountUpProps> = ({
   });
 
   const formatNumber = (val: number) => {
-    let formatted = val.toFixed(decimals);
+    const isNeg = val < 0;
+    const absVal = Math.abs(val);
+    let formatted = absVal.toFixed(decimals);
     if (separator) {
       const parts = formatted.split('.');
       parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
       formatted = parts.join('.');
     }
+
+    // If prefix already has a minus sign explicitly provided (e.g. '-₹')
+    if (prefix.includes('-')) {
+      return `${prefix}${formatted}${suffix}`;
+    }
+
+    // If the value is negative and prefix does not contain '-', prepend '-' before prefix
+    if (isNeg && absVal > 0) {
+      return `-${prefix}${formatted}${suffix}`;
+    }
+
     return `${prefix}${formatted}${suffix}`;
   };
 

@@ -165,10 +165,15 @@ export function generateChartSeries(
       return tA - tB;
     });
 
+  const overallReturnRatio = portfolioSummary.totalInvested > 0
+    ? (portfolioSummary.currentValue - portfolioSummary.totalInvested) / portfolioSummary.totalInvested
+    : 0;
+
   const points: ChartDataPoint[] = [];
 
   for (let i = 0; i < sampleCount; i++) {
-    const sampleTimestamp = i === sampleCount - 1 ? now : startTime + i * intervalMs;
+    const isLast = i === sampleCount - 1;
+    const sampleTimestamp = isLast ? now : startTime + i * intervalMs;
     const dObj = new Date(sampleTimestamp);
 
     // Filter transactions up to this sample point
@@ -194,15 +199,21 @@ export function generateChartSeries(
       } else {
         runningInvested += tx.amount;
         const txTime = new Date(tx.isoTimestamp || 0).getTime();
-        const elapsedSec = Math.max(0, Math.floor((sampleTimestamp - txTime) / 1000));
-        const secondRate = annualRate / (365 * 24 * 3600);
-        const factor = Math.pow(1 + secondRate, elapsedSec) + (marketAdjustment * 0.04);
-        runningValue += tx.amount * Math.max(1, factor);
+        const totalSpan = Math.max(dayMs, now - txTime);
+        const elapsedSinceTx = Math.max(0, sampleTimestamp - txTime);
+        const progress = Math.min(1, elapsedSinceTx / totalSpan);
+
+        // Smooth historical market trajectory with zero jump at point N
+        const marketWave = (Math.sin((sampleTimestamp / dayMs) * 1.2) * 0.015 + Math.cos((sampleTimestamp / dayMs) * 0.6) * 0.01) * (1 + marketAdjustment);
+        const convergence = 1 - progress; // naturally 0 at now
+        const pointMultiplier = Math.max(0.01, 1 + (progress * overallReturnRatio) + (marketWave * convergence));
+
+        runningValue += tx.amount * pointMultiplier;
       }
     });
 
-    // If it's the last point, align strictly with live portfolio summary
-    if (i === sampleCount - 1) {
+    // Ensure final point matches live portfolio summary exactly with continuous convergence
+    if (isLast) {
       runningInvested = portfolioSummary.totalInvested;
       runningValue = portfolioSummary.currentValue;
     }
@@ -240,3 +251,4 @@ export function generateChartSeries(
     gainPercentage: finalPoint?.gainPercentage || 0,
   };
 }
+

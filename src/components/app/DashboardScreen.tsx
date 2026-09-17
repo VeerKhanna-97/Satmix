@@ -400,7 +400,7 @@ export const DashboardScreen: React.FC = () => {
             <div>
               <span className="text-[11px] font-sans block" style={{ color: colors.textTertiary }}>Live Net Return</span>
               <span className="text-sm sm:text-base font-bold" style={{ color: isPositiveGain ? colors.semanticSuccess : colors.semanticDanger }}>
-                <CountUp to={tabMetrics.netDeltaRupees} prefix={isPositiveGain ? '+₹' : '-₹'} duration={1} />
+                <CountUp to={Math.abs(tabMetrics.netDeltaRupees)} prefix={isPositiveGain ? '+₹' : '-₹'} duration={1} />
               </span>
             </div>
             <div>
