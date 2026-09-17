@@ -11,7 +11,7 @@ import {
   X,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
-import { SpotlightCard, Magnet, ShinyText } from '../ui';
+import { SpotlightCard, ShinyText } from '../ui';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface TutorialStep {
@@ -231,7 +231,7 @@ export const TutorialModal: React.FC<TutorialModalProps> = ({
           {!isFirst && (
             <button
               onClick={handleBack}
-              className="px-4 py-3.5 rounded-xl font-bold text-xs border transition-all hover:opacity-80 active:scale-95 flex items-center gap-1.5"
+              className="h-11 px-4 rounded-xl font-bold text-xs border transition-all hover:bg-white/5 active:scale-[0.98] flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
               style={{
                 backgroundColor: colors.surface,
                 borderColor: colors.cardBorder,
@@ -243,16 +243,14 @@ export const TutorialModal: React.FC<TutorialModalProps> = ({
             </button>
           )}
 
-          <Magnet strength={0.15} className="flex-1 block">
-            <button
-              onClick={handleNext}
-              className="w-full py-3.5 px-5 rounded-xl font-bold text-xs tracking-wide shadow-xl transition-all hover:scale-[1.01] active:scale-95 flex items-center justify-center gap-2"
-              style={{ backgroundColor: colors.primary, color: colors.primaryText }}
-            >
-              <span>{isLast ? 'Finish & Start Basket Fit Quiz' : 'Continue'}</span>
-              <ArrowRight className="w-3.5 h-3.5 flex-shrink-0" />
-            </button>
-          </Magnet>
+          <button
+            onClick={handleNext}
+            className="flex-1 h-11 px-5 rounded-xl font-bold text-xs tracking-wide shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] transition-all hover:brightness-105 active:scale-[0.98] flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+            style={{ backgroundColor: colors.primary, color: colors.primaryText }}
+          >
+            <span>{isLast ? 'Finish & Start Basket Fit Quiz' : 'Continue'}</span>
+            <ArrowRight className="w-3.5 h-3.5 flex-shrink-0" />
+          </button>
         </div>
       </div>
     </div>

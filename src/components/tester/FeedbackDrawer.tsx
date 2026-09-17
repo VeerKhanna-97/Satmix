@@ -95,7 +95,7 @@ export const FeedbackDrawer: React.FC<FeedbackDrawerProps> = ({ isOpen, onClose 
                         key={cat}
                         type="button"
                         onClick={() => setCategory(cat)}
-                        className="p-2 rounded-xl border text-center transition-all hover:opacity-80 active:scale-95"
+                        className="h-9 p-2 rounded-xl border text-center transition-all hover:opacity-90 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                         style={{
                           backgroundColor: isSelected ? colors.accentTint : colors.surface,
                           borderColor: isSelected ? colors.borderAccent : colors.cardBorder,
@@ -128,7 +128,7 @@ export const FeedbackDrawer: React.FC<FeedbackDrawerProps> = ({ isOpen, onClose 
 
               <button
                 type="submit"
-                className="w-full py-4 rounded-xl font-bold text-xs shadow-xl transition-all active:scale-95"
+                className="w-full h-11 px-5 rounded-xl font-bold text-xs shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] transition-all hover:brightness-105 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                 style={{ backgroundColor: colors.primary, color: colors.primaryText }}
               >
                 Submit Feedback
@@ -150,7 +150,7 @@ export const FeedbackDrawer: React.FC<FeedbackDrawerProps> = ({ isOpen, onClose 
                   setSubmitted(false);
                   setComment('');
                 }}
-                className="px-4 py-2 rounded-xl text-xs font-bold border transition-colors hover:opacity-80"
+                className="h-9 px-4 rounded-xl text-xs font-bold border transition-all hover:bg-white/5 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                 style={{ backgroundColor: colors.surface, borderColor: colors.borderAccent, color: colors.accent }}
               >
                 Submit Another Feedback

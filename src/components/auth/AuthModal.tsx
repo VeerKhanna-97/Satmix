@@ -11,7 +11,7 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
-import { SpotlightCard, Magnet } from '../ui';
+import { SpotlightCard } from '../ui';
 import { motion, AnimatePresence } from 'motion/react';
 
 export const AuthModal: React.FC = () => {
@@ -396,23 +396,21 @@ export const AuthModal: React.FC = () => {
             )}
           </AnimatePresence>
 
-          <Magnet strength={0.15} className="w-full block">
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-4 px-6 rounded-xl font-bold text-sm tracking-wide shadow-xl transition-all hover:scale-[1.01] active:scale-95 flex items-center justify-center gap-2 mt-2"
-              style={{ backgroundColor: colors.primary, color: colors.primaryText }}
-            >
-              {loading ? (
-                <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-              ) : (
-                <>
-                  <span>{isLogin ? 'Sign In to Web App' : 'Create Account & Start'}</span>
-                  <ArrowRight className="w-4 h-4 flex-shrink-0" />
-                </>
-              )}
-            </button>
-          </Magnet>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full h-12 px-6 rounded-xl font-bold text-sm tracking-wide shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] transition-all hover:brightness-105 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none disabled:active:scale-100 flex items-center justify-center gap-2 mt-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+            style={{ backgroundColor: colors.primary, color: colors.primaryText }}
+          >
+            {loading ? (
+              <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <>
+                <span>{isLogin ? 'Sign In to Web App' : 'Create Account & Start'}</span>
+                <ArrowRight className="w-4 h-4 flex-shrink-0" />
+              </>
+            )}
+          </button>
         </form>
       </SpotlightCard>
     </div>

@@ -7,3 +7,5 @@ export { TiltedCard } from './TiltedCard';
 export { FadeIn } from './FadeIn';
 export { CustomCursor } from './CustomCursor';
 export { FloatingScrollbar } from './FloatingScrollbar';
+export { Button } from './Button';
+export type { ButtonProps } from './Button';

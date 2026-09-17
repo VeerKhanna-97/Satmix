@@ -15,7 +15,7 @@ import {
 import { useApp } from '../../context/AppContext';
 import { verifyPin } from '../../utils/crypto';
 import { Transaction } from '../../types';
-import { Magnet } from '../ui';
+
 
 interface WithdrawModalProps {
   isOpen: boolean;
@@ -233,7 +233,7 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
                     key={pct}
                     type="button"
                     onClick={() => handlePreset(pct)}
-                    className="py-1.5 px-2 rounded-xl text-xs font-bold font-mono border transition-all hover:opacity-80 active:scale-95"
+                    className="h-8 rounded-lg text-xs font-bold font-mono border transition-all active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                     style={{ backgroundColor: colors.surface, borderColor: colors.borderDim, color: colors.textSecondary }}
                   >
                     {pct === 100 ? 'MAX' : `${pct}%`}
@@ -282,17 +282,15 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
             </div>
 
             {/* Next Button */}
-            <Magnet strength={0.15} className="w-full block">
-              <button
-                onClick={handleProceedToPin}
-                disabled={availableBalance <= 0 || numAmount <= 0 || numAmount > availableBalance}
-                className="w-full py-4 px-6 rounded-2xl font-bold text-sm shadow-xl flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-40"
-                style={{ backgroundColor: colors.primary, color: colors.primaryText }}
-              >
-                <span>Proceed to Payout · ₹{netPayout.toLocaleString('en-IN')}</span>
-                <ArrowUpRight className="w-4 h-4 flex-shrink-0" />
-              </button>
-            </Magnet>
+            <button
+              onClick={handleProceedToPin}
+              disabled={availableBalance <= 0 || numAmount <= 0 || numAmount > availableBalance}
+              className="w-full h-12 px-6 rounded-xl font-bold text-sm shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] flex items-center justify-center gap-2 transition-all hover:brightness-105 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none disabled:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+              style={{ backgroundColor: colors.primary, color: colors.primaryText }}
+            >
+              <span>Proceed to Payout · ₹{netPayout.toLocaleString('en-IN')}</span>
+              <ArrowUpRight className="w-4 h-4 flex-shrink-0" />
+            </button>
           </div>
         )}
 
@@ -364,7 +362,7 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
                       else if (k === '⌫') setPin((prev) => prev.slice(0, -1));
                       else setPin((prev) => (prev.length < 4 ? prev + k : prev));
                     }}
-                    className="py-3 rounded-xl border text-sm font-bold font-mono hover:opacity-80 active:scale-95 transition-all"
+                    className="h-11 rounded-xl border text-sm font-bold font-mono active:scale-[0.96] hover:bg-white/5 transition-all flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                     style={{ backgroundColor: colors.surface, borderColor: colors.borderDim, color: colors.textPrimary }}
                   >
                     {k}
@@ -374,16 +372,14 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
             </div>
 
             {/* Submit Auth */}
-            <Magnet strength={0.15} className="w-full block">
-              <button
-                onClick={handleConfirmPin}
-                disabled={pin.length !== 4}
-                className="w-full py-4 px-6 rounded-2xl font-bold text-sm shadow-xl flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-40"
-                style={{ backgroundColor: colors.primary, color: colors.primaryText }}
-              >
-                <span>Authorize & Disburse Payout</span>
-              </button>
-            </Magnet>
+            <button
+              onClick={handleConfirmPin}
+              disabled={pin.length !== 4}
+              className="w-full h-12 px-6 rounded-xl font-bold text-sm shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] flex items-center justify-center gap-2 transition-all hover:brightness-105 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none disabled:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+              style={{ backgroundColor: colors.primary, color: colors.primaryText }}
+            >
+              <span>Authorize & Disburse Payout</span>
+            </button>
           </div>
         )}
 
@@ -448,22 +444,20 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
 
             {/* Navigation CTAs */}
             <div className="space-y-2">
-              <Magnet strength={0.15} className="w-full block">
-                <button
-                  onClick={handleClose}
-                  className="w-full py-3.5 px-6 rounded-xl font-bold text-sm shadow-xl flex items-center justify-center transition-all active:scale-95"
-                  style={{ backgroundColor: colors.primary, color: colors.primaryText }}
-                >
-                  Back to Dashboard
-                </button>
-              </Magnet>
+              <button
+                onClick={handleClose}
+                className="w-full h-11 px-6 rounded-xl font-bold text-sm shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] flex items-center justify-center transition-all hover:brightness-105 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                style={{ backgroundColor: colors.primary, color: colors.primaryText }}
+              >
+                Back to Dashboard
+              </button>
 
               <button
                 onClick={() => {
                   handleClose();
                   setActiveTab('profile');
                 }}
-                className="w-full py-2.5 rounded-xl text-xs font-semibold hover:opacity-80 transition-opacity flex items-center justify-center gap-1.5"
+                className="w-full h-10 px-4 rounded-xl text-xs font-semibold hover:bg-white/5 transition-all flex items-center justify-center gap-1.5 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                 style={{ color: colors.textSecondary }}
               >
                 <FileCheck className="w-3.5 h-3.5" style={{ color: colors.accent }} />

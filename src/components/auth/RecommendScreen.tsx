@@ -10,7 +10,7 @@ import {
 import { useApp } from '../../context/AppContext';
 import { BasketId } from '../../types';
 import { BASKETS, getBasketById } from '../../data/baskets';
-import { SpotlightCard, Magnet, ShinyText } from '../ui';
+import { SpotlightCard, ShinyText } from '../ui';
 import { motion } from 'motion/react';
 
 interface RecommendScreenProps {
@@ -179,7 +179,7 @@ export const RecommendScreen: React.FC<RecommendScreenProps> = ({
           <button
             type="button"
             onClick={() => handleSwitch(selectedId === 'stable' ? 'growth' : 'stable')}
-            className="text-xs font-bold hover:underline"
+            className="text-xs font-bold hover:underline active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
             style={{ color: colors.accent }}
           >
             Switch to {selectedId === 'stable' ? 'Growth' : 'Stable'} →
@@ -187,16 +187,14 @@ export const RecommendScreen: React.FC<RecommendScreenProps> = ({
         </div>
 
         {/* Continue Action */}
-        <Magnet strength={0.15} className="w-full block">
-          <button
-            onClick={handleContinue}
-            className="w-full py-4 px-6 rounded-xl font-bold text-sm shadow-xl transition-all hover:scale-[1.01] active:scale-95 flex items-center justify-center gap-2"
-            style={{ backgroundColor: colors.primary, color: colors.primaryText }}
-          >
-            <span>Confirm & Set Daily Amount (from ₹{activeBasket.minDailyAmount}/day)</span>
-            <ArrowRight className="w-4 h-4 flex-shrink-0" />
-          </button>
-        </Magnet>
+        <button
+          onClick={handleContinue}
+          className="w-full h-12 px-6 rounded-xl font-bold text-sm shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] transition-all hover:brightness-105 active:scale-[0.98] flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+          style={{ backgroundColor: colors.primary, color: colors.primaryText }}
+        >
+          <span>Confirm & Set Daily Amount (from ₹{activeBasket.minDailyAmount}/day)</span>
+          <ArrowRight className="w-4 h-4 flex-shrink-0" />
+        </button>
       </div>
     </div>
   );

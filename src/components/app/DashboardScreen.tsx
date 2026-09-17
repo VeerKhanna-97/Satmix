@@ -369,28 +369,24 @@ export const DashboardScreen: React.FC = () => {
 
             {/* Quick Actions (Deposit & Withdraw) */}
             <div className="flex items-center gap-2">
-              <Magnet strength={0.15} className="w-full sm:w-auto">
-                <button
-                  onClick={() => setDepositOpen(true)}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl font-bold text-xs shadow-md transition-all active:scale-95"
-                  style={{ backgroundColor: colors.primary, color: colors.primaryText }}
-                >
-                  <ArrowDownLeft className="w-4 h-4 flex-shrink-0" />
-                  <span>+ Add Money</span>
-                </button>
-              </Magnet>
+              <button
+                onClick={() => setDepositOpen(true)}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 h-9 px-3.5 rounded-lg font-semibold text-xs shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_1px_3px_rgba(0,0,0,0.3)] transition-[transform,background-color,box-shadow] duration-150 ease-out active:scale-[0.98] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                style={{ backgroundColor: colors.primary, color: colors.primaryText }}
+              >
+                <ArrowDownLeft className="w-4 h-4 flex-shrink-0" />
+                <span>+ Add Money</span>
+              </button>
 
-              <Magnet strength={0.15} className="w-full sm:w-auto">
-                <button
-                  onClick={() => setWithdrawOpen(true)}
-                  disabled={tabMetrics.marketValue <= 0}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl font-semibold text-xs border transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-80"
-                  style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textPrimary }}
-                >
-                  <ArrowUpRight className="w-4 h-4 flex-shrink-0" />
-                  <span>Withdraw</span>
-                </button>
-              </Magnet>
+              <button
+                onClick={() => setWithdrawOpen(true)}
+                disabled={tabMetrics.marketValue <= 0}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 h-9 px-3.5 rounded-lg font-semibold text-xs border transition-[transform,background-color,border-color] duration-150 ease-out hover:bg-white/[0.05] hover:border-white/20 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none disabled:active:scale-100 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textPrimary }}
+              >
+                <ArrowUpRight className="w-4 h-4 flex-shrink-0" />
+                <span>Withdraw</span>
+              </button>
             </div>
           </div>
 

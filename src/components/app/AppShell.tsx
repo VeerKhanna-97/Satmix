@@ -160,7 +160,7 @@ export const AppShell: React.FC = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className="relative flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-full transition-all duration-200 select-none active:scale-95"
+                className="relative flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-full transition-all duration-200 select-none active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                 style={{
                   color: isActive ? colors.primaryText : colors.textSecondary,
                 }}

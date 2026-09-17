@@ -63,7 +63,7 @@ export const FloatingActionDock: React.FC = () => {
             <button
               type="button"
               onClick={handleLaunch}
-              className="flex-1 min-h-[48px] py-3 px-4 rounded-xl font-bold text-xs shadow-xl flex items-center justify-center gap-1.5 transition-all active:scale-95"
+              className="flex-1 h-11 px-4 rounded-xl font-semibold text-xs shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] flex items-center justify-center gap-1.5 transition-[transform,background-color] duration-150 ease-out active:scale-[0.98] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
               style={{ backgroundColor: colors.primary, color: colors.primaryText }}
               aria-label={isAuthenticated ? 'Open Satmix Dashboard' : 'Start with ₹10 a day'}
             >
@@ -74,29 +74,26 @@ export const FloatingActionDock: React.FC = () => {
 
           {/* Desktop Floating Pill */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.85, y: 20 }}
+            initial={{ opacity: 0, scale: 0.95, y: 16 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.85, y: 20 }}
+            exit={{ opacity: 0, scale: 0.95, y: 16 }}
             transition={{ type: 'spring', stiffness: 350, damping: 25 }}
             className="hidden sm:block fixed bottom-6 right-6 z-40 pointer-events-auto"
           >
-            <Magnet strength={12}>
-              <button
-                type="button"
-                onClick={handleLaunch}
-                className="px-5 py-3.5 min-h-[44px] rounded-2xl font-extrabold text-xs shadow-2xl transition-all hover:scale-105 active:scale-95 flex items-center gap-2 border backdrop-blur-xl group"
-                style={{
-                  backgroundColor: colors.primary,
-                  color: colors.primaryText,
-                  borderColor: colors.borderAccent,
-                  boxShadow: '0 10px 35px rgba(0, 0, 0, 0.35), 0 0 20px rgba(239, 142, 25, 0.15)',
-                }}
-                aria-label={isAuthenticated ? 'Open Satmix Web Dashboard' : 'Launch Satmix Web App'}
-              >
-                <span>{isAuthenticated ? 'Open Dashboard' : 'Launch Web App'}</span>
-                <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
-              </button>
-            </Magnet>
+            <button
+              type="button"
+              onClick={handleLaunch}
+              className="h-11 px-4 rounded-xl font-semibold text-xs shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_8px_24px_rgba(0,0,0,0.35)] transition-[transform,background-color,box-shadow] duration-150 ease-out active:scale-[0.98] flex items-center gap-2 border select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50 group"
+              style={{
+                backgroundColor: colors.primary,
+                color: colors.primaryText,
+                borderColor: colors.borderAccent,
+              }}
+              aria-label={isAuthenticated ? 'Open Satmix Web Dashboard' : 'Launch Satmix Web App'}
+            >
+              <span>{isAuthenticated ? 'Open Dashboard' : 'Launch Web App'}</span>
+              <ArrowRight className="w-3.5 h-3.5 transition-transform duration-150 group-hover:translate-x-0.5" />
+            </button>
           </motion.div>
         </>
       )}

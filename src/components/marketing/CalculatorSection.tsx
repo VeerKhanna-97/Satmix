@@ -89,12 +89,10 @@ export const CalculatorSection: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => handleStrategyChange('low')}
-                      className="p-3.5 rounded-2xl border text-left transition-all duration-300"
+                      className="p-3.5 rounded-2xl border text-left transition-[background-color,border-color,transform] duration-150 ease-out active:scale-[0.98] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                       style={{
                         backgroundColor: strategy === 'low' ? colors.accentTint : colors.surface,
                         borderColor: strategy === 'low' ? colors.accent : colors.cardBorder,
-                        transform: strategy === 'low' ? 'scale(1.02)' : 'none',
-                        boxShadow: strategy === 'low' ? '0 4px 12px rgba(0,0,0,0.1)' : 'none',
                       }}
                     >
                       <div className="flex items-center gap-1.5 mb-1">
@@ -110,12 +108,10 @@ export const CalculatorSection: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => handleStrategyChange('high')}
-                      className="p-3.5 rounded-2xl border text-left transition-all duration-300"
+                      className="p-3.5 rounded-2xl border text-left transition-[background-color,border-color,transform] duration-150 ease-out active:scale-[0.98] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                       style={{
                         backgroundColor: strategy === 'high' ? colors.accentTint : colors.surface,
                         borderColor: strategy === 'high' ? colors.accent : colors.cardBorder,
-                        transform: strategy === 'high' ? 'scale(1.02)' : 'none',
-                        boxShadow: strategy === 'high' ? '0 4px 12px rgba(0,0,0,0.1)' : 'none',
                       }}
                     >
                       <div className="flex items-center gap-1.5 mb-1">
@@ -167,12 +163,11 @@ export const CalculatorSection: React.FC = () => {
                         key={preset}
                         type="button"
                         onClick={() => setDailySavings(preset)}
-                        className="py-1.5 rounded-xl text-[11px] font-bold font-mono border transition-all duration-200"
+                        className="h-8 rounded-lg text-xs font-semibold font-mono border transition-[transform,background-color,border-color] duration-150 ease-out active:scale-[0.97] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50 flex items-center justify-center"
                         style={{
                           backgroundColor: dailySavings === preset ? colors.primary : colors.surface,
                           borderColor: dailySavings === preset ? colors.primary : colors.cardBorder,
                           color: dailySavings === preset ? colors.primaryText : colors.textSecondary,
-                          transform: dailySavings === preset ? 'scale(1.05)' : 'none',
                         }}
                       >
                         ₹{preset}
@@ -184,24 +179,22 @@ export const CalculatorSection: React.FC = () => {
 
               {/* Action Button */}
               <div className="pt-6">
-                <Magnet strength={12} className="w-full">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (isAuthenticated) {
-                        setViewMode('app');
-                      } else {
-                        setAuthSubView('signup');
-                        setViewMode('auth');
-                      }
-                    }}
-                    className="w-full py-3.5 rounded-xl font-bold text-sm shadow-xl transition-all hover:opacity-95 active:scale-95 flex items-center justify-center gap-2"
-                    style={{ backgroundColor: colors.primary, color: colors.primaryText }}
-                  >
-                    <span>Automate with This Plan (₹{dailySavings}/day)</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                </Magnet>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (isAuthenticated) {
+                      setViewMode('app');
+                    } else {
+                      setAuthSubView('signup');
+                      setViewMode('auth');
+                    }
+                  }}
+                  className="w-full h-12 rounded-xl font-semibold text-sm shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_4px_16px_rgba(247,147,26,0.2)] transition-[transform,background-color,box-shadow] duration-150 ease-out active:scale-[0.98] flex items-center justify-center gap-2 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                  style={{ backgroundColor: colors.primary, color: colors.primaryText }}
+                >
+                  <span>Automate with This Plan (₹{dailySavings}/day)</span>
+                  <ArrowRight className="w-4 h-4 flex-shrink-0" />
+                </button>
               </div>
             </SpotlightCard>
           </FadeIn>

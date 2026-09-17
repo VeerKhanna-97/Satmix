@@ -153,19 +153,17 @@ export const BasketsSection: React.FC = () => {
 
                   {/* Basket Action Button */}
                   <div className="pt-2">
-                    <Magnet strength={10} className="w-full">
-                      <button
-                        onClick={() => handleSelectBasket(basket.id)}
-                        className="w-full py-3.5 rounded-xl font-bold text-xs tracking-wide shadow-md transition-all active:scale-95 flex items-center justify-center gap-2"
-                        style={{
-                          backgroundColor: colors.primary,
-                          color: colors.primaryText,
-                        }}
-                      >
-                        <span>Start with {basket.name}</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
-                      </button>
-                    </Magnet>
+                    <button
+                      onClick={() => handleSelectBasket(basket.id)}
+                      className="w-full h-11 rounded-xl font-semibold text-xs tracking-wide shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] transition-[transform,background-color,box-shadow] duration-150 ease-out active:scale-[0.98] flex items-center justify-center gap-2 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                      style={{
+                        backgroundColor: colors.primary,
+                        color: colors.primaryText,
+                      }}
+                    >
+                      <span>Start with {basket.name}</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
                   </div>
                 </SpotlightCard>
               </FadeIn>

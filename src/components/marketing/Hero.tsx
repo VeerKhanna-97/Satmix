@@ -154,21 +154,19 @@ export const Hero: React.FC = () => {
 
             {/* CTAs */}
             <FadeIn delay={0.35}>
-              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
-                <Magnet strength={12} className="w-full sm:w-auto">
-                  <button
-                    onClick={handleStartSaving}
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-4 rounded-xl font-bold text-sm shadow-xl transition-all active:scale-95"
-                    style={{ backgroundColor: colors.primary, color: colors.primaryText }}
-                  >
-                    <span>{isAuthenticated ? 'Open Web Dashboard' : 'Start with ₹10/Day'}</span>
-                    <ArrowRight className="w-4 h-4 flex-shrink-0" />
-                  </button>
-                </Magnet>
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5 pt-2">
+                <button
+                  onClick={handleStartSaving}
+                  className="w-full sm:w-auto h-12 px-7 rounded-xl font-semibold text-sm shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_4px_16px_rgba(247,147,26,0.2)] transition-[transform,background-color,box-shadow] duration-150 ease-out active:scale-[0.98] inline-flex items-center justify-center gap-2 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                  style={{ backgroundColor: colors.primary, color: colors.primaryText }}
+                >
+                  <span>{isAuthenticated ? 'Open Web Dashboard' : 'Start with ₹10/Day'}</span>
+                  <ArrowRight className="w-4 h-4 flex-shrink-0" />
+                </button>
 
                 <a
                   href="#calc-section"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-4 rounded-xl font-semibold text-sm transition-all hover:bg-white/5 border"
+                  className="w-full sm:w-auto h-12 px-6 rounded-xl font-semibold text-sm transition-[transform,background-color,border-color] duration-150 ease-out hover:bg-white/[0.04] hover:border-white/20 active:scale-[0.98] border inline-flex items-center justify-center gap-2 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                   style={{
                     backgroundColor: colors.surface,
                     borderColor: colors.cardBorder,
@@ -388,7 +386,7 @@ export const Hero: React.FC = () => {
                         <button
                           type="submit"
                           disabled={isSubmitting || !consentAgreed}
-                          className="w-full py-3 rounded-xl font-bold text-sm tracking-wide shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 disabled:opacity-60"
+                          className="w-full h-11 rounded-xl font-semibold text-sm tracking-[-0.01em] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] transition-[transform,background-color,box-shadow,opacity] duration-150 ease-out active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none disabled:active:scale-100 flex items-center justify-center gap-2 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                           style={{ backgroundColor: colors.primary, color: colors.primaryText }}
                         >
                           {isSubmitting ? (
@@ -421,7 +419,7 @@ export const Hero: React.FC = () => {
                         <button
                           type="button"
                           onClick={handleGoToApp}
-                          className="px-3.5 py-1.5 rounded-xl font-bold text-xs shadow transition-all active:scale-95 flex items-center gap-1 flex-shrink-0"
+                          className="h-8 px-3 rounded-lg font-semibold text-xs shadow-[inset_0_1px_0_0_rgba(255,255,255,0.2)] transition-[transform,background-color] duration-150 ease-out active:scale-[0.98] flex items-center gap-1.5 flex-shrink-0 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                           style={{ backgroundColor: colors.primary, color: colors.primaryText }}
                         >
                           <span>Launch App</span>
@@ -455,7 +453,7 @@ export const Hero: React.FC = () => {
                       {/* Direct WebApp Launch CTA */}
                       <button
                         onClick={handleGoToApp}
-                        className="w-full py-3.5 rounded-xl font-bold text-sm shadow-xl transition-all active:scale-95 flex items-center justify-center gap-2"
+                        className="w-full h-11 rounded-xl font-semibold text-sm shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] transition-[transform,background-color,box-shadow] duration-150 ease-out active:scale-[0.98] flex items-center justify-center gap-2 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                         style={{ backgroundColor: colors.primary, color: colors.primaryText }}
                       >
                         <span>Launch Web App →</span>

@@ -3,7 +3,7 @@ import { CheckCircle2, ArrowRight, Sparkles, MessageSquare, ChevronRight, Clock 
 import { useApp } from '../../context/AppContext';
 import { Header } from '../marketing/Header';
 import { Footer } from '../marketing/Footer';
-import { SpotlightCard, Magnet } from '../ui';
+import { SpotlightCard } from '../ui';
 
 export const ThankYouPage: React.FC = () => {
   const { colors, setViewMode, setAuthSubView, triggerConfetti } = useApp();
@@ -91,16 +91,14 @@ export const ThankYouPage: React.FC = () => {
 
           {/* Direct CTA: Launch Interactive App */}
           <div className="space-y-3 max-w-md mx-auto pt-2">
-            <Magnet strength={12} className="w-full">
-              <button
-                onClick={handleLaunchApp}
-                className="w-full py-4 rounded-2xl font-bold text-sm shadow-xl transition-all hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2"
-                style={{ backgroundColor: colors.primary, color: colors.primaryText }}
-              >
-                <span>Launch Interactive Web App Now</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </Magnet>
+            <button
+              onClick={handleLaunchApp}
+              className="w-full h-12 px-6 rounded-xl font-bold text-sm shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] transition-all hover:brightness-105 active:scale-[0.98] flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+              style={{ backgroundColor: colors.primary, color: colors.primaryText }}
+            >
+              <span>Launch Interactive Web App Now</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
 
             <button
               onClick={() => setViewMode('marketing')}

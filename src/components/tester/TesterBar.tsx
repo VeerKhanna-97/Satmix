@@ -17,7 +17,7 @@ export const TesterBar: React.FC = () => {
       <div className="fixed bottom-20 md:bottom-6 right-4 md:right-6 z-40 flex items-center animate-fade-in">
         <button
           onClick={() => setFeedbackOpen(true)}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold shadow-2xl backdrop-blur-xl border transition-all hover:scale-105 active:scale-95 shadow-[0_10px_30px_rgba(0,0,0,0.5)]"
+          className="flex items-center gap-2 h-10 px-4 rounded-xl text-xs font-bold backdrop-blur-xl border shadow-[inset_0_1px_0_0_rgba(255,255,255,0.2),0_8px_24px_rgba(0,0,0,0.4)] transition-all hover:brightness-105 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
           style={{
             backgroundColor: colors.cardHigh,
             borderColor: colors.borderAccent,

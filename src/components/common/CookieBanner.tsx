@@ -47,7 +47,7 @@ export const CookieBanner: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setCookieConsent('essential')}
-                className="flex-1 py-2 px-3 rounded-xl text-xs font-bold border transition-colors hover:bg-white/5"
+                className="flex-1 h-8.5 px-3 rounded-lg text-xs font-semibold border transition-all hover:bg-white/5 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                 style={{
                   backgroundColor: colors.surface,
                   borderColor: colors.cardBorder,
@@ -59,7 +59,7 @@ export const CookieBanner: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setCookieConsent('all')}
-                className="flex-1 py-2 px-3 rounded-xl text-xs font-bold shadow-md transition-all active:scale-95"
+                className="flex-1 h-8.5 px-3 rounded-lg text-xs font-bold shadow-[inset_0_1px_0_0_rgba(255,255,255,0.2),0_2px_6px_rgba(0,0,0,0.15)] transition-all hover:brightness-105 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                 style={{ backgroundColor: colors.primary, color: colors.primaryText }}
               >
                 Accept All

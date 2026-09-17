@@ -1,7 +1,7 @@
 import React from 'react';
 import { Zap, Flame, Shield, Award, Check, AlertCircle, Sparkles, PlusCircle } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
-import { SpotlightCard, Magnet, CountUp } from '../ui';
+import { SpotlightCard, CountUp } from '../ui';
 
 interface StreakWeeklyTrackerProps {
   onQuickDeposit?: () => void;
@@ -138,16 +138,14 @@ export const StreakWeeklyTracker: React.FC<StreakWeeklyTrackerProps> = ({ onQuic
           </div>
 
           {(status === 'AT_RISK' || status === 'INACTIVE') && (
-            <Magnet strength={10}>
-              <button
-                onClick={onQuickDeposit || (() => setActiveTab('invest'))}
-                className="px-3 py-1.5 rounded-xl text-xs font-bold shadow-md flex items-center gap-1.5 transition-all hover:scale-105 active:scale-95"
-                style={{ backgroundColor: colors.primary, color: colors.primaryText }}
-              >
-                <PlusCircle className="w-3.5 h-3.5" />
-                <span>Quick ₹10</span>
-              </button>
-            </Magnet>
+            <button
+              onClick={onQuickDeposit || (() => setActiveTab('invest'))}
+              className="h-8 px-3 rounded-lg text-xs font-bold shadow-[inset_0_1px_0_0_rgba(255,255,255,0.2),0_2px_6px_rgba(0,0,0,0.15)] flex items-center gap-1.5 transition-all hover:brightness-105 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+              style={{ backgroundColor: colors.primary, color: colors.primaryText }}
+            >
+              <PlusCircle className="w-3.5 h-3.5" />
+              <span>Quick ₹10</span>
+            </button>
           )}
         </div>
       </div>

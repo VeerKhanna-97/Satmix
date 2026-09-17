@@ -3,7 +3,7 @@ import { Shield, Rocket, CheckCircle2, ArrowRight, Zap, Info } from 'lucide-reac
 import { useApp } from '../../context/AppContext';
 import { BASKETS } from '../../data/baskets';
 import { BasketId } from '../../types';
-import { SpotlightCard, ShinyText, Magnet, FadeIn } from '../ui';
+import { SpotlightCard, ShinyText, FadeIn } from '../ui';
 import { motion } from 'motion/react';
 
 export const BasketsScreen: React.FC = () => {
@@ -183,23 +183,21 @@ export const BasketsScreen: React.FC = () => {
 
                 {/* Action */}
                 <div className="pt-2">
-                  <Magnet strength={0.15} className="w-full block">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleConfirmAndInvest(basket.id);
-                      }}
-                      className="w-full py-3.5 px-5 rounded-xl font-bold text-xs tracking-wide shadow-md transition-all active:scale-95 flex items-center justify-center gap-2"
-                      style={{
-                        backgroundColor: isSelected ? colors.primary : colors.surface,
-                        color: isSelected ? colors.primaryText : colors.textPrimary,
-                        border: `1px solid ${isSelected ? 'transparent' : colors.cardBorder}`,
-                      }}
-                    >
-                      <span>{isConfigured ? `Adjust ${basket.name} (₹${habitStatus.dailyAmount}/day)` : `Set Up Daily AutoPay (from ₹${basket.minDailyAmount})`}</span>
-                      <ArrowRight className="w-3.5 h-3.5 flex-shrink-0" />
-                    </button>
-                  </Magnet>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleConfirmAndInvest(basket.id);
+                    }}
+                    className="w-full h-11 px-5 rounded-xl font-bold text-xs tracking-wide shadow-[inset_0_1px_0_0_rgba(255,255,255,0.2),0_2px_6px_rgba(0,0,0,0.15)] transition-all hover:brightness-105 active:scale-[0.98] flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                    style={{
+                      backgroundColor: isSelected ? colors.primary : colors.surface,
+                      color: isSelected ? colors.primaryText : colors.textPrimary,
+                      border: `1px solid ${isSelected ? 'transparent' : colors.cardBorder}`,
+                    }}
+                  >
+                    <span>{isConfigured ? `Adjust ${basket.name} (₹${habitStatus.dailyAmount}/day)` : `Set Up Daily AutoPay (from ₹${basket.minDailyAmount})`}</span>
+                    <ArrowRight className="w-3.5 h-3.5 flex-shrink-0" />
+                  </button>
                 </div>
               </SpotlightCard>
             </FadeIn>

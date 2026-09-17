@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { X, ArrowDownLeft, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
-import { Magnet } from '../ui';
+
 
 interface DepositModalProps {
   isOpen: boolean;
@@ -80,11 +80,12 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
                       key={preset}
                       type="button"
                       onClick={() => setAmount(preset)}
-                      className="py-1.5 rounded-xl text-xs font-bold font-mono border transition-all hover:opacity-80 active:scale-95"
+                      className="h-8 rounded-lg text-xs font-bold font-mono border transition-all active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                       style={{
                         backgroundColor: isActive ? colors.accentTint : colors.surface,
                         borderColor: isActive ? colors.borderAccent : colors.cardBorder,
                         color: isActive ? colors.accent : colors.textSecondary,
+                        boxShadow: isActive ? 'inset 0 1px 0 0 rgba(255,255,255,0.2)' : 'none',
                       }}
                     >
                       +₹{preset}
@@ -115,7 +116,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
                       key={m}
                       type="button"
                       onClick={() => setMethod(m as any)}
-                      className="p-3 rounded-xl border text-xs font-bold transition-all text-left flex items-center justify-between hover:opacity-80 active:scale-95"
+                      className="h-11 px-3.5 rounded-xl border text-xs font-bold transition-all text-left flex items-center justify-between active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                       style={{
                         backgroundColor: isSelected ? colors.accentTint : colors.surface,
                         borderColor: isSelected ? colors.borderAccent : colors.cardBorder,
@@ -131,20 +132,18 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
             </div>
 
             {/* Submit Button */}
-            <Magnet strength={0.15} className="w-full block">
-              <button
-                onClick={handleDeposit}
-                disabled={loading || !amount || parseInt(amount, 10) < 10}
-                className="w-full py-4 px-6 rounded-xl font-bold text-sm shadow-xl flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-50"
-                style={{ backgroundColor: colors.primary, color: colors.primaryText }}
-              >
-                {loading ? (
-                  <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                ) : (
-                  <span>Pay ₹{amount ? parseInt(amount, 10).toLocaleString('en-IN') : '0'} Instantly</span>
-                )}
-              </button>
-            </Magnet>
+            <button
+              onClick={handleDeposit}
+              disabled={loading || !amount || parseInt(amount, 10) < 10}
+              className="w-full h-12 px-6 rounded-xl font-bold text-sm shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] flex items-center justify-center gap-2 transition-all hover:brightness-105 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none disabled:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+              style={{ backgroundColor: colors.primary, color: colors.primaryText }}
+            >
+              {loading ? (
+                <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <span>Pay ₹{amount ? parseInt(amount, 10).toLocaleString('en-IN') : '0'} Instantly</span>
+              )}
+            </button>
           </div>
         ) : (
           <div className="p-8 text-center space-y-4 animate-fade-in">
@@ -155,15 +154,13 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
             <p className="text-xs leading-relaxed" style={{ color: colors.textSecondary }}>
               ₹{parseInt(amount, 10).toLocaleString('en-IN')} has been added to your portfolio and routed for 9:00 AM batch execution via CoinDCX API.
             </p>
-            <Magnet strength={0.15} className="w-full block">
-              <button
-                onClick={handleClose}
-                className="w-full py-3.5 px-6 rounded-xl font-bold text-sm shadow-xl mt-2 flex items-center justify-center transition-all active:scale-95"
-                style={{ backgroundColor: colors.primary, color: colors.primaryText }}
-              >
-                View Updated Dashboard
-              </button>
-            </Magnet>
+            <button
+              onClick={handleClose}
+              className="w-full h-11 px-6 rounded-xl font-bold text-sm shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] mt-2 flex items-center justify-center transition-all hover:brightness-105 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+              style={{ backgroundColor: colors.primary, color: colors.primaryText }}
+            >
+              View Updated Dashboard
+            </button>
           </div>
         )}
       </div>

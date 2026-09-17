@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Shield, Rocket, CheckCircle2, ArrowRight, Sparkles } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { BasketId } from '../../types';
-import { SpotlightCard, Magnet, ShinyText } from '../ui';
+import { SpotlightCard, ShinyText } from '../ui';
 import { motion, AnimatePresence } from 'motion/react';
 import { RecommendScreen } from './RecommendScreen';
 
@@ -251,17 +251,15 @@ export const RiskQuiz: React.FC = () => {
         </AnimatePresence>
 
         {/* Continue Button */}
-        <Magnet strength={0.15} className="w-full block">
-          <button
-            onClick={handleNext}
-            disabled={selectedOptIndex === null}
-            className="w-full py-4 px-6 rounded-xl font-bold text-sm shadow-xl transition-all disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 flex items-center justify-center gap-2"
-            style={{ backgroundColor: colors.primary, color: colors.primaryText }}
-          >
-            <span>{currentStep === QUIZ_QUESTIONS.length - 1 ? 'Calculate Basket Fit' : 'Next Question'}</span>
-            <ArrowRight className="w-4 h-4 flex-shrink-0" />
-          </button>
-        </Magnet>
+        <button
+          onClick={handleNext}
+          disabled={selectedOptIndex === null}
+          className="w-full h-12 px-6 rounded-xl font-bold text-sm shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] transition-all hover:brightness-105 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none disabled:active:scale-100 flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+          style={{ backgroundColor: colors.primary, color: colors.primaryText }}
+        >
+          <span>{currentStep === QUIZ_QUESTIONS.length - 1 ? 'Calculate Basket Fit' : 'Next Question'}</span>
+          <ArrowRight className="w-4 h-4 flex-shrink-0" />
+        </button>
       </div>
     </div>
   );

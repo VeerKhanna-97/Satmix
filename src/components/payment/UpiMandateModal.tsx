@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { X, ShieldCheck, CheckCircle2, Lock, ArrowRight } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
-import { Magnet } from '../ui';
+
 
 interface UpiMandateModalProps {
   isOpen: boolean;
@@ -108,7 +108,7 @@ export const UpiMandateModal: React.FC<UpiMandateModalProps> = ({ isOpen, onClos
                       key={app.name}
                       type="button"
                       onClick={() => setSelectedApp(app.name as any)}
-                      className="p-3 rounded-xl border text-left flex items-center justify-between transition-all hover:opacity-80 active:scale-95"
+                      className="p-3 rounded-xl border text-left flex items-center justify-between transition-all hover:opacity-90 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                       style={{
                         backgroundColor: isSelected ? colors.accentTint : colors.surface,
                         borderColor: isSelected ? colors.borderAccent : colors.cardBorder,
@@ -152,17 +152,15 @@ export const UpiMandateModal: React.FC<UpiMandateModalProps> = ({ isOpen, onClos
               </label>
             </div>
 
-            <Magnet strength={0.15} className="w-full block">
-              <button
-                onClick={() => setStep('pin')}
-                disabled={!mandateConsent}
-                className="w-full py-4 px-6 rounded-xl font-bold text-sm shadow-xl flex items-center justify-center gap-2 disabled:opacity-50 transition-all active:scale-95"
-                style={{ backgroundColor: colors.primary, color: colors.primaryText }}
-              >
-                <span>Proceed to Enter UPI PIN</span>
-                <ArrowRight className="w-4 h-4 flex-shrink-0" />
-              </button>
-            </Magnet>
+            <button
+              onClick={() => setStep('pin')}
+              disabled={!mandateConsent}
+              className="w-full h-12 px-6 rounded-xl font-bold text-sm shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none disabled:active:scale-100 transition-all hover:brightness-105 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+              style={{ backgroundColor: colors.primary, color: colors.primaryText }}
+            >
+              <span>Proceed to Enter UPI PIN</span>
+              <ArrowRight className="w-4 h-4 flex-shrink-0" />
+            </button>
           </div>
         )}
 
@@ -199,7 +197,7 @@ export const UpiMandateModal: React.FC<UpiMandateModalProps> = ({ isOpen, onClos
                   <button
                     key={idx}
                     onClick={() => handleKeypadPress(key)}
-                    className="h-12 rounded-xl text-lg font-bold font-mono border hover:opacity-80 active:scale-95 flex items-center justify-center transition-all"
+                    className="h-12 rounded-xl text-lg font-bold font-mono border active:scale-[0.96] hover:bg-white/5 flex items-center justify-center transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                     style={{ backgroundColor: colors.surface, borderColor: colors.borderDim, color: colors.textPrimary }}
                   >
                     {key === 'backspace' ? '⌫' : key}
@@ -246,15 +244,13 @@ export const UpiMandateModal: React.FC<UpiMandateModalProps> = ({ isOpen, onClos
               </div>
             </div>
 
-            <Magnet strength={0.15} className="w-full block">
-              <button
-                onClick={handleDone}
-                className="w-full py-3.5 px-6 rounded-xl font-bold text-sm shadow-xl flex items-center justify-center transition-all active:scale-95"
-                style={{ backgroundColor: colors.primary, color: colors.primaryText }}
-              >
-                Go to Dashboard
-              </button>
-            </Magnet>
+            <button
+              onClick={handleDone}
+              className="w-full h-11 px-6 rounded-xl font-bold text-sm shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] flex items-center justify-center transition-all hover:brightness-105 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+              style={{ backgroundColor: colors.primary, color: colors.primaryText }}
+            >
+              Go to Dashboard
+            </button>
           </div>
         )}
       </div>

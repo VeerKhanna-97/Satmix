@@ -32,7 +32,7 @@ export const PrimaryButton: React.FC<PrimaryButtonProps> = ({
     <button
       onClick={onClick}
       disabled={disabled || loading}
-      className={`w-full relative flex flex-col items-center justify-center py-3.5 px-5 rounded-xl font-bold transition-all duration-200 shadow-md active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 ${className}`}
+      className={`w-full relative flex flex-col items-center justify-center h-12 px-5 rounded-xl font-semibold text-sm transition-[transform,background-color,box-shadow,opacity] duration-150 ease-out shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50 disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none disabled:active:scale-100 ${className}`}
       style={{ backgroundColor: bg, color: textClr }}
     >
       <div className="flex items-center gap-2">
@@ -41,12 +41,12 @@ export const PrimaryButton: React.FC<PrimaryButtonProps> = ({
         ) : (
           icon
         )}
-        <span className="text-sm md:text-base tracking-wide font-semibold">
+        <span className="tracking-[-0.01em]">
           {loading ? 'Processing...' : label}
         </span>
       </div>
       {sublabel && (
-        <span className="text-xs opacity-80 mt-0.5 font-normal tracking-normal">{sublabel}</span>
+        <span className="text-[11px] opacity-80 mt-0.5 font-normal tracking-normal">{sublabel}</span>
       )}
     </button>
   );
@@ -63,7 +63,7 @@ export const GhostButton: React.FC<{
   return (
     <button
       onClick={onClick}
-      className={`inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-semibold transition-all duration-200 hover:bg-white/5 active:scale-[0.98] ${className}`}
+      className={`inline-flex items-center justify-center gap-2 h-10 px-4 rounded-xl text-xs font-semibold transition-[transform,background-color,border-color] duration-150 ease-out hover:bg-white/[0.05] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50 ${className}`}
       style={{
         backgroundColor: colors.surface,
         border: `1px solid ${colors.cardBorder}`,

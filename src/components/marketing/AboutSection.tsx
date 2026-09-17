@@ -164,17 +164,15 @@ export const AboutSection: React.FC = () => {
                     <p className="text-xs font-semibold" style={{ color: colors.accent }}>Founder & CEO</p>
                     <p className="text-[11px] mt-1" style={{ color: colors.textSecondary }}>Strategy, Direction & Growth</p>
                   </div>
-                  <Magnet strength={8}>
-                    <a
-                      href="https://www.linkedin.com/in/sheiden-borges-654415276"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 text-[11px] font-semibold font-mono hover:underline px-3 py-1.5 rounded-lg border transition-colors"
-                      style={{ color: colors.accent, borderColor: colors.borderAccent, backgroundColor: colors.accentTint }}
-                    >
-                      <LinkedinIcon /> LinkedIn Profile
-                    </a>
-                  </Magnet>
+                  <a
+                    href="https://www.linkedin.com/in/sheiden-borges-654415276"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg text-[11px] font-semibold font-mono border transition-[transform,background-color,border-color] duration-150 ease-out hover:border-amber-500/40 active:scale-[0.98] select-none"
+                    style={{ color: colors.accent, borderColor: colors.borderAccent, backgroundColor: colors.accentTint }}
+                  >
+                    <LinkedinIcon /> LinkedIn Profile
+                  </a>
                 </SpotlightCard>
               </TiltedCard>
             </FadeIn>
@@ -195,17 +193,15 @@ export const AboutSection: React.FC = () => {
                     <p className="text-xs font-semibold" style={{ color: colors.accent }}>Co-Founder & CTO</p>
                     <p className="text-[11px] mt-1" style={{ color: colors.textSecondary }}>Product Architecture & Engineering</p>
                   </div>
-                  <Magnet strength={8}>
-                    <a
-                      href="https://www.linkedin.com/in/veerkhanna"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 text-[11px] font-semibold font-mono hover:underline px-3 py-1.5 rounded-lg border transition-colors"
-                      style={{ color: colors.accent, borderColor: colors.borderAccent, backgroundColor: colors.accentTint }}
-                    >
-                      <LinkedinIcon /> LinkedIn Profile
-                    </a>
-                  </Magnet>
+                  <a
+                    href="https://www.linkedin.com/in/veerkhanna"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg text-[11px] font-semibold font-mono border transition-[transform,background-color,border-color] duration-150 ease-out hover:border-amber-500/40 active:scale-[0.98] select-none"
+                    style={{ color: colors.accent, borderColor: colors.borderAccent, backgroundColor: colors.accentTint }}
+                  >
+                    <LinkedinIcon /> LinkedIn Profile
+                  </a>
                 </SpotlightCard>
               </TiltedCard>
             </FadeIn>
@@ -226,17 +222,15 @@ export const AboutSection: React.FC = () => {
                     <p className="text-xs font-semibold" style={{ color: colors.accent }}>Co-Founder & CFO</p>
                     <p className="text-[11px] mt-1" style={{ color: colors.textSecondary }}>Growth, Outreach & Finance</p>
                   </div>
-                  <Magnet strength={8}>
-                    <a
-                      href="https://www.linkedin.com/in/shashank-jajodia-528b5b299"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 text-[11px] font-semibold font-mono hover:underline px-3 py-1.5 rounded-lg border transition-colors"
-                      style={{ color: colors.accent, borderColor: colors.borderAccent, backgroundColor: colors.accentTint }}
-                    >
-                      <LinkedinIcon /> LinkedIn Profile
-                    </a>
-                  </Magnet>
+                  <a
+                    href="https://www.linkedin.com/in/shashank-jajodia-528b5b299"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg text-[11px] font-semibold font-mono border transition-[transform,background-color,border-color] duration-150 ease-out hover:border-amber-500/40 active:scale-[0.98] select-none"
+                    style={{ color: colors.accent, borderColor: colors.borderAccent, backgroundColor: colors.accentTint }}
+                  >
+                    <LinkedinIcon /> LinkedIn Profile
+                  </a>
                 </SpotlightCard>
               </TiltedCard>
             </FadeIn>

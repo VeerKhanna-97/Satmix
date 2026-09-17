@@ -3,7 +3,7 @@ import { ArrowRight, Home, Shield, FileText, HelpCircle, ChevronRight } from 'lu
 import { useApp } from '../../context/AppContext';
 import { Header } from '../marketing/Header';
 import { Footer } from '../marketing/Footer';
-import { SpotlightCard, Magnet } from '../ui';
+import { SpotlightCard } from '../ui';
 
 export const NotFoundPage: React.FC = () => {
   const { colors, setViewMode, setAuthSubView } = useApp();
@@ -52,23 +52,21 @@ export const NotFoundPage: React.FC = () => {
 
           {/* Primary Action Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2 max-w-md mx-auto">
-            <Magnet strength={10} className="w-full sm:w-auto">
-              <button
-                onClick={() => setViewMode('marketing')}
-                className="w-full sm:w-auto px-6 py-3.5 rounded-2xl font-bold text-xs shadow-xl flex items-center justify-center gap-2"
-                style={{ backgroundColor: colors.primary, color: colors.primaryText }}
-              >
-                <Home className="w-4 h-4" />
-                <span>Return to Homepage</span>
-              </button>
-            </Magnet>
+            <button
+              onClick={() => setViewMode('marketing')}
+              className="w-full sm:w-auto h-11 px-6 rounded-xl font-bold text-xs shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] flex items-center justify-center gap-2 transition-all hover:brightness-105 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+              style={{ backgroundColor: colors.primary, color: colors.primaryText }}
+            >
+              <Home className="w-4 h-4" />
+              <span>Return to Homepage</span>
+            </button>
 
             <button
               onClick={() => {
                 setAuthSubView('signup');
                 setViewMode('auth');
               }}
-              className="w-full sm:w-auto px-6 py-3.5 rounded-2xl font-bold text-xs border hover:opacity-80 transition-all flex items-center justify-center gap-2"
+              className="w-full sm:w-auto h-11 px-6 rounded-xl font-bold text-xs border transition-all hover:bg-white/5 active:scale-[0.98] flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
               style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textPrimary }}
             >
               <span>Launch Web App</span>

@@ -381,7 +381,7 @@ export const Header: React.FC = () => {
           {/* Theme Toggle */}
           <button
             onClick={toggleTheme}
-            className="p-2 rounded-xl border transition-colors hover:opacity-80"
+            className="w-9 h-9 rounded-lg border transition-[transform,background-color,border-color] duration-150 ease-out hover:bg-white/[0.05] active:scale-[0.98] flex items-center justify-center select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
             style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textPrimary }}
             aria-label="Toggle Theme"
           >
@@ -390,44 +390,40 @@ export const Header: React.FC = () => {
 
           {/* Auth Button */}
           {isAuthenticated ? (
-            <Magnet strength={10}>
-              <button
-                onClick={handleLaunchApp}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-xs tracking-wide shadow-md transition-all active:scale-95"
-                style={{ backgroundColor: colors.primary, color: colors.primaryText }}
-              >
-                <span>Go to App</span>
-                <span className="w-5 h-5 rounded-full bg-black/10 dark:bg-black/20 flex items-center justify-center text-[10px] font-mono">
-                  {user?.initials || 'VK'}
-                </span>
-              </button>
-            </Magnet>
+            <button
+              onClick={handleLaunchApp}
+              className="inline-flex items-center gap-2 h-9 px-3.5 rounded-lg font-semibold text-xs tracking-wide shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_1px_3px_rgba(0,0,0,0.3)] transition-[transform,background-color,box-shadow] duration-150 ease-out active:scale-[0.98] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+              style={{ backgroundColor: colors.primary, color: colors.primaryText }}
+            >
+              <span>Go to App</span>
+              <span className="w-5 h-5 rounded-full bg-black/10 dark:bg-black/20 flex items-center justify-center text-[10px] font-mono">
+                {user?.initials || 'VK'}
+              </span>
+            </button>
           ) : (
             <div className="flex items-center gap-2">
               <button
                 onClick={handleLaunchApp}
-                className="hidden sm:inline-flex items-center px-3.5 py-1.5 rounded-xl font-semibold text-xs transition-colors hover:bg-white/5"
-                style={{ color: colors.textPrimary, border: `1px solid ${colors.cardBorder}` }}
+                className="hidden sm:inline-flex items-center justify-center h-9 px-3.5 rounded-lg font-semibold text-xs transition-[transform,background-color,border-color] duration-150 ease-out hover:bg-white/[0.05] hover:border-white/20 active:scale-[0.98] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                style={{ backgroundColor: colors.surface, color: colors.textPrimary, border: `1px solid ${colors.cardBorder}` }}
               >
                 Sign In
               </button>
-              <Magnet strength={10}>
-                <button
-                  onClick={handleSignUpClick}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl font-bold text-xs tracking-wide shadow-md transition-all active:scale-95"
-                  style={{ backgroundColor: colors.primary, color: colors.primaryText }}
-                >
-                  <span>Launch App</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-              </Magnet>
+              <button
+                onClick={handleSignUpClick}
+                className="inline-flex items-center justify-center gap-1.5 h-9 px-3.5 rounded-lg font-semibold text-xs tracking-wide shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_1px_3px_rgba(0,0,0,0.3)] transition-[transform,background-color,box-shadow] duration-150 ease-out active:scale-[0.98] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                style={{ backgroundColor: colors.primary, color: colors.primaryText }}
+              >
+                <span>Launch App</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
             </div>
           )}
 
           {/* Mobile Menu Toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-xl border"
+            className="md:hidden w-9 h-9 rounded-lg border flex items-center justify-center transition-[transform,background-color,border-color] duration-150 ease-out hover:bg-white/[0.05] active:scale-[0.98] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
             style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textPrimary }}
             aria-label="Toggle navigation menu"
           >
@@ -642,7 +638,7 @@ export const Header: React.FC = () => {
                 handleLaunchApp();
                 setMobileMenuOpen(false);
               }}
-              className="w-full py-3 rounded-xl font-bold text-sm text-center shadow-md transition-all active:scale-95"
+              className="w-full h-11 px-5 rounded-xl font-bold text-sm text-center shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] transition-all hover:brightness-105 active:scale-[0.98] flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
               style={{ backgroundColor: colors.primary, color: colors.primaryText }}
             >
               {isAuthenticated ? 'Open Dashboard' : 'Sign In / Register'}

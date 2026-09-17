@@ -6,7 +6,7 @@ import { UpiMandateModal } from '../payment/UpiMandateModal';
 import { getBasketById, BASKETS } from '../../data/baskets';
 import { BasketId } from '../../types';
 import { MilestonesWidget } from './MilestonesWidget';
-import { SpotlightCard, CountUp, Magnet, FadeIn, ShinyText } from '../ui';
+import { SpotlightCard, CountUp, FadeIn, ShinyText } from '../ui';
 import { motion } from 'motion/react';
 
 const STABLE_PRESETS = [10, 20, 30, 50, 100];
@@ -176,22 +176,25 @@ export const InvestScreen: React.FC = () => {
 
             {/* Preset Buttons */}
             <div className="flex items-center gap-2 flex-wrap">
-              {presets.map((preset) => (
-                <Magnet key={preset} strength={0.15}>
+              {presets.map((preset) => {
+                const isSelected = dailyAmount === preset;
+                return (
                   <button
+                    key={preset}
                     type="button"
                     onClick={() => setDailyAmount(preset)}
-                    className="w-full sm:w-auto min-w-[64px] px-3.5 py-2 rounded-xl text-xs font-bold font-mono border transition-all"
+                    className="min-w-[60px] h-8 px-3 rounded-lg text-xs font-bold font-mono border transition-all active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                     style={{
-                      backgroundColor: dailyAmount === preset ? colors.primary : colors.surface,
-                      color: dailyAmount === preset ? colors.primaryText : colors.textSecondary,
-                      borderColor: dailyAmount === preset ? colors.accent : colors.cardBorder,
+                      backgroundColor: isSelected ? colors.primary : colors.surface,
+                      color: isSelected ? colors.primaryText : colors.textSecondary,
+                      borderColor: isSelected ? colors.accent : colors.cardBorder,
+                      boxShadow: isSelected ? 'inset 0 1px 0 0 rgba(255,255,255,0.2)' : 'none',
                     }}
                   >
                     ₹{preset}
                   </button>
-                </Magnet>
-              ))}
+                );
+              })}
             </div>
           </div>
 
@@ -208,10 +211,11 @@ export const InvestScreen: React.FC = () => {
                   key={h.label}
                   type="button"
                   onClick={() => setHorizonIdx(idx)}
-                  className="py-2.5 rounded-xl text-xs font-bold transition-all relative"
+                  className="py-2.5 rounded-xl text-xs font-bold transition-all relative active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                   style={{
                     backgroundColor: horizonIdx === idx ? colors.primary : 'transparent',
                     color: horizonIdx === idx ? colors.primaryText : colors.textSecondary,
+                    boxShadow: horizonIdx === idx ? 'inset 0 1px 0 0 rgba(255,255,255,0.2), 0 2px 6px rgba(0,0,0,0.15)' : 'none',
                   }}
                 >
                   {h.label}
@@ -283,39 +287,37 @@ export const InvestScreen: React.FC = () => {
                     </div>
                   </div>
 
-                  <Magnet strength={0.2}>
-                    <button
-                      onClick={() => toggleHabitPause(selectedBasketId)}
-                      className="px-3 py-1.5 rounded-lg text-xs font-bold transition-opacity hover:opacity-80"
-                      style={{ backgroundColor: 'rgba(245, 158, 11, 0.12)', color: colors.semanticWarning }}
-                    >
-                      Pause Habit
-                    </button>
-                  </Magnet>
+                  <button
+                    onClick={() => toggleHabitPause(selectedBasketId)}
+                    className="h-8 px-3 rounded-lg text-xs font-semibold border transition-all hover:opacity-85 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                    style={{
+                      backgroundColor: 'rgba(245, 158, 11, 0.12)',
+                      color: colors.semanticWarning,
+                      borderColor: 'rgba(245, 158, 11, 0.25)',
+                    }}
+                  >
+                    Pause Habit
+                  </button>
                 </div>
 
-                <Magnet strength={0.15} className="w-full block">
-                  <button
-                    onClick={handleSaveHabit}
-                    className="w-full py-4 px-6 rounded-xl font-bold text-xs tracking-wide shadow-xl flex items-center justify-center gap-2 transition-transform active:scale-95"
-                    style={{ backgroundColor: colors.primary, color: colors.primaryText }}
-                  >
-                    <span>Update Habit Rate to ₹{dailyAmount}/day</span>
-                    <ArrowRight className="w-4 h-4 flex-shrink-0" />
-                  </button>
-                </Magnet>
-              </div>
-            ) : (
-              <Magnet strength={0.15} className="w-full block">
                 <button
                   onClick={handleSaveHabit}
-                  className="w-full py-4 px-6 rounded-xl font-bold text-sm shadow-xl flex items-center justify-center gap-2 transition-all hover:scale-[1.01] active:scale-95"
+                  className="w-full h-12 px-6 rounded-xl font-bold text-xs tracking-wide shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] flex items-center justify-center gap-2 transition-all hover:brightness-105 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                   style={{ backgroundColor: colors.primary, color: colors.primaryText }}
                 >
-                  <Zap className="w-4 h-4 fill-current flex-shrink-0" />
-                  <span>Activate Daily Habit (₹{dailyAmount}/day in {activeBasket.name})</span>
+                  <span>Update Habit Rate to ₹{dailyAmount}/day</span>
+                  <ArrowRight className="w-4 h-4 flex-shrink-0" />
                 </button>
-              </Magnet>
+              </div>
+            ) : (
+              <button
+                onClick={handleSaveHabit}
+                className="w-full h-12 px-6 rounded-xl font-bold text-sm shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] flex items-center justify-center gap-2 transition-all hover:brightness-105 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                style={{ backgroundColor: colors.primary, color: colors.primaryText }}
+              >
+                <Zap className="w-4 h-4 fill-current flex-shrink-0" />
+                <span>Activate Daily Habit (₹{dailyAmount}/day in {activeBasket.name})</span>
+              </button>
             )}
 
             <div className="flex items-center justify-center gap-1.5 text-[11px]" style={{ color: colors.textTertiary }}>

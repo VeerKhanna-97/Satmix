@@ -27,7 +27,7 @@ import {
 import { useApp } from '../../context/AppContext';
 import { generateTaxStatement, downloadCsvFile } from '../../utils/taxGenerator';
 import { ACHIEVEMENTS } from '../../data/mockData';
-import { SpotlightCard, CountUp, Magnet, FadeIn, ShinyText } from '../ui';
+import { SpotlightCard, CountUp, FadeIn, ShinyText } from '../ui';
 import { motion, AnimatePresence } from 'motion/react';
 
 export const ProfileScreen: React.FC = () => {
@@ -483,7 +483,7 @@ export const ProfileScreen: React.FC = () => {
                 <>
                   <button
                     onClick={() => toggleHabitPause('stable')}
-                    className="flex-1 py-2 px-3 rounded-xl text-xs font-bold border transition-all"
+                    className="flex-1 h-9 px-3 rounded-xl text-xs font-bold border transition-all active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                     style={{
                       backgroundColor: isStableActive ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)',
                       borderColor: isStableActive ? 'rgba(239, 68, 68, 0.3)' : 'rgba(16, 185, 129, 0.3)',
@@ -497,8 +497,8 @@ export const ProfileScreen: React.FC = () => {
                       setSelectedBasketId('stable');
                       setActiveTab('invest');
                     }}
-                    className="py-2 px-3 rounded-xl text-xs font-bold"
-                    style={{ backgroundColor: colors.accentTint, color: colors.accent }}
+                    className="h-9 px-3 rounded-xl text-xs font-bold transition-all active:scale-[0.98] hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                    style={{ backgroundColor: colors.accentTint, color: colors.accent, border: `1px solid ${colors.borderAccent}` }}
                   >
                     Adjust
                   </button>
@@ -509,7 +509,7 @@ export const ProfileScreen: React.FC = () => {
                     setSelectedBasketId('stable');
                     setActiveTab('invest');
                   }}
-                  className="w-full py-2 px-3 rounded-xl text-xs font-bold shadow-sm transition-all"
+                  className="w-full h-9 px-3 rounded-xl text-xs font-bold shadow-[inset_0_1px_0_0_rgba(255,255,255,0.2),0_2px_6px_rgba(0,0,0,0.15)] transition-all hover:brightness-105 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                   style={{ backgroundColor: colors.primary, color: colors.primaryText }}
                 >
                   + Setup Habit →
@@ -547,7 +547,7 @@ export const ProfileScreen: React.FC = () => {
                 <>
                   <button
                     onClick={() => toggleHabitPause('growth')}
-                    className="flex-1 py-2 px-3 rounded-xl text-xs font-bold border transition-all"
+                    className="flex-1 h-9 px-3 rounded-xl text-xs font-bold border transition-all active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                     style={{
                       backgroundColor: isGrowthActive ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)',
                       borderColor: isGrowthActive ? 'rgba(239, 68, 68, 0.3)' : 'rgba(16, 185, 129, 0.3)',
@@ -561,8 +561,8 @@ export const ProfileScreen: React.FC = () => {
                       setSelectedBasketId('growth');
                       setActiveTab('invest');
                     }}
-                    className="py-2 px-3 rounded-xl text-xs font-bold"
-                    style={{ backgroundColor: colors.accentTint, color: colors.accent }}
+                    className="h-9 px-3 rounded-xl text-xs font-bold transition-all active:scale-[0.98] hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                    style={{ backgroundColor: colors.accentTint, color: colors.accent, border: `1px solid ${colors.borderAccent}` }}
                   >
                     Adjust
                   </button>
@@ -573,7 +573,7 @@ export const ProfileScreen: React.FC = () => {
                     setSelectedBasketId('growth');
                     setActiveTab('invest');
                   }}
-                  className="w-full py-2 px-3 rounded-xl text-xs font-bold shadow-sm transition-all"
+                  className="w-full h-9 px-3 rounded-xl text-xs font-bold shadow-[inset_0_1px_0_0_rgba(255,255,255,0.2),0_2px_6px_rgba(0,0,0,0.15)] transition-all hover:brightness-105 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                   style={{ backgroundColor: colors.primary, color: colors.primaryText }}
                 >
                   + Setup Habit →
@@ -614,15 +614,13 @@ export const ProfileScreen: React.FC = () => {
             </div>
 
             <div className="flex items-center gap-2 mt-4">
-              <Magnet strength={0.15} className="w-full block">
-                <button
-                  onClick={() => handleGenerateTaxStatement('FY 2025-26')}
-                  className="w-full py-2.5 px-4 rounded-xl text-xs font-bold shadow-lg transition-all active:scale-95 flex items-center justify-center"
-                  style={{ backgroundColor: colors.primary, color: colors.primaryText }}
-                >
-                  Generate Statement
-                </button>
-              </Magnet>
+              <button
+                onClick={() => handleGenerateTaxStatement('FY 2025-26')}
+                className="w-full h-10 px-4 rounded-xl text-xs font-bold shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] transition-all hover:brightness-105 active:scale-[0.98] flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                style={{ backgroundColor: colors.primary, color: colors.primaryText }}
+              >
+                Generate Statement
+              </button>
             </div>
           </div>
 
@@ -639,15 +637,13 @@ export const ProfileScreen: React.FC = () => {
             </div>
 
             <div className="flex items-center gap-2 mt-4">
-              <Magnet strength={0.15} className="w-full block">
-                <button
-                  onClick={() => handleGenerateTaxStatement('FY 2026-27')}
-                  className="w-full py-2.5 px-4 rounded-xl text-xs font-bold shadow-lg transition-all active:scale-95 flex items-center justify-center"
-                  style={{ backgroundColor: colors.primary, color: colors.primaryText }}
-                >
-                  Generate Statement
-                </button>
-              </Magnet>
+              <button
+                onClick={() => handleGenerateTaxStatement('FY 2026-27')}
+                className="w-full h-10 px-4 rounded-xl text-xs font-bold shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] transition-all hover:brightness-105 active:scale-[0.98] flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                style={{ backgroundColor: colors.primary, color: colors.primaryText }}
+              >
+                Generate Statement
+              </button>
             </div>
           </div>
         </div>
@@ -794,15 +790,13 @@ export const ProfileScreen: React.FC = () => {
       </SpotlightCard>
 
       {/* ── LOGOUT BUTTON ─────────────────────────────────────── */}
-      <Magnet strength={0.1} className="w-full block">
-        <button
-          onClick={logout}
-          className="w-full py-4 px-6 rounded-2xl font-bold text-xs tracking-wider border border-rose-500/30 text-rose-500 bg-rose-500/10 hover:bg-rose-500/20 transition-all flex items-center justify-center gap-2 active:scale-98"
-        >
-          <LogOut className="w-4 h-4 flex-shrink-0" />
-          <span>Secure Session Logout</span>
-        </button>
-      </Magnet>
+      <button
+        onClick={logout}
+        className="w-full h-12 px-6 rounded-xl font-bold text-xs tracking-wider border border-rose-500/30 text-rose-500 bg-rose-500/10 hover:bg-rose-500/20 transition-all flex items-center justify-center gap-2 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500/50"
+      >
+        <LogOut className="w-4 h-4 flex-shrink-0" />
+        <span>Secure Session Logout</span>
+      </button>
 
       {/* Tax Statement Modal */}
       {taxModalOpen && taxStatementData && (
@@ -849,14 +843,14 @@ export const ProfileScreen: React.FC = () => {
             <div className="flex items-center gap-3">
               <button
                 onClick={handleDownloadCsv}
-                className="flex-1 py-3.5 rounded-xl font-bold text-xs shadow-xl flex items-center justify-center gap-2"
+                className="flex-1 h-11 px-5 rounded-xl font-bold text-xs shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] flex items-center justify-center gap-2 transition-all hover:brightness-105 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                 style={{ backgroundColor: colors.primary, color: colors.primaryText }}
               >
                 <Download className="w-4 h-4" /> Download Official CSV Statement
               </button>
               <button
                 onClick={() => setTaxModalOpen(false)}
-                className="px-5 py-3.5 rounded-xl font-semibold text-xs border"
+                className="h-11 px-5 rounded-xl font-semibold text-xs border transition-all hover:bg-white/5 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                 style={{ borderColor: colors.cardBorder, color: colors.textSecondary }}
               >
                 Done
