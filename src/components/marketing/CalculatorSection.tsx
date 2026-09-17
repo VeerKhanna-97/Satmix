@@ -6,7 +6,7 @@ import { SpotlightCard, CountUp, Magnet, FadeIn } from '../ui';
 export const CalculatorSection: React.FC = () => {
   const { colors, setViewMode, setAuthSubView, isAuthenticated } = useApp();
 
-  // Default to Calm Basket (starts at ₹10)
+  // Default to Stable Basket (starts at ₹10)
   const [strategy, setStrategy] = useState<'low' | 'high'>('low');
   const [dailySavings, setDailySavings] = useState(10);
 
@@ -97,7 +97,7 @@ export const CalculatorSection: React.FC = () => {
                     >
                       <div className="flex items-center gap-1.5 mb-1">
                         <Shield className="w-4 h-4 text-emerald-500" />
-                        <span className="font-bold text-xs" style={{ color: colors.textPrimary }}>Calm Basket</span>
+                        <span className="font-bold text-xs" style={{ color: colors.textPrimary }}>Stable Basket</span>
                       </div>
                       <div className="flex justify-between items-baseline mt-1">
                         <span className="text-[11px] font-mono text-emerald-500 font-bold">~8% Ref. Return</span>

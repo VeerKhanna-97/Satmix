@@ -99,7 +99,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
             <div className="p-3 rounded-xl border text-xs flex justify-between items-center" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
               <span style={{ color: colors.textSecondary }}>Target Strategy:</span>
               <span className="font-bold" style={{ color: colors.accent }}>
-                {selectedBasketId === 'stable' ? 'Calm Basket' : 'Growth Basket'}
+                {selectedBasketId === 'stable' ? 'Stable Basket' : 'Growth Basket'}
               </span>
             </div>
 

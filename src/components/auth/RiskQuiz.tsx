@@ -70,7 +70,7 @@ const QUIZ_QUESTIONS: QuizQuestion[] = [
     prompt: 'Primary Satmix goal',
     options: [
       {
-        title: 'Calm way to start',
+        title: 'Stable way to start',
         subtitle: 'A stress-free digital dollar reserve (85% USDT) with a modest Bitcoin kicker (15% BTC).',
         points: 0,
       },

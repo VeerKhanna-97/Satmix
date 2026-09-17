@@ -60,7 +60,7 @@ export const FAQ_ITEMS = [
 export const ACHIEVEMENTS = [
   { id: 'a1', icon: 'zap', title: 'Streak Master', desc: 'Maintain a 7+ day active auto-investment streak', unlocked: false },
   { id: 'a2', icon: 'award', title: 'Beta Pioneer', desc: 'Join Satmix during the private launch preview', unlocked: true },
-  { id: 'a3', icon: 'shield', title: 'Calm Pioneer', desc: 'Allocate daily micro-savings to the Calm Basket', unlocked: false },
+  { id: 'a3', icon: 'shield', title: 'Stable Pioneer', desc: 'Allocate daily micro-savings to the Stable Basket', unlocked: false },
   { id: 'a4', icon: 'trending-up', title: 'Growth Accumulator', desc: 'Allocate daily micro-savings to the Growth Basket', unlocked: false },
   { id: 'a5', icon: 'target', title: 'Milestone 10K', desc: 'Accumulate ₹10,000 in digital asset micro-investments', unlocked: false },
   { id: 'a6', icon: 'users', title: 'Community Champion', desc: 'Invite peers using your unique referral code', unlocked: false },

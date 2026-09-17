@@ -121,7 +121,7 @@ export const DashboardScreen: React.FC = () => {
         bg: 'rgba(247, 147, 26, 0.12)',
         border: 'rgba(247, 147, 26, 0.25)',
         desc: 'Market leader, digital gold reserve, and immutable monetary foundation.',
-        basketName: 'Growth Basket (70%) & Calm Basket (15%)',
+        basketName: 'Growth Basket (70%) & Stable Basket (15%)',
         basketId: 'growth' as const,
         network: 'Bitcoin Native Layer-1',
         tokenStandard: 'UTXO Native',
@@ -154,7 +154,7 @@ export const DashboardScreen: React.FC = () => {
         bg: 'rgba(38, 161, 123, 0.12)',
         border: 'rgba(38, 161, 123, 0.25)',
         desc: '1:1 USD-pegged reserve asset providing capital protection and zero price volatility.',
-        basketName: 'Calm Basket (85%)',
+        basketName: 'Stable Basket (85%)',
         basketId: 'stable' as const,
         network: 'Multi-Chain USD Stable Reserve',
         tokenStandard: 'ERC-20 / TRC-20 Pegged',
@@ -296,7 +296,7 @@ export const DashboardScreen: React.FC = () => {
       <div className="flex items-center gap-1.5 p-1 rounded-2xl border w-fit" style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder }}>
         {[
           { id: 'all', label: 'All Baskets' },
-          { id: 'stable', label: 'Calm Basket' },
+          { id: 'stable', label: 'Stable Basket' },
           { id: 'growth', label: 'Growth Basket' },
         ].map((tab) => {
           const isActive = activeTabFilter === tab.id;
@@ -339,7 +339,7 @@ export const DashboardScreen: React.FC = () => {
                 {activeTabFilter === 'all'
                   ? 'Total Live Portfolio Valuation (MTM)'
                   : activeTabFilter === 'stable'
-                  ? 'Calm Basket Valuation (MTM)'
+                  ? 'Stable Basket Valuation (MTM)'
                   : 'Growth Basket Valuation (MTM)'}
               </span>
               <div className="flex items-baseline gap-3 mt-1 flex-wrap">
@@ -718,7 +718,7 @@ export const DashboardScreen: React.FC = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Shield className="w-4 h-4" style={{ color: isStableConfigured ? colors.semanticSuccess : colors.textTertiary }} />
-                <h3 className="font-bold text-sm" style={{ color: colors.textPrimary }}>Calm Basket Habit</h3>
+                <h3 className="font-bold text-sm" style={{ color: colors.textPrimary }}>Stable Basket Habit</h3>
               </div>
               <span
                 className="px-2 py-0.5 rounded-md text-[10px] font-bold font-mono border tracking-wider"
@@ -733,7 +733,7 @@ export const DashboardScreen: React.FC = () => {
             </div>
 
             <p className="text-xs leading-relaxed" style={{ color: colors.textSecondary }}>
-              85% USDT / 15% BTC. <em>"A calmer way to start."</em>
+              85% USDT / 15% BTC. <em>"A disciplined, stable way to start."</em>
             </p>
 
             {isStableConfigured ? (

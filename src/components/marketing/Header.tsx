@@ -209,7 +209,7 @@ export const Header: React.FC = () => {
                       </div>
                       <h4 className="font-bold text-xs mb-1" style={{ color: colors.textPrimary }}>Curated Baskets</h4>
                       <p className="text-[11px] leading-relaxed" style={{ color: colors.textSecondary }}>
-                        Calm & Growth automated micro-portfolios.
+                        Stable & Growth automated micro-portfolios.
                       </p>
                     </div>
                     <span className="text-[10px] font-bold mt-3 inline-flex items-center gap-1" style={{ color: colors.accent }}>
@@ -519,7 +519,7 @@ export const Header: React.FC = () => {
                 </div>
                 <div>
                   <div className="font-bold text-xs" style={{ color: colors.textPrimary }}>Curated Baskets</div>
-                  <div className="text-[10px]" style={{ color: colors.textSecondary }}>Calm & Growth portfolios</div>
+                  <div className="text-[10px]" style={{ color: colors.textSecondary }}>Stable & Growth portfolios</div>
                 </div>
               </div>
             </div>

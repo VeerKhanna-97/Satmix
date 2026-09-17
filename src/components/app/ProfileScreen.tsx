@@ -455,13 +455,13 @@ export const ProfileScreen: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-          {/* Calm Habit */}
+          {/* Stable Habit */}
           <div className="p-4 rounded-2xl border flex flex-col justify-between" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
             <div>
               <div className="flex items-center justify-between mb-1">
                 <div className="flex items-center gap-2">
                   <Shield className="w-4 h-4 text-emerald-500" />
-                  <span className="font-bold text-xs" style={{ color: colors.textPrimary }}>Calm Basket</span>
+                  <span className="font-bold text-xs" style={{ color: colors.textPrimary }}>Stable Basket</span>
                 </div>
                 <span
                   className="text-[10px] px-2 py-0.5 rounded font-bold uppercase font-mono"

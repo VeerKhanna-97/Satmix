@@ -496,7 +496,7 @@ export const Hero: React.FC = () => {
                   <div className="space-y-2.5">
                     {[
                       { step: '01', title: 'Sign Up with Mobile & PIN', desc: 'Secure authentication in under 30 seconds.' },
-                      { step: '02', title: '5-Question Risk Quiz', desc: 'Maps you to Calm or Growth basket.' },
+                      { step: '02', title: '5-Question Risk Quiz', desc: 'Maps you to Stable or Growth basket.' },
                       { step: '03', title: 'Set UPI AutoPay from ₹10', desc: 'Morning 8:00 AM automated debit.' },
                       { step: '04', title: 'Automated Batch Execution', desc: '9:00 AM spot execution into your basket.' },
                     ].map((item) => (
@@ -533,7 +533,7 @@ export const Hero: React.FC = () => {
                     </p>
                   </div>
 
-                  {/* Calm Basket Card */}
+                  {/* Stable Basket Card */}
                   <div
                     className="p-3.5 rounded-2xl border flex items-center justify-between cursor-pointer hover:border-white/30"
                     style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder }}
@@ -548,9 +548,9 @@ export const Hero: React.FC = () => {
                       </div>
                       <div>
                         <div className="flex items-center gap-1.5">
-                          <span className="font-bold text-xs" style={{ color: colors.textPrimary }}>Calm Basket</span>
+                          <span className="font-bold text-xs" style={{ color: colors.textPrimary }}>Stable Basket</span>
                           <span className="text-[10px] px-1.5 py-0.5 rounded font-bold" style={{ backgroundColor: colors.mintTint, color: colors.semanticSuccess }}>
-                            Calm
+                            Stable
                           </span>
                         </div>
                         <div className="text-[11px] font-mono" style={{ color: colors.textSecondary }}>
