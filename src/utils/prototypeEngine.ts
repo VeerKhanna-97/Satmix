@@ -295,6 +295,7 @@ export function accrueMissingDays(
         amount: habit.dailyAmount,
         basketId,
         status: 'recorded',
+        type: 'habit_accrual',
         fills,
       };
 
@@ -312,6 +313,210 @@ export function accrueMissingDays(
   nextState.valueHistory = buildValueHistory(nextState, livePrices);
 
   return { state: nextState, accruedCount };
+}
+
+/**
+ * Executes an instant lump-sum spot deposit into a chosen basket without altering recurring habit settings.
+ */
+export function executeOneTimeDeposit(
+  state: PrototypeState,
+  basketId: BasketId,
+  amount: number,
+  livePrices: LiveCoinPrices
+): { state: PrototypeState; newEntry: ActivityEntry } {
+  const basketDef = getBasketById(basketId);
+  const nextState: PrototypeState = JSON.parse(JSON.stringify(state));
+  const todayKey = formatDateKey(new Date());
+
+  const currentHabit = nextState.habits[basketId] || {
+    setupAt: null,
+    dailyAmount: 10,
+    paused: true,
+    streakStartedAt: null,
+    holdings: { BTC: 0, ETH: 0, SOL: 0, USDT: 0 },
+  };
+
+  // Split deposit across basket weights
+  const fills: ActivityFill[] = basketDef.allocation.map((alloc) => {
+    const inrShare = amount * (alloc.pct / 100);
+    const priceInr =
+      alloc.ticker === 'BTC'
+        ? livePrices.BTC
+        : alloc.ticker === 'ETH'
+        ? livePrices.ETH
+        : alloc.ticker === 'SOL'
+        ? livePrices.SOL
+        : livePrices.USDT;
+
+    const units = priceInr > 0 ? inrShare / priceInr : 0;
+    return {
+      asset: alloc.ticker,
+      inr: Math.round(inrShare * 100) / 100,
+      units,
+      priceInr,
+    };
+  });
+
+  const newHoldings = { ...currentHabit.holdings };
+  fills.forEach((f) => {
+    if (f.asset === 'BTC') newHoldings.BTC = (newHoldings.BTC || 0) + f.units;
+    else if (f.asset === 'ETH') newHoldings.ETH = (newHoldings.ETH || 0) + f.units;
+    else if (f.asset === 'SOL') newHoldings.SOL = (newHoldings.SOL || 0) + f.units;
+    else if (f.asset === 'USDT') newHoldings.USDT = (newHoldings.USDT || 0) + f.units;
+  });
+
+  nextState.habits[basketId] = {
+    ...currentHabit,
+    // Preserve setupAt, dailyAmount, paused, streakStartedAt without overriding!
+    holdings: newHoldings,
+  };
+
+  const entryId = `act_dep_${Date.now().toString(36)}_${Math.random().toString(36).substring(2, 6)}`;
+  const newEntry: ActivityEntry = {
+    id: entryId,
+    date: todayKey,
+    amount,
+    basketId,
+    status: 'recorded',
+    type: 'deposit',
+    fills,
+  };
+
+  nextState.activity.unshift(newEntry);
+  nextState.lastAccruedDate = todayKey;
+  nextState.valueHistory = buildValueHistory(nextState, livePrices);
+
+  return { state: nextState, newEntry };
+}
+
+/**
+ * Executes a withdrawal from a specific basket or pro-rata across all baskets,
+ * reducing unit holdings and proportionally offsetting historical cost basis.
+ */
+export function executeWithdrawal(
+  state: PrototypeState,
+  targetBasket: 'all' | 'stable' | 'growth',
+  amount: number,
+  livePrices: LiveCoinPrices
+): { state: PrototypeState; success: boolean; error?: string; actualWithdrawn?: number } {
+  const nextState: PrototypeState = JSON.parse(JSON.stringify(state));
+  const todayKey = formatDateKey(new Date());
+
+  const getBasketValuation = (bId: BasketId) => {
+    const h = nextState.habits[bId]?.holdings || { BTC: 0, ETH: 0, SOL: 0, USDT: 0 };
+    return (
+      (h.BTC || 0) * livePrices.BTC +
+      (h.ETH || 0) * livePrices.ETH +
+      (h.SOL || 0) * livePrices.SOL +
+      (h.USDT || 0) * livePrices.USDT
+    );
+  };
+
+  const getBasketInvested = (bId: BasketId) => {
+    return nextState.activity
+      .filter((a) => a.basketId === bId)
+      .reduce((sum, a) => sum + a.amount, 0);
+  };
+
+  const stableVal = getBasketValuation('stable');
+  const growthVal = getBasketValuation('growth');
+  const totalVal = stableVal + growthVal;
+
+  if (totalVal <= 0 || amount <= 0) {
+    return { state, success: false, error: 'Insufficient portfolio balance to withdraw.' };
+  }
+
+  // Determine amounts to withdraw from each basket
+  let stableWithdraw = 0;
+  let growthWithdraw = 0;
+
+  if (targetBasket === 'stable') {
+    if (amount > stableVal + 0.5) {
+      return { state, success: false, error: `Requested amount exceeds Stable Basket value of ₹${Math.floor(stableVal).toLocaleString('en-IN')}.` };
+    }
+    stableWithdraw = Math.min(amount, stableVal);
+  } else if (targetBasket === 'growth') {
+    if (amount > growthVal + 0.5) {
+      return { state, success: false, error: `Requested amount exceeds Growth Basket value of ₹${Math.floor(growthVal).toLocaleString('en-IN')}.` };
+    }
+    growthWithdraw = Math.min(amount, growthVal);
+  } else {
+    // Pro-rata across all
+    if (amount > totalVal + 0.5) {
+      return { state, success: false, error: `Requested amount exceeds total portfolio value of ₹${Math.floor(totalVal).toLocaleString('en-IN')}.` };
+    }
+    const ratio = Math.min(1, amount / (totalVal || 1));
+    stableWithdraw = stableVal * ratio;
+    growthWithdraw = growthVal * ratio;
+  }
+
+  const processBasketWithdrawal = (bId: BasketId, wAmt: number, currentVal: number) => {
+    if (wAmt <= 0 || currentVal <= 0) return;
+    const isFullLiquidation = wAmt >= currentVal - 0.5;
+    const fraction = isFullLiquidation ? 1 : Math.min(1, wAmt / currentVal);
+    const costBasis = Math.max(0, getBasketInvested(bId));
+    const costReduction = isFullLiquidation ? costBasis : Math.round(costBasis * fraction * 100) / 100;
+
+    const habit = nextState.habits[bId];
+    if (!habit) return;
+    const oldH = habit.holdings;
+    const soldFills: ActivityFill[] = [];
+
+    if (isFullLiquidation) {
+      if (oldH.BTC > 0) soldFills.push({ asset: 'BTC', inr: oldH.BTC * livePrices.BTC, units: -oldH.BTC, priceInr: livePrices.BTC });
+      if (oldH.ETH > 0) soldFills.push({ asset: 'ETH', inr: oldH.ETH * livePrices.ETH, units: -oldH.ETH, priceInr: livePrices.ETH });
+      if (oldH.SOL > 0) soldFills.push({ asset: 'SOL', inr: oldH.SOL * livePrices.SOL, units: -oldH.SOL, priceInr: livePrices.SOL });
+      if (oldH.USDT > 0) soldFills.push({ asset: 'USDT', inr: oldH.USDT * livePrices.USDT, units: -oldH.USDT, priceInr: livePrices.USDT });
+
+      habit.holdings = { BTC: 0, ETH: 0, SOL: 0, USDT: 0 };
+    } else {
+      const remainingMultiplier = Math.max(0, 1 - fraction);
+      if (oldH.BTC > 0) {
+        const soldUnits = oldH.BTC * fraction;
+        soldFills.push({ asset: 'BTC', inr: soldUnits * livePrices.BTC, units: -soldUnits, priceInr: livePrices.BTC });
+        oldH.BTC *= remainingMultiplier;
+      }
+      if (oldH.ETH > 0) {
+        const soldUnits = oldH.ETH * fraction;
+        soldFills.push({ asset: 'ETH', inr: soldUnits * livePrices.ETH, units: -soldUnits, priceInr: livePrices.ETH });
+        oldH.ETH *= remainingMultiplier;
+      }
+      if (oldH.SOL > 0) {
+        const soldUnits = oldH.SOL * fraction;
+        soldFills.push({ asset: 'SOL', inr: soldUnits * livePrices.SOL, units: -soldUnits, priceInr: livePrices.SOL });
+        oldH.SOL *= remainingMultiplier;
+      }
+      if (oldH.USDT > 0) {
+        const soldUnits = oldH.USDT * fraction;
+        soldFills.push({ asset: 'USDT', inr: soldUnits * livePrices.USDT, units: -soldUnits, priceInr: livePrices.USDT });
+        oldH.USDT *= remainingMultiplier;
+      }
+    }
+
+    const entryId = `act_wd_${Date.now().toString(36)}_${Math.random().toString(36).substring(2, 6)}`;
+    const wdEntry: ActivityEntry = {
+      id: entryId,
+      date: todayKey,
+      amount: -costReduction, // Negative cost basis offset
+      basketId: bId,
+      status: 'recorded',
+      type: 'withdrawal',
+      fills: soldFills,
+    };
+    nextState.activity.unshift(wdEntry);
+  };
+
+  if (stableWithdraw > 0) {
+    processBasketWithdrawal('stable', stableWithdraw, stableVal);
+  }
+  if (growthWithdraw > 0) {
+    processBasketWithdrawal('growth', growthWithdraw, growthVal);
+  }
+
+  nextState.lastAccruedDate = todayKey;
+  nextState.valueHistory = buildValueHistory(nextState, livePrices);
+
+  return { state: nextState, success: true, actualWithdrawn: stableWithdraw + growthWithdraw };
 }
 
 /**
@@ -464,26 +669,33 @@ export function calculateTabMetrics(
   const usdtVal = usdtUnits * livePrices.USDT;
 
   const marketValue = Math.round((btcVal + ethVal + solVal + usdtVal) * 100) / 100;
-  const netDeltaRupees = Math.round((marketValue - totalInvested) * 100) / 100;
+  const cleanTotalInvested = Math.max(0, Math.round(totalInvested * 100) / 100);
+  const cleanMarketValue = Math.max(0, marketValue);
+  const netDeltaRupees = cleanTotalInvested > 0 ? Math.round((cleanMarketValue - cleanTotalInvested) * 100) / 100 : 0;
   const netDeltaPercentage =
-    totalInvested > 0 ? Number(((netDeltaRupees / totalInvested) * 100).toFixed(2)) : 0;
+    cleanTotalInvested > 0 ? Number(((netDeltaRupees / cleanTotalInvested) * 100).toFixed(2)) : 0;
 
-  // Compute streak: consecutive days count from activity
+  // Compute streak: positive deposit/accrual days count from activity
   const distinctDays = new Set(
     state.activity
-      .filter((act) => (tab === 'all' ? true : act.basketId === tab))
+      .filter((act) => act.amount > 0 && (tab === 'all' ? true : act.basketId === tab))
       .map((act) => act.date)
   );
 
   const streakDays = distinctDays.size;
 
+  const cleanBtcInvested = btcUnits > 0.00000001 ? Math.max(0, btcInvested) : 0;
+  const cleanEthInvested = ethUnits > 0.00000001 ? Math.max(0, ethInvested) : 0;
+  const cleanSolInvested = solUnits > 0.00000001 ? Math.max(0, solInvested) : 0;
+  const cleanUsdtInvested = usdtUnits > 0.00000001 ? Math.max(0, usdtInvested) : 0;
+
   const createDetail = (units: number, priceInr: number, invested: number): HoldingDetail => {
     const inrValue = Math.round(units * priceInr * 100) / 100;
     const usdValue = fxRate > 0 ? Math.round((inrValue / fxRate) * 100) / 100 : 0;
     const priceUsd = fxRate > 0 ? Math.round((priceInr / fxRate) * 100) / 100 : 0;
-    const gainRupees = Math.round((inrValue - invested) * 100) / 100;
+    const gainRupees = invested > 0 ? Math.round((inrValue - invested) * 100) / 100 : 0;
     const gainPercentage = invested > 0 ? Number(((gainRupees / invested) * 100).toFixed(2)) : 0;
-    const avgBuyPriceInr = units > 0 ? Math.round(invested / units) : priceInr;
+    const avgBuyPriceInr = units > 0 && invested > 0 ? Math.round(invested / units) : priceInr;
 
     return {
       units,
@@ -499,16 +711,16 @@ export function calculateTabMetrics(
   };
 
   return {
-    totalInvested: Math.round(totalInvested * 100) / 100,
-    marketValue,
+    totalInvested: cleanTotalInvested,
+    marketValue: cleanMarketValue,
     netDeltaRupees,
     netDeltaPercentage,
     streakDays,
     holdings: {
-      BTC: createDetail(btcUnits, livePrices.BTC, btcInvested),
-      ETH: createDetail(ethUnits, livePrices.ETH, ethInvested),
-      SOL: createDetail(solUnits, livePrices.SOL, solInvested),
-      USDT: createDetail(usdtUnits, livePrices.USDT, usdtInvested),
+      BTC: createDetail(btcUnits, livePrices.BTC, cleanBtcInvested),
+      ETH: createDetail(ethUnits, livePrices.ETH, cleanEthInvested),
+      SOL: createDetail(solUnits, livePrices.SOL, cleanSolInvested),
+      USDT: createDetail(usdtUnits, livePrices.USDT, cleanUsdtInvested),
     },
   };
 }

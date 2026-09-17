@@ -894,41 +894,56 @@ export const DashboardScreen: React.FC = () => {
         {filteredActivity.length > 0 ? (
           <div className="divide-y" style={{ borderColor: colors.borderDim }}>
             {filteredActivity.slice(0, 15).map((entry) => {
+              const isWd = entry.type === 'withdrawal' || entry.amount < 0;
+              const isDep = entry.type === 'deposit';
+
               const fillsSummary = entry.fills && entry.fills.length > 0
-                ? entry.fills.map((f) => `${f.units.toFixed(f.asset === 'USDT' ? 2 : 6)} ${f.asset}`).join(', ')
-                : `${entry.amount} INR allocated`;
+                ? entry.fills.map((f) => `${Math.abs(f.units).toFixed(f.asset === 'USDT' ? 2 : 6)} ${f.asset}`).join(', ')
+                : `${Math.abs(entry.amount)} INR`;
 
               return (
                 <div key={entry.id} className="py-3.5 flex items-center justify-between text-xs hover:bg-white/[0.02] px-2 rounded-xl transition-colors">
                   <div className="flex items-center gap-3">
                     <div
-                      className="p-2.5 rounded-xl"
+                      className="p-2.5 rounded-xl flex-shrink-0"
                       style={{
-                        backgroundColor: colors.mintTint,
-                        color: colors.semanticSuccess,
+                        backgroundColor: isWd ? 'rgba(244, 63, 94, 0.12)' : isDep ? colors.accentTint : colors.mintTint,
+                        color: isWd ? '#FB7185' : isDep ? colors.accent : colors.semanticSuccess,
                       }}
                     >
-                      <ArrowDownLeft className="w-4 h-4" />
+                      {isWd ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownLeft className="w-4 h-4" />}
                     </div>
                     <div>
                       <div className="font-bold flex items-center gap-2" style={{ color: colors.textPrimary }}>
-                        <span>{entry.basketId.toUpperCase()} Basket Daily Fill</span>
-                        <span className="text-[10px] px-1.5 py-0.2 rounded font-mono font-bold" style={{ backgroundColor: colors.accentTint, color: colors.accent }}>
-                          {entry.status}
+                        <span>
+                          {entry.basketId === 'stable' ? 'Stable Basket' : 'Growth Basket'}{' '}
+                          {isWd ? 'Withdrawal' : isDep ? 'Instant Top-Up' : 'Daily SIP'}
+                        </span>
+                        <span
+                          className="text-[10px] px-1.5 py-0.2 rounded font-mono font-bold"
+                          style={{
+                            backgroundColor: isWd ? 'rgba(244, 63, 94, 0.15)' : colors.accentTint,
+                            color: isWd ? '#FB7185' : colors.accent,
+                          }}
+                        >
+                          {isWd ? 'IMPS SETTLED' : isDep ? 'INSTANT SPOT' : 'AUTOPAY'}
                         </span>
                       </div>
                       <div className="text-[11px] font-mono mt-0.5" style={{ color: colors.textSecondary }}>
-                        {entry.date} · Credited: {fillsSummary}
+                        {entry.date} · {isWd ? `Liquidated: ${fillsSummary}` : `Credited: ${fillsSummary}`}
                       </div>
                     </div>
                   </div>
 
                   <div className="text-right font-mono">
-                    <div className="font-bold text-sm" style={{ color: colors.textPrimary }}>
-                      +₹{entry.amount.toLocaleString('en-IN')}
+                    <div
+                      className="font-bold text-sm"
+                      style={{ color: isWd ? '#FB7185' : colors.textPrimary }}
+                    >
+                      {isWd ? '-' : '+'}₹{Math.abs(entry.amount).toLocaleString('en-IN')}
                     </div>
                     <span className="text-[10px]" style={{ color: colors.textTertiary }}>
-                      UPI AutoPay Fill
+                      {isWd ? 'Bank Payout' : isDep ? 'Lump-Sum' : 'Daily 8 AM SIP'}
                     </span>
                   </div>
                 </div>
@@ -937,7 +952,7 @@ export const DashboardScreen: React.FC = () => {
           </div>
         ) : (
           <div className="p-8 text-center text-xs border rounded-2xl border-dashed" style={{ color: colors.textTertiary, borderColor: colors.borderDim }}>
-            No daily debits recorded in this tab yet. Keep your habit active to accumulate daily fills automatically!
+            No transaction records in this tab yet. Top up or activate your habit to accumulate daily fills!
           </div>
         )}
       </SpotlightCard>

@@ -106,10 +106,10 @@ export default async function handler(req, res) {
     }
 
     // 3. SYNC ACTION: Update user state across devices
-    if (action === 'sync' && (cleanId || user?.id)) {
+    if (action === 'sync' && (cleanId || user?.id || payload?.userId)) {
       const formData = new URLSearchParams();
       formData.append('action', 'auth_sync');
-      formData.append('userId', user?.id || '');
+      formData.append('userId', payload?.userId || user?.id || '');
       formData.append('identifier', cleanId);
       if (userState) {
         formData.append('userState', typeof userState === 'string' ? userState : JSON.stringify(userState));

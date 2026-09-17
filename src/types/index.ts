@@ -69,6 +69,7 @@ export interface ActivityEntry {
   amount: number;
   basketId: BasketId;
   status: 'recorded';
+  type?: 'habit_accrual' | 'deposit' | 'withdrawal';
   fills?: ActivityFill[];
 }
 

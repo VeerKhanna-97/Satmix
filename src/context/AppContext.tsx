@@ -25,6 +25,8 @@ import {
   accrueMissingDays,
   fetchCoinbaseSpotPrices,
   calculateTabMetrics,
+  executeOneTimeDeposit,
+  executeWithdrawal,
   TabPortfolioMetrics,
   LiveCoinPrices,
   FALLBACK_LIVE_PRICES,
@@ -101,8 +103,9 @@ interface AppContextType {
   streakDays: number;
   streakState: StreakState;
   transactions: Transaction[];
-  simulateDeposit: (amount: number, paymentMethod: string) => Promise<boolean>;
-  simulateWithdrawal: (amount: number) => Promise<{ success: boolean; tx?: Transaction; error?: string }>;
+  executeOneTimeDeposit: (basketId: BasketId, amount: number, paymentMethod: string) => Promise<boolean>;
+  simulateDeposit: (amount: number, paymentMethod: string, targetBasket?: BasketId) => Promise<boolean>;
+  simulateWithdrawal: (amount: number, targetBasket?: 'all' | 'stable' | 'growth') => Promise<{ success: boolean; tx?: Transaction; error?: string }>;
 
   // Live Market
   liveCoins: CryptoCoin[];
@@ -293,24 +296,45 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return calculateTabMetrics(prototypeState, activeTabFilter, livePrices);
   }, [prototypeState, activeTabFilter, livePrices]);
 
-  // Legacy Transaction Adapter (derived from activity ledger for backwards-compatible views)
+  // Transaction Adapter (derived from activity ledger for unified views)
   const transactions: Transaction[] = useMemo(() => {
     return prototypeState.activity.map((act) => {
       const basketName = act.basketId === 'stable' ? 'Stable Basket' : 'Growth Basket';
+      const isDeposit = act.type === 'deposit';
+      const isWithdrawal = act.type === 'withdrawal' || act.amount < 0;
+
+      const txType: Transaction['type'] = isWithdrawal
+        ? 'WITHDRAWAL'
+        : isDeposit
+        ? 'ONE_TIME'
+        : 'DAILY_SIP';
+
+      const title = isWithdrawal
+        ? `IMPS Bank Withdrawal (${basketName})`
+        : isDeposit
+        ? `Instant Top-Up (${basketName})`
+        : `Daily Auto-Invest (${basketName})`;
+
+      const displayAmount = Math.abs(act.amount);
+
       return {
         id: act.id,
-        type: 'DAILY_SIP',
-        title: `Daily Auto-Invest (${basketName})`,
+        type: txType,
+        title,
         basketName,
-        amount: act.amount,
+        amount: displayAmount,
         status: 'SUCCESS',
-        timestamp: `${act.date} · 08:00 AM`,
+        timestamp: `${act.date} · ${isWithdrawal || isDeposit ? 'Completed' : '08:00 AM'}`,
         isoTimestamp: `${act.date}T08:00:00.000Z`,
-        utrNumber: `50${act.id.replace(/\D/g, '').padEnd(10, '8')}`,
-        paymentMethod: 'UPI AutoPay',
+        utrNumber: `50${act.id.replace(/\D/g, '').padEnd(10, '8').slice(-10)}`,
+        paymentMethod: isWithdrawal
+          ? `${activeUser?.bankName || 'HDFC Bank'} · ${activeUser?.bankAccountMasked || '•••• 4129'}`
+          : isDeposit
+          ? 'UPI Instant'
+          : 'UPI AutoPay',
       };
     });
-  }, [prototypeState.activity]);
+  }, [prototypeState.activity, activeUser]);
 
   // Legacy Portfolio Summary Adapter
   const portfolioSummary: PortfolioSummary = useMemo(() => {
@@ -622,6 +646,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           amount,
           basketId,
           status: 'recorded' as const,
+          type: 'habit_accrual' as const,
           fills,
         };
 
@@ -759,59 +784,102 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     toggleHabitPause(selectedBasketId);
   }, [toggleHabitPause, selectedBasketId]);
 
-  // Simulate Instant Deposit
-  const simulateDeposit = useCallback(
-    async (amount: number, _paymentMethod: string): Promise<boolean> => {
+  // Execute One-Time Spot Top-Up (Decoupled from recurring habit settings)
+  const executeOneTimeDepositAction = useCallback(
+    async (basketId: BasketId, amount: number, paymentMethod: string): Promise<boolean> => {
       await new Promise((resolve) => setTimeout(resolve, 800));
-      await setupHabit(selectedBasketId, amount);
+
+      updateStateAndPersist((prev) => {
+        const { state: nextState } = executeOneTimeDeposit(prev, basketId, amount, livePrices);
+
+        // Sync to cloud in background
+        try {
+          fetch('/api/auth', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'sync',
+              userId: prev.sessionUserId,
+              userState: {
+                activity: nextState.activity,
+                habits: nextState.habits,
+              },
+            }),
+          }).catch(() => {});
+        } catch {}
+
+        return nextState;
+      });
+
+      triggerConfetti();
       return true;
     },
-    [setupHabit, selectedBasketId]
+    [livePrices, updateStateAndPersist, triggerConfetti]
   );
 
-  // Simulate Instant Withdrawal
+  const simulateDeposit = useCallback(
+    async (amount: number, paymentMethod: string, targetBasket?: BasketId): Promise<boolean> => {
+      const bId = targetBasket || selectedBasketId;
+      return await executeOneTimeDepositAction(bId, amount, paymentMethod);
+    },
+    [executeOneTimeDepositAction, selectedBasketId]
+  );
+
+  // Decoupled Instant Withdrawal with Proportional Cost-Basis Accounting
   const simulateWithdrawal = useCallback(
-    async (amount: number): Promise<{ success: boolean; tx?: Transaction; error?: string }> => {
+    async (
+      amount: number,
+      targetBasket: 'all' | 'stable' | 'growth' = 'all'
+    ): Promise<{ success: boolean; tx?: Transaction; error?: string }> => {
       await new Promise((resolve) => setTimeout(resolve, 900));
 
-      if (tabMetrics.marketValue < amount) {
-        return { success: false, error: 'Insufficient portfolio value to withdraw.' };
-      }
+      let resultError: string | undefined;
+      let actualWithdrawn = amount;
 
-      // Pro-rate reduce holdings
       updateStateAndPersist((prev) => {
-        const ratio = Math.max(0, (tabMetrics.marketValue - amount) / (tabMetrics.marketValue || 1));
-        return {
-          ...prev,
-          habits: {
-            stable: {
-              ...prev.habits.stable,
-              holdings: {
-                BTC: prev.habits.stable.holdings.BTC * ratio,
-                ETH: prev.habits.stable.holdings.ETH * ratio,
-                SOL: prev.habits.stable.holdings.SOL * ratio,
-                USDT: prev.habits.stable.holdings.USDT * ratio,
+        const res = executeWithdrawal(prev, targetBasket, amount, livePrices);
+        if (!res.success) {
+          resultError = res.error || 'Failed to process withdrawal.';
+          return prev;
+        }
+
+        actualWithdrawn = res.actualWithdrawn || amount;
+
+        // Sync to cloud in background
+        try {
+          fetch('/api/auth', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'sync',
+              userId: prev.sessionUserId,
+              userState: {
+                activity: res.state.activity,
+                habits: res.state.habits,
               },
-            },
-            growth: {
-              ...prev.habits.growth,
-              holdings: {
-                BTC: prev.habits.growth.holdings.BTC * ratio,
-                ETH: prev.habits.growth.holdings.ETH * ratio,
-                SOL: prev.habits.growth.holdings.SOL * ratio,
-                USDT: prev.habits.growth.holdings.USDT * ratio,
-              },
-            },
-          },
-        };
+            }),
+          }).catch(() => {});
+        } catch {}
+
+        return res.state;
       });
+
+      if (resultError) {
+        return { success: false, error: resultError };
+      }
 
       const tx: Transaction = {
         id: `tx_wd_${Date.now().toString().slice(-6)}`,
         type: 'WITHDRAWAL',
-        title: 'INR Bank Withdrawal',
-        basketName: selectedBasketId === 'stable' ? 'Stable Basket' : 'Growth Basket',
-        amount,
+        title:
+          targetBasket === 'all'
+            ? 'INR Bank Withdrawal (All Baskets)'
+            : targetBasket === 'stable'
+            ? 'INR Bank Withdrawal (Stable Basket)'
+            : 'INR Bank Withdrawal (Growth Basket)',
+        basketName:
+          targetBasket === 'stable' ? 'Stable Basket' : targetBasket === 'growth' ? 'Growth Basket' : 'All Baskets',
+        amount: actualWithdrawn,
         status: 'SUCCESS',
         timestamp: 'Just now',
         isoTimestamp: new Date().toISOString(),
@@ -822,7 +890,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       triggerConfetti();
       return { success: true, tx };
     },
-    [tabMetrics.marketValue, updateStateAndPersist, selectedBasketId, activeUser, triggerConfetti]
+    [livePrices, updateStateAndPersist, activeUser, triggerConfetti]
   );
 
   // Update Profile
@@ -908,6 +976,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         streakDays,
         streakState,
         transactions,
+        executeOneTimeDeposit: executeOneTimeDepositAction,
         simulateDeposit,
         simulateWithdrawal,
         liveCoins,
