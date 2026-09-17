@@ -17,35 +17,35 @@ export const EDUCATIONAL_GUIDES = [
     category: 'EXECUTION & CUSTODY',
     title: 'Non-Custodial Architecture & Batch Execution',
     readTime: '3 min read',
-    summary: 'Satmix never holds user private keys. Orders execute systematically via exchange API batch jobs.',
-    content: 'After your morning 8:00–8:30 AM UPI AutoPay debit, our scheduled 9:00 AM batch worker executes spot market orders through the CoinDCX API in your exact basket ratio. Portfolio ledgers update with fractional holdings once fills confirm on-chain.',
+    summary: 'Satmix never holds user private keys. Orders execute systematically via direct batch engines.',
+    content: 'After your morning 8:00–8:30 AM UPI AutoPay debit, our scheduled 9:00 AM batch engine executes spot market orders in your exact basket ratio. Portfolio ledgers update with fractional holdings once fills confirm on-chain.',
   },
   {
     id: 'g3',
-    category: 'TAX & COMPLIANCE',
-    title: 'Understanding Indian VDA Tax (Section 115BBH & 194S)',
+    category: 'PORTFOLIO STRATEGY',
+    title: 'Automated 2-Basket Diversification',
     readTime: '3 min read',
-    summary: 'Tax applies on profit when you sell, not when you invest daily. 31.2% net tax rate and 1% TDS.',
-    content: 'Under Indian tax law (Section 115BBH), gains from Virtual Digital Assets (VDAs) are taxed at flat 30% plus 4% cess (~31.2%) upon realized profit when you sell or withdraw. Buying and holding is NOT a taxable event. 1% TDS (Section 194S) is an advance tax collected at exit.',
+    summary: 'Balance stability and upside with rule-based index weighting across Bitcoin, Ethereum, and Solana.',
+    content: 'Rather than betting on volatile single tokens, Satmix organizes your daily capital into mathematical allocations: Stable Basket for capital stability or Growth Basket (70% BTC / 20% ETH / 10% SOL) for broader market capture.',
   },
 ];
 
 export const FAQ_ITEMS = [
   {
     question: 'What is Satmix?',
-    answer: 'Satmix is an automated micro-investing platform that makes crypto ownership simple for young Indians. Set a daily UPI AutoPay from ₹10/day into a curated risk basket (Calm or Growth). No coin picking, no chart watching, and no market timing.',
+    answer: 'Satmix is an automated micro-investing platform that makes crypto ownership simple for young Indians. Set a daily UPI AutoPay from ₹10/day into a curated risk basket (Stable or Growth). No coin picking, no chart watching, and no market timing.',
   },
   {
     question: 'How does daily UPI AutoPay & batch execution work?',
-    answer: 'You authorize a daily UPI mandate (via PhonePe, Google Pay, or Paytm). Between 8:00 and 8:30 AM IST, your chosen amount (from ₹10) is debited. At 9:00 AM IST, a scheduled batch worker executes spot buy orders via the CoinDCX API in your basket ratio, syncing exact fractions to your portfolio.',
+    answer: 'You authorize a daily UPI mandate (via PhonePe, Google Pay, or Paytm). Between 8:00 and 8:30 AM IST, your chosen amount (from ₹10) is debited. At 9:00 AM IST, our automated batch engine executes spot buy orders in your basket ratio, syncing exact fractions directly to your portfolio.',
   },
   {
-    question: 'How are crypto taxes handled in India?',
-    answer: 'Tax applies only on net profit when you sell, swap, or withdraw—never when you invest daily. Indian VDA regulations impose a flat 30% tax + 4% cess (~31.2%) on gains. 1% TDS is deducted at exit as advance tax. Satmix tracks your cost basis for clean tax reporting.',
+    question: 'Can I change my daily investment amount or pause anytime?',
+    answer: 'Yes. Satmix gives you 100% control with zero lock-in. You can adjust your daily amount, skip a day, pause your UPI mandate, or restart anytime directly from your dashboard with one tap.',
   },
   {
     question: 'Does Satmix hold my private keys?',
-    answer: 'No. Satmix operates as a non-custodial fintech platform. We do not hold user private keys. Orders are executed via regulated exchange infrastructure (CoinDCX API), ensuring transparency and security.',
+    answer: 'No. Satmix operates as a non-custodial fintech platform. We do not hold user private keys. Orders are executed directly into spot holdings via our institutional execution architecture, ensuring maximum security and transparency.',
   },
   {
     question: 'Can I pause investing or withdraw to my bank anytime?',

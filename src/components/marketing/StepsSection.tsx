@@ -241,7 +241,7 @@ export const StepsSection: React.FC = () => {
               <div className="flex-1 rounded-2xl p-3 border space-y-2 shadow-inner relative overflow-hidden flex flex-col" style={{ backgroundColor: '#11131C', borderColor: '#262B3D' }}>
                 <div className="text-center">
                   <div className="text-xs font-bold text-white">9:00 AM Batch Execution</div>
-                  <div className="text-[9px] text-gray-400">Automated spot buy via CoinDCX API</div>
+                  <div className="text-[9px] text-gray-400">Automated daily spot buy execution</div>
                 </div>
 
                 {/* Basket Card Preview */}

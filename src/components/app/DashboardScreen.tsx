@@ -697,7 +697,7 @@ export const DashboardScreen: React.FC = () => {
               <div className="pt-2 flex items-center justify-between text-[11px] font-mono text-slate-400" style={{ color: colors.textTertiary }}>
                 <div className="flex items-center gap-1.5">
                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>100% Non-Custodial · Direct Spot Execution via CoinDCX API</span>
+                  <span>100% Non-Custodial · Direct Spot Execution Engine</span>
                 </div>
                 <span className="hidden sm:inline">Tap any asset to inspect on-chain balance & cost basis</span>
               </div>
@@ -1165,13 +1165,13 @@ export const DashboardScreen: React.FC = () => {
               </div>
 
               <div className="flex justify-between items-center text-[11px]">
-                <span style={{ color: colors.textSecondary }}>Spot Execution Partner:</span>
-                <span style={{ color: colors.textPrimary }}>CoinDCX API Batch Engine (09:00 AM)</span>
+                <span style={{ color: colors.textSecondary }}>Execution Protocol:</span>
+                <span style={{ color: colors.textPrimary }}>Direct Spot Batch Engine (09:00 AM)</span>
               </div>
 
               <div className="flex justify-between items-center text-[11px]">
-                <span style={{ color: colors.textSecondary }}>Indian Tax Reporting:</span>
-                <span style={{ color: colors.accent }}>1% TDS (Sec 194S) / TRACES Form 16A</span>
+                <span style={{ color: colors.textSecondary }}>Order Liquidity:</span>
+                <span style={{ color: colors.accent }}>Instant 24/7 Liquidity / Zero Lock-in</span>
               </div>
             </div>
 

@@ -38,7 +38,7 @@ export const BasketsScreen: React.FC = () => {
           Curated Investment Baskets
         </h1>
         <p className="text-xs sm:text-sm mt-1.5" style={{ color: colors.textSecondary }}>
-          Run one or both baskets concurrently with independent daily micro-AutoPay allocations. Executed daily at 9:00 AM via CoinDCX API with zero keys held.
+          Run one or both baskets concurrently with independent daily micro-AutoPay allocations. Executed daily at 9:00 AM with zero private keys held.
         </p>
       </div>
 

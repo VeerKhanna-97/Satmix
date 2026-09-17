@@ -42,7 +42,7 @@ export function initTicker() {
           { id: 'polkadot', symbol: 'DOT' }
         ];
 
-        const RETAIL_MARKUP = 1.025; // 2.5% retail markup for 1% TDS & platform spread
+        const RETAIL_MARKUP = 1.025; // 2.5% retail markup for liquidity & platform spread
         const compiledData = coins.map(coin => {
           const coinData = data[coin.id];
           if (!coinData) throw new Error(`Missing data for ${coin.id}`);

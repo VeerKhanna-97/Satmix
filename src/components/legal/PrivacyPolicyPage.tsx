@@ -96,7 +96,7 @@ export const PrivacyPolicyPage: React.FC = () => {
             <ul className="space-y-2 pl-4 list-disc" style={{ accentColor: colors.accent }}>
               <li>Authenticating your account session and preventing unauthorized access.</li>
               <li>Facilitating recurring daily UPI e-mandate registration with NPCI-regulated banking gateways.</li>
-              <li>Calculating real-time portfolio performance, streaks, and comprehensive tax statements (Section 194S TDS reports).</li>
+              <li>Calculating real-time portfolio performance, streaks, and comprehensive transaction statements.</li>
               <li>Responding to your customer support requests and notifying you of critical system updates.</li>
             </ul>
           </section>
@@ -105,7 +105,7 @@ export const PrivacyPolicyPage: React.FC = () => {
           <section className="p-6 rounded-3xl border space-y-3" style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}>
             <h2 className="text-lg font-bold" style={{ color: colors.textPrimary }}>4. Data Storage, Encryption & Retention</h2>
             <p>
-              Your data is encrypted both in transit (TLS 1.3 with 256-bit AES encryption) and at rest. We retain account records only for as long as your account remains active or as required by applicable Indian tax and financial reporting laws. You may request permanent deletion of your account and personal data at any time.
+              Your data is encrypted both in transit (TLS 1.3 with 256-bit AES encryption) and at rest. We retain account records only for as long as your account remains active or as required by applicable statutory accounting and financial recordkeeping standards. You may request permanent deletion of your account and personal data at any time.
             </p>
           </section>
 

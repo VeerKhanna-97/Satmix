@@ -67,8 +67,7 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
 
   const availableBalance = Math.floor(portfolioSummary.currentValue * 100) / 100;
   const numAmount = parseInt(amount, 10) || 0;
-  const tdsDeduction = Math.round(numAmount * 0.01 * 100) / 100;
-  const netPayout = Math.max(0, Math.round((numAmount - tdsDeduction) * 100) / 100);
+  const netPayout = numAmount;
 
   // Quick Preset Handlers
   const handlePreset = (percentage: number) => {
@@ -126,10 +125,10 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
 
     // PIN Valid: Move to Processing Animation
     setStep('PROCESSING');
-    setProcessingStatus('Routing spot sell order via CoinDCX API...');
+    setProcessingStatus('Verifying portfolio balance & preparing withdrawal...');
 
     await new Promise((resolve) => setTimeout(resolve, 500));
-    setProcessingStatus('Deducting 1% TDS u/s 194S & generating Sec 115BBH gain record...');
+    setProcessingStatus('Executing spot liquidation order...');
 
     await new Promise((resolve) => setTimeout(resolve, 500));
     setProcessingStatus('Connecting to NPCI IMPS Payout Gateway...');
@@ -242,25 +241,18 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
               </div>
             </div>
 
-            {/* Payout & Tax Breakdown (1% TDS u/s 194S) */}
+            {/* Payout Breakdown */}
             <div className="p-4 rounded-2xl border text-xs space-y-2.5" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
               <div className="flex justify-between items-center">
-                <span style={{ color: colors.textSecondary }}>Gross Sale Amount:</span>
+                <span style={{ color: colors.textSecondary }}>Withdrawal Amount:</span>
                 <span className="font-mono" style={{ color: colors.textPrimary }}>₹{numAmount.toLocaleString('en-IN')}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span style={{ color: colors.textSecondary }}>Platform Exit Load:</span>
                 <span className="font-bold" style={{ color: colors.accent }}>₹0 (Zero Fee)</span>
               </div>
-              <div className="flex justify-between items-center">
-                <div className="flex items-center gap-1" style={{ color: colors.textSecondary }}>
-                  <span>1% TDS (Sec 194S):</span>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded font-mono font-bold" style={{ backgroundColor: colors.accentTint, color: colors.accent }}>Credited in Tax Form</span>
-                </div>
-                <span className="font-mono" style={{ color: colors.accent }}>-₹{tdsDeduction.toFixed(2)}</span>
-              </div>
               <div className="pt-2.5 border-t flex justify-between items-baseline font-bold" style={{ borderColor: colors.borderDim }}>
-                <span style={{ color: colors.textPrimary }}>Net IMPS Bank Payout:</span>
+                <span style={{ color: colors.textPrimary }}>Net Bank Payout:</span>
                 <span className="font-mono text-base font-extrabold" style={{ color: colors.accent }}>₹{netPayout.toLocaleString('en-IN')}</span>
               </div>
             </div>
@@ -425,12 +417,8 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
                 <span className="font-bold" style={{ color: colors.accent }}>{completedTx.utrNumber}</span>
               </div>
               <div className="flex justify-between">
-                <span style={{ color: colors.textSecondary }}>Gross Liquidation:</span>
+                <span style={{ color: colors.textSecondary }}>Withdrawal Amount:</span>
                 <span style={{ color: colors.textPrimary }}>₹{completedTx.amount.toLocaleString('en-IN')}</span>
-              </div>
-              <div className="flex justify-between">
-                <span style={{ color: colors.textSecondary }}>1% TDS (Sec 194S):</span>
-                <span style={{ color: colors.accent }}>-₹{tdsDeduction.toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
                 <span style={{ color: colors.textSecondary }}>Net Bank Payout:</span>
@@ -461,7 +449,7 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
                 style={{ color: colors.textSecondary }}
               >
                 <FileCheck className="w-3.5 h-3.5" style={{ color: colors.accent }} />
-                <span>View in Tax & TDS Reports</span>
+                <span>View Transaction Statements</span>
               </button>
             </div>
           </div>

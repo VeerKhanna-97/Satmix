@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, RefreshCw, Lock, Building2 } from 'lucide-react';
+import { ShieldCheck, RefreshCw, Lock, Zap } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { SpotlightCard, FadeIn } from '../ui';
 
@@ -9,8 +9,8 @@ export const TrustStrip: React.FC = () => {
   const trustItems = [
     {
       icon: ShieldCheck,
-      title: '1% TDS & 31.2% Tax Ready',
-      desc: 'Automated Sec 194S / 115BBH Reports',
+      title: 'Instant 24/7 Liquidity',
+      desc: '0% Lock-in • Withdraw Anytime',
       iconColor: '#E2E8F0',
       bgColor: 'rgba(255, 255, 255, 0.08)',
       borderColor: 'rgba(255, 255, 255, 0.15)',
@@ -26,9 +26,9 @@ export const TrustStrip: React.FC = () => {
       spotlight: 'rgba(247, 147, 26, 0.15)',
     },
     {
-      icon: Building2,
-      title: 'CoinDCX API Routing',
-      desc: 'FIU-Compliant Spot Execution at 9 AM',
+      icon: Zap,
+      title: 'Direct Spot Execution',
+      desc: 'Scheduled 9:00 AM Batch Market Buys',
       iconColor: '#38BDF8',
       bgColor: 'rgba(56, 189, 248, 0.1)',
       borderColor: 'rgba(56, 189, 248, 0.25)',
@@ -37,7 +37,7 @@ export const TrustStrip: React.FC = () => {
     {
       icon: Lock,
       title: 'Non-Custodial Design',
-      desc: 'Zero Keys Held • Direct Exchange Ownership',
+      desc: 'Zero Keys Held • Direct User Ownership',
       iconColor: '#F7931A',
       bgColor: 'rgba(247, 147, 26, 0.1)',
       borderColor: 'rgba(247, 147, 26, 0.25)',

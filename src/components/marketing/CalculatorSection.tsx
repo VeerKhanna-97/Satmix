@@ -257,7 +257,7 @@ export const CalculatorSection: React.FC = () => {
 
               {/* Disclaimer */}
               <p className="text-[11px] leading-relaxed pt-5" style={{ color: colors.textTertiary }}>
-                *Projections simulate daily systematic execution via CoinDCX API. Digital assets carry market risk. Returns are subject to 30% VDA profit tax (+ 4% cess) upon realization under Sec 115BBH.
+                *Projections simulate historical periodic compounding with systematic daily execution. Digital assets carry market risk.
               </p>
             </SpotlightCard>
           </FadeIn>

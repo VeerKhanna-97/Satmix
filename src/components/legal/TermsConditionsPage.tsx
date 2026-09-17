@@ -63,7 +63,7 @@ export const TermsConditionsPage: React.FC = () => {
               <li>A custodian of fiat currency, bank deposits, or digital asset private keys.</li>
             </ul>
             <p>
-              All strategies, indices, and asset weightings displayed on the platform are educational and systematic algorithmic templates. Satmix does not provide personalized investment, tax, or legal advice.
+              All strategies, indices, and asset weightings displayed on the platform are educational and systematic algorithmic templates. Satmix does not provide personalized investment, financial, or legal advice.
             </p>
           </section>
 
@@ -102,9 +102,9 @@ export const TermsConditionsPage: React.FC = () => {
             </p>
             <ul className="space-y-2 pl-4 list-disc text-xs sm:text-sm" style={{ accentColor: colors.accent }}>
               <li>Your use of and access to the Satmix platform and automated UPI AutoPay workflows.</li>
-              <li>Your violation of any provision of these Terms or any applicable law, rule, or regulation in India or your jurisdiction.</li>
-              <li>Your failure to declare, pay, or report applicable Indian taxes (including Section 115BBH 30% tax and Section 194S 1% TDS).</li>
-              <li>Any financial loss or tax penalty incurred due to crypto asset market fluctuations or third-party banking downtimes.</li>
+              <li>Your violation of any provision of these Terms or any applicable law, rule, or regulation in your jurisdiction.</li>
+              <li>Your failure to declare, pay, or report applicable taxes or statutory dues in your jurisdiction.</li>
+              <li>Any financial loss incurred due to digital asset market fluctuations or third-party banking downtimes.</li>
             </ul>
           </section>
 
@@ -121,11 +121,11 @@ export const TermsConditionsPage: React.FC = () => {
             </ul>
           </section>
 
-          {/* Section 6: Tax Compliance in India */}
+          {/* Section 6: Tax & Regulatory Governance */}
           <section className="p-6 rounded-3xl border space-y-3" style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}>
-            <h2 className="text-lg font-bold" style={{ color: colors.textPrimary }}>6. Indian Tax & TDS Governance (Sec 115BBH & 194S)</h2>
+            <h2 className="text-lg font-bold" style={{ color: colors.textPrimary }}>6. Regulatory & Tax Governance</h2>
             <p>
-              Under Indian Income Tax regulations, Virtual Digital Assets (VDAs) are subject to a flat 30% tax on gains (Section 115BBH) and 1% TDS on sale/liquidation transfers (Section 194S). Satmix provides automated statement calculation tools for informational and reporting convenience, but users remain solely responsible for filing accurate tax returns.
+              Users remain solely responsible for understanding and fulfilling any applicable tax reporting and regulatory filing obligations in their jurisdiction. Satmix provides automated portfolio tracking and statement generation tools for informational convenience only.
             </p>
           </section>
 

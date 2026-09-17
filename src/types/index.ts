@@ -179,9 +179,10 @@ export interface TaxStatement {
   assessmentYear: string;
   financialYear: string;
   totalVolume: number;
+  totalDeposits: number;
+  totalWithdrawals: number;
+  netPortfolioValue: number;
   realizedGains: number;
-  taxPayable115BBH: number; // 30% flat tax
-  tdsDeducted194S: number; // 1% TDS
   transactionsCount: number;
   generatedAt: string;
 }

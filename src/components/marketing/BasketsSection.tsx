@@ -146,7 +146,7 @@ export const BasketsSection: React.FC = () => {
                       </div>
                       <div className="flex items-center gap-2">
                         <CheckCircle2 className="w-4 h-4 flex-shrink-0" style={{ color: colors.accent }} />
-                        <span>Zero churn discipline (prevents premature taxable events)</span>
+                        <span>Zero churn discipline (maximizes long-term compounding)</span>
                       </div>
                     </div>
                   </div>

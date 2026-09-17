@@ -77,7 +77,7 @@ export const ProfileScreen: React.FC = () => {
 
   const handleDownloadCsv = () => {
     if (!taxStatementData || !user) return;
-    downloadCsvFile(`Satmix_Tax_Statement_${selectedFy.replace(/\s+/g, '_')}_${user.name.replace(/\s+/g, '_')}.csv`, taxStatementData.csvContent);
+    downloadCsvFile(`Satmix_Account_Statement_${selectedFy.replace(/\s+/g, '_')}_${user.name.replace(/\s+/g, '_')}.csv`, taxStatementData.csvContent);
   };
 
   // Dynamic Gamification & Achievements calculation
@@ -97,22 +97,23 @@ export const ProfileScreen: React.FC = () => {
     return ACHIEVEMENTS.map((a) => {
       let isUnlocked = a.unlocked;
       if (a.id === 'a1') isUnlocked = streakDays >= 7; // Streak Master
-      if (a.id === 'a3') isUnlocked = transactions.some((t) => (t.basketName.toLowerCase().includes('calm') || t.basketName.toLowerCase().includes('safe')) && t.status === 'SUCCESS');
+      if (a.id === 'a3') isUnlocked = transactions.some((t) => (t.basketName.toLowerCase().includes('calm') || t.basketName.toLowerCase().includes('safe') || t.basketName.toLowerCase().includes('stable')) && t.status === 'SUCCESS');
       if (a.id === 'a4') isUnlocked = transactions.some((t) => t.basketName.toLowerCase().includes('growth') && t.status === 'SUCCESS');
       if (a.id === 'a5') isUnlocked = portfolioSummary.totalInvested >= 10000;
       return { ...a, unlocked: isUnlocked };
     });
   }, [streakDays, transactions, portfolioSummary.totalInvested]);
 
-  const handleDownloadTds = () => {
+  const handleDownloadLedger = () => {
     if (!user) return;
-    const tdsContent = `SATMIX 1% TDS CERTIFICATE (UNDER SECTION 194S)\n` +
-      `PAN: ${user.panNumberMasked}\n` +
-      `Deductor: Satmix (TAN: BLRS99281F)\n` +
+    const ledgerContent = `SATMIX ANNUAL TRANSACTION LEDGER\n` +
+      `Account Holder: ${user.name}\n` +
+      `Linked Bank: ${user.bankName || 'HDFC Bank'} (${user.bankAccountMasked || '•••• 4129'})\n` +
       `Financial Year: ${selectedFy}\n` +
-      `Total TDS Deducted: ₹${Math.round(portfolioSummary.totalInvested * 0.01)}\n` +
-      `Status: Deposited with Income Tax Department (TRACES Form 16A Compliant)\n`;
-    downloadCsvFile(`Satmix_TDS_Certificate_${selectedFy.replace(/\s+/g, '_')}.txt`, tdsContent);
+      `Total Invested: ₹${portfolioSummary.totalInvested.toLocaleString('en-IN')}\n` +
+      `Current Portfolio Value: ₹${portfolioSummary.currentValue.toLocaleString('en-IN')}\n` +
+      `Status: Reconciled & Verified On-Chain\n`;
+    downloadCsvFile(`Satmix_Transaction_Ledger_${selectedFy.replace(/\s+/g, '_')}.txt`, ledgerContent);
     triggerConfetti();
   };
 
@@ -261,7 +262,7 @@ export const ProfileScreen: React.FC = () => {
                 </span>
               </div>
               <p className="text-[11px] font-mono mt-0.5" style={{ color: colors.textSecondary }}>
-                Non-custodial spot execution via CoinDCX API · Linked: {user?.bankName || 'HDFC Bank'}
+                Non-custodial direct spot execution · Linked: {user?.bankName || 'HDFC Bank'}
               </p>
             </div>
           </div>
@@ -584,7 +585,7 @@ export const ProfileScreen: React.FC = () => {
         </div>
       </SpotlightCard>
 
-      {/* ── TAX COMPLIANCE & STATEMENTS (LATEST FY) ───────────── */}
+      {/* ── ACCOUNT STATEMENTS & REPORTS (LATEST FY) ───────────── */}
       <SpotlightCard
         spotlightColor={colors.accentTint}
         className="rounded-3xl p-6 border shadow-lg space-y-4"
@@ -594,8 +595,8 @@ export const ProfileScreen: React.FC = () => {
           <div className="flex items-center gap-2">
             <FileText className="w-5 h-5" style={{ color: colors.accent }} />
             <div>
-              <h3 className="font-bold text-sm" style={{ color: colors.textPrimary }}>Tax Reports & Compliance Center</h3>
-              <p className="text-xs" style={{ color: colors.textSecondary }}>Indian Section 115BBH (30% Tax) & Section 194S (1% TDS) compliant.</p>
+              <h3 className="font-bold text-sm" style={{ color: colors.textPrimary }}>Account Statements & Reports</h3>
+              <p className="text-xs" style={{ color: colors.textSecondary }}>Comprehensive annual trade logs, deposits, and transaction history.</p>
             </div>
           </div>
         </div>
@@ -605,11 +606,11 @@ export const ProfileScreen: React.FC = () => {
           <div className="p-4 rounded-2xl border flex flex-col justify-between" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
             <div>
               <div className="flex items-center justify-between mb-1">
-                <span className="font-bold text-xs" style={{ color: colors.textPrimary }}>FY 2025-26 Tax Statement</span>
+                <span className="font-bold text-xs" style={{ color: colors.textPrimary }}>FY 2025-26 Statement</span>
                 <span className="text-[10px] px-2 py-0.5 rounded font-bold uppercase font-mono" style={{ backgroundColor: colors.accentTint, color: colors.accent, border: `1px solid ${colors.borderAccent}` }}>CURRENT</span>
               </div>
               <p className="text-[11px] leading-relaxed" style={{ color: colors.textSecondary }}>
-                Full annual capital gains statement, trade logs, and TDS reconciliation report.
+                Full annual transaction ledger, deposits, withdrawals, and trade logs.
               </p>
             </div>
 
@@ -632,7 +633,7 @@ export const ProfileScreen: React.FC = () => {
                 <span className="text-[10px] px-2 py-0.5 rounded font-bold uppercase font-mono" style={{ backgroundColor: colors.accentTint, color: colors.accent, border: `1px solid ${colors.borderAccent}` }}>PROJECTION</span>
               </div>
               <p className="text-[11px] leading-relaxed" style={{ color: colors.textSecondary }}>
-                Estimated year-to-date TDS credits and capital gains forecast.
+                Projected annual transaction records and asset growth forecast.
               </p>
             </div>
 
@@ -649,9 +650,9 @@ export const ProfileScreen: React.FC = () => {
         </div>
 
         <div className="pt-2 flex flex-wrap items-center justify-between gap-2 text-xs border-t" style={{ borderColor: colors.borderDim }}>
-          <span style={{ color: colors.textSecondary }}>Need Form 16A / TDS Certificates?</span>
-          <button onClick={handleDownloadTds} className="font-bold hover:underline inline-flex items-center gap-1" style={{ color: colors.accent }}>
-            <Download className="w-3.5 h-3.5" /> Download 1% TDS Certificate
+          <span style={{ color: colors.textSecondary }}>Need complete transaction ledger?</span>
+          <button onClick={handleDownloadLedger} className="font-bold hover:underline inline-flex items-center gap-1" style={{ color: colors.accent }}>
+            <Download className="w-3.5 h-3.5" /> Download Transaction Ledger
           </button>
         </div>
       </SpotlightCard>
@@ -798,45 +799,45 @@ export const ProfileScreen: React.FC = () => {
         <span>Secure Session Logout</span>
       </button>
 
-      {/* Tax Statement Modal */}
+      {/* Account Statement Modal */}
       {taxModalOpen && taxStatementData && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in">
           <div className="w-full max-w-xl rounded-3xl p-6 sm:p-8 border shadow-2xl space-y-5" style={{ backgroundColor: colors.cardHigh, borderColor: colors.cardBorder }}>
             <div className="flex justify-between items-start">
               <div>
-                <span className="text-[11px] font-bold uppercase font-mono" style={{ color: colors.accent }}>Official Indian Web3 Tax Statement</span>
-                <h3 className="text-xl font-extrabold mt-1" style={{ color: colors.textPrimary }}>{taxStatementData.statement.financialYear} ({taxStatementData.statement.assessmentYear})</h3>
+                <span className="text-[11px] font-bold uppercase font-mono" style={{ color: colors.accent }}>Verified Annual Statement</span>
+                <h3 className="text-xl font-extrabold mt-1" style={{ color: colors.textPrimary }}>{taxStatementData.statement.financialYear}</h3>
               </div>
               <button onClick={() => setTaxModalOpen(false)} className="p-1 hover:opacity-80 transition-opacity" style={{ color: colors.textSecondary }}>
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Tax Details Grid */}
+            {/* Statement Details Grid */}
             <div className="p-4 rounded-2xl border space-y-3 font-mono text-xs" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
               <div className="flex justify-between">
-                <span className="font-sans" style={{ color: colors.textSecondary }}>Taxpayer Name:</span>
+                <span className="font-sans" style={{ color: colors.textSecondary }}>Account Holder:</span>
                 <strong style={{ color: colors.textPrimary }}>{user?.name}</strong>
               </div>
               <div className="flex justify-between">
-                <span className="font-sans" style={{ color: colors.textSecondary }}>Permanent Account Number:</span>
-                <strong className="font-mono" style={{ color: colors.accent }}>{user?.panNumberMasked}</strong>
+                <span className="font-sans" style={{ color: colors.textSecondary }}>Linked Bank Account:</span>
+                <strong className="font-mono" style={{ color: colors.accent }}>{user?.bankName || 'HDFC Bank'} ({user?.bankAccountMasked || '•••• 4129'})</strong>
               </div>
               <div className="flex justify-between">
                 <span className="font-sans" style={{ color: colors.textSecondary }}>Total Transaction Volume:</span>
                 <strong style={{ color: colors.textPrimary }}>₹{taxStatementData.statement.totalVolume.toLocaleString('en-IN')}</strong>
               </div>
               <div className="flex justify-between">
-                <span className="font-sans" style={{ color: colors.textSecondary }}>Realized Gains (Section 115BBH):</span>
-                <strong style={{ color: colors.semanticSuccess }}>₹{taxStatementData.statement.realizedGains.toLocaleString('en-IN')}</strong>
+                <span className="font-sans" style={{ color: colors.textSecondary }}>Total Deposits & Purchases:</span>
+                <strong style={{ color: colors.semanticSuccess }}>₹{taxStatementData.statement.totalDeposits.toLocaleString('en-IN')}</strong>
               </div>
               <div className="flex justify-between">
-                <span className="font-sans" style={{ color: colors.textSecondary }}>Tax Payable @ 30%:</span>
-                <strong className="text-rose-500">₹{taxStatementData.statement.taxPayable115BBH.toLocaleString('en-IN')}</strong>
+                <span className="font-sans" style={{ color: colors.textSecondary }}>Total Withdrawals:</span>
+                <strong style={{ color: colors.textPrimary }}>₹{taxStatementData.statement.totalWithdrawals.toLocaleString('en-IN')}</strong>
               </div>
               <div className="flex justify-between">
-                <span className="font-sans" style={{ color: colors.textSecondary }}>TDS Deducted @ 1% u/s 194S:</span>
-                <strong style={{ color: colors.accent }}>₹{taxStatementData.statement.tdsDeducted194S.toLocaleString('en-IN')}</strong>
+                <span className="font-sans" style={{ color: colors.textSecondary }}>Net Portfolio Balance:</span>
+                <strong style={{ color: colors.accent }}>₹{taxStatementData.statement.netPortfolioValue.toLocaleString('en-IN')}</strong>
               </div>
             </div>
 

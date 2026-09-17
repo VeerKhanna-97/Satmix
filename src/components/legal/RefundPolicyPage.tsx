@@ -93,14 +93,14 @@ export const RefundPolicyPage: React.FC = () => {
             </ul>
           </section>
 
-          {/* Section 3: Tax Deductions on Liquidation (Sec 194S) */}
-          <section className="p-6 rounded-2xl border space-y-3" style={{ backgroundColor: colors.redTint, borderColor: colors.semanticDanger }}>
-            <div className="flex items-center gap-2.5" style={{ color: colors.semanticDanger }}>
+          {/* Section 3: Statutory Dues & Third-Party Fees */}
+          <section className="p-6 rounded-2xl border space-y-3" style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}>
+            <div className="flex items-center gap-2.5" style={{ color: colors.accent }}>
               <AlertCircle className="w-5 h-5" />
-              <h2 className="text-lg font-bold">3. Statutory Tax Deductions (Section 194S 1% TDS)</h2>
+              <h2 className="text-lg font-bold">3. Statutory Dues and Transaction Processing</h2>
             </div>
             <p className="text-xs sm:text-sm leading-relaxed" style={{ color: colors.textSecondary }}>
-              Under Indian Income Tax Law (Section 194S), a mandatory 1% Tax Deducted at Source (TDS) is deducted on the gross liquidation value of Virtual Digital Assets. Because this amount is deposited directly with the Government of India and credited to your Form 26AS / PAN tax ledger, <strong>TDS amounts cannot be refunded or reversed by Satmix</strong>. You can claim credit or refunds for this TDS when filing your annual Income Tax Return (ITR).
+              Any third-party banking charges, network processing fees, or mandatory statutory withholdings incurred during asset liquidation cannot be refunded or reversed once processed through banking or settlement networks.
             </p>
           </section>
 

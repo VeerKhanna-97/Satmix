@@ -152,7 +152,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
             </div>
             <h3 className="text-xl font-bold" style={{ color: colors.textPrimary }}>Deposit Successful!</h3>
             <p className="text-xs leading-relaxed" style={{ color: colors.textSecondary }}>
-              ₹{parseInt(amount, 10).toLocaleString('en-IN')} has been added to your portfolio and routed for 9:00 AM batch execution via CoinDCX API.
+              ₹{parseInt(amount, 10).toLocaleString('en-IN')} has been added to your portfolio and queued for automated 9:00 AM spot execution.
             </p>
             <button
               onClick={handleClose}

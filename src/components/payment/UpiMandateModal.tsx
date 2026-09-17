@@ -87,7 +87,7 @@ export const UpiMandateModal: React.FC<UpiMandateModalProps> = ({ isOpen, onClos
               <div className="text-3xl font-extrabold font-mono mt-1" style={{ color: colors.textPrimary }}>
                 ₹{dailyAmount}<span className="text-xs font-normal" style={{ color: colors.textTertiary }}>/day</span>
               </div>
-              <span className="text-[11px] block mt-1" style={{ color: colors.textTertiary }}>Daily debit at 08:00 AM (09:00 AM CoinDCX Spot Buy)</span>
+              <span className="text-[11px] block mt-1" style={{ color: colors.textTertiary }}>Daily debit at 08:00 AM (09:00 AM Spot Buy Execution)</span>
             </div>
 
             {/* Select App */}

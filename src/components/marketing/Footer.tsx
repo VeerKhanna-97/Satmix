@@ -76,7 +76,7 @@ export const Footer: React.FC = () => {
           <div className="space-y-1">
             <p>© {new Date().getFullYear()} Satmix. All rights reserved. Non-Custodial Systematic Micro-Investing.</p>
             <p className="max-w-2xl text-[11px] leading-relaxed" style={{ color: colors.textTertiary }}>
-              Disclaimer: Digital assets and cryptocurrencies are volatile and subject to market risk. Satmix is a non-custodial software technology layer facilitating automated spot order execution via CoinDCX API, not a SEBI-registered investment adviser or portfolio manager. VDA gains are taxed at 30% (+4% cess) under Income Tax Act Sec 115BBH with 1% TDS under Sec 194S upon redemption. Past performance does not guarantee future results.
+              Disclaimer: Digital assets and cryptocurrencies are volatile and subject to market risk. Satmix is a non-custodial software technology platform facilitating automated spot order execution, not a SEBI-registered investment adviser or portfolio manager. Past performance does not guarantee future results.
             </p>
           </div>
 

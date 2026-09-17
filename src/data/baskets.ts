@@ -21,7 +21,7 @@ export const BASKETS: Basket[] = [
     growthRate: 0.08,
     volatility: 'Low Volatility',
     rebalance: 'Zero Churn',
-    custodyPartner: 'CoinDCX API Spot Execution',
+    custodyPartner: 'Direct Spot Execution',
     minDailyAmount: 10,
     chips: [10, 20, 30, 50, 100],
     allocation: [
@@ -44,7 +44,7 @@ export const BASKETS: Basket[] = [
     growthRate: 0.28,
     volatility: 'Market Swings',
     rebalance: 'Zero Churn',
-    custodyPartner: 'CoinDCX API Spot Execution',
+    custodyPartner: 'Direct Spot Execution',
     minDailyAmount: 30,
     chips: [30, 50, 100, 250, 500],
     allocation: [

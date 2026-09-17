@@ -200,7 +200,7 @@ export const Hero: React.FC = () => {
                   style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textSecondary }}
                 >
                   <FileCheck className="w-3.5 h-3.5 flex-shrink-0" style={{ color: colors.accent }} />
-                  <span>100% Tax & TDS Ready</span>
+                  <span>100% Non-Custodial</span>
                 </div>
               </div>
             </FadeIn>
@@ -498,7 +498,7 @@ export const Hero: React.FC = () => {
                       { step: '01', title: 'Sign Up with Mobile & PIN', desc: 'Secure authentication in under 30 seconds.' },
                       { step: '02', title: '5-Question Risk Quiz', desc: 'Maps you to Calm or Growth basket.' },
                       { step: '03', title: 'Set UPI AutoPay from ₹10', desc: 'Morning 8:00 AM automated debit.' },
-                      { step: '04', title: 'Batch Execution via CoinDCX', desc: '9:00 AM spot execution into your basket.' },
+                      { step: '04', title: 'Automated Batch Execution', desc: '9:00 AM spot execution into your basket.' },
                     ].map((item) => (
                       <div
                         key={item.step}

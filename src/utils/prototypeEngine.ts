@@ -25,7 +25,7 @@ export interface LiveCoinPrices {
   USD_INR: number;
 }
 
-export const RETAIL_MARKUP_MULTIPLIER = 1.025; // 2.5% retail markup accounting for 1% TDS (Sec 194S), slippage, and platform spread
+export const RETAIL_MARKUP_MULTIPLIER = 1.025; // 2.5% retail markup accounting for slippage, liquidity buffer, and platform spread
 
 export const FALLBACK_LIVE_PRICES: LiveCoinPrices = {
   BTC: Math.round(8460000 * RETAIL_MARKUP_MULTIPLIER),
