@@ -5,7 +5,6 @@ import { LineChart } from '../common/LineChart';
 import { UpiMandateModal } from '../payment/UpiMandateModal';
 import { getBasketById, BASKETS } from '../../data/baskets';
 import { BasketId } from '../../types';
-import { MilestonesWidget } from './MilestonesWidget';
 import { SpotlightCard, CountUp, FadeIn, ShinyText } from '../ui';
 import { motion } from 'motion/react';
 
@@ -327,13 +326,6 @@ export const InvestScreen: React.FC = () => {
           </div>
         </SpotlightCard>
       </FadeIn>
-
-      {/* ── DYNAMIC MILESTONES PROJECTION TRACKER ───────────── */}
-      <MilestonesWidget
-        customDailyAmount={dailyAmount}
-        title="Life Milestones Accelerated by Compounding"
-        subtitle={`See how setting your UPI AutoPay to ₹${dailyAmount}/day in ${activeBasket.name} compounds free wealth and collapses target time.`}
-      />
 
       {/* Modal */}
       <UpiMandateModal

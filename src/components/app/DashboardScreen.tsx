@@ -36,7 +36,6 @@ import { DepositModal } from '../payment/DepositModal';
 import { WithdrawModal } from '../payment/WithdrawModal';
 import { getBasketById } from '../../data/baskets';
 import { EDUCATIONAL_GUIDES } from '../../data/mockData';
-import { MilestonesWidget } from './MilestonesWidget';
 import { StreakWeeklyTracker } from './StreakWeeklyTracker';
 import { generateChartSeries, ChartTimeframe } from '../../utils/chartSeries';
 import { SpotlightCard, CountUp, Magnet, ShinyText, FadeIn } from '../ui';
@@ -942,9 +941,6 @@ export const DashboardScreen: React.FC = () => {
           </div>
         )}
       </SpotlightCard>
-
-      {/* ── LIFE MILESTONES GOAL ACCELERATOR ──────────────────── */}
-      <MilestonesWidget />
 
       {/* ── EDUCATIONAL GUIDES FEED ───────────────────────────── */}
       <div className="rounded-3xl p-6 border shadow-lg space-y-4" style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}>
