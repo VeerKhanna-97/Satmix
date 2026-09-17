@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { Calendar, Check, ShieldCheck } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { FadeIn } from '../ui';
@@ -51,8 +51,8 @@ export const StepsSection: React.FC = () => {
             <div
               className={`w-[275px] sm:w-[285px] h-[360px] rounded-3xl p-3 border-2 transition-all duration-300 relative overflow-hidden flex flex-col ${
                 activeStep === 0
-                  ? 'border-white ring-1 ring-white/30 opacity-100 scale-[1.02]'
-                  : 'border-[#222533] opacity-50 grayscale-[50%] hover:opacity-85 hover:grayscale-0'
+                  ? 'border-white ring-1 ring-white/30 scale-[1.02]'
+                  : 'border-[#222533] hover:border-gray-700'
               }`}
               style={{ backgroundColor: '#090A10' }}
             >
@@ -102,9 +102,6 @@ export const StepsSection: React.FC = () => {
                   <span className="text-gray-400 font-sans">1Y Wealth Est.:</span>
                   <span className="font-bold text-emerald-400">₹21,438</span>
                 </div>
-
-                {/* Low Fade Overlay at Bottom */}
-                <div className="mock-bottom-fade absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-b from-transparent via-[#11131C]/80 to-[#11131C] pointer-events-none z-20" />
               </div>
             </div>
 
@@ -135,8 +132,8 @@ export const StepsSection: React.FC = () => {
             <div
               className={`w-[275px] sm:w-[285px] h-[360px] rounded-3xl p-3 border-2 transition-all duration-300 relative overflow-hidden flex flex-col ${
                 activeStep === 1
-                  ? 'border-white ring-1 ring-white/30 opacity-100 scale-[1.02]'
-                  : 'border-[#222533] opacity-50 grayscale-[50%] hover:opacity-85 hover:grayscale-0'
+                  ? 'border-white ring-1 ring-white/30 scale-[1.02]'
+                  : 'border-[#222533] hover:border-gray-700'
               }`}
               style={{ backgroundColor: '#090A10' }}
             >
@@ -199,9 +196,6 @@ export const StepsSection: React.FC = () => {
                   <ShieldCheck className="w-3 h-3" />
                   <span>NPCI UPI AutoPay Framework</span>
                 </div>
-
-                {/* Low Fade Overlay at Bottom */}
-                <div className="mock-bottom-fade absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-b from-transparent via-[#11131C]/80 to-[#11131C] pointer-events-none z-20" />
               </div>
             </div>
 
@@ -232,8 +226,8 @@ export const StepsSection: React.FC = () => {
             <div
               className={`w-[275px] sm:w-[285px] h-[360px] rounded-3xl p-3 border-2 transition-all duration-300 relative overflow-hidden flex flex-col ${
                 activeStep === 2
-                  ? 'border-white ring-1 ring-white/30 opacity-100 scale-[1.02]'
-                  : 'border-[#222533] opacity-50 grayscale-[50%] hover:opacity-85 hover:grayscale-0'
+                  ? 'border-white ring-1 ring-white/30 scale-[1.02]'
+                  : 'border-[#222533] hover:border-gray-700'
               }`}
               style={{ backgroundColor: '#090A10' }}
             >
@@ -272,9 +266,6 @@ export const StepsSection: React.FC = () => {
                     <span>PAYOUT</span>
                   </div>
                 </div>
-
-                {/* Low Fade Overlay at Bottom */}
-                <div className="mock-bottom-fade absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-b from-transparent via-[#11131C]/80 to-[#11131C] pointer-events-none z-20" />
               </div>
             </div>
 
