@@ -123,9 +123,6 @@ export const StepsSection: React.FC = () => {
               <h3 className="font-extrabold text-sm mt-1.5 h-5 flex items-center justify-center truncate" style={{ color: colors.textPrimary }}>
                 Select Your Daily Amount
               </h3>
-              <p className="text-[11px] leading-snug mt-1 h-8 flex items-start justify-center text-center max-w-[230px]" style={{ color: colors.textSecondary }}>
-                Choose an amount you want to invest daily. Start from just ₹10.
-              </p>
             </div>
           </div>
 
@@ -223,9 +220,6 @@ export const StepsSection: React.FC = () => {
               <h3 className="font-extrabold text-sm mt-1.5 h-5 flex items-center justify-center truncate" style={{ color: colors.textPrimary }}>
                 Authorize UPI AutoPay
               </h3>
-              <p className="text-[11px] leading-snug mt-1 h-8 flex items-start justify-center text-center max-w-[230px]" style={{ color: colors.textSecondary }}>
-                Link PhonePe, GPay, or Paytm once. No daily manual transfers.
-              </p>
             </div>
           </div>
 
@@ -299,9 +293,6 @@ export const StepsSection: React.FC = () => {
               <h3 className="font-extrabold text-sm mt-1.5 h-5 flex items-center justify-center truncate" style={{ color: colors.textPrimary }}>
                 Batch Buy & Accumulate
               </h3>
-              <p className="text-[11px] leading-snug mt-1 h-8 flex items-start justify-center text-center max-w-[230px]" style={{ color: colors.textSecondary }}>
-                Daily CoinDCX API batch fills update your portfolio with exact fractions automatically.
-              </p>
             </div>
           </div>
         </div>
