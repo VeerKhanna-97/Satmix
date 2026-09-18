@@ -1,6 +1,7 @@
 // ============================================================
 // FILE: src/utils/streakEngine.ts
 // PURPOSE: Deterministic Streak Calculation Engine & Gamification Tiers
+//          Fixed Sunday-to-Saturday Calendar Week with Accurate Month Mapping
 // ============================================================
 
 import { Transaction, StreakState, StreakStatus, StreakMilestone, DayHistoryItem } from '../types';
@@ -65,9 +66,12 @@ export const STREAK_MILESTONES: StreakMilestone[] = [
 ];
 
 /**
- * Format a Date object or ISO timestamp into 'YYYY-MM-DD'
+ * Format a Date object or ISO timestamp into local 'YYYY-MM-DD' key
  */
 export function toDateKey(date: Date | string | number): string {
+  if (typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    return date;
+  }
   const d = new Date(date);
   if (isNaN(d.getTime())) {
     return new Date().toISOString().split('T')[0];
@@ -79,9 +83,15 @@ export function toDateKey(date: Date | string | number): string {
 }
 
 /**
- * Add or subtract days from a YYYY-MM-DD date string
+ * Add or subtract days from a YYYY-MM-DD date string with local calendar precision
  */
 export function shiftDateKey(dateKey: string, daysOffset: number): string {
+  const parts = dateKey.split('-').map(Number);
+  if (parts.length === 3 && !isNaN(parts[0]) && !isNaN(parts[1]) && !isNaN(parts[2])) {
+    const d = new Date(parts[0], parts[1] - 1, parts[2]);
+    d.setDate(d.getDate() + daysOffset);
+    return toDateKey(d);
+  }
   const d = new Date(dateKey);
   d.setDate(d.getDate() + daysOffset);
   return toDateKey(d);
@@ -91,10 +101,83 @@ export function shiftDateKey(dateKey: string, daysOffset: number): string {
  * Difference in days between two date keys (d1 - d2)
  */
 export function getDaysDifference(dateKey1: string, dateKey2: string): number {
-  const d1 = new Date(dateKey1).getTime();
-  const d2 = new Date(dateKey2).getTime();
-  const diffTime = d1 - d2;
+  const [y1, m1, d1] = dateKey1.split('-').map(Number);
+  const [y2, m2, d2] = dateKey2.split('-').map(Number);
+  const dateObj1 = new Date(y1, m1 - 1, d1);
+  const dateObj2 = new Date(y2, m2 - 1, d2);
+  const diffTime = dateObj1.getTime() - dateObj2.getTime();
   return Math.round(diffTime / (1000 * 60 * 60 * 24));
+}
+
+/**
+ * Get the Sunday (00:00:00 local time) of the calendar week for any given date
+ */
+export function getStartOfWeek(date: Date | string | number = new Date()): Date {
+  let d: Date;
+  if (typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    const [y, m, day] = date.split('-').map(Number);
+    d = new Date(y, m - 1, day, 0, 0, 0, 0);
+  } else {
+    d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+  }
+  const dayOfWeek = d.getDay(); // 0 is Sunday, 1 is Monday, ..., 6 is Saturday
+  d.setDate(d.getDate() - dayOfWeek);
+  return d;
+}
+
+/**
+ * Generate accurate 7-day Sunday-to-Saturday calendar week items
+ */
+export function getCurrentCalendarWeek(
+  historyMap: Record<
+    string,
+    { invested: boolean; amount: number; txId?: string; frozenWithShield?: boolean }
+  >,
+  todayDate: Date = new Date()
+): DayHistoryItem[] {
+  const todayKey = toDateKey(todayDate);
+  const sunday = getStartOfWeek(todayDate);
+  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const weeklyHistory: DayHistoryItem[] = [];
+
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(sunday);
+    d.setDate(sunday.getDate() + i);
+    d.setHours(0, 0, 0, 0);
+
+    const dKey = toDateKey(d);
+    const dayLabel = dayNames[i];
+    const dayNumber = d.getDate();
+    const monthLabel = monthNames[d.getMonth()];
+    const fullDate = d.toLocaleDateString('en-IN', {
+      weekday: 'short',
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    });
+
+    const isToday = dKey === todayKey;
+    const isFuture = dKey > todayKey;
+    const isInvested = Boolean(historyMap[dKey]?.invested);
+    const isFrozen = Boolean(historyMap[dKey]?.frozenWithShield);
+
+    weeklyHistory.push({
+      date: dKey,
+      dayLabel,
+      dayNumber,
+      monthLabel,
+      fullDate,
+      completed: isInvested,
+      isToday,
+      isFuture,
+      frozenWithShield: isFrozen,
+      amount: historyMap[dKey]?.amount,
+    });
+  }
+
+  return weeklyHistory;
 }
 
 /**
@@ -104,7 +187,8 @@ export function calculateStreakState(
   transactions: Transaction[],
   savedStreakState?: Partial<StreakState> | null
 ): StreakState {
-  const todayKey = toDateKey(new Date());
+  const todayDate = new Date();
+  const todayKey = toDateKey(todayDate);
   const yesterdayKey = shiftDateKey(todayKey, -1);
 
   // 1. Build a map of all unique investment days from successful transactions
@@ -192,31 +276,8 @@ export function calculateStreakState(
   const longestStreak = Math.max(currentStreak, savedStreakState?.longestStreak || currentStreak);
   const lastActiveDate = uniqueInvestedDates[uniqueInvestedDates.length - 1] || null;
 
-  // 4. Generate 7-Day Trailing Weekly History (Past 6 days + Today)
-  const weeklyHistory: DayHistoryItem[] = [];
-  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
-  for (let i = 6; i >= 0; i--) {
-    const dKey = shiftDateKey(todayKey, -i);
-    const dObj = new Date(dKey);
-    const dayLabel = dayNames[dObj.getDay()];
-    const dayNumber = dObj.getDate();
-    const isToday = dKey === todayKey;
-    const isFuture = getDaysDifference(dKey, todayKey) > 0;
-    const isInvested = Boolean(historyMap[dKey]?.invested);
-    const isFrozen = Boolean(historyMap[dKey]?.frozenWithShield);
-
-    weeklyHistory.push({
-      date: dKey,
-      dayLabel,
-      dayNumber,
-      completed: isInvested,
-      isToday,
-      isFuture,
-      frozenWithShield: isFrozen,
-      amount: historyMap[dKey]?.amount,
-    });
-  }
+  // 4. Generate Standard Sunday-to-Saturday Calendar Week
+  const weeklyHistory = getCurrentCalendarWeek(historyMap, todayDate);
 
   // 5. Determine Next Milestone
   const nextMilestoneItem =
@@ -254,22 +315,7 @@ export function calculateStreakState(
 }
 
 export function createEmptyStreakState(): StreakState {
-  const todayKey = toDateKey(new Date());
-  const weeklyHistory: DayHistoryItem[] = [];
-  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
-  for (let i = 6; i >= 0; i--) {
-    const dKey = shiftDateKey(todayKey, -i);
-    const dObj = new Date(dKey);
-    weeklyHistory.push({
-      date: dKey,
-      dayLabel: dayNames[dObj.getDay()],
-      dayNumber: dObj.getDate(),
-      completed: false,
-      isToday: dKey === todayKey,
-      isFuture: false,
-    });
-  }
+  const weeklyHistory = getCurrentCalendarWeek({}, new Date());
 
   return {
     currentStreak: 0,
@@ -290,3 +336,4 @@ export function createEmptyStreakState(): StreakState {
     history: {},
   };
 }
+

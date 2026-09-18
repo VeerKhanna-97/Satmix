@@ -203,6 +203,8 @@ export interface DayHistoryItem {
   date: string; // 'YYYY-MM-DD'
   dayLabel: string; // 'Sun', 'Mon', 'Tue', ...
   dayNumber: number; // 1-31
+  monthLabel?: string; // 'Jan', 'Feb', 'Sep', ...
+  fullDate?: string; // 'Sun, 13 Sep 2026'
   completed: boolean;
   isToday: boolean;
   isFuture: boolean;

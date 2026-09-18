@@ -150,67 +150,100 @@ export const StreakWeeklyTracker: React.FC<StreakWeeklyTrackerProps> = ({ onQuic
         </div>
       </div>
 
-      {/* ── 2. 7-DAY CIRCULAR CALENDAR TRACKER ── */}
+      {/* ── 2. 7-DAY CIRCULAR CALENDAR TRACKER (FIXED SUN-SAT WEEK) ── */}
       <div className="py-4">
         <div className="grid grid-cols-7 gap-2 sm:gap-3 text-center">
           {weeklyHistory.map((day) => {
+            const isCompleted = day.completed;
+            const isFrozen = day.frozenWithShield;
+            const isToday = day.isToday;
+            const isFuture = day.isFuture;
+
+            const tooltipText = `${day.fullDate || day.date}${
+              isCompleted
+                ? ' · Invested'
+                : isFrozen
+                ? ' · Protected by Shield'
+                : isToday
+                ? ' · Today'
+                : isFuture
+                ? ' · Upcoming'
+                : ' · No Deposit'
+            }`;
+
             return (
-              <div key={day.date} className="flex flex-col items-center gap-1.5">
+              <div key={day.date} className="flex flex-col items-center gap-1.5" title={tooltipText}>
                 <span
                   className="text-[10px] sm:text-xs font-bold uppercase font-mono"
                   style={{
-                    color: day.isToday ? colors.accent : colors.textTertiary,
+                    color: isToday
+                      ? colors.accent
+                      : isFuture
+                      ? colors.textTertiary
+                      : colors.textSecondary,
+                    opacity: isFuture ? 0.6 : 1,
                   }}
                 >
                   {day.dayLabel}
                 </span>
 
                 <div
-                  className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center border text-xs font-bold transition-all duration-300 ${
-                    day.completed
-                      ? 'scale-105'
-                      : day.frozenWithShield
+                  className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center border text-xs font-bold transition-all duration-300 select-none ${
+                    isCompleted
+                      ? 'scale-105 shadow-sm'
+                      : isFrozen
                       ? 'shadow-md shadow-cyan-500/10'
-                      : day.isToday
-                      ? 'ring-1 animate-pulse'
-                      : 'opacity-60'
+                      : isToday
+                      ? 'ring-2 animate-pulse'
+                      : isFuture
+                      ? 'opacity-40 border-dashed'
+                      : 'opacity-65'
                   }`}
                   style={{
-                    backgroundColor: day.completed
+                    backgroundColor: isCompleted
                       ? colors.accentTint
-                      : day.frozenWithShield
+                      : isFrozen
                       ? 'rgba(6, 182, 212, 0.18)'
-                      : day.isToday
+                      : isToday
                       ? colors.surface
+                      : isFuture
+                      ? 'transparent'
                       : colors.surface,
-                    borderColor: day.completed
+                    borderColor: isCompleted
                       ? colors.borderAccent
-                      : day.frozenWithShield
+                      : isFrozen
                       ? 'rgba(6, 182, 212, 0.4)'
-                      : day.isToday
+                      : isToday
                       ? colors.accent
                       : colors.borderDim,
-                    color: day.completed
+                    color: isCompleted
                       ? colors.accent
-                      : day.frozenWithShield
+                      : isFrozen
                       ? '#22D3EE'
-                      : day.isToday
+                      : isToday
                       ? colors.textPrimary
                       : colors.textTertiary,
                   }}
                 >
-                  {day.completed ? (
+                  {isCompleted ? (
                     <Check className="w-4 h-4 stroke-[3]" />
-                  ) : day.frozenWithShield ? (
+                  ) : isFrozen ? (
                     <Shield className="w-4 h-4 text-cyan-400" />
                   ) : (
                     <span className="text-xs font-mono">{day.dayNumber}</span>
                   )}
                 </div>
 
-                {day.isToday && (
-                  <span className="text-[9px] font-bold uppercase tracking-wider font-mono" style={{ color: colors.accent }}>
+                {isToday ? (
+                  <span
+                    className="text-[9px] font-bold uppercase tracking-wider font-mono"
+                    style={{ color: colors.accent }}
+                  >
                     Today
+                  </span>
+                ) : (
+                  <span className="text-[9px] font-mono opacity-0 select-none pointer-events-none">
+                    ·
                   </span>
                 )}
               </div>
