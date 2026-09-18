@@ -335,10 +335,7 @@ export const LineChart: React.FC<LineChartProps> = ({
               transform: 'translate(-50%, -50%)',
             }}
           >
-            <div className="relative flex items-center justify-center">
-              <span className="absolute w-5 h-5 rounded-full bg-emerald-500/30 animate-ping" />
-              <span className="w-3.5 h-3.5 rounded-full border-2 border-emerald-400 bg-white shadow-[0_0_10px_rgba(16,185,129,0.8)]" />
-            </div>
+            <div className="w-3.5 h-3.5 rounded-full border-2 border-emerald-400 bg-white shadow-sm" />
           </div>
         )}
       </div>

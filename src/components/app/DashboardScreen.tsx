@@ -29,6 +29,7 @@ import {
   Lock,
   Info,
   ExternalLink,
+  Activity,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { LineChart } from '../common/LineChart';
@@ -202,13 +203,13 @@ export const DashboardScreen: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2.5 flex-wrap">
-          {/* Quiet Hedge Badge */}
+          {/* Real-time MTM Engine Status Pill */}
           <div
-            className="px-3 py-1.5 rounded-xl border text-[11px] font-semibold flex items-center gap-1.5 shadow-sm"
-            style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textSecondary }}
+            className="px-3 py-1.5 rounded-xl border text-[11px] font-mono font-medium flex items-center gap-2 shadow-sm"
+            style={{ backgroundColor: colors.surface, borderColor: colors.borderDim, color: colors.textSecondary }}
           >
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping inline-block mr-0.5" />
-            <span>Live Market Pricing · Automated Execution</span>
+            <Activity className="w-3.5 h-3.5 flex-shrink-0" style={{ color: colors.accent }} />
+            <span>Live Spot MTM · Auto-Execute</span>
           </div>
 
           {/* Streak Indicator */}
