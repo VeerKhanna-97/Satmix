@@ -14,11 +14,14 @@ export interface ChartCustomRange {
   endDate: string; // YYYY-MM-DD
 }
 
+export type SegmentStatus = 'profit' | 'loss' | 'neutral';
+
 export interface ChartSegment {
   id: string;
   label: string; // e.g. 'Sun', 'Week 1', 'Oct 2026'
   startIndex: number;
   endIndex: number;
+  status: SegmentStatus;
   isProfit: boolean;
   gain: number;
   gainPercentage: number;
@@ -56,7 +59,8 @@ export interface ChartSeriesResult {
 function buildChartSegments(
   points: ChartDataPoint[],
   granularity: 'day' | 'week' | 'month',
-  targetChunkCount?: number
+  targetChunkCount?: number,
+  isProjection: boolean = false
 ): ChartSegment[] {
   if (points.length === 0) return [];
 
@@ -65,13 +69,19 @@ function buildChartSegments(
   if (granularity === 'day') {
     // 1 segment per data point (e.g. 7 daily divisions in 1W)
     points.forEach((pt, idx) => {
-      const isProfit = pt.gain >= 0;
+      const isZeroInvested = !isProjection && pt.invested <= 0 && pt.value <= 0;
+      let status: SegmentStatus = 'neutral';
+      if (!isZeroInvested) {
+        status = pt.gain >= 0 ? 'profit' : 'loss';
+      }
+      const isProfit = status === 'profit';
       const dayName = pt.fullDate.split(',')[0] || pt.label;
       const seg: ChartSegment = {
         id: `seg-day-${idx}`,
         label: dayName,
         startIndex: idx,
         endIndex: idx,
+        status,
         isProfit,
         gain: pt.gain,
         gainPercentage: pt.gainPercentage,
@@ -97,11 +107,20 @@ function buildChartSegments(
     if (startIndex > endIndex || startIndex >= points.length) continue;
 
     const slice = points.slice(startIndex, endIndex + 1);
+    const maxInvested = Math.max(...slice.map((p) => p.invested), 0);
+    const maxValue = Math.max(...slice.map((p) => p.value), 0);
+    const isZeroInvested = !isProjection && maxInvested <= 0 && maxValue <= 0;
+
     const sumGain = slice.reduce((acc, p) => acc + p.gain, 0);
     const avgGain = Math.round((sumGain / (slice.length || 1)) * 100) / 100;
     const sumGainPct = slice.reduce((acc, p) => acc + p.gainPercentage, 0);
     const avgGainPct = Number((sumGainPct / (slice.length || 1)).toFixed(2));
-    const isProfit = avgGain >= 0;
+
+    let status: SegmentStatus = 'neutral';
+    if (!isZeroInvested) {
+      status = avgGain >= 0 ? 'profit' : 'loss';
+    }
+    const isProfit = status === 'profit';
 
     const firstDate = slice[0]?.date || '';
     const lastDate = slice[slice.length - 1]?.date || '';
@@ -115,6 +134,7 @@ function buildChartSegments(
       label,
       startIndex,
       endIndex,
+      status,
       isProfit,
       gain: avgGain,
       gainPercentage: avgGainPct,
@@ -303,7 +323,7 @@ export function generateChartSeries(
       }
     }
 
-    const segments = buildChartSegments(points, granularity, targetChunkCount);
+    const segments = buildChartSegments(points, granularity, targetChunkCount, true);
     const allValues = points.flatMap((p) => [p.value, p.invested]);
     const minVal = Math.min(...allValues, 0);
     const maxVal = Math.max(...allValues, 100);

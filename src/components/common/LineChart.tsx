@@ -146,9 +146,9 @@ export const LineChart: React.FC<LineChartProps> = ({
   }, [dataPoints, usableHeight, usableWidth, paddingX, paddingTop, height, width]);
 
   // ── SEGMENT RECTANGLE INTERVAL COMPUTATION (FOR CLIPPED MULTI-COLOR RENDERING) ──
-  const { greenRects, redRects, divisionDividers } = useMemo(() => {
+  const { greenRects, redRects, neutralRects, divisionDividers } = useMemo(() => {
     if (dataPoints.length === 0 || !valCoords || valCoords.length === 0) {
-      return { greenRects: [], redRects: [], divisionDividers: [] };
+      return { greenRects: [], redRects: [], neutralRects: [], divisionDividers: [] };
     }
 
     const segments = series?.segments || [];
@@ -158,13 +158,15 @@ export const LineChart: React.FC<LineChartProps> = ({
       return {
         greenRects: isOverallProfit ? [allRect] : [],
         redRects: !isOverallProfit ? [allRect] : [],
+        neutralRects: [],
         divisionDividers: [],
       };
     }
 
     const green: { x: number; width: number }[] = [];
     const red: { x: number; width: number }[] = [];
-    const dividers: { x: number; label: string; isProfit: boolean }[] = [];
+    const neutral: { x: number; width: number }[] = [];
+    const dividers: { x: number; label: string; status: 'profit' | 'loss' | 'neutral' }[] = [];
 
     segments.forEach((seg, sIdx) => {
       let xStart = paddingX;
@@ -180,7 +182,9 @@ export const LineChart: React.FC<LineChartProps> = ({
       const rectWidth = Math.max(0, xEnd - xStart);
       const rect = { x: xStart, width: rectWidth };
 
-      if (seg.isProfit) {
+      if (seg.status === 'neutral') {
+        neutral.push(rect);
+      } else if (seg.status === 'profit' || seg.isProfit) {
         green.push(rect);
       } else {
         red.push(rect);
@@ -191,12 +195,12 @@ export const LineChart: React.FC<LineChartProps> = ({
         dividers.push({
           x: xStart,
           label: seg.label,
-          isProfit: seg.isProfit,
+          status: seg.status,
         });
       }
     });
 
-    return { greenRects: green, redRects: red, divisionDividers: dividers };
+    return { greenRects: green, redRects: red, neutralRects: neutral, divisionDividers: dividers };
   }, [series?.segments, dataPoints, valCoords, paddingX, usableWidth, width]);
 
   // Interactive mouse/touch scrubber handling with precise padding offset alignment
@@ -233,6 +237,7 @@ export const LineChart: React.FC<LineChartProps> = ({
 
   const hasAnyLossSegment = redRects.length > 0;
   const hasAnyProfitSegment = greenRects.length > 0;
+  const hasAnyNeutralSegment = neutralRects.length > 0;
 
   // X-Axis Date markers (Start, Mid, End)
   const startDateLabel = dataPoints[0]?.date || '';
@@ -256,12 +261,32 @@ export const LineChart: React.FC<LineChartProps> = ({
                   <span
                     className="text-[9px] px-1.5 py-0.5 rounded font-mono font-bold uppercase tracking-wider border"
                     style={{
-                      backgroundColor: activeSegment.isProfit ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.12)',
-                      borderColor: activeSegment.isProfit ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)',
-                      color: activeSegment.isProfit ? '#10B981' : '#EF4444',
+                      backgroundColor:
+                        activeSegment.status === 'neutral'
+                          ? 'rgba(100, 116, 139, 0.12)'
+                          : activeSegment.status === 'profit'
+                          ? 'rgba(16, 185, 129, 0.12)'
+                          : 'rgba(239, 68, 68, 0.12)',
+                      borderColor:
+                        activeSegment.status === 'neutral'
+                          ? 'rgba(100, 116, 139, 0.3)'
+                          : activeSegment.status === 'profit'
+                          ? 'rgba(16, 185, 129, 0.3)'
+                          : 'rgba(239, 68, 68, 0.3)',
+                      color:
+                        activeSegment.status === 'neutral'
+                          ? '#94A3B8'
+                          : activeSegment.status === 'profit'
+                          ? '#10B981'
+                          : '#EF4444',
                     }}
                   >
-                    {activeSegment.label} · {activeSegment.isProfit ? 'Profit' : 'Loss'}
+                    {activeSegment.label} ·{' '}
+                    {activeSegment.status === 'neutral'
+                      ? 'No Investment'
+                      : activeSegment.status === 'profit'
+                      ? 'Profit'
+                      : 'Loss'}
                   </span>
                 )}
               </div>
@@ -269,9 +294,13 @@ export const LineChart: React.FC<LineChartProps> = ({
                 <span style={{ color: colors.textPrimary }}>
                   Val: ₹{activePoint.value.toLocaleString('en-IN')}{Number.isInteger(activePoint.value) ? '.00' : ''}
                 </span>
-                <span style={{ color: activePoint.gain >= 0 ? colors.semanticSuccess : colors.semanticDanger }}>
-                  {activePoint.gain >= 0 ? '+' : '-'}₹{Math.abs(activePoint.gain).toFixed(2)} ({activePoint.gainPercentage >= 0 ? '+' : ''}{activePoint.gainPercentage}%)
-                </span>
+                {activeSegment?.status === 'neutral' || (activePoint.invested === 0 && activePoint.value === 0) ? (
+                  <span style={{ color: colors.textTertiary }}>₹0.00 (0.00%)</span>
+                ) : (
+                  <span style={{ color: activePoint.gain >= 0 ? colors.semanticSuccess : colors.semanticDanger }}>
+                    {activePoint.gain >= 0 ? '+' : '-'}₹{Math.abs(activePoint.gain).toFixed(2)} ({activePoint.gainPercentage >= 0 ? '+' : ''}{activePoint.gainPercentage}%)
+                  </span>
+                )}
               </div>
             </>
           ) : (
@@ -336,6 +365,13 @@ export const LineChart: React.FC<LineChartProps> = ({
             <clipPath id="chartClipRed">
               {redRects.map((r, i) => (
                 <rect key={`rr-${i}`} x={r.x} y={0} width={r.width} height={height} />
+              ))}
+            </clipPath>
+
+            {/* Neutral Pre-Investment Clipping Mask */}
+            <clipPath id="chartClipNeutral">
+              {neutralRects.map((r, i) => (
+                <rect key={`nr-${i}`} x={r.x} y={0} width={r.width} height={height} />
               ))}
             </clipPath>
 
@@ -450,6 +486,21 @@ export const LineChart: React.FC<LineChartProps> = ({
             />
           )}
 
+          {/* Valuation Trajectory Line: Neutral Pre-Investment Segments */}
+          {smoothValPath && neutralRects.length > 0 && (
+            <path
+              d={smoothValPath}
+              fill="none"
+              stroke="#64748B"
+              strokeWidth="2"
+              strokeDasharray="4 3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              clipPath="url(#chartClipNeutral)"
+              opacity="0.65"
+            />
+          )}
+
           {/* Interactive Vertical Dashed Crosshair */}
           {activeCoord && activePoint && (
             <line
@@ -457,7 +508,13 @@ export const LineChart: React.FC<LineChartProps> = ({
               y1={paddingTop}
               x2={activeCoord.x}
               y2={paddingTop + usableHeight}
-              stroke={activePoint.gain >= 0 ? '#34D399' : '#F87171'}
+              stroke={
+                activeSegment?.status === 'neutral' || (activePoint.invested === 0 && activePoint.value === 0)
+                  ? '#64748B'
+                  : activePoint.gain >= 0
+                  ? '#34D399'
+                  : '#F87171'
+              }
               strokeWidth="1.2"
               strokeDasharray="3 3"
               opacity="0.85"
@@ -492,7 +549,11 @@ export const LineChart: React.FC<LineChartProps> = ({
           >
             <div
               className={`w-3.5 h-3.5 rounded-full border-2 bg-white shadow-sm ${
-                activePoint.gain >= 0 ? 'border-emerald-400' : 'border-rose-500'
+                activeSegment?.status === 'neutral' || (activePoint.invested === 0 && activePoint.value === 0)
+                  ? 'border-slate-400'
+                  : activePoint.gain >= 0
+                  ? 'border-emerald-400'
+                  : 'border-rose-500'
               }`}
             />
           </div>
@@ -516,6 +577,14 @@ export const LineChart: React.FC<LineChartProps> = ({
               <div className="flex items-center gap-1.5">
                 <span className="w-3 h-0.5 rounded-full bg-rose-500" />
                 <span className="text-xs font-bold" style={{ color: colors.semanticDanger }}>Loss Division</span>
+              </div>
+            )}
+
+            {/* Pre-Investment Neutral Curve */}
+            {hasAnyNeutralSegment && (
+              <div className="flex items-center gap-1.5">
+                <span className="w-3 h-0.5 rounded-full bg-slate-500 opacity-60" />
+                <span className="text-xs" style={{ color: colors.textTertiary }}>Pre-Start</span>
               </div>
             )}
 
