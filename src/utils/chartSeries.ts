@@ -1,10 +1,11 @@
 // ============================================================
 // FILE: src/utils/chartSeries.ts
 // PURPOSE: Time-Series Generator for Portfolio Performance Curves
-//          Synthesizes real transactions, DCA compounding, and live market delta
+//          Fixed Sunday-to-Saturday Calendar Week Alignment & DateKey Filtering
 // ============================================================
 
 import { Transaction, BasketId, CryptoCoin, PortfolioSummary } from '../types';
+import { toDateKey, getStartOfWeek, shiftDateKey, getDaysDifference } from './streakEngine';
 
 export type ChartTimeframe = '1W' | '1M' | '3M' | '1Y' | 'ALL';
 
@@ -42,6 +43,7 @@ export function generateChartSeries(
   const isZero = portfolioSummary.totalInvested <= 0;
   const now = Date.now();
   const dayMs = 24 * 60 * 60 * 1000;
+  const todayKey = toDateKey(now);
 
   // Basket annual rate (8% for Stable, 28% for Growth)
   const annualRate = activeBasketId === 'stable' ? 0.08 : 0.28;
@@ -53,53 +55,87 @@ export function generateChartSeries(
 
   // 1. If Zero-state (new user), generate an illustrative DCA compounding projection curve
   if (isZero) {
-    const projectionDays =
-      timeframe === '1W' ? 7 : timeframe === '1M' ? 30 : timeframe === '3M' ? 90 : timeframe === '1Y' ? 365 : 180;
-
-    const numSamples = timeframe === '1W' ? 7 : 30;
-    const sampleIntervalDays = projectionDays / (numSamples - 1);
-    const simulatedDailySip = 50;
-
     const points: ChartDataPoint[] = [];
 
-    for (let i = 0; i < numSamples; i++) {
-      const dayOffset = Math.round(i * sampleIntervalDays);
-      const targetTime = now - (projectionDays - dayOffset) * dayMs;
-      const dObj = new Date(targetTime);
+    if (timeframe === '1W') {
+      // Standard Sunday-to-Saturday Calendar Week Projection
+      const sunday = getStartOfWeek(now);
+      const simulatedDailySip = 50;
 
-      const daysInvested = dayOffset + 1;
-      const simInvested = daysInvested * simulatedDailySip;
+      for (let i = 0; i < 7; i++) {
+        const dObj = new Date(sunday);
+        dObj.setDate(sunday.getDate() + i);
+        dObj.setHours(12, 0, 0, 0);
 
-      // Future value of daily micro-SIP: FV = PMT * [((1 + r)^n - 1) / r]
-      let simValue = simInvested;
-      if (dailyRate > 0) {
-        simValue = simulatedDailySip * ((Math.pow(1 + dailyRate, daysInvested) - 1) / dailyRate);
+        const daysInvested = i + 1;
+        const simInvested = daysInvested * simulatedDailySip;
+
+        let simValue = simInvested;
+        if (dailyRate > 0) {
+          simValue = simulatedDailySip * ((Math.pow(1 + dailyRate, daysInvested) - 1) / dailyRate);
+        }
+        const noise = (Math.sin(i * 0.6) * 0.01) + (marketAdjustment * 0.02 * (i / 7));
+        simValue = simValue * (1 + noise);
+
+        const roundedVal = Math.round(simValue * 100) / 100;
+        const roundedInv = Math.round(simInvested * 100) / 100;
+        const gain = Math.round((roundedVal - roundedInv) * 100) / 100;
+        const gainPercentage = roundedInv > 0 ? Number(((gain / roundedInv) * 100).toFixed(2)) : 0;
+
+        points.push({
+          date: dObj.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }),
+          fullDate: dObj.toLocaleDateString('en-IN', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' }),
+          timestamp: dObj.getTime(),
+          label: dObj.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }),
+          invested: roundedInv,
+          value: roundedVal,
+          gain,
+          gainPercentage,
+        });
       }
-      // Add subtle market sentiment curve
-      const noise = (Math.sin(i * 0.6) * 0.015) + (marketAdjustment * 0.02 * (i / numSamples));
-      simValue = simValue * (1 + noise);
+    } else {
+      const projectionDays =
+        timeframe === '1M' ? 30 : timeframe === '3M' ? 90 : timeframe === '1Y' ? 365 : 180;
+      const numSamples = 30;
+      const sampleIntervalDays = projectionDays / (numSamples - 1);
+      const simulatedDailySip = 50;
 
-      const roundedVal = Math.round(simValue * 100) / 100;
-      const roundedInv = Math.round(simInvested * 100) / 100;
-      const gain = Math.round((roundedVal - roundedInv) * 100) / 100;
-      const gainPercentage = roundedInv > 0 ? Number(((gain / roundedInv) * 100).toFixed(2)) : 0;
+      for (let i = 0; i < numSamples; i++) {
+        const dayOffset = Math.round(i * sampleIntervalDays);
+        const targetTime = now - (projectionDays - dayOffset) * dayMs;
+        const dObj = new Date(targetTime);
 
-      points.push({
-        date: dObj.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }),
-        fullDate: dObj.toLocaleDateString('en-IN', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' }),
-        timestamp: targetTime,
-        label: `Day ${daysInvested}`,
-        invested: roundedInv,
-        value: roundedVal,
-        gain,
-        gainPercentage,
-      });
+        const daysInvested = dayOffset + 1;
+        const simInvested = daysInvested * simulatedDailySip;
+
+        let simValue = simInvested;
+        if (dailyRate > 0) {
+          simValue = simulatedDailySip * ((Math.pow(1 + dailyRate, daysInvested) - 1) / dailyRate);
+        }
+        const noise = (Math.sin(i * 0.6) * 0.015) + (marketAdjustment * 0.02 * (i / numSamples));
+        simValue = simValue * (1 + noise);
+
+        const roundedVal = Math.round(simValue * 100) / 100;
+        const roundedInv = Math.round(simInvested * 100) / 100;
+        const gain = Math.round((roundedVal - roundedInv) * 100) / 100;
+        const gainPercentage = roundedInv > 0 ? Number(((gain / roundedInv) * 100).toFixed(2)) : 0;
+
+        points.push({
+          date: dObj.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }),
+          fullDate: dObj.toLocaleDateString('en-IN', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' }),
+          timestamp: targetTime,
+          label: dObj.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }),
+          invested: roundedInv,
+          value: roundedVal,
+          gain,
+          gainPercentage,
+        });
+      }
     }
 
     const allValues = points.flatMap((p) => [p.value, p.invested]);
     const minVal = Math.min(...allValues, 0);
     const maxVal = Math.max(...allValues, 100);
-
     const lastPoint = points[points.length - 1];
 
     return {
@@ -108,54 +144,12 @@ export function generateChartSeries(
       maxVal,
       timeframe,
       isProjection: true,
-      totalGains: lastPoint.gain,
-      gainPercentage: lastPoint.gainPercentage,
+      totalGains: lastPoint?.gain || 0,
+      gainPercentage: lastPoint?.gainPercentage || 0,
     };
   }
 
   // 2. Real User Portfolio with actual transactions
-  let numDays = 30;
-  let sampleCount = 30;
-
-  switch (timeframe) {
-    case '1W':
-      numDays = 7;
-      sampleCount = 7;
-      break;
-    case '1M':
-      numDays = 30;
-      sampleCount = 30;
-      break;
-    case '3M':
-      numDays = 90;
-      sampleCount = 30;
-      break;
-    case '1Y':
-      numDays = 365;
-      sampleCount = 52;
-      break;
-    case 'ALL':
-    default: {
-      const sorted = [...transactions]
-        .filter((t) => t.status === 'SUCCESS' && t.isoTimestamp)
-        .sort((a, b) => new Date(a.isoTimestamp).getTime() - new Date(b.isoTimestamp).getTime());
-
-      if (sorted.length > 0) {
-        const firstTime = new Date(sorted[0].isoTimestamp).getTime();
-        const diffDays = Math.max(7, Math.ceil((now - firstTime) / dayMs));
-        numDays = diffDays;
-        sampleCount = Math.min(60, Math.max(7, diffDays));
-      } else {
-        numDays = 30;
-        sampleCount = 30;
-      }
-      break;
-    }
-  }
-
-  const startTime = now - numDays * dayMs;
-  const intervalMs = (now - startTime) / (sampleCount - 1 || 1);
-
   // Chronologically sorted success transactions
   const validTx = [...transactions]
     .filter((t) => t.status === 'SUCCESS')
@@ -171,74 +165,187 @@ export function generateChartSeries(
 
   const points: ChartDataPoint[] = [];
 
-  for (let i = 0; i < sampleCount; i++) {
-    const isLast = i === sampleCount - 1;
-    const sampleTimestamp = isLast ? now : startTime + i * intervalMs;
-    const dObj = new Date(sampleTimestamp);
+  if (timeframe === '1W') {
+    // ── FIXED SUNDAY-TO-SATURDAY CALENDAR WEEK ─────────────────────
+    const sunday = getStartOfWeek(now);
 
-    // Filter transactions up to this sample point
-    const txUpToNow = validTx.filter((t) => {
-      const txTime = new Date(t.isoTimestamp || 0).getTime();
-      return txTime <= sampleTimestamp;
-    });
+    for (let i = 0; i < 7; i++) {
+      const dObj = new Date(sunday);
+      dObj.setDate(sunday.getDate() + i);
+      dObj.setHours(12, 0, 0, 0);
 
-    let runningInvested = 0;
-    let runningValue = 0;
+      const sampleDateKey = toDateKey(dObj);
+      const isPastOrToday = sampleDateKey <= todayKey;
+      const isToday = sampleDateKey === todayKey;
 
-    txUpToNow.forEach((tx) => {
-      if (tx.type === 'WITHDRAWAL') {
-        if (runningValue > 0) {
-          const grossWd = Math.min(runningValue, tx.amount);
-          const prop = Math.min(1, grossWd / runningValue);
-          runningInvested = Math.max(0, runningInvested - runningInvested * prop);
-          runningValue = Math.max(0, runningValue - grossWd);
-        } else {
-          runningInvested = Math.max(0, runningInvested - tx.amount);
-          runningValue = 0;
+      // Filter transactions executed on or before this calendar day
+      const txUpToThisDay = validTx.filter((t) => {
+        const txDateKey = t.isoTimestamp ? toDateKey(t.isoTimestamp) : toDateKey(t.timestamp || now);
+        return txDateKey <= sampleDateKey;
+      });
+
+      let runningInvested = 0;
+      let runningValue = 0;
+
+      if (isPastOrToday && txUpToThisDay.length > 0) {
+        txUpToThisDay.forEach((tx) => {
+          if (tx.type === 'WITHDRAWAL') {
+            if (runningValue > 0) {
+              const grossWd = Math.min(runningValue, tx.amount);
+              const prop = Math.min(1, grossWd / runningValue);
+              runningInvested = Math.max(0, runningInvested - runningInvested * prop);
+              runningValue = Math.max(0, runningValue - grossWd);
+            } else {
+              runningInvested = Math.max(0, runningInvested - tx.amount);
+              runningValue = 0;
+            }
+          } else {
+            runningInvested += tx.amount;
+            const txDateKey = tx.isoTimestamp ? toDateKey(tx.isoTimestamp) : toDateKey(tx.timestamp || now);
+            const daysSinceTx = Math.max(0, getDaysDifference(sampleDateKey, txDateKey));
+            const totalSpanDays = Math.max(1, getDaysDifference(todayKey, txDateKey));
+            const progress = Math.min(1, daysSinceTx / totalSpanDays);
+
+            const marketWave = (Math.sin(daysSinceTx * 1.5) * 0.012 + Math.cos(daysSinceTx * 0.8) * 0.008) * (1 + marketAdjustment);
+            const convergence = 1 - progress;
+            const pointMultiplier = Math.max(0.01, 1 + (progress * overallReturnRatio) + (marketWave * convergence));
+
+            runningValue += tx.amount * pointMultiplier;
+          }
+        });
+
+        // Exact match on today
+        if (isToday) {
+          runningInvested = portfolioSummary.totalInvested;
+          runningValue = portfolioSummary.currentValue;
         }
-      } else {
-        runningInvested += tx.amount;
-        const txTime = new Date(tx.isoTimestamp || 0).getTime();
-        const totalSpan = Math.max(dayMs, now - txTime);
-        const elapsedSinceTx = Math.max(0, sampleTimestamp - txTime);
-        const progress = Math.min(1, elapsedSinceTx / totalSpan);
-
-        // Smooth historical market trajectory with zero jump at point N
-        const marketWave = (Math.sin((sampleTimestamp / dayMs) * 1.2) * 0.015 + Math.cos((sampleTimestamp / dayMs) * 0.6) * 0.01) * (1 + marketAdjustment);
-        const convergence = 1 - progress; // naturally 0 at now
-        const pointMultiplier = Math.max(0.01, 1 + (progress * overallReturnRatio) + (marketWave * convergence));
-
-        runningValue += tx.amount * pointMultiplier;
+      } else if (!isPastOrToday) {
+        // Upcoming future days in the week mirror the latest live portfolio status
+        runningInvested = portfolioSummary.totalInvested;
+        runningValue = portfolioSummary.currentValue;
       }
-    });
 
-    // Ensure final point matches live portfolio summary exactly with continuous convergence
-    if (isLast) {
-      runningInvested = portfolioSummary.totalInvested;
-      runningValue = portfolioSummary.currentValue;
+      const roundedVal = Math.round(runningValue * 100) / 100;
+      const roundedInv = Math.round(runningInvested * 100) / 100;
+      const gain = Math.round((roundedVal - roundedInv) * 100) / 100;
+      const gainPercentage = roundedInv > 0 ? Number(((gain / roundedInv) * 100).toFixed(2)) : 0;
+
+      points.push({
+        date: dObj.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }),
+        fullDate: dObj.toLocaleDateString('en-IN', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' }),
+        timestamp: dObj.getTime(),
+        label: dObj.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }),
+        invested: roundedInv,
+        value: roundedVal,
+        gain,
+        gainPercentage,
+      });
+    }
+  } else {
+    // ── MULTI-DAY / MULTI-MONTH TIMEFRAMES (1M, 3M, 1Y, ALL) ────────
+    let numDays = 30;
+    let sampleCount = 30;
+
+    switch (timeframe) {
+      case '1M':
+        numDays = 30;
+        sampleCount = 30;
+        break;
+      case '3M':
+        numDays = 90;
+        sampleCount = 30;
+        break;
+      case '1Y':
+        numDays = 365;
+        sampleCount = 52;
+        break;
+      case 'ALL':
+      default: {
+        if (validTx.length > 0) {
+          const firstTxDateKey = validTx[0].isoTimestamp ? toDateKey(validTx[0].isoTimestamp) : todayKey;
+          const diffDays = Math.max(7, getDaysDifference(todayKey, firstTxDateKey) + 1);
+          numDays = diffDays;
+          sampleCount = Math.min(60, Math.max(7, diffDays));
+        } else {
+          numDays = 30;
+          sampleCount = 30;
+        }
+        break;
+      }
     }
 
-    const roundedVal = Math.round(runningValue * 100) / 100;
-    const roundedInv = Math.round(runningInvested * 100) / 100;
-    const gain = Math.round((roundedVal - roundedInv) * 100) / 100;
-    const gainPercentage = roundedInv > 0 ? Number(((gain / roundedInv) * 100).toFixed(2)) : 0;
+    const intervalDays = (numDays - 1) / (sampleCount - 1 || 1);
 
-    points.push({
-      date: dObj.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }),
-      fullDate: dObj.toLocaleDateString('en-IN', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' }),
-      timestamp: sampleTimestamp,
-      label: dObj.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }),
-      invested: roundedInv,
-      value: roundedVal,
-      gain,
-      gainPercentage,
-    });
+    for (let i = 0; i < sampleCount; i++) {
+      const isLast = i === sampleCount - 1;
+      const dayOffsetFromStart = Math.round(i * intervalDays);
+      const sampleDateKey = shiftDateKey(todayKey, -(numDays - 1 - dayOffsetFromStart));
+      const [y, m, d] = sampleDateKey.split('-').map(Number);
+      const dObj = new Date(y, m - 1, d, 12, 0, 0);
+
+      // Filter transactions on or before this sample calendar date
+      const txUpToThisDay = validTx.filter((t) => {
+        const txDateKey = t.isoTimestamp ? toDateKey(t.isoTimestamp) : toDateKey(t.timestamp || now);
+        return txDateKey <= sampleDateKey;
+      });
+
+      let runningInvested = 0;
+      let runningValue = 0;
+
+      if (txUpToThisDay.length > 0) {
+        txUpToThisDay.forEach((tx) => {
+          if (tx.type === 'WITHDRAWAL') {
+            if (runningValue > 0) {
+              const grossWd = Math.min(runningValue, tx.amount);
+              const prop = Math.min(1, grossWd / runningValue);
+              runningInvested = Math.max(0, runningInvested - runningInvested * prop);
+              runningValue = Math.max(0, runningValue - grossWd);
+            } else {
+              runningInvested = Math.max(0, runningInvested - tx.amount);
+              runningValue = 0;
+            }
+          } else {
+            runningInvested += tx.amount;
+            const txDateKey = tx.isoTimestamp ? toDateKey(tx.isoTimestamp) : toDateKey(tx.timestamp || now);
+            const daysSinceTx = Math.max(0, getDaysDifference(sampleDateKey, txDateKey));
+            const totalSpanDays = Math.max(1, getDaysDifference(todayKey, txDateKey));
+            const progress = Math.min(1, daysSinceTx / totalSpanDays);
+
+            const marketWave = (Math.sin((daysSinceTx * 1.2)) * 0.015 + Math.cos((daysSinceTx * 0.6)) * 0.01) * (1 + marketAdjustment);
+            const convergence = 1 - progress;
+            const pointMultiplier = Math.max(0.01, 1 + (progress * overallReturnRatio) + (marketWave * convergence));
+
+            runningValue += tx.amount * pointMultiplier;
+          }
+        });
+
+        if (isLast) {
+          runningInvested = portfolioSummary.totalInvested;
+          runningValue = portfolioSummary.currentValue;
+        }
+      }
+
+      const roundedVal = Math.round(runningValue * 100) / 100;
+      const roundedInv = Math.round(runningInvested * 100) / 100;
+      const gain = Math.round((roundedVal - roundedInv) * 100) / 100;
+      const gainPercentage = roundedInv > 0 ? Number(((gain / roundedInv) * 100).toFixed(2)) : 0;
+
+      points.push({
+        date: dObj.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }),
+        fullDate: dObj.toLocaleDateString('en-IN', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' }),
+        timestamp: dObj.getTime(),
+        label: dObj.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }),
+        invested: roundedInv,
+        value: roundedVal,
+        gain,
+        gainPercentage,
+      });
+    }
   }
 
   const allValues = points.flatMap((p) => [p.value, p.invested]);
   const minVal = Math.min(...allValues, 0);
   const maxVal = Math.max(...allValues, 100);
-
   const finalPoint = points[points.length - 1];
 
   return {
@@ -251,4 +358,5 @@ export function generateChartSeries(
     gainPercentage: finalPoint?.gainPercentage || 0,
   };
 }
+
 
