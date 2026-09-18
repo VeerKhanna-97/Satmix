@@ -33,12 +33,13 @@ import {
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { LineChart } from '../common/LineChart';
+import { MiniLineChart } from '../common/MiniLineChart';
 import { DepositModal } from '../payment/DepositModal';
 import { WithdrawModal } from '../payment/WithdrawModal';
 import { getBasketById } from '../../data/baskets';
 import { EDUCATIONAL_GUIDES } from '../../data/mockData';
 import { StreakWeeklyTracker } from './StreakWeeklyTracker';
-import { generateChartSeries, ChartTimeframe } from '../../utils/chartSeries';
+import { generateChartSeries, generateAssetWeekSeries, ChartTimeframe } from '../../utils/chartSeries';
 import { CustomDateRangePicker } from '../common/CustomDateRangePicker';
 import { SpotlightCard, CountUp, Magnet, ShinyText, FadeIn } from '../ui';
 import { motion, AnimatePresence } from 'motion/react';
@@ -185,13 +186,37 @@ export const DashboardScreen: React.FC = () => {
     };
 
     const entries = [
-      { coin: 'BTC' as const, label: 'Bitcoin', meta: assetMeta.BTC, ...tabMetrics.holdings.BTC },
-      { coin: 'ETH' as const, label: 'Ethereum', meta: assetMeta.ETH, ...tabMetrics.holdings.ETH },
-      { coin: 'SOL' as const, label: 'Solana', meta: assetMeta.SOL, ...tabMetrics.holdings.SOL },
-      { coin: 'USDT' as const, label: 'Tether USD', meta: assetMeta.USDT, ...tabMetrics.holdings.USDT },
+      {
+        coin: 'BTC' as const,
+        label: 'Bitcoin',
+        meta: assetMeta.BTC,
+        ...tabMetrics.holdings.BTC,
+        weekSeries: generateAssetWeekSeries('BTC', prototypeState.activity, tabMetrics.holdings.BTC),
+      },
+      {
+        coin: 'ETH' as const,
+        label: 'Ethereum',
+        meta: assetMeta.ETH,
+        ...tabMetrics.holdings.ETH,
+        weekSeries: generateAssetWeekSeries('ETH', prototypeState.activity, tabMetrics.holdings.ETH),
+      },
+      {
+        coin: 'SOL' as const,
+        label: 'Solana',
+        meta: assetMeta.SOL,
+        ...tabMetrics.holdings.SOL,
+        weekSeries: generateAssetWeekSeries('SOL', prototypeState.activity, tabMetrics.holdings.SOL),
+      },
+      {
+        coin: 'USDT' as const,
+        label: 'Tether USD',
+        meta: assetMeta.USDT,
+        ...tabMetrics.holdings.USDT,
+        weekSeries: generateAssetWeekSeries('USDT', prototypeState.activity, tabMetrics.holdings.USDT),
+      },
     ];
     return entries.filter((e) => e.units > 0 || tabMetrics.marketValue === 0);
-  }, [tabMetrics.holdings, tabMetrics.marketValue]);
+  }, [tabMetrics.holdings, tabMetrics.marketValue, prototypeState.activity]);
 
   const isStableConfigured = prototypeState.habits.stable?.setupAt !== null;
   const isStableActive = isStableConfigured && !prototypeState.habits.stable.paused;
@@ -732,7 +757,7 @@ export const DashboardScreen: React.FC = () => {
                         }}
                       >
                         {/* Left: Coin Badge & Unit Quantity */}
-                        <div className="flex items-center gap-3.5">
+                        <div className="flex items-center gap-3.5 min-w-[190px]">
                           <div
                             className="w-12 h-12 rounded-2xl border flex items-center justify-center font-extrabold text-sm font-mono shadow-sm flex-shrink-0"
                             style={{
@@ -783,8 +808,60 @@ export const DashboardScreen: React.FC = () => {
                           </div>
                         </div>
 
+                        {/* Center: 1-Week Sub-Asset Performance Mini Graph */}
+                        <div className="hidden md:flex flex-col items-center justify-center px-2 flex-shrink-0">
+                          <div className="w-full flex items-center justify-between text-[9px] font-mono mb-1 px-0.5" style={{ color: colors.textTertiary }}>
+                            <span>1W (Sun–Sat)</span>
+                            <span
+                              className="font-bold"
+                              style={{
+                                color:
+                                  item.investedInr <= 0
+                                    ? '#64748B'
+                                    : isProfit
+                                    ? colors.semanticSuccess
+                                    : colors.semanticDanger,
+                              }}
+                            >
+                              {item.investedInr <= 0 ? '₹0.00' : `${isProfit ? '+' : ''}₹${item.gainRupees.toFixed(2)}`}
+                            </span>
+                          </div>
+                          <MiniLineChart
+                            series={item.weekSeries}
+                            width={160}
+                            height={38}
+                            interactive={true}
+                          />
+                        </div>
+
+                        {/* Mobile: 1-Week Sub-Asset Mini Graph */}
+                        <div className="md:hidden w-full flex items-center justify-between py-1.5 px-1 border-t border-b" style={{ borderColor: colors.borderDim }}>
+                          <div className="flex flex-col text-[10px] font-mono" style={{ color: colors.textTertiary }}>
+                            <span>1W Trajectory</span>
+                            <span
+                              className="font-bold text-[11px]"
+                              style={{
+                                color:
+                                  item.investedInr <= 0
+                                    ? '#64748B'
+                                    : isProfit
+                                    ? colors.semanticSuccess
+                                    : colors.semanticDanger,
+                              }}
+                            >
+                              {item.investedInr <= 0 ? '0.00%' : `${isProfit ? '+' : ''}${item.gainPercentage}%`}
+                            </span>
+                          </div>
+                          <MiniLineChart
+                            series={item.weekSeries}
+                            width={150}
+                            height={34}
+                            interactive={true}
+                          />
+                        </div>
+
                         {/* Middle / Right: Financial PnL & Valuation */}
-                        <div className="flex items-center justify-between md:justify-end gap-6 pt-3 md:pt-0 border-t md:border-t-0 font-mono" style={{ borderColor: colors.borderDim }}>
+                        <div className="flex items-center justify-between md:justify-end gap-6 pt-2 md:pt-0 font-mono" style={{ borderColor: colors.borderDim }}>
                           {/* Cost Basis & Performance */}
                           <div className="text-left md:text-right text-xs">
                             <div className="text-[11px]" style={{ color: colors.textTertiary }}>
@@ -1246,6 +1323,46 @@ export const DashboardScreen: React.FC = () => {
                 )}
               </div>
             </div>
+
+            {/* 1-Week Performance Trajectory Card */}
+            {selectedAssetModal.weekSeries && (
+              <div
+                className="p-4 rounded-2xl border space-y-2"
+                style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}
+              >
+                <div className="flex items-center justify-between text-xs font-mono">
+                  <span className="text-[11px] font-sans font-bold flex items-center gap-1.5" style={{ color: colors.textPrimary }}>
+                    <Activity className="w-3.5 h-3.5" style={{ color: colors.accent }} />
+                    1-Week Trajectory (Sun – Sat)
+                  </span>
+                  <span
+                    className="font-bold text-[11px]"
+                    style={{
+                      color:
+                        selectedAssetModal.investedInr <= 0
+                          ? '#64748B'
+                          : selectedAssetModal.gainRupees >= 0
+                          ? colors.semanticSuccess
+                          : colors.semanticDanger,
+                    }}
+                  >
+                    {selectedAssetModal.investedInr <= 0
+                      ? 'No Investment'
+                      : `${selectedAssetModal.gainRupees >= 0 ? '+' : ''}₹${selectedAssetModal.gainRupees.toLocaleString('en-IN', { minimumFractionDigits: 2 })} (${selectedAssetModal.gainRupees >= 0 ? '+' : ''}${selectedAssetModal.gainPercentage}%)`}
+                  </span>
+                </div>
+
+                <div className="pt-1 w-full flex justify-center overflow-hidden">
+                  <MiniLineChart
+                    series={selectedAssetModal.weekSeries}
+                    width={360}
+                    height={50}
+                    interactive={true}
+                    className="w-full max-w-full"
+                  />
+                </div>
+              </div>
+            )}
 
             {/* Financial Intelligence Grid */}
             <div className="grid grid-cols-2 gap-3 font-mono text-xs">
