@@ -15,27 +15,98 @@ interface LineChartProps {
 }
 
 /**
- * Generate smooth SVG cubic Bézier path from array of coordinate points
+ * Generate smooth monotonic SVG cubic Bézier path from array of coordinate points.
+ * Implements Fritsch-Carlson Monotone Cubic Spline interpolation with bounded control points.
+ * Guarantees zero overshoot/undershoot, preventing curves from ever dipping below baseline
+ * or exceeding local plateaus.
  */
-function pointsToSmoothPath(points: { x: number; y: number }[]): string {
+function pointsToSmoothPath(
+  points: { x: number; y: number }[],
+  options?: { minY?: number; maxY?: number }
+): string {
   if (points.length === 0) return '';
-  if (points.length === 1) return `M ${points[0].x},${points[0].y}`;
+  if (points.length === 1) return `M ${points[0].x.toFixed(2)},${points[0].y.toFixed(2)}`;
+  if (points.length === 2) {
+    return `M ${points[0].x.toFixed(2)},${points[0].y.toFixed(2)} L ${points[1].x.toFixed(2)},${points[1].y.toFixed(2)}`;
+  }
 
-  let path = `M ${points[0].x},${points[0].y}`;
+  const n = points.length;
+  const dx: number[] = [];
+  const dy: number[] = [];
+  const slopes: number[] = [];
 
-  for (let i = 0; i < points.length - 1; i++) {
-    const p0 = points[i === 0 ? 0 : i - 1];
+  for (let i = 0; i < n - 1; i++) {
+    const deltaX = points[i + 1].x - points[i].x;
+    const deltaY = points[i + 1].y - points[i].y;
+    dx.push(deltaX);
+    dy.push(deltaY);
+    slopes.push(deltaX === 0 ? 0 : deltaY / deltaX);
+  }
+
+  // 1. Initial tangent slope estimation at each point
+  const m: number[] = new Array(n).fill(0);
+  m[0] = slopes[0];
+  m[n - 1] = slopes[n - 2];
+
+  for (let i = 1; i < n - 1; i++) {
+    const s0 = slopes[i - 1];
+    const s1 = slopes[i];
+    // If slope changes sign or either slope is 0 (plateau / local extremum), tangent MUST be zero
+    if (s0 * s1 <= 0 || Math.abs(s0) < 1e-7 || Math.abs(s1) < 1e-7) {
+      m[i] = 0;
+    } else {
+      m[i] = (s0 + s1) / 2;
+    }
+  }
+
+  // 2. Fritsch-Carlson monotonicity check & adjustment
+  for (let i = 0; i < n - 1; i++) {
+    if (Math.abs(slopes[i]) < 1e-7) {
+      m[i] = 0;
+      m[i + 1] = 0;
+    } else {
+      const alpha = m[i] / slopes[i];
+      const beta = m[i + 1] / slopes[i];
+      if (alpha < 0) m[i] = 0;
+      if (beta < 0) m[i + 1] = 0;
+      const mag = alpha * alpha + beta * beta;
+      if (mag > 9) {
+        const tau = 3 / Math.sqrt(mag);
+        m[i] = tau * alpha * slopes[i];
+        m[i + 1] = tau * beta * slopes[i];
+      }
+    }
+  }
+
+  // 3. Convert tangents to Bézier control points with strict segment bounding box clamping
+  let path = `M ${points[0].x.toFixed(2)},${points[0].y.toFixed(2)}`;
+
+  const minY = options?.minY ?? -Infinity;
+  const maxY = options?.maxY ?? Infinity;
+
+  for (let i = 0; i < n - 1; i++) {
     const p1 = points[i];
     const p2 = points[i + 1];
-    const p3 = points[i + 2 < points.length ? i + 2 : points.length - 1];
+    const deltaX = dx[i];
 
-    const cp1x = p1.x + (p2.x - p0.x) / 6;
-    const cp1y = p1.y + (p2.y - p0.y) / 6;
+    const cp1x = p1.x + deltaX / 3;
+    let cp1y = p1.y + (m[i] * deltaX) / 3;
 
-    const cp2x = p2.x - (p3.x - p1.x) / 6;
-    const cp2y = p2.y - (p3.y - p1.y) / 6;
+    const cp2x = p2.x - deltaX / 3;
+    let cp2y = p2.y - (m[i + 1] * deltaX) / 3;
 
-    path += ` C ${cp1x},${cp1y} ${cp2x},${cp2y} ${p2.x},${p2.y}`;
+    // Segment bounding box (curve between p1 and p2 must stay bounded by p1 and p2)
+    const segMinY = Math.min(p1.y, p2.y);
+    const segMaxY = Math.max(p1.y, p2.y);
+
+    cp1y = Math.max(segMinY, Math.min(segMaxY, cp1y));
+    cp2y = Math.max(segMinY, Math.min(segMaxY, cp2y));
+
+    // Global bounds clamping (e.g. ground baseline maxY and top padding minY)
+    cp1y = Math.max(minY, Math.min(maxY, cp1y));
+    cp2y = Math.max(minY, Math.min(maxY, cp2y));
+
+    path += ` C ${cp1x.toFixed(2)},${cp1y.toFixed(2)} ${cp2x.toFixed(2)},${cp2y.toFixed(2)} ${p2.x.toFixed(2)},${p2.y.toFixed(2)}`;
   }
 
   return path;
@@ -126,13 +197,13 @@ export const LineChart: React.FC<LineChartProps> = ({
       return { x, y };
     });
 
-    const smoothVal = pointsToSmoothPath(valCoords);
-    const smoothInv = pointsToSmoothPath(invCoords);
+    const groundY = paddingTop + usableHeight;
+    const smoothVal = pointsToSmoothPath(valCoords, { minY: paddingTop, maxY: groundY });
+    const smoothInv = pointsToSmoothPath(invCoords, { minY: paddingTop, maxY: groundY });
 
     const firstPt = valCoords[0] || { x: 0, y: height };
     const lastPt = valCoords[valCoords.length - 1] || { x: width, y: height };
-    const groundY = paddingTop + usableHeight;
-    const smoothArea = `${smoothVal} L ${lastPt.x},${groundY} L ${firstPt.x},${groundY} Z`;
+    const smoothArea = `${smoothVal} L ${lastPt.x.toFixed(2)},${groundY.toFixed(2)} L ${firstPt.x.toFixed(2)},${groundY.toFixed(2)} Z`;
 
     return {
       valCoords,
