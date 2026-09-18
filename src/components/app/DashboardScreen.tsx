@@ -750,14 +750,14 @@ export const DashboardScreen: React.FC = () => {
                       <div
                         key={item.coin}
                         onClick={() => setSelectedAssetModal(item)}
-                        className="p-4 sm:p-5 rounded-2xl border transition-all duration-200 cursor-pointer hover:scale-[1.008] hover:shadow-md grid grid-cols-1 md:grid-cols-[minmax(220px,260px)_180px_1fr] items-center gap-4"
+                        className="p-4 sm:p-5 rounded-2xl border transition-all duration-200 cursor-pointer hover:scale-[1.008] hover:shadow-md grid grid-cols-1 md:grid-cols-[minmax(210px,260px)_1fr_minmax(210px,260px)] items-center gap-4"
                         style={{
                           backgroundColor: colors.surface,
                           borderColor: colors.borderDim,
                         }}
                       >
                         {/* Left Column: Coin Badge & Unit Quantity */}
-                        <div className="flex items-center gap-3.5">
+                        <div className="flex items-center gap-3.5 min-w-0">
                           <div
                             className="w-12 h-12 rounded-2xl border flex items-center justify-center font-extrabold text-sm font-mono shadow-sm flex-shrink-0"
                             style={{
@@ -775,7 +775,7 @@ export const DashboardScreen: React.FC = () => {
                                 {item.label}
                               </span>
                               <span
-                                className="text-[10px] font-mono px-2 py-0.5 rounded-md border font-semibold"
+                                className="text-[10px] font-mono px-2 py-0.5 rounded-md border font-semibold flex-shrink-0"
                                 style={{
                                   backgroundColor: item.meta.bg,
                                   borderColor: item.meta.border,
@@ -808,9 +808,9 @@ export const DashboardScreen: React.FC = () => {
                           </div>
                         </div>
 
-                        {/* Center Column: 1-Week Sub-Asset Performance Mini Graph (Strictly Aligned) */}
-                        <div className="hidden md:flex flex-col items-center justify-center w-[180px]">
-                          <div className="w-full flex items-center justify-between text-[9px] font-mono mb-1 px-1" style={{ color: colors.textTertiary }}>
+                        {/* Center Column: 1-Week Sub-Asset Performance Mini Graph (Strictly Vertically Aligned & Padded) */}
+                        <div className="hidden md:flex flex-col items-center justify-center px-4 lg:px-8 w-full max-w-[210px] mx-auto">
+                          <div className="w-full flex items-center justify-between text-[10px] font-mono mb-1 px-1" style={{ color: colors.textTertiary }}>
                             <span>1W (Sun–Sat)</span>
                             <span
                               className="font-bold"
@@ -826,16 +826,18 @@ export const DashboardScreen: React.FC = () => {
                               {item.investedInr <= 0 ? '₹0.00' : `${isProfit ? '+' : ''}₹${item.gainRupees.toFixed(2)}`}
                             </span>
                           </div>
-                          <MiniLineChart
-                            series={item.weekSeries}
-                            width={180}
-                            height={38}
-                            interactive={true}
-                          />
+                          <div className="w-full flex justify-center">
+                            <MiniLineChart
+                              series={item.weekSeries}
+                              width={180}
+                              height={38}
+                              interactive={true}
+                            />
+                          </div>
                         </div>
 
-                        {/* Mobile: 1-Week Sub-Asset Mini Graph */}
-                        <div className="md:hidden w-full flex items-center justify-between py-1.5 px-1 border-t border-b" style={{ borderColor: colors.borderDim }}>
+                        {/* Mobile View: 1-Week Sub-Asset Mini Graph */}
+                        <div className="md:hidden w-full flex items-center justify-between py-2 px-1 border-t border-b" style={{ borderColor: colors.borderDim }}>
                           <div className="flex flex-col text-[10px] font-mono" style={{ color: colors.textTertiary }}>
                             <span>1W Trajectory</span>
                             <span
@@ -861,7 +863,7 @@ export const DashboardScreen: React.FC = () => {
                         </div>
 
                         {/* Right Column: Financial PnL & Valuation */}
-                        <div className="flex items-center justify-between md:justify-end gap-5 font-mono w-full">
+                        <div className="flex items-center justify-between md:justify-end gap-6 pt-2 md:pt-0 font-mono" style={{ borderColor: colors.borderDim }}>
                           {/* Cost Basis & Performance */}
                           <div className="text-left md:text-right text-xs">
                             <div className="text-[11px]" style={{ color: colors.textTertiary }}>

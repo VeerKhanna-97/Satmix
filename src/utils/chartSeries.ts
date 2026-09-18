@@ -664,6 +664,10 @@ export function generateAssetWeekSeries(
       ? (holdingDetail.inrValue - holdingDetail.investedInr) / holdingDetail.investedInr
       : 0;
 
+  // Asset-specific volatility / momentum characteristics
+  const assetPhase = asset === 'BTC' ? 0.4 : asset === 'ETH' ? 1.2 : asset === 'SOL' ? 2.4 : 0;
+  const assetVol = asset === 'BTC' ? 0.012 : asset === 'ETH' ? 0.016 : asset === 'SOL' ? 0.026 : 0.001;
+
   for (let i = 0; i < 7; i++) {
     const dObj = new Date(sunday);
     dObj.setDate(sunday.getDate() + i);
@@ -696,14 +700,16 @@ export function generateAssetWeekSeries(
       } else {
         const daysDifference = Math.max(0, getDaysDifference(todayKey, sampleDateKey));
         const progress = Math.min(1, Math.max(0, (6 - daysDifference) / 6));
-        const marketWave = Math.sin(i * 1.4) * 0.01 + Math.cos(i * 0.9) * 0.008;
+        const wave = Math.sin((i + assetPhase) * 1.3) * assetVol + Math.cos((i * 0.7) + assetPhase) * (assetVol * 0.5);
         const convergence = 1 - progress;
-        const multiplier = Math.max(0.01, 1 + (progress * assetReturnRatio) + (marketWave * convergence));
+        const multiplier = Math.max(0.01, 1 + (progress * assetReturnRatio) + (wave * convergence));
         runningValue = runningInvested * multiplier;
       }
     } else if (!isPastOrToday && holdingDetail.investedInr > 0) {
       runningInvested = holdingDetail.investedInr;
-      runningValue = holdingDetail.inrValue;
+      const futureOffset = i - (new Date().getDay());
+      const forwardDrift = Math.sin(futureOffset * 0.9 + assetPhase) * (assetVol * 0.4);
+      runningValue = holdingDetail.inrValue * (1 + forwardDrift);
     } else {
       runningInvested = 0;
       runningValue = 0;
