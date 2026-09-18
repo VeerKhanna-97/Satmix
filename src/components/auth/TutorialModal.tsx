@@ -8,10 +8,9 @@ import {
   CheckCircle2,
   Shield,
   Clock,
-  X,
+  CheckSquare,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
-import { SpotlightCard, ShinyText } from '../ui';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface TutorialStep {
@@ -26,7 +25,7 @@ interface TutorialStep {
 const TUTORIAL_STEPS: TutorialStep[] = [
   {
     title: 'Daily Crypto Micro-Investing from ₹10',
-    badge: 'Step 1 of 4 · The Habit',
+    badge: 'Step 1 of 5 · The Habit',
     desc: 'Satmix turns disciplined daily micro-savings into long-term digital asset wealth. Automate daily debits without staring at charts or timing volatile market tops and bottoms.',
     icon: Sparkles,
     highlight: 'Start with just ₹10/day (less than a daily chai)',
@@ -38,10 +37,10 @@ const TUTORIAL_STEPS: TutorialStep[] = [
   },
   {
     title: 'Two Curated Baskets (Run Both Concurrently)',
-    badge: 'Step 2 of 4 · The Baskets',
+    badge: 'Step 2 of 5 · The Baskets',
     desc: 'Choose between Stable Basket (85% USDT / 15% BTC) for capital guarding or Growth Basket (70% BTC / 20% ETH / 10% SOL) for core market upside. You can run both at the same time with separate daily amounts.',
     icon: Layers,
-    highlight: 'Stable Basket: Not an FD. Not a savings account.',
+    highlight: 'Stable Basket: Capital Guard · Growth Basket: Market Upside',
     subBullets: [
       'Stable Basket: Min ₹10/day · 85% USDT + 15% BTC',
       'Growth Basket: Min ₹30/day · 70% BTC + 20% ETH + 10% SOL',
@@ -50,25 +49,37 @@ const TUTORIAL_STEPS: TutorialStep[] = [
   },
   {
     title: 'Live Market Pricing & Automated Execution',
-    badge: 'Step 3 of 4 · Execution Engine',
+    badge: 'Step 3 of 5 · Execution Engine',
     desc: 'All crypto asset prices and holdings Mark-to-Market (MTM) valuations update in real-time from live crypto spot markets. Your daily micro-investments are automated seamlessly via UPI AutoPay.',
     icon: Clock,
     highlight: 'Real-time live MTM tracking · Disciplined daily execution',
     subBullets: [
       'Real-time live spot prices for BTC, ETH, SOL, and USDT',
-      'Automatic daily habit tracking and streak consistency',
+      'Automatic daily habit tracking with instant ledger updates',
       'Instant UPI deposits and 24/7 bank withdrawals',
     ],
   },
   {
-    title: 'Find Your Basket Fit with a 3-Question Quiz',
-    badge: 'Step 4 of 4 · Onboarding Fit',
-    desc: 'Take our 30-second 3-question quiz to find whether Stable or Growth basket matches your current financial goals and risk comfort. You can always switch or add the other basket anytime.',
+    title: 'Streaks & Streak Freeze Shields',
+    badge: 'Step 4 of 5 · Habit Protection',
+    desc: 'Investing daily builds your continuous streak, unlocking XP rewards and milestone badges. If you ever miss a day due to bank downtime or a busy schedule, our Streak Freeze Shields protect you automatically.',
     icon: Shield,
+    highlight: 'Earn 1 Shield every 14 active days (Hold up to 2)',
+    subBullets: [
+      'Auto-Protection: Missed a day? 1 Shield is consumed to keep your streak intact',
+      'Fixed Sunday-to-Saturday calendar tracker keeps progress clear and predictable',
+      'Maintain continuous momentum to unlock exclusive milestone ranks and XP perks',
+    ],
+  },
+  {
+    title: 'Find Your Basket Fit with a 3-Question Quiz',
+    badge: 'Step 5 of 5 · Onboarding Fit',
+    desc: 'Take our 30-second 3-question quiz to find whether Stable or Growth basket matches your current financial goals and risk comfort. You can always switch or add the other basket anytime.',
+    icon: CheckSquare,
     highlight: 'Personalized basket fit · 100% control to adjust anytime',
     subBullets: [
       '3 quick questions on price moves, experience, and goals',
-      'Score <= 3 suggests Stable · Score >= 4 suggests Growth',
+      'Score ≤ 3 suggests Stable · Score ≥ 4 suggests Growth',
       'Confirm amount, save habit, and start compounding',
     ],
   },
@@ -155,7 +166,10 @@ export const TutorialModal: React.FC<TutorialModalProps> = ({
         </div>
 
         {/* Progress Dots */}
-        <div className="grid grid-cols-4 gap-2 mb-6">
+        <div
+          className="grid gap-2 mb-6"
+          style={{ gridTemplateColumns: `repeat(${TUTORIAL_STEPS.length}, minmax(0, 1fr))` }}
+        >
           {TUTORIAL_STEPS.map((_, idx) => (
             <div
               key={idx}
