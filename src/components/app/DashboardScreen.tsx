@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import {
   Shield,
   TrendingUp,
@@ -176,6 +176,35 @@ export const DashboardScreen: React.FC = () => {
   const isGrowthConfigured = prototypeState.habits.growth?.setupAt !== null;
   const isGrowthActive = isGrowthConfigured && !prototypeState.habits.growth.paused;
 
+  const [priceFlashMap, setPriceFlashMap] = useState<Record<string, 'up' | 'down' | null>>({});
+  const prevPricesRef = useRef<typeof livePrices>(livePrices);
+
+  React.useEffect(() => {
+    const prev = prevPricesRef.current;
+    const newFlashes: Record<string, 'up' | 'down' | null> = {};
+    let hasChange = false;
+
+    (['BTC', 'ETH', 'SOL', 'USDT'] as const).forEach((coin) => {
+      if (livePrices[coin] > prev[coin]) {
+        newFlashes[coin] = 'up';
+        hasChange = true;
+      } else if (livePrices[coin] < prev[coin]) {
+        newFlashes[coin] = 'down';
+        hasChange = true;
+      }
+    });
+
+    if (hasChange) {
+      setPriceFlashMap(newFlashes);
+      const timer = setTimeout(() => {
+        setPriceFlashMap({});
+      }, 900);
+      prevPricesRef.current = livePrices;
+      return () => clearTimeout(timer);
+    }
+    prevPricesRef.current = livePrices;
+  }, [livePrices]);
+
   const fxRate = livePrices.USD_INR > 0 ? livePrices.USD_INR : 87.85 * 1.025;
   const btcUsd = livePrices.BTC / fxRate;
   const ethUsd = livePrices.ETH / fxRate;
@@ -203,23 +232,22 @@ export const DashboardScreen: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2.5 flex-wrap">
-          {/* Real-time MTM Engine Status Pill */}
+          {/* Real-time MTM Engine Status Pill (Clean static institutional style) */}
           <div
-            className="px-3 py-1.5 rounded-xl border text-[11px] font-mono font-medium flex items-center gap-2 shadow-sm"
+            className="px-3 py-1.5 rounded-xl border text-[11px] font-mono font-medium flex items-center gap-2 shadow-sm select-none"
             style={{ backgroundColor: colors.surface, borderColor: colors.borderDim, color: colors.textSecondary }}
           >
-            {/* Subtle Hairline Sonar Ripple (Restrained, thin border ring with no green/neon glow) */}
-            <div className="relative flex items-center justify-center w-3 h-3 flex-shrink-0">
-              <span
-                className="absolute inset-0 rounded-full border border-amber-400/40 animate-ping"
-                style={{ animationDuration: '2.8s' }}
-              />
-              <span
-                className="w-1.5 h-1.5 rounded-full"
-                style={{ backgroundColor: colors.accent }}
-              />
-            </div>
-            <span>Live Spot MTM · Auto-Execute</span>
+            <span
+              className="px-1.5 py-0.5 rounded text-[9px] font-bold font-mono uppercase tracking-wider"
+              style={{
+                backgroundColor: colors.accentTint,
+                color: colors.accent,
+                border: `1px solid ${colors.borderAccent}`,
+              }}
+            >
+              LIVE
+            </span>
+            <span>Spot MTM · Auto-Execute</span>
           </div>
 
           {/* Streak Indicator */}
@@ -269,15 +297,18 @@ export const DashboardScreen: React.FC = () => {
         className="p-2.5 rounded-2xl border flex items-center gap-3 overflow-hidden text-xs font-mono select-none"
         style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}
       >
-        <div
-          className="flex items-center gap-1.5 pr-2.5 border-r flex-shrink-0 z-10"
+        <button
+          type="button"
+          onClick={() => triggerAccrual()}
+          className="flex items-center gap-1.5 pr-2.5 border-r flex-shrink-0 z-10 hover:opacity-80 transition-opacity focus:outline-none cursor-pointer"
           style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}
+          title="Click to sync live spot prices from Coinbase"
         >
           <RefreshCw className={`w-3.5 h-3.5 text-amber-400 flex-shrink-0 ${isPricesLoading ? 'animate-spin' : ''}`} />
           <span className="text-[10px] font-bold tracking-wider uppercase whitespace-nowrap" style={{ color: colors.textTertiary }}>
             LIVE SPOT TICKER
           </span>
-        </div>
+        </button>
 
         <div className="flex-1 overflow-hidden relative">
           {/* Subtle edge fade overlays */}
@@ -291,13 +322,37 @@ export const DashboardScreen: React.FC = () => {
           />
 
           <div className="flex animate-ticker whitespace-nowrap gap-6 items-center">
-            {[...tickerItems, ...tickerItems, ...tickerItems, ...tickerItems].map((item, idx) => (
-              <div key={`${item.symbol}-${idx}`} className="inline-flex items-center gap-1.5 flex-shrink-0">
-                <span className="font-bold" style={{ color: colors.textPrimary }}>{item.symbol}</span>
-                <span style={{ color: colors.textSecondary }}>{item.inr}</span>
-                <span className="text-[10px]" style={{ color: colors.textTertiary }}>({item.usd})</span>
-              </div>
-            ))}
+            {[...tickerItems, ...tickerItems, ...tickerItems, ...tickerItems].map((item, idx) => {
+              const flash = priceFlashMap[item.symbol];
+              return (
+                <div
+                  key={`${item.symbol}-${idx}`}
+                  className={`inline-flex items-center gap-1.5 flex-shrink-0 px-2 py-0.5 rounded-md transition-colors duration-500 ${
+                    flash === 'up'
+                      ? 'bg-emerald-500/20 text-emerald-400'
+                      : flash === 'down'
+                      ? 'bg-rose-500/20 text-rose-400'
+                      : ''
+                  }`}
+                >
+                  <span className="font-bold" style={{ color: colors.textPrimary }}>{item.symbol}</span>
+                  <span
+                    className="transition-colors duration-300"
+                    style={{
+                      color:
+                        flash === 'up'
+                          ? '#34D399'
+                          : flash === 'down'
+                          ? '#F87171'
+                          : colors.textSecondary,
+                    }}
+                  >
+                    {item.inr}
+                  </span>
+                  <span className="text-[10px]" style={{ color: colors.textTertiary }}>({item.usd})</span>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
