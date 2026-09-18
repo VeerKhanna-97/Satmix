@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef, useEffect } from 'react';
+import React, { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import {
   Shield,
   TrendingUp,
@@ -39,6 +39,7 @@ import { getBasketById } from '../../data/baskets';
 import { EDUCATIONAL_GUIDES } from '../../data/mockData';
 import { StreakWeeklyTracker } from './StreakWeeklyTracker';
 import { generateChartSeries, ChartTimeframe } from '../../utils/chartSeries';
+import { CustomDateRangePicker } from '../common/CustomDateRangePicker';
 import { SpotlightCard, CountUp, Magnet, ShinyText, FadeIn } from '../ui';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -63,6 +64,7 @@ export const DashboardScreen: React.FC = () => {
 
   // Timeframe filter state & Custom View Range
   const [timeframe, setTimeframe] = useState<ChartTimeframe>('1M');
+  const [isCustomPickerOpen, setIsCustomPickerOpen] = useState(false);
   const todayStr = useMemo(() => new Date().toISOString().split('T')[0], []);
   const thirtyDaysAgoStr = useMemo(() => {
     const d = new Date();
@@ -72,17 +74,17 @@ export const DashboardScreen: React.FC = () => {
   const [customStartDate, setCustomStartDate] = useState(thirtyDaysAgoStr);
   const [customEndDate, setCustomEndDate] = useState(todayStr);
 
-  const applyCustomPreset = (daysOrPreset: number | 'YTD') => {
-    const end = new Date();
-    let start = new Date();
-    if (daysOrPreset === 'YTD') {
-      start = new Date(end.getFullYear(), 0, 1);
-    } else {
-      start.setDate(end.getDate() - daysOrPreset);
-    }
-    setCustomStartDate(start.toISOString().split('T')[0]);
-    setCustomEndDate(end.toISOString().split('T')[0]);
-  };
+  const formatRangeLabel = useCallback((startStr: string, endStr: string) => {
+    if (!startStr || !endStr) return 'Select Horizon';
+    const [y1, m1, d1] = startStr.split('-').map(Number);
+    const [y2, m2, d2] = endStr.split('-').map(Number);
+    if (!y1 || !m1 || !d1 || !y2 || !m2 || !d2) return `${startStr} – ${endStr}`;
+    const dObj1 = new Date(y1, m1 - 1, d1);
+    const dObj2 = new Date(y2, m2 - 1, d2);
+    const s1 = dObj1.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
+    const s2 = dObj2.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+    return `${s1} – ${s2}`;
+  }, []);
 
   // Modals
   const [depositOpen, setDepositOpen] = useState(false);
@@ -513,9 +515,9 @@ export const DashboardScreen: React.FC = () => {
             />
           </div>
 
-          {/* Timeframe Filter Tabs */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-3 border-t" style={{ borderColor: colors.borderDim }}>
-            <div className="flex items-center gap-2">
+          {/* Timeframe Filter Tabs & Custom Date Trigger */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t" style={{ borderColor: colors.borderDim }}>
+            <div className="flex items-center gap-2 flex-wrap">
               <span className="text-[11px] font-semibold font-mono" style={{ color: colors.textTertiary }}>Performance Horizon</span>
               {chartSeriesResult.isProjection && (
                 <span
@@ -529,12 +531,36 @@ export const DashboardScreen: React.FC = () => {
                   DCA Projection Model
                 </span>
               )}
+              {timeframe === 'CUSTOM' && (
+                <button
+                  type="button"
+                  onClick={() => setIsCustomPickerOpen((prev) => !prev)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-mono font-bold border transition-all hover:bg-white/5 active:scale-95 shadow-sm select-none"
+                  style={{
+                    backgroundColor: colors.surface,
+                    borderColor: isCustomPickerOpen ? colors.accent : colors.borderAccent,
+                    color: colors.accent,
+                  }}
+                >
+                  <Calendar className="w-3.5 h-3.5 text-amber-400" />
+                  <span>{formatRangeLabel(customStartDate, customEndDate)}</span>
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isCustomPickerOpen ? 'rotate-180 text-amber-400' : ''}`} />
+                </button>
+              )}
             </div>
+
             <div className="flex items-center gap-1 p-1 rounded-xl self-start sm:self-auto border overflow-x-auto max-w-full" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
               {(['1W', '1M', '3M', '1Y', 'ALL', 'CUSTOM'] as const).map((t) => (
                 <button
                   key={t}
-                  onClick={() => setTimeframe(t)}
+                  onClick={() => {
+                    setTimeframe(t);
+                    if (t === 'CUSTOM') {
+                      setIsCustomPickerOpen(true);
+                    } else {
+                      setIsCustomPickerOpen(false);
+                    }
+                  }}
                   className="px-2.5 sm:px-3 py-1 rounded-lg text-xs font-bold font-mono transition-all flex-shrink-0"
                   style={{
                     backgroundColor: timeframe === t ? colors.primary : 'transparent',
@@ -547,97 +573,27 @@ export const DashboardScreen: React.FC = () => {
             </div>
           </div>
 
-          {/* Custom Date Range Toolbar */}
+          {/* Google Flights-style Custom Date Range Dropdown Popover */}
           <AnimatePresence>
-            {timeframe === 'CUSTOM' && (
+            {timeframe === 'CUSTOM' && isCustomPickerOpen && (
               <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className="mt-3 pt-3 border-t overflow-hidden"
-                style={{ borderColor: colors.borderDim }}
+                initial={{ opacity: 0, y: -10, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -10, scale: 0.98 }}
+                transition={{ duration: 0.2, ease: 'easeOut' }}
+                className="mt-4"
               >
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 p-3 rounded-2xl border" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
-                  {/* Start / End Date Selectors */}
-                  <div className="flex items-center gap-2.5 flex-wrap">
-                    <div className="flex items-center gap-1.5 text-xs font-mono font-semibold" style={{ color: colors.textSecondary }}>
-                      <Calendar className="w-3.5 h-3.5 text-amber-400" />
-                      <span>From:</span>
-                      <input
-                        type="date"
-                        value={customStartDate}
-                        max={customEndDate || todayStr}
-                        onChange={(e) => setCustomStartDate(e.target.value)}
-                        className="px-2 py-1 rounded-lg border text-xs font-mono font-medium focus:outline-none transition-colors"
-                        style={{
-                          backgroundColor: colors.card,
-                          borderColor: colors.cardBorder,
-                          color: colors.textPrimary,
-                          colorScheme: 'dark',
-                        }}
-                      />
-                    </div>
-
-                    <div className="flex items-center gap-1.5 text-xs font-mono font-semibold" style={{ color: colors.textSecondary }}>
-                      <span>To:</span>
-                      <input
-                        type="date"
-                        value={customEndDate}
-                        min={customStartDate}
-                        max={todayStr}
-                        onChange={(e) => setCustomEndDate(e.target.value)}
-                        className="px-2 py-1 rounded-lg border text-xs font-mono font-medium focus:outline-none transition-colors"
-                        style={{
-                          backgroundColor: colors.card,
-                          borderColor: colors.cardBorder,
-                          color: colors.textPrimary,
-                          colorScheme: 'dark',
-                        }}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Quick Presets & Granularity Badge */}
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <div className="flex items-center gap-1">
-                      {[
-                        { label: '7D', value: 7 },
-                        { label: '14D', value: 14 },
-                        { label: '30D', value: 30 },
-                        { label: '90D', value: 90 },
-                        { label: '180D', value: 180 },
-                        { label: 'YTD', value: 'YTD' as const },
-                      ].map((preset) => (
-                        <button
-                          key={preset.label}
-                          type="button"
-                          onClick={() => applyCustomPreset(preset.value)}
-                          className="px-2 py-1 rounded-md text-[10px] font-mono font-bold border transition-colors hover:opacity-80"
-                          style={{
-                            backgroundColor: colors.card,
-                            borderColor: colors.cardBorder,
-                            color: colors.textSecondary,
-                          }}
-                        >
-                          {preset.label}
-                        </button>
-                      ))}
-                    </div>
-
-                    {chartSeriesResult.granularity && (
-                      <span
-                        className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold uppercase tracking-wider border ml-auto md:ml-0"
-                        style={{
-                          backgroundColor: colors.accentTint,
-                          borderColor: colors.borderAccent,
-                          color: colors.accent,
-                        }}
-                      >
-                        Mode: {chartSeriesResult.granularity === 'day' ? 'Daily' : chartSeriesResult.granularity === 'week' ? 'Weekly' : 'Monthly'}
-                      </span>
-                    )}
-                  </div>
-                </div>
+                <CustomDateRangePicker
+                  startDate={customStartDate}
+                  endDate={customEndDate}
+                  onChange={(start, end) => {
+                    setCustomStartDate(start);
+                    setCustomEndDate(end);
+                  }}
+                  onClose={() => setIsCustomPickerOpen(false)}
+                  colors={colors}
+                  granularity={chartSeriesResult.granularity}
+                />
               </motion.div>
             )}
           </AnimatePresence>
