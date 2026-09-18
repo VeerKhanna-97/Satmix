@@ -1,7 +1,7 @@
 import React, { useState, useRef, useMemo, useCallback } from 'react';
 import { useApp } from '../../context/AppContext';
-import { ChartSeriesResult, ChartDataPoint } from '../../utils/chartSeries';
-import { TrendingUp, Calendar } from 'lucide-react';
+import { ChartSeriesResult, ChartDataPoint, ChartSegment } from '../../utils/chartSeries';
+import { TrendingUp, Calendar, Layers } from 'lucide-react';
 
 interface LineChartProps {
   series?: ChartSeriesResult;
@@ -145,6 +145,60 @@ export const LineChart: React.FC<LineChartProps> = ({
     };
   }, [dataPoints, usableHeight, usableWidth, paddingX, paddingTop, height, width]);
 
+  // ── SEGMENT RECTANGLE INTERVAL COMPUTATION (FOR CLIPPED MULTI-COLOR RENDERING) ──
+  const { greenRects, redRects, divisionDividers } = useMemo(() => {
+    if (dataPoints.length === 0 || !valCoords || valCoords.length === 0) {
+      return { greenRects: [], redRects: [], divisionDividers: [] };
+    }
+
+    const segments = series?.segments || [];
+    if (segments.length === 0) {
+      const isOverallProfit = (dataPoints[dataPoints.length - 1]?.gain ?? 0) >= 0;
+      const allRect = { x: paddingX, width: usableWidth };
+      return {
+        greenRects: isOverallProfit ? [allRect] : [],
+        redRects: !isOverallProfit ? [allRect] : [],
+        divisionDividers: [],
+      };
+    }
+
+    const green: { x: number; width: number }[] = [];
+    const red: { x: number; width: number }[] = [];
+    const dividers: { x: number; label: string; isProfit: boolean }[] = [];
+
+    segments.forEach((seg, sIdx) => {
+      let xStart = paddingX;
+      if (seg.startIndex > 0 && valCoords[seg.startIndex - 1]) {
+        xStart = (valCoords[seg.startIndex - 1].x + valCoords[seg.startIndex].x) / 2;
+      }
+
+      let xEnd = width - paddingX;
+      if (seg.endIndex < valCoords.length - 1 && valCoords[seg.endIndex + 1]) {
+        xEnd = (valCoords[seg.endIndex].x + valCoords[seg.endIndex + 1].x) / 2;
+      }
+
+      const rectWidth = Math.max(0, xEnd - xStart);
+      const rect = { x: xStart, width: rectWidth };
+
+      if (seg.isProfit) {
+        green.push(rect);
+      } else {
+        red.push(rect);
+      }
+
+      // Add division boundary divider tick (skip the very first starting border)
+      if (sIdx > 0) {
+        dividers.push({
+          x: xStart,
+          label: seg.label,
+          isProfit: seg.isProfit,
+        });
+      }
+    });
+
+    return { greenRects: green, redRects: red, divisionDividers: dividers };
+  }, [series?.segments, dataPoints, valCoords, paddingX, usableWidth, width]);
+
   // Interactive mouse/touch scrubber handling with precise padding offset alignment
   const handlePointerMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
@@ -169,6 +223,17 @@ export const LineChart: React.FC<LineChartProps> = ({
   const activePoint = hoverIndex !== null ? dataPoints[hoverIndex] : null;
   const activeCoord = hoverIndex !== null ? valCoords[hoverIndex] : null;
 
+  const activeSegment: ChartSegment | undefined = useMemo(() => {
+    if (!activePoint || !series?.segments) return undefined;
+    return (
+      series.segments.find((s) => s.id === activePoint.segmentId) ||
+      series.segments.find((s) => hoverIndex !== null && hoverIndex >= s.startIndex && hoverIndex <= s.endIndex)
+    );
+  }, [activePoint, hoverIndex, series?.segments]);
+
+  const hasAnyLossSegment = redRects.length > 0;
+  const hasAnyProfitSegment = greenRects.length > 0;
+
   // X-Axis Date markers (Start, Mid, End)
   const startDateLabel = dataPoints[0]?.date || '';
   const midDateLabel = dataPoints[Math.floor(dataPoints.length / 2)]?.date || '';
@@ -181,11 +246,24 @@ export const LineChart: React.FC<LineChartProps> = ({
         <div className="h-7 mb-2 flex items-center justify-between text-xs px-1 font-mono transition-all">
           {activePoint ? (
             <>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <span className="flex items-center gap-1 font-sans text-[11px]" style={{ color: colors.textSecondary }}>
                   <Calendar className="w-3 h-3" style={{ color: colors.accent }} />
                   {activePoint.fullDate}
                 </span>
+
+                {activeSegment && (
+                  <span
+                    className="text-[9px] px-1.5 py-0.5 rounded font-mono font-bold uppercase tracking-wider border"
+                    style={{
+                      backgroundColor: activeSegment.isProfit ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.12)',
+                      borderColor: activeSegment.isProfit ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)',
+                      color: activeSegment.isProfit ? '#10B981' : '#EF4444',
+                    }}
+                  >
+                    {activeSegment.label} · {activeSegment.isProfit ? 'Profit' : 'Loss'}
+                  </span>
+                )}
               </div>
               <div className="flex items-center gap-3 font-extrabold">
                 <span style={{ color: colors.textPrimary }}>
@@ -202,15 +280,22 @@ export const LineChart: React.FC<LineChartProps> = ({
                 <TrendingUp className="w-3.5 h-3.5 flex-shrink-0" style={{ color: colors.accent }} />
                 {series?.isProjection ? 'Projected Growth Model' : 'Live Valuation Trajectory'}
               </span>
-              <span className="text-[10px] font-mono" style={{ color: colors.textTertiary }}>
-                Hover or drag along the curve to inspect
-              </span>
+              <div className="flex items-center gap-2">
+                {series?.granularity && (
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded border" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim, color: colors.textTertiary }}>
+                    Divisions: {series.granularity === 'day' ? 'Daily' : series.granularity === 'week' ? 'Weekly' : 'Monthly'}
+                  </span>
+                )}
+                <span className="text-[10px] font-mono hidden sm:inline" style={{ color: colors.textTertiary }}>
+                  Hover/drag across divisions
+                </span>
+              </div>
             </div>
           )}
         </div>
       )}
 
-      {/* ── 2. SVG FINANCIAL CHART WITH ACCURATE HTML SCRUBBER OVERLAY ── */}
+      {/* ── 2. SVG FINANCIAL CHART WITH MULTI-COLOR SECTIONS & UNDERSHADOWS ── */}
       <div
         ref={containerRef}
         className="w-full relative overflow-hidden touch-none cursor-crosshair"
@@ -226,18 +311,44 @@ export const LineChart: React.FC<LineChartProps> = ({
           preserveAspectRatio="none"
         >
           <defs>
-            <linearGradient id="chartGradientVal" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#059669" stopOpacity="0.25" />
-              <stop offset="65%" stopColor="#10B981" stopOpacity="0.06" />
+            {/* Green Profit Area Gradient */}
+            <linearGradient id="chartGradientGreen" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#059669" stopOpacity="0.28" />
+              <stop offset="65%" stopColor="#10B981" stopOpacity="0.08" />
               <stop offset="100%" stopColor="#059669" stopOpacity="0.0" />
             </linearGradient>
 
-            <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#059669" floodOpacity="0.3" />
+            {/* Red Loss Area Gradient */}
+            <linearGradient id="chartGradientRed" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#DC2626" stopOpacity="0.28" />
+              <stop offset="65%" stopColor="#EF4444" stopOpacity="0.08" />
+              <stop offset="100%" stopColor="#DC2626" stopOpacity="0.0" />
+            </linearGradient>
+
+            {/* Green Profit Clipping Mask */}
+            <clipPath id="chartClipGreen">
+              {greenRects.map((r, i) => (
+                <rect key={`gr-${i}`} x={r.x} y={0} width={r.width} height={height} />
+              ))}
+            </clipPath>
+
+            {/* Red Loss Clipping Mask */}
+            <clipPath id="chartClipRed">
+              {redRects.map((r, i) => (
+                <rect key={`rr-${i}`} x={r.x} y={0} width={r.width} height={height} />
+              ))}
+            </clipPath>
+
+            {/* Glow Filters */}
+            <filter id="glowGreen" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#059669" floodOpacity="0.35" />
+            </filter>
+            <filter id="glowRed" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#DC2626" floodOpacity="0.35" />
             </filter>
           </defs>
 
-          {/* Grid lines (Theme-aware) */}
+          {/* Grid lines (Theme-aware horizontal dividers) */}
           <line
             x1={paddingX}
             y1={paddingTop}
@@ -265,9 +376,38 @@ export const LineChart: React.FC<LineChartProps> = ({
             strokeOpacity="0.8"
           />
 
-          {/* Shaded Area under smooth trajectory */}
-          {smoothAreaPath && (
-            <path d={smoothAreaPath} fill="url(#chartGradientVal)" className="transition-all duration-300" />
+          {/* Vertical Division Divider Ticks */}
+          {divisionDividers.map((div, i) => (
+            <line
+              key={`div-${i}`}
+              x1={div.x}
+              y1={paddingTop}
+              x2={div.x}
+              y2={paddingTop + usableHeight}
+              stroke={colors.borderDim}
+              strokeDasharray="2 3"
+              strokeOpacity="0.5"
+            />
+          ))}
+
+          {/* Shaded Area: Green Portions */}
+          {smoothAreaPath && greenRects.length > 0 && (
+            <path
+              d={smoothAreaPath}
+              fill="url(#chartGradientGreen)"
+              clipPath="url(#chartClipGreen)"
+              className="transition-all duration-300"
+            />
+          )}
+
+          {/* Shaded Area: Red Portions */}
+          {smoothAreaPath && redRects.length > 0 && (
+            <path
+              d={smoothAreaPath}
+              fill="url(#chartGradientRed)"
+              clipPath="url(#chartClipRed)"
+              className="transition-all duration-300"
+            />
           )}
 
           {/* Invested Cost-Basis Line (Dashed Slate) */}
@@ -282,8 +422,8 @@ export const LineChart: React.FC<LineChartProps> = ({
             />
           )}
 
-          {/* Valuation Trajectory Line (Solid Curved Sovereign Pine / Emerald with Glow) */}
-          {smoothValPath && (
+          {/* Valuation Trajectory Line: Green Segments */}
+          {smoothValPath && greenRects.length > 0 && (
             <path
               d={smoothValPath}
               fill="none"
@@ -291,7 +431,22 @@ export const LineChart: React.FC<LineChartProps> = ({
               strokeWidth="2.5"
               strokeLinecap="round"
               strokeLinejoin="round"
-              filter="url(#glow)"
+              clipPath="url(#chartClipGreen)"
+              filter="url(#glowGreen)"
+            />
+          )}
+
+          {/* Valuation Trajectory Line: Red Segments */}
+          {smoothValPath && redRects.length > 0 && (
+            <path
+              d={smoothValPath}
+              fill="none"
+              stroke="#EF4444"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              clipPath="url(#chartClipRed)"
+              filter="url(#glowRed)"
             />
           )}
 
@@ -302,7 +457,7 @@ export const LineChart: React.FC<LineChartProps> = ({
               y1={paddingTop}
               x2={activeCoord.x}
               y2={paddingTop + usableHeight}
-              stroke="#34D399"
+              stroke={activePoint.gain >= 0 ? '#34D399' : '#F87171'}
               strokeWidth="1.2"
               strokeDasharray="3 3"
               opacity="0.85"
@@ -325,7 +480,7 @@ export const LineChart: React.FC<LineChartProps> = ({
           )}
         </svg>
 
-        {/* ── PERFECT CIRCULAR SCRUBBER DOT (HTML Overlay avoids SVG non-uniform aspect warping) ── */}
+        {/* ── PERFECT CIRCULAR SCRUBBER DOT ── */}
         {activeCoord && activePoint && (
           <div
             className="absolute pointer-events-none transition-transform duration-75"
@@ -335,25 +490,39 @@ export const LineChart: React.FC<LineChartProps> = ({
               transform: 'translate(-50%, -50%)',
             }}
           >
-            <div className="w-3.5 h-3.5 rounded-full border-2 border-emerald-400 bg-white shadow-sm" />
+            <div
+              className={`w-3.5 h-3.5 rounded-full border-2 bg-white shadow-sm ${
+                activePoint.gain >= 0 ? 'border-emerald-400' : 'border-rose-500'
+              }`}
+            />
           </div>
         )}
       </div>
 
-      {/* ── 3. DUAL-LINE LEGEND ── */}
+      {/* ── 3. DUAL-LINE & MULTI-SECTION LEGEND ── */}
       {showLegend && (
-        <div className="flex items-center justify-between text-[11px] font-semibold mt-2 px-1 border-t pt-2.5" style={{ borderColor: colors.borderDim, color: colors.textSecondary }}>
-          <div className="flex items-center gap-4">
-            {/* Curve 1: Portfolio Value */}
-            <div className="flex items-center gap-1.5">
-              <span className="w-3 h-0.5 rounded-full bg-emerald-400" />
-              <span className="text-xs font-bold" style={{ color: colors.textPrimary }}>Portfolio Valuation</span>
-            </div>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px] font-semibold mt-2 px-1 border-t pt-2.5" style={{ borderColor: colors.borderDim, color: colors.textSecondary }}>
+          <div className="flex items-center gap-3.5 flex-wrap">
+            {/* Profit Curve */}
+            {hasAnyProfitSegment && (
+              <div className="flex items-center gap-1.5">
+                <span className="w-3 h-0.5 rounded-full bg-emerald-400" />
+                <span className="text-xs font-bold" style={{ color: colors.textPrimary }}>Profit Division</span>
+              </div>
+            )}
 
-            {/* Curve 2: Total Invested (Cost basis) */}
+            {/* Loss Curve */}
+            {hasAnyLossSegment && (
+              <div className="flex items-center gap-1.5">
+                <span className="w-3 h-0.5 rounded-full bg-rose-500" />
+                <span className="text-xs font-bold" style={{ color: colors.semanticDanger }}>Loss Division</span>
+              </div>
+            )}
+
+            {/* Invested Cost basis */}
             <div className="flex items-center gap-1.5">
               <span className="w-3 h-0.5 rounded-full border-t border-dashed" style={{ borderColor: colors.textTertiary }} />
-              <span className="text-xs" style={{ color: colors.textSecondary }}>Invested Capital</span>
+              <span className="text-xs" style={{ color: colors.textSecondary }}>Invested Basis</span>
             </div>
           </div>
 
@@ -367,3 +536,4 @@ export const LineChart: React.FC<LineChartProps> = ({
 };
 
 export default LineChart;
+
