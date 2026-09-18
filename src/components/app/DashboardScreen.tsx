@@ -208,7 +208,17 @@ export const DashboardScreen: React.FC = () => {
             className="px-3 py-1.5 rounded-xl border text-[11px] font-mono font-medium flex items-center gap-2 shadow-sm"
             style={{ backgroundColor: colors.surface, borderColor: colors.borderDim, color: colors.textSecondary }}
           >
-            <Activity className="w-3.5 h-3.5 flex-shrink-0" style={{ color: colors.accent }} />
+            {/* Subtle Hairline Sonar Ripple (Restrained, thin border ring with no green/neon glow) */}
+            <div className="relative flex items-center justify-center w-3 h-3 flex-shrink-0">
+              <span
+                className="absolute inset-0 rounded-full border border-amber-400/40 animate-ping"
+                style={{ animationDuration: '2.8s' }}
+              />
+              <span
+                className="w-1.5 h-1.5 rounded-full"
+                style={{ backgroundColor: colors.accent }}
+              />
+            </div>
             <span>Live Spot MTM · Auto-Execute</span>
           </div>
 
