@@ -750,14 +750,14 @@ export const DashboardScreen: React.FC = () => {
                       <div
                         key={item.coin}
                         onClick={() => setSelectedAssetModal(item)}
-                        className="p-4 sm:p-5 rounded-2xl border transition-all duration-200 cursor-pointer hover:scale-[1.008] hover:shadow-md flex flex-col md:flex-row md:items-center justify-between gap-4"
+                        className="p-4 sm:p-5 rounded-2xl border transition-all duration-200 cursor-pointer hover:scale-[1.008] hover:shadow-md grid grid-cols-1 md:grid-cols-[minmax(220px,260px)_180px_1fr] items-center gap-4"
                         style={{
                           backgroundColor: colors.surface,
                           borderColor: colors.borderDim,
                         }}
                       >
-                        {/* Left: Coin Badge & Unit Quantity */}
-                        <div className="flex items-center gap-3.5 min-w-[190px]">
+                        {/* Left Column: Coin Badge & Unit Quantity */}
+                        <div className="flex items-center gap-3.5">
                           <div
                             className="w-12 h-12 rounded-2xl border flex items-center justify-center font-extrabold text-sm font-mono shadow-sm flex-shrink-0"
                             style={{
@@ -769,9 +769,9 @@ export const DashboardScreen: React.FC = () => {
                             {item.coin}
                           </div>
 
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <span className="font-extrabold text-sm sm:text-base" style={{ color: colors.textPrimary }}>
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="font-extrabold text-sm sm:text-base truncate" style={{ color: colors.textPrimary }}>
                                 {item.label}
                               </span>
                               <span
@@ -808,9 +808,9 @@ export const DashboardScreen: React.FC = () => {
                           </div>
                         </div>
 
-                        {/* Center: 1-Week Sub-Asset Performance Mini Graph */}
-                        <div className="hidden md:flex flex-col items-center justify-center px-2 flex-shrink-0">
-                          <div className="w-full flex items-center justify-between text-[9px] font-mono mb-1 px-0.5" style={{ color: colors.textTertiary }}>
+                        {/* Center Column: 1-Week Sub-Asset Performance Mini Graph (Strictly Aligned) */}
+                        <div className="hidden md:flex flex-col items-center justify-center w-[180px]">
+                          <div className="w-full flex items-center justify-between text-[9px] font-mono mb-1 px-1" style={{ color: colors.textTertiary }}>
                             <span>1W (Sun–Sat)</span>
                             <span
                               className="font-bold"
@@ -828,7 +828,7 @@ export const DashboardScreen: React.FC = () => {
                           </div>
                           <MiniLineChart
                             series={item.weekSeries}
-                            width={160}
+                            width={180}
                             height={38}
                             interactive={true}
                           />
@@ -860,8 +860,8 @@ export const DashboardScreen: React.FC = () => {
                           />
                         </div>
 
-                        {/* Middle / Right: Financial PnL & Valuation */}
-                        <div className="flex items-center justify-between md:justify-end gap-6 pt-2 md:pt-0 font-mono" style={{ borderColor: colors.borderDim }}>
+                        {/* Right Column: Financial PnL & Valuation */}
+                        <div className="flex items-center justify-between md:justify-end gap-5 font-mono w-full">
                           {/* Cost Basis & Performance */}
                           <div className="text-left md:text-right text-xs">
                             <div className="text-[11px]" style={{ color: colors.textTertiary }}>
@@ -895,7 +895,7 @@ export const DashboardScreen: React.FC = () => {
                             </div>
                           </div>
 
-                          <ChevronRight className="w-4 h-4 hidden md:block text-slate-500" />
+                          <ChevronRight className="w-4 h-4 hidden md:block text-slate-500 flex-shrink-0" />
                         </div>
                       </div>
                     );
