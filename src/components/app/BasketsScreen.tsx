@@ -7,16 +7,14 @@ import { SpotlightCard, ShinyText, FadeIn } from '../ui';
 import { motion } from 'motion/react';
 
 export const BasketsScreen: React.FC = () => {
-  const { selectedBasketId, setSelectedBasketId, setActiveTab, prototypeState, triggerConfetti, colors } = useApp();
+  const { selectedBasketId, setSelectedBasketId, setActiveTab, prototypeState, colors } = useApp();
 
   const handleSelect = (id: BasketId) => {
     setSelectedBasketId(id);
-    triggerConfetti();
   };
 
   const handleConfirmAndInvest = (id: BasketId) => {
     setSelectedBasketId(id);
-    triggerConfetti();
     setActiveTab('invest');
   };
 

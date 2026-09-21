@@ -22,17 +22,12 @@ import { ThankYouPage } from './components/legal/ThankYouPage';
 import { NotFoundPage } from './components/legal/NotFoundPage';
 import { CookieBanner } from './components/common/CookieBanner';
 import { TesterBar } from './components/tester/TesterBar';
-import { CustomCursor, FloatingScrollbar } from './components/ui';
 
 export function AppContent() {
   const { viewMode, authSubView, colors } = useApp();
 
   return (
     <div className="min-h-screen font-sans selection:bg-white selection:text-black transition-colors relative" style={{ backgroundColor: colors.bg, color: colors.textPrimary }}>
-      {/* Interactive Custom Bitcoin Cursor (Desktop/Laptop with fine pointer) */}
-      <CustomCursor />
-      {/* Futuristic Floating Bitcoin Scrollbar (Zero Track Background) */}
-      <FloatingScrollbar />
       {/* 1. MARKETING VIEW */}
       {viewMode === 'marketing' && (
         <>

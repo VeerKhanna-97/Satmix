@@ -96,7 +96,7 @@ export const TutorialModal: React.FC<TutorialModalProps> = ({
   onClose,
   onFinish,
 }) => {
-  const { colors, triggerConfetti } = useApp();
+  const { colors } = useApp();
   const [currentStep, setCurrentStep] = useState(0);
 
   if (!isOpen) return null;
@@ -108,7 +108,6 @@ export const TutorialModal: React.FC<TutorialModalProps> = ({
 
   const handleNext = () => {
     if (isLast) {
-      triggerConfetti();
       onFinish();
     } else {
       setCurrentStep((prev) => prev + 1);
@@ -122,7 +121,6 @@ export const TutorialModal: React.FC<TutorialModalProps> = ({
   };
 
   const handleSkip = () => {
-    triggerConfetti();
     onFinish();
   };
 

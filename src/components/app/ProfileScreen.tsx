@@ -49,7 +49,6 @@ export const ProfileScreen: React.FC = () => {
     themeMode,
     toggleTheme,
     colors,
-    triggerConfetti,
   } = useApp();
 
   const [reminderToggle, setReminderToggle] = useState(true);
@@ -72,7 +71,6 @@ export const ProfileScreen: React.FC = () => {
     const result = generateTaxStatement(user, transactions, fy);
     setTaxStatementData(result);
     setTaxModalOpen(true);
-    triggerConfetti();
   };
 
   const handleDownloadCsv = () => {
@@ -114,7 +112,6 @@ export const ProfileScreen: React.FC = () => {
       `Current Portfolio Value: ₹${portfolioSummary.currentValue.toLocaleString('en-IN')}\n` +
       `Status: Reconciled & Verified On-Chain\n`;
     downloadCsvFile(`Satmix_Transaction_Ledger_${selectedFy.replace(/\s+/g, '_')}.txt`, ledgerContent);
-    triggerConfetti();
   };
 
   const handleLogout = logout;
@@ -901,7 +898,6 @@ export const ProfileScreen: React.FC = () => {
                 <button
                   onClick={() => {
                     setSupportSent(true);
-                    triggerConfetti();
                   }}
                   disabled={!supportMsg.trim()}
                   className="w-full py-3 rounded-xl font-bold text-xs disabled:opacity-40"

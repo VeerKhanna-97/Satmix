@@ -120,7 +120,7 @@ export const FeedbackDrawer: React.FC<FeedbackDrawerProps> = ({ isOpen, onClose 
                   required
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
-                  placeholder="The UPI AutoPay mandate flow felt super realistic! On the portfolio chart, I'd suggest..."
+                  placeholder="Describe your thoughts on the user flow, bug reports, or feature requests..."
                   className="w-full p-3.5 rounded-2xl text-xs border focus:outline-none focus:ring-1"
                   style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textPrimary }}
                 />

@@ -105,28 +105,40 @@
   animation: ambientGlow 8s ease-in-out infinite;
 }
 
-/* ── GLOBAL NATIVE SCROLLBAR SUPPRESSION ─────────────────── */
-/* Fully hide native browser scrollbar across all browsers (Chrome, Brave, Edge, Firefox, Safari) */
-html,
-body {
-  scrollbar-width: none !important; /* Firefox */
-  -ms-overflow-style: none !important; /* IE & Edge Legacy */
+/* ── CLEAN SUBTLE SCROLLBAR ─────────────────── */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+}
+
+body.light-theme html {
+  scrollbar-color: rgba(15, 23, 42, 0.2) transparent;
 }
 
 ::-webkit-scrollbar {
-  display: none !important;
-  width: 0 !important;
-  height: 0 !important;
-  background: transparent !important;
+  width: 6px;
+  height: 6px;
 }
 
-::-webkit-scrollbar-button,
-::-webkit-scrollbar-track,
-::-webkit-scrollbar-track-piece,
-::-webkit-scrollbar-thumb,
-::-webkit-scrollbar-corner {
-  display: none !important;
-  background: transparent !important;
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+body.light-theme ::-webkit-scrollbar-thumb {
+  background: rgba(15, 23, 42, 0.2);
+}
+
+body.light-theme ::-webkit-scrollbar-thumb:hover {
+  background: rgba(15, 23, 42, 0.35);
 }
 
 

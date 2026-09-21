@@ -7,11 +7,10 @@ import { SpotlightCard, Magnet, FadeIn } from '../ui';
 import { motion } from 'motion/react';
 
 export const BasketsSection: React.FC = () => {
-  const { colors, setViewMode, setAuthSubView, setSelectedBasketId, isAuthenticated, triggerConfetti } = useApp();
+  const { colors, setViewMode, setAuthSubView, setSelectedBasketId, isAuthenticated } = useApp();
 
   const handleSelectBasket = (id: BasketId) => {
     setSelectedBasketId(id);
-    triggerConfetti();
     if (isAuthenticated) {
       setViewMode('app');
     } else {

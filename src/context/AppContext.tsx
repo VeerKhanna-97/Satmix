@@ -531,10 +531,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setActiveTab('dashboard');
       }
 
-      triggerConfetti();
       return { success: true };
     },
-    [prototypeState.users, prototypeState.tutorialDone, prototypeState.quizCompleted, updateStateAndPersist, triggerConfetti]
+    [prototypeState.users, prototypeState.tutorialDone, prototypeState.quizCompleted, updateStateAndPersist]
   );
 
   // Logout
@@ -887,10 +886,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         paymentMethod: `${activeUser?.bankName || 'HDFC Bank'} · ${activeUser?.bankAccountMasked || '•••• 4129'}`,
       };
 
-      triggerConfetti();
       return { success: true, tx };
     },
-    [livePrices, updateStateAndPersist, activeUser, triggerConfetti]
+    [livePrices, updateStateAndPersist, activeUser]
   );
 
   // Update Profile
@@ -920,9 +918,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const updated = [newFeedback, ...feedbackList];
       setFeedbackList(updated);
       localStorage.setItem(FEEDBACK_DB_KEY, JSON.stringify(updated));
-      triggerConfetti();
     },
-    [activeUser, feedbackList, triggerConfetti]
+    [activeUser, feedbackList]
   );
 
   const colors = themeMode === 'dark' ? DARK_COLORS : LIGHT_COLORS;
