@@ -168,14 +168,6 @@ body.light-theme :focus-visible {
   }
 }
 
-/* Universally eliminate native OS cursor on fine pointer devices across ALL elements */
-@media (pointer: fine) {
-  *,
-  *::before,
-  *::after {
-    cursor: none !important;
-  }
-}
 
 /* Custom Range Slider Thumb - Clean White Knob */
 input[type='range'] {
