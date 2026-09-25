@@ -1,7 +1,7 @@
 import React from 'react';
 import { BookOpen, Compass, Eye, ShieldCheck, RefreshCw, Coins } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
-import { SpotlightCard, TiltedCard, Magnet, FadeIn } from '../ui';
+import { SpotlightCard, Magnet, FadeIn } from '../ui';
 
 const LinkedinIcon = () => (
   <svg className="w-3 h-3 fill-current" viewBox="0 0 24 24">
@@ -144,89 +144,83 @@ export const AboutSection: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-4xl mx-auto">
             {/* Founder 1: Sheiden Borges */}
             <FadeIn delay={0.1} direction="up">
-              <TiltedCard maxAngle={6} scale={1.02}>
-                <SpotlightCard
-                  spotlightColor={colors.accentTint}
-                  className="rounded-3xl p-5 border text-center space-y-3 shadow-lg backdrop-blur-md"
-                  style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
+              <SpotlightCard
+                spotlightColor={colors.accentTint}
+                className="rounded-3xl p-5 border text-center space-y-3 shadow-lg backdrop-blur-md"
+                style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
+              >
+                <div className="w-20 h-20 rounded-full mx-auto overflow-hidden border-2 shadow-md transition-transform duration-300 hover:scale-105" style={{ borderColor: colors.borderAccent }}>
+                  <img src="/assets/images/CEO.jpeg" alt="Sheiden Borges" className="w-full h-full object-cover object-center" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-base" style={{ color: colors.textPrimary }}>Sheiden Borges</h4>
+                  <p className="text-xs font-semibold" style={{ color: colors.accent }}>Founder & CEO</p>
+                  <p className="text-[11px] mt-1" style={{ color: colors.textSecondary }}>Strategy, Direction & Growth</p>
+                </div>
+                <a
+                  href="https://www.linkedin.com/in/sheiden-borges-654415276"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg text-[11px] font-semibold font-mono border transition-[transform,background-color,border-color] duration-150 ease-out hover:border-amber-500/40 active:scale-[0.98] select-none"
+                  style={{ color: colors.accent, borderColor: colors.borderAccent, backgroundColor: colors.accentTint }}
                 >
-                  <div className="w-20 h-20 rounded-full mx-auto overflow-hidden border-2 shadow-md transition-transform duration-300 hover:scale-105" style={{ borderColor: colors.borderAccent }}>
-                    <img src="/assets/images/CEO.jpeg" alt="Sheiden Borges" className="w-full h-full object-cover object-center" />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-base" style={{ color: colors.textPrimary }}>Sheiden Borges</h4>
-                    <p className="text-xs font-semibold" style={{ color: colors.accent }}>Founder & CEO</p>
-                    <p className="text-[11px] mt-1" style={{ color: colors.textSecondary }}>Strategy, Direction & Growth</p>
-                  </div>
-                  <a
-                    href="https://www.linkedin.com/in/sheiden-borges-654415276"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg text-[11px] font-semibold font-mono border transition-[transform,background-color,border-color] duration-150 ease-out hover:border-amber-500/40 active:scale-[0.98] select-none"
-                    style={{ color: colors.accent, borderColor: colors.borderAccent, backgroundColor: colors.accentTint }}
-                  >
-                    <LinkedinIcon /> LinkedIn Profile
-                  </a>
-                </SpotlightCard>
-              </TiltedCard>
+                  <LinkedinIcon /> LinkedIn Profile
+                </a>
+              </SpotlightCard>
             </FadeIn>
 
             {/* Founder 2: Veer Khanna */}
             <FadeIn delay={0.2} direction="up">
-              <TiltedCard maxAngle={6} scale={1.02}>
-                <SpotlightCard
-                  spotlightColor={colors.accentTint}
-                  className="rounded-3xl p-5 border text-center space-y-3 shadow-lg backdrop-blur-md"
-                  style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
+              <SpotlightCard
+                spotlightColor={colors.accentTint}
+                className="rounded-3xl p-5 border text-center space-y-3 shadow-lg backdrop-blur-md"
+                style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
+              >
+                <div className="w-20 h-20 rounded-full mx-auto overflow-hidden border-2 shadow-md transition-transform duration-300 hover:scale-105" style={{ borderColor: colors.borderAccent }}>
+                  <img src="/assets/images/CTO.jpeg" alt="Veer Khanna" className="w-full h-full object-cover object-center" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-base" style={{ color: colors.textPrimary }}>Veer Khanna</h4>
+                  <p className="text-xs font-semibold" style={{ color: colors.accent }}>Co-Founder & CTO</p>
+                  <p className="text-[11px] mt-1" style={{ color: colors.textSecondary }}>Product Architecture & Engineering</p>
+                </div>
+                <a
+                  href="https://www.linkedin.com/in/veerkhanna"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg text-[11px] font-semibold font-mono border transition-[transform,background-color,border-color] duration-150 ease-out hover:border-amber-500/40 active:scale-[0.98] select-none"
+                  style={{ color: colors.accent, borderColor: colors.borderAccent, backgroundColor: colors.accentTint }}
                 >
-                  <div className="w-20 h-20 rounded-full mx-auto overflow-hidden border-2 shadow-md transition-transform duration-300 hover:scale-105" style={{ borderColor: colors.borderAccent }}>
-                    <img src="/assets/images/CTO.jpeg" alt="Veer Khanna" className="w-full h-full object-cover object-center" />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-base" style={{ color: colors.textPrimary }}>Veer Khanna</h4>
-                    <p className="text-xs font-semibold" style={{ color: colors.accent }}>Co-Founder & CTO</p>
-                    <p className="text-[11px] mt-1" style={{ color: colors.textSecondary }}>Product Architecture & Engineering</p>
-                  </div>
-                  <a
-                    href="https://www.linkedin.com/in/veerkhanna"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg text-[11px] font-semibold font-mono border transition-[transform,background-color,border-color] duration-150 ease-out hover:border-amber-500/40 active:scale-[0.98] select-none"
-                    style={{ color: colors.accent, borderColor: colors.borderAccent, backgroundColor: colors.accentTint }}
-                  >
-                    <LinkedinIcon /> LinkedIn Profile
-                  </a>
-                </SpotlightCard>
-              </TiltedCard>
+                  <LinkedinIcon /> LinkedIn Profile
+                </a>
+              </SpotlightCard>
             </FadeIn>
 
             {/* Founder 3: Shashank Jajodia */}
             <FadeIn delay={0.3} direction="up">
-              <TiltedCard maxAngle={6} scale={1.02}>
-                <SpotlightCard
-                  spotlightColor={colors.accentTint}
-                  className="rounded-3xl p-5 border text-center space-y-3 shadow-lg backdrop-blur-md"
-                  style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
+              <SpotlightCard
+                spotlightColor={colors.accentTint}
+                className="rounded-3xl p-5 border text-center space-y-3 shadow-lg backdrop-blur-md"
+                style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
+              >
+                <div className="w-20 h-20 rounded-full mx-auto overflow-hidden border-2 shadow-md transition-transform duration-300 hover:scale-105" style={{ borderColor: colors.borderAccent }}>
+                  <img src="/assets/images/CFO.jpeg" alt="Shashank Jajodia" className="w-full h-full object-cover object-center" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-base" style={{ color: colors.textPrimary }}>Shashank Jajodia</h4>
+                  <p className="text-xs font-semibold" style={{ color: colors.accent }}>Co-Founder & CFO</p>
+                  <p className="text-[11px] mt-1" style={{ color: colors.textSecondary }}>Growth, Outreach & Finance</p>
+                </div>
+                <a
+                  href="https://www.linkedin.com/in/shashank-jajodia-528b5b299"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg text-[11px] font-semibold font-mono border transition-[transform,background-color,border-color] duration-150 ease-out hover:border-amber-500/40 active:scale-[0.98] select-none"
+                  style={{ color: colors.accent, borderColor: colors.borderAccent, backgroundColor: colors.accentTint }}
                 >
-                  <div className="w-20 h-20 rounded-full mx-auto overflow-hidden border-2 shadow-md transition-transform duration-300 hover:scale-105" style={{ borderColor: colors.borderAccent }}>
-                    <img src="/assets/images/CFO.jpeg" alt="Shashank Jajodia" className="w-full h-full object-cover object-center" />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-base" style={{ color: colors.textPrimary }}>Shashank Jajodia</h4>
-                    <p className="text-xs font-semibold" style={{ color: colors.accent }}>Co-Founder & CFO</p>
-                    <p className="text-[11px] mt-1" style={{ color: colors.textSecondary }}>Growth, Outreach & Finance</p>
-                  </div>
-                  <a
-                    href="https://www.linkedin.com/in/shashank-jajodia-528b5b299"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg text-[11px] font-semibold font-mono border transition-[transform,background-color,border-color] duration-150 ease-out hover:border-amber-500/40 active:scale-[0.98] select-none"
-                    style={{ color: colors.accent, borderColor: colors.borderAccent, backgroundColor: colors.accentTint }}
-                  >
-                    <LinkedinIcon /> LinkedIn Profile
-                  </a>
-                </SpotlightCard>
-              </TiltedCard>
+                  <LinkedinIcon /> LinkedIn Profile
+                </a>
+              </SpotlightCard>
             </FadeIn>
           </div>
         </div>

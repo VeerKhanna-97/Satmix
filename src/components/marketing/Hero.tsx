@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Shield, ArrowRight, CheckCircle2, Rocket, User, Mail, Phone, Layers, Info, BarChart2, Loader2, Zap, ArrowDownLeft, FileCheck } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { initReferralCapture, getStoredReferralCode } from '../../utils/referral';
-import { SpotlightCard, BlurText, Magnet, TiltedCard, FadeIn, CountUp } from '../ui';
+import { SpotlightCard, BlurText, Magnet, FadeIn, CountUp } from '../ui';
 
 export const Hero: React.FC = () => {
   const { colors, setViewMode, setAuthSubView, isAuthenticated, triggerConfetti } = useApp();
@@ -192,10 +192,9 @@ export const Hero: React.FC = () => {
             </FadeIn>
           </div>
 
-          {/* Right Column: Interactive 3-Tab Slide Deck with SpotlightCard and 3D Tilt */}
+          {/* Right Column: Interactive 3-Tab Slide Deck */}
           <div className="lg:col-span-5">
-            <TiltedCard maxAngle={4} scale={1.01}>
-              <SpotlightCard
+            <SpotlightCard
                 className="rounded-3xl border shadow-2xl p-5 md:p-6 backdrop-blur-xl transition-all"
                 spotlightColor={colors.accentTint}
                 style={{
@@ -601,8 +600,7 @@ export const Hero: React.FC = () => {
                 ))}
               </div>
             </SpotlightCard>
-          </TiltedCard>
-        </div>
+          </div>
       </div>
     </div>
   </section>
