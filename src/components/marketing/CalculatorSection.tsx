@@ -189,7 +189,7 @@ export const CalculatorSection: React.FC = () => {
                       setViewMode('auth');
                     }
                   }}
-                  className="w-full h-12 rounded-xl font-semibold text-sm shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_4px_16px_rgba(247,147,26,0.2)] transition-[transform,background-color,box-shadow] duration-150 ease-out active:scale-[0.98] flex items-center justify-center gap-2 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                  className="w-full h-12 rounded-xl font-semibold text-sm shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_4px_16px_rgba(93,23,235,0.25)] transition-[transform,background-color,box-shadow] duration-150 ease-out active:scale-[0.98] flex items-center justify-center gap-2 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50"
                   style={{ backgroundColor: colors.primary, color: colors.primaryText }}
                 >
                   <span>Automate with This Plan (₹{dailySavings}/day)</span>
@@ -202,7 +202,7 @@ export const CalculatorSection: React.FC = () => {
           {/* ── RIGHT CARD: RESULTS ─────────────────────────── */}
           <FadeIn delay={0.25} direction="right" className="h-full">
             <SpotlightCard
-              spotlightColor="rgba(247, 147, 26, 0.15)"
+              spotlightColor={colors.accentTint}
               className="rounded-2xl p-6 sm:p-8 lg:p-9 border shadow-xl flex flex-col justify-between h-full"
               style={{
                 background: `linear-gradient(135deg, ${colors.card} 0%, ${colors.cardHigh || colors.card} 100%)`,

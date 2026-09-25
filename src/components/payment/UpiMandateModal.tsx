@@ -145,7 +145,7 @@ export const UpiMandateModal: React.FC<UpiMandateModalProps> = ({ isOpen, onClos
                 type="checkbox"
                 checked={mandateConsent}
                 onChange={(e) => setMandateConsent(e.target.checked)}
-                className="mt-0.5 w-3.5 h-3.5 rounded border-gray-700 cursor-pointer accent-[#F7931A]"
+                className="mt-0.5 w-3.5 h-3.5 rounded border-gray-700 cursor-pointer accent-[#5D17EB]"
               />
               <label htmlFor="mandate-consent" className="text-[11px] leading-tight select-none cursor-pointer" style={{ color: colors.textSecondary }}>
                 I authorize a recurring daily UPI AutoPay mandate of ₹{dailyAmount}/day with zero lock-in (can be paused or revoked anytime).

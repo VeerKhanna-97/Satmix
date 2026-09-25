@@ -262,13 +262,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.setItem('satmix_cookie_consent_v4', choice);
   }, []);
 
-  // Confetti helper
+  // Confetti helper (Primary: #5D17EB, Legacy: #F7931A)
   const triggerConfetti = useCallback(() => {
     confetti({
       particleCount: 80,
       spread: 70,
       origin: { y: 0.6 },
-      colors: ['#F7931A', '#E2E8F0', '#FFFFFF', '#FFA733', '#38BDF8'],
+      colors: ['#5D17EB', '#E2E8F0', '#FFFFFF', '#8B5CF6', '#38BDF8'],
     });
   }, []);
 

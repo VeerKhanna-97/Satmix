@@ -49,7 +49,7 @@ export const BasketsSection: React.FC = () => {
             return (
               <FadeIn key={basket.id} delay={0.15 + bIdx * 0.1} direction={isLow ? 'left' : 'right'} className="h-full">
                 <SpotlightCard
-                  spotlightColor="rgba(247, 147, 26, 0.15)"
+                  spotlightColor={colors.accentTint}
                   className="rounded-2xl p-7 sm:p-9 border shadow-xl flex flex-col justify-between h-full transition-all duration-300 hover:scale-[1.01]"
                   style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
                 >

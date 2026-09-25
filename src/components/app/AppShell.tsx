@@ -33,7 +33,7 @@ export const AppShell: React.FC = () => {
       {/* Background Accent Glow */}
       <div
         className="absolute top-0 right-1/4 w-[600px] h-[600px] rounded-full blur-[180px] pointer-events-none opacity-5 animate-ambient-glow"
-        style={{ background: 'radial-gradient(circle, #F7931A 0%, transparent 70%)' }}
+        style={{ background: `radial-gradient(circle, ${colors.accent} 0%, transparent 70%)` }}
       />
 
       {/* ── TOP NAV BAR ───────────────────────────────────────── */}

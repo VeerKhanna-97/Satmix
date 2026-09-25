@@ -55,7 +55,7 @@ export const BasketsScreen: React.FC = () => {
                 spotlightColor={colors.accentTint}
                 onClick={() => handleSelect(basket.id)}
                 className={`rounded-3xl p-7 sm:p-9 border shadow-xl flex flex-col justify-between transition-all cursor-pointer h-full ${
-                  isSelected ? 'scale-[1.01] shadow-[0_8px_30px_rgba(247,147,26,0.15)]' : 'hover:border-slate-700 opacity-95'
+                  isSelected ? 'scale-[1.01] shadow-[0_8px_30px_rgba(93,23,235,0.2)]' : 'hover:border-slate-700 opacity-95'
                 }`}
                 style={{ backgroundColor: colors.card, borderColor: isSelected ? colors.accent : colors.cardBorder }}
               >

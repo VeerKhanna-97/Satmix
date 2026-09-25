@@ -35,7 +35,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     // Base interaction and layout
     const baseClasses =
-      'inline-flex items-center justify-center select-none font-semibold transition-[transform,background-color,border-color,box-shadow,opacity] duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F7931A]/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0C10] disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none disabled:active:scale-100 disabled:shadow-none';
+      'inline-flex items-center justify-center select-none font-semibold transition-[transform,background-color,border-color,box-shadow,opacity] duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5D17EB]/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0C10] disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none disabled:active:scale-100 disabled:shadow-none';
 
     // Size tiers
     const sizeClasses = {

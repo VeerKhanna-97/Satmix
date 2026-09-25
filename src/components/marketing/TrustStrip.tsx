@@ -23,7 +23,7 @@ export const TrustStrip: React.FC = () => {
       iconColor: colors.accent,
       bgColor: colors.accentTint,
       borderColor: colors.borderAccent,
-      spotlight: 'rgba(247, 147, 26, 0.15)',
+      spotlight: colors.accentTint,
     },
     {
       icon: Zap,
@@ -38,10 +38,10 @@ export const TrustStrip: React.FC = () => {
       icon: Lock,
       title: 'Non-Custodial Design',
       desc: 'Zero Keys Held • Direct User Ownership',
-      iconColor: '#F7931A',
-      bgColor: 'rgba(247, 147, 26, 0.1)',
-      borderColor: 'rgba(247, 147, 26, 0.25)',
-      spotlight: 'rgba(247, 147, 26, 0.15)',
+      iconColor: colors.purple,
+      bgColor: colors.purpleTint,
+      borderColor: colors.borderPurple,
+      spotlight: colors.accentTint,
     },
   ];
 

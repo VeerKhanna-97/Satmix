@@ -145,14 +145,14 @@ body.light-theme ::-webkit-scrollbar-thumb:hover {
 
 
 
-/* Accessibility: High-Contrast Focus Visible Rings */
+/* Accessibility: High-Contrast Focus Visible Rings (Primary: #5D17EB, Legacy: #F7931A) */
 :focus-visible {
-  outline: 2px solid #F7931A !important;
+  outline: 2px solid #5D17EB !important;
   outline-offset: 2px !important;
 }
 
 body.light-theme :focus-visible {
-  outline: 2px solid #D97706 !important;
+  outline: 2px solid #5D17EB !important;
   outline-offset: 2px !important;
 }
 
@@ -181,15 +181,15 @@ input[type='range']::-webkit-slider-thumb {
   height: 20px;
   border-radius: 50%;
   background-color: #FFFFFF !important;
-  border: 2px solid #F7931A;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45), 0 0 10px rgba(247, 147, 26, 0.35);
+  border: 2px solid #5D17EB;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45), 0 0 10px rgba(93, 23, 235, 0.35);
   cursor: pointer;
   transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.15s ease;
 }
 
 input[type='range']::-webkit-slider-thumb:hover {
   transform: scale(1.15);
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.6), 0 0 14px rgba(247, 147, 26, 0.5);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.6), 0 0 14px rgba(93, 23, 235, 0.5);
 }
 
 input[type='range']::-webkit-slider-thumb:active {
@@ -201,15 +201,15 @@ input[type='range']::-moz-range-thumb {
   height: 20px;
   border-radius: 50%;
   background-color: #FFFFFF !important;
-  border: 2px solid #F7931A;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45), 0 0 10px rgba(247, 147, 26, 0.35);
+  border: 2px solid #5D17EB;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45), 0 0 10px rgba(93, 23, 235, 0.35);
   cursor: pointer;
   transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.15s ease;
 }
 
 input[type='range']::-moz-range-thumb:hover {
   transform: scale(1.15);
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.6), 0 0 14px rgba(247, 147, 26, 0.5);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.6), 0 0 14px rgba(93, 23, 235, 0.5);
 }
 
 input[type='range']::-moz-range-thumb:active {

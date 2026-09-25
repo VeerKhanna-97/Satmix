@@ -157,7 +157,7 @@ export const Hero: React.FC = () => {
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5 pt-2">
                 <button
                   onClick={handleStartSaving}
-                  className="w-full sm:w-auto h-12 px-7 rounded-xl font-semibold text-sm shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_4px_16px_rgba(247,147,26,0.2)] transition-[transform,background-color,box-shadow] duration-150 ease-out active:scale-[0.98] inline-flex items-center justify-center gap-2 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                  className="w-full sm:w-auto h-12 px-7 rounded-xl font-semibold text-sm shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_4px_16px_rgba(93,23,235,0.25)] transition-[transform,background-color,box-shadow] duration-150 ease-out active:scale-[0.98] inline-flex items-center justify-center gap-2 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50"
                   style={{ backgroundColor: colors.primary, color: colors.primaryText }}
                 >
                   <span>{isAuthenticated ? 'Open Web Dashboard' : 'Start with ₹10/Day'}</span>
@@ -211,7 +211,7 @@ export const Hero: React.FC = () => {
             <TiltedCard maxAngle={4} scale={1.01}>
               <SpotlightCard
                 className="rounded-3xl border shadow-2xl p-5 md:p-6 backdrop-blur-xl transition-all"
-                spotlightColor="rgba(247, 147, 26, 0.15)"
+                spotlightColor={colors.accentTint}
                 style={{
                   backgroundColor: colors.card,
                   borderColor: colors.cardBorder,

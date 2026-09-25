@@ -368,7 +368,7 @@ export const AuthModal: React.FC = () => {
                     type="checkbox"
                     checked={consentAgreed}
                     onChange={(e) => setConsentAgreed(e.target.checked)}
-                    className="mt-0.5 w-3.5 h-3.5 rounded cursor-pointer accent-[#F7931A]"
+                    className="mt-0.5 w-3.5 h-3.5 rounded cursor-pointer accent-[#5D17EB]"
                   />
                   <label htmlFor="auth-consent" className="text-[11px] leading-tight select-none cursor-pointer" style={{ color: colors.textSecondary }}>
                     I agree to Satmix's{' '}
