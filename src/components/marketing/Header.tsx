@@ -68,9 +68,6 @@ export const Header: React.FC = () => {
           <span className="font-extrabold text-xl tracking-tight" style={{ color: colors.textPrimary }}>
             Satmix
           </span>
-          <span className="hidden sm:inline-flex items-center gap-1 text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded-md border font-mono" style={{ backgroundColor: colors.accentTint, color: colors.accent, borderColor: colors.borderAccent }}>
-            UPI AutoPay
-          </span>
         </div>
 
         {/* Desktop Navigation */}
