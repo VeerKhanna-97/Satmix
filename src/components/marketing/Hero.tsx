@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, ArrowRight, CheckCircle2, Rocket, User, Mail, Phone, Layers, Info, BarChart2, Loader2, Zap, ArrowDownLeft, FileCheck } from 'lucide-react';
+import { Shield, ArrowRight, CheckCircle2, Rocket, User, Mail, Phone, Layers, Info, BarChart2, Loader2 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { initReferralCapture, getStoredReferralCode } from '../../utils/referral';
 import { SpotlightCard, BlurText, Magnet, FadeIn, CountUp } from '../ui';
@@ -133,21 +133,14 @@ export const Hero: React.FC = () => {
             </FadeIn>
 
             <FadeIn delay={0.25}>
-              <p className="text-sm sm:text-base lg:text-lg max-w-2xl mx-auto lg:mx-0 leading-relaxed" style={{ color: colors.textSecondary }}>
-                {/* Mobile (< 1024px): Concise, punchy copy */}
-                <span className="block lg:hidden">
-                  Automated crypto baskets from ₹10 via daily UPI. Zero stress, full control.
-                </span>
-                {/* Laptop / Desktop (>= 1024px): 100% untouched original */}
-                <span className="hidden lg:inline">
-                  No coin picking. No market timing. No staring at charts. Auto-invest from ₹10 daily via UPI AutoPay into curated baskets of top crypto assets. Withdraw to your bank anytime.
-                </span>
+              <p className="text-base sm:text-lg max-w-2xl mx-auto lg:mx-0 leading-relaxed" style={{ color: colors.textSecondary }}>
+                No coin picking. No market timing. No staring at charts. Auto-invest from ₹10 daily via UPI AutoPay into curated baskets of top crypto assets. Withdraw to your bank anytime.
               </p>
             </FadeIn>
 
             {/* CTAs */}
             <FadeIn delay={0.35}>
-              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5 pt-2">
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5 pt-1 lg:pt-2">
                 <button
                   onClick={handleStartSaving}
                   className="w-full sm:w-auto h-12 px-7 rounded-xl font-semibold text-sm shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_4px_16px_rgba(93,23,235,0.25)] transition-[transform,background-color,box-shadow] duration-150 ease-out active:scale-[0.98] inline-flex items-center justify-center gap-2 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50"
@@ -168,33 +161,6 @@ export const Hero: React.FC = () => {
                 >
                   <span>Calculate Your Growth</span>
                 </a>
-              </div>
-            </FadeIn>
-
-            {/* Feature Spec Strip */}
-            <FadeIn delay={0.45}>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-3">
-                <div
-                  className="flex items-center justify-center lg:justify-start gap-2 px-3 py-2 rounded-lg border text-xs font-mono"
-                  style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textSecondary }}
-                >
-                  <Zap className="w-3.5 h-3.5 flex-shrink-0" style={{ color: colors.accent }} />
-                  <span>Daily UPI AutoPay</span>
-                </div>
-                <div
-                  className="flex items-center justify-center lg:justify-start gap-2 px-3 py-2 rounded-lg border text-xs font-mono"
-                  style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textSecondary }}
-                >
-                  <ArrowDownLeft className="w-3.5 h-3.5 flex-shrink-0" style={{ color: colors.accent }} />
-                  <span>Withdraw Anytime 24/7</span>
-                </div>
-                <div
-                  className="flex items-center justify-center lg:justify-start gap-2 px-3 py-2 rounded-lg border text-xs font-mono"
-                  style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textSecondary }}
-                >
-                  <FileCheck className="w-3.5 h-3.5 flex-shrink-0" style={{ color: colors.accent }} />
-                  <span>Institutional Custody</span>
-                </div>
               </div>
             </FadeIn>
           </div>
