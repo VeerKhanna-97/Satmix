@@ -42,13 +42,13 @@ export const TermsConditionsPage: React.FC = () => {
 
         {/* Content Card */}
         <div className="space-y-8 text-sm leading-relaxed" style={{ color: colors.textSecondary }}>
-          {/* Section 1: Non-Custodial Technology Disclaimer */}
+          {/* Section 1: Technology Platform & Custody Disclaimer */}
           <section className="p-6 rounded-3xl border space-y-3" style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}>
             <div className="flex items-center gap-2.5">
               <div className="p-2 rounded-xl" style={{ backgroundColor: colors.purpleTint, color: colors.accent }}>
                 <ShieldCheck className="w-4 h-4" />
               </div>
-              <h2 className="text-lg font-bold" style={{ color: colors.textPrimary }}>1. Nature of Software: Non-Custodial Technology Platform</h2>
+              <h2 className="text-lg font-bold" style={{ color: colors.textPrimary }}>1. Nature of Software: Automated Technology & Execution Platform</h2>
             </div>
             <p>
               Satmix operates strictly as a <strong>financial software and technological infrastructure layer</strong>. Satmix is <strong>NOT</strong>:
@@ -56,7 +56,7 @@ export const TermsConditionsPage: React.FC = () => {
             <ul className="space-y-1.5 pl-4 list-disc" style={{ accentColor: colors.accent }}>
               <li>A registered investment adviser (RIA) under the Securities and Exchange Board of India (SEBI).</li>
               <li>A Portfolio Management Service (PMS), mutual fund, broker-dealer, or bank.</li>
-              <li>A custodian of fiat currency, bank deposits, or digital asset private keys.</li>
+              <li>A direct custodian of fiat deposits or banking funds; digital asset custody is facilitated via compliant institutional custodial partners.</li>
             </ul>
             <p>
               All strategies, indices, and asset weightings displayed on the platform are educational and systematic algorithmic templates. Satmix does not provide personalized investment, financial, or legal advice.

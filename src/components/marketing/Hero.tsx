@@ -186,7 +186,7 @@ export const Hero: React.FC = () => {
                   style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textSecondary }}
                 >
                   <FileCheck className="w-3.5 h-3.5 flex-shrink-0" style={{ color: colors.accent }} />
-                  <span>100% Non-Custodial</span>
+                  <span>Institutional Custody</span>
                 </div>
               </div>
             </FadeIn>

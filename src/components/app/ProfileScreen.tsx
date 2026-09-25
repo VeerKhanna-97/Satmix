@@ -156,7 +156,7 @@ export const ProfileScreen: React.FC = () => {
               </p>
               <div className="flex items-center gap-2 mt-2 text-[11px] font-mono" style={{ color: colors.textTertiary }}>
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Pan: {user?.panNumberMasked || 'ABCDE****F'} · Non-Custodial Vault</span>
+                <span>Pan: {user?.panNumberMasked || 'ABCDE****F'} · Secure Custodial Vault</span>
               </div>
             </div>
           </div>
@@ -259,7 +259,7 @@ export const ProfileScreen: React.FC = () => {
                 </span>
               </div>
               <p className="text-[11px] font-mono mt-0.5" style={{ color: colors.textSecondary }}>
-                Non-custodial direct spot execution · Linked: {user?.bankName || 'HDFC Bank'}
+                Institutional custodial spot execution · Linked: {user?.bankName || 'HDFC Bank'}
               </p>
             </div>
           </div>

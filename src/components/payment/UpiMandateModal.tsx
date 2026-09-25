@@ -214,7 +214,7 @@ export const UpiMandateModal: React.FC<UpiMandateModalProps> = ({ isOpen, onClos
             <div className="w-16 h-16 rounded-full border-4 border-current border-t-transparent animate-spin mx-auto" style={{ color: colors.accent }} />
             <h3 className="text-lg font-bold" style={{ color: colors.textPrimary }}>Registering Mandate with NPCI...</h3>
             <p className="text-xs max-w-xs mx-auto leading-relaxed" style={{ color: colors.textSecondary }}>
-              Communicating with {selectedApp} gateway and securing non-custodial recurring authorization.
+              Communicating with {selectedApp} gateway and securing recurring AutoPay authorization.
             </p>
           </div>
         )}

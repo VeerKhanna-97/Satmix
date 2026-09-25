@@ -653,7 +653,7 @@ export const DashboardScreen: React.FC = () => {
                 </span>
               </div>
               <p className="text-xs mt-0.5" style={{ color: colors.textSecondary }}>
-                Real fractional crypto units held in your non-custodial wallet with live MTM pricing.
+                Real fractional crypto units held in your secure custodial wallet with live MTM pricing.
               </p>
             </div>
           </div>
@@ -913,7 +913,7 @@ export const DashboardScreen: React.FC = () => {
               <div className="pt-2 flex items-center justify-between text-[11px] font-mono text-slate-400" style={{ color: colors.textTertiary }}>
                 <div className="flex items-center gap-1.5">
                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>100% Non-Custodial · Direct Spot Execution Engine</span>
+                  <span>Institutional Custody · Direct Spot Execution Engine</span>
                 </div>
                 <span className="hidden sm:inline">Tap any asset to inspect on-chain balance & cost basis</span>
               </div>
@@ -1429,7 +1429,7 @@ export const DashboardScreen: React.FC = () => {
 
               <div className="flex justify-between items-center text-[11px]">
                 <span style={{ color: colors.textSecondary }}>Custody Architecture:</span>
-                <span className="text-emerald-400 font-bold">100% Non-Custodial (Zero Keys Held)</span>
+                <span className="text-emerald-400 font-bold">Institutional Custody (FIU-IND Compliant)</span>
               </div>
 
               <div className="flex justify-between items-center text-[11px]">

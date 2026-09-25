@@ -36,8 +36,8 @@ export const TrustStrip: React.FC = () => {
     },
     {
       icon: Lock,
-      title: 'Non-Custodial Design',
-      desc: 'Zero Keys Held • Direct User Ownership',
+      title: 'Institutional Custody',
+      desc: 'Regulated Vaults • Secure Asset Storage',
       iconColor: colors.purple,
       bgColor: colors.purpleTint,
       borderColor: colors.borderPurple,

@@ -15,9 +15,9 @@ export const EDUCATIONAL_GUIDES = [
   {
     id: 'g2',
     category: 'EXECUTION & CUSTODY',
-    title: 'Non-Custodial Architecture & Batch Execution',
+    title: 'Institutional Custody & Batch Execution',
     readTime: '3 min read',
-    summary: 'Satmix never holds user private keys. Orders execute systematically via direct batch engines.',
+    summary: 'Crypto assets are held securely in institutional custodial storage. Orders execute systematically via direct batch engines.',
     content: 'After your morning 8:00–8:30 AM UPI AutoPay debit, our scheduled 9:00 AM batch engine executes spot market orders in your exact basket ratio. Portfolio ledgers update with fractional holdings once fills confirm on-chain.',
   },
   {
@@ -44,8 +44,8 @@ export const FAQ_ITEMS = [
     answer: 'Yes. Satmix gives you 100% control with zero lock-in. You can adjust your daily amount, skip a day, pause your UPI mandate, or restart anytime directly from your dashboard with one tap.',
   },
   {
-    question: 'Does Satmix hold my private keys?',
-    answer: 'No. Satmix operates as a non-custodial fintech platform. We do not hold user private keys. Orders are executed directly into spot holdings via our institutional execution architecture, ensuring maximum security and transparency.',
+    question: 'How are my crypto assets stored and safeguarded?',
+    answer: 'Your crypto assets are held in institutional-grade custodial storage with registered digital asset partners. Orders are executed directly into spot holdings via our compliant execution architecture, ensuring maximum security and transparency.',
   },
   {
     question: 'Can I pause investing or withdraw to my bank anytime?',

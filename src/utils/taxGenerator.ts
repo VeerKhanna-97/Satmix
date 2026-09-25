@@ -55,7 +55,7 @@ export function generateTaxStatement(
   const csvSummary = `\n\nSATMIX DIGITAL ASSET ACCOUNT STATEMENT (${financialYear})\n` +
     `Account Holder: "${user.name}"\n` +
     `Linked Account: "${user.bankName} ${user.bankAccountMasked}"\n` +
-    `Architecture: "Non-Custodial Multi-Basket Vault"\n` +
+    `Architecture: "Institutional Custodial Vault"\n` +
     `Total Transaction Volume (INR): "${totalVolume}"\n` +
     `Total Deposits & Purchases (INR): "${totalCredits}"\n` +
     `Total Withdrawals (INR): "${totalDebits}"\n` +

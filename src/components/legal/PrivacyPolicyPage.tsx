@@ -42,16 +42,16 @@ export const PrivacyPolicyPage: React.FC = () => {
 
         {/* Content Card */}
         <div className="space-y-8 text-sm leading-relaxed" style={{ color: colors.textSecondary }}>
-          {/* Section 1: Non-Custodial Architecture */}
+          {/* Section 1: Custody & Technology Architecture */}
           <section className="p-6 rounded-3xl border space-y-3" style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}>
             <div className="flex items-center gap-2.5">
               <div className="p-2 rounded-xl" style={{ backgroundColor: colors.purpleTint, color: colors.accent }}>
                 <Lock className="w-4 h-4" />
               </div>
-              <h2 className="text-lg font-bold" style={{ color: colors.textPrimary }}>1. Non-Custodial Technology Architecture</h2>
+              <h2 className="text-lg font-bold" style={{ color: colors.textPrimary }}>1. Technology Architecture & Institutional Custody</h2>
             </div>
             <p>
-              Satmix provides automated technology workflows for daily Rupee Cost Averaging into digital asset baskets. Satmix operates on a non-custodial software principle. We do not store, hold, or directly custody your fiat money, bank login credentials, UPI PINs, or digital asset private keys. All recurring fiat debits are handled directly through authorized NPCI UPI AutoPay rails via your bank.
+              Satmix provides automated technology workflows for daily Rupee Cost Averaging into digital asset baskets. Digital asset holdings are safeguarded with compliant, registered institutional custodial partners. Satmix does not directly store your fiat deposits, bank passwords, or UPI PINs. All recurring fiat debits are handled directly through authorized NPCI UPI AutoPay rails via your bank.
             </p>
           </section>
 
@@ -81,7 +81,7 @@ export const PrivacyPolicyPage: React.FC = () => {
               </li>
             </ul>
             <div className="p-3.5 rounded-2xl border text-xs font-semibold" style={{ backgroundColor: colors.redTint, borderColor: colors.semanticDanger, color: colors.semanticDanger }}>
-              Zero Collection Guarantee: Satmix NEVER requests or stores credit/debit card numbers, CVVs, net-banking passwords, UPI PINs, or cryptocurrency private keys.
+              Zero Collection Guarantee: Satmix NEVER requests or stores credit/debit card numbers, CVVs, net-banking passwords, or UPI PINs.
             </div>
           </section>
 

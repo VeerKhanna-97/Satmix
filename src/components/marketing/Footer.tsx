@@ -74,9 +74,9 @@ export const Footer: React.FC = () => {
         {/* Legal & Compliance Disclaimer */}
         <div className="pt-8 text-center md:text-left flex flex-col md:flex-row items-center justify-between gap-4 text-xs" style={{ color: colors.textTertiary }}>
           <div className="space-y-1">
-            <p>© {new Date().getFullYear()} Satmix. All rights reserved. Non-Custodial Systematic Micro-Investing.</p>
+            <p>© {new Date().getFullYear()} Satmix. All rights reserved. Systematic Micro-Investing with Institutional Custody.</p>
             <p className="max-w-2xl text-[11px] leading-relaxed" style={{ color: colors.textTertiary }}>
-              Disclaimer: Digital assets and cryptocurrencies are volatile and subject to market risk. Satmix is a non-custodial software technology platform facilitating automated spot order execution, not a SEBI-registered investment adviser or portfolio manager. Past performance does not guarantee future results.
+              Disclaimer: Digital assets and cryptocurrencies are volatile and subject to market risk. Satmix facilitates automated spot order execution with institutional custodial partners, and is not a SEBI-registered investment adviser or portfolio manager. Past performance does not guarantee future results.
             </p>
           </div>
 

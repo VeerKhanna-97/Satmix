@@ -311,7 +311,7 @@ export const InvestScreen: React.FC = () => {
 
             <div className="flex items-center justify-center gap-1.5 text-[11px]" style={{ color: colors.textTertiary }}>
               <Shield className="w-3.5 h-3.5" style={{ color: colors.accent }} />
-              <span>UPI AutoPay at launch · Non-custodial direct spot execution · Pause anytime.</span>
+              <span>UPI AutoPay at launch · Secure custodial spot execution · Pause anytime.</span>
             </div>
           </div>
         </SpotlightCard>
