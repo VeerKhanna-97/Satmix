@@ -16,12 +16,12 @@ export const StepsSection: React.FC = () => {
   return (
     <section
       id="steps-animation"
-      className="py-16 md:py-24 border-t border-b relative overflow-hidden"
+      className="py-12 sm:py-16 md:py-24 border-t border-b relative overflow-hidden"
       style={{ backgroundColor: colors.bg, borderColor: colors.borderDim }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* ── 1. SECTION HEADER ───────────────────────────────── */}
-        <FadeIn delay={0.05} direction="up" className="text-center max-w-2xl mx-auto mb-10 md:mb-14 space-y-2">
+        <FadeIn delay={0.05} direction="up" className="text-center max-w-2xl mx-auto mb-6 sm:mb-10 md:mb-14 space-y-2">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight pt-0.5" style={{ color: colors.textPrimary }}>
             Savings Made Simple in 3 Steps
           </h2>
@@ -30,12 +30,37 @@ export const StepsSection: React.FC = () => {
           </p>
         </FadeIn>
 
-        {/* ── 2. THREE PHONE MOCKUPS (UNIFIED 3-COLUMN GRID) ─── */}
+        {/* ── MOBILE-ONLY STEP SELECTOR ───────────────────────── */}
+        <div className="flex md:hidden items-center justify-between p-1 rounded-xl mb-6 border max-w-[320px] mx-auto shadow-sm" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+          {[
+            { num: '01', label: 'Amount' },
+            { num: '02', label: 'AutoPay' },
+            { num: '03', label: 'Custody' },
+          ].map((step, idx) => (
+            <button
+              key={idx}
+              type="button"
+              onClick={() => setActiveStep(idx)}
+              className="flex-1 py-1.5 px-2 rounded-lg text-xs font-semibold font-mono flex items-center justify-center gap-1.5 transition-all select-none"
+              style={{
+                backgroundColor: activeStep === idx ? colors.primary : 'transparent',
+                color: activeStep === idx ? colors.primaryText : colors.textSecondary,
+              }}
+            >
+              <span>{step.num}</span>
+              <span className="font-sans text-[11px] font-bold">{step.label}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* ── 2. THREE PHONE MOCKUPS (UNIFIED 3-COLUMN GRID ON DESKTOP, FOCUSED ON MOBILE) ─── */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-start max-w-5xl mx-auto w-full">
           {/* ── COLUMN 1: STEP 1 (Amount Setup) ───────────────── */}
           <div
             onClick={() => handleStepClick(0)}
-            className="flex flex-col items-center cursor-pointer transition-all duration-300 w-full hover:-translate-y-1"
+            className={`flex-col items-center cursor-pointer transition-all duration-300 w-full hover:-translate-y-1 ${
+              activeStep === 0 ? 'flex' : 'hidden md:flex'
+            }`}
           >
             {/* Phone Chassis */}
             <div
@@ -116,7 +141,9 @@ export const StepsSection: React.FC = () => {
           {/* ── COLUMN 2: STEP 2 (UPI AutoPay) ────────────────── */}
           <div
             onClick={() => handleStepClick(1)}
-            className="flex flex-col items-center cursor-pointer transition-all duration-300 w-full hover:-translate-y-1"
+            className={`flex-col items-center cursor-pointer transition-all duration-300 w-full hover:-translate-y-1 ${
+              activeStep === 1 ? 'flex' : 'hidden md:flex'
+            }`}
           >
             {/* Phone Chassis */}
             <div
@@ -210,7 +237,9 @@ export const StepsSection: React.FC = () => {
           {/* ── COLUMN 3: STEP 3 (Basket Compounding) ─────────── */}
           <div
             onClick={() => handleStepClick(2)}
-            className="flex flex-col items-center cursor-pointer transition-all duration-300 w-full hover:-translate-y-1"
+            className={`flex-col items-center cursor-pointer transition-all duration-300 w-full hover:-translate-y-1 ${
+              activeStep === 2 ? 'flex' : 'hidden md:flex'
+            }`}
           >
             {/* Phone Chassis */}
             <div
@@ -276,6 +305,21 @@ export const StepsSection: React.FC = () => {
               </h3>
             </div>
           </div>
+        </div>
+
+        {/* ── MOBILE STEP PAGINATION DOTS ────────────────────── */}
+        <div className="flex md:hidden justify-center items-center gap-2 mt-4">
+          {[0, 1, 2].map((idx) => (
+            <button
+              key={idx}
+              type="button"
+              onClick={() => handleStepClick(idx)}
+              className={`h-1.5 rounded-full transition-all duration-300 ${
+                activeStep === idx ? 'w-6 bg-white' : 'w-2 bg-gray-600 hover:bg-gray-400'
+              }`}
+              aria-label={`Go to step ${idx + 1}`}
+            />
+          ))}
         </div>
 
         {/* ── 3. BOTTOM PROGRESS INDICATOR (PIXEL-PERFECT COLUMN ALIGNMENT) ── */}

@@ -20,10 +20,10 @@ export const BasketsSection: React.FC = () => {
   };
 
   return (
-    <section id="baskets-section" className="py-20 md:py-28 border-t relative overflow-hidden" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+    <section id="baskets-section" className="py-12 sm:py-16 md:py-24 lg:py-28 border-t relative overflow-hidden" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Title */}
-        <FadeIn delay={0.05} direction="up" className="text-center max-w-2xl mx-auto mb-16 space-y-3.5">
+        <FadeIn delay={0.05} direction="up" className="text-center max-w-2xl mx-auto mb-8 sm:mb-12 md:mb-16 space-y-3">
           <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight" style={{ color: colors.textPrimary }}>
             Choose Your Investment Strategy
           </h2>
@@ -40,7 +40,7 @@ export const BasketsSection: React.FC = () => {
               <FadeIn key={basket.id} delay={0.15 + bIdx * 0.1} direction={isLow ? 'left' : 'right'} className="h-full">
                 <SpotlightCard
                   spotlightColor={colors.accentTint}
-                  className="rounded-2xl p-7 sm:p-9 border shadow-xl flex flex-col justify-between h-full transition-all duration-300 hover:scale-[1.01]"
+                  className="rounded-2xl p-4.5 sm:p-7 md:p-8 lg:p-9 border shadow-xl flex flex-col justify-between h-full transition-all duration-300 hover:scale-[1.01]"
                   style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
                 >
                   <div>
@@ -85,7 +85,7 @@ export const BasketsSection: React.FC = () => {
                     </p>
 
                     {/* 3 Metric Pills */}
-                    <div className="grid grid-cols-3 gap-2 p-3.5 rounded-2xl border mb-6 text-center font-mono text-xs transition-colors" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+                    <div className="grid grid-cols-3 gap-1.5 sm:gap-2 p-2.5 sm:p-3.5 rounded-2xl border mb-5 sm:mb-6 text-center font-mono text-xs transition-colors" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
                       <div>
                         <span className="text-[10px] font-sans block" style={{ color: colors.textSecondary }}>Profile</span>
                         <strong className="text-xs" style={{ color: colors.textPrimary }}>{basket.historicalCagr}</strong>

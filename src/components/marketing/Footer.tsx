@@ -18,7 +18,7 @@ export const Footer: React.FC = () => {
   const { colors, setViewMode, setAuthSubView } = useApp();
 
   return (
-    <footer className="border-t pt-16 pb-32 sm:pb-16" style={{ backgroundColor: colors.bg, borderColor: colors.borderDim }}>
+    <footer className="border-t pt-12 sm:pt-16 pb-28 sm:pb-16" style={{ backgroundColor: colors.bg, borderColor: colors.borderDim }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-10 border-b" style={{ borderColor: colors.borderDim }}>
           {/* Logo & Tagline */}

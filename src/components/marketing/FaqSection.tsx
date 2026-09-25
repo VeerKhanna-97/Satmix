@@ -15,10 +15,10 @@ export const FaqSection: React.FC = () => {
   };
 
   return (
-    <section id="faq-section" className="py-20 md:py-28 border-t relative overflow-hidden" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+    <section id="faq-section" className="py-12 sm:py-16 md:py-24 lg:py-28 border-t relative overflow-hidden" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
-        <FadeIn delay={0.05} direction="up" className="text-center max-w-2xl mx-auto mb-16 space-y-3.5">
+        <FadeIn delay={0.05} direction="up" className="text-center max-w-2xl mx-auto mb-8 sm:mb-12 md:mb-16 space-y-3">
           <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight" style={{ color: colors.textPrimary }}>
             Frequently Asked Questions
           </h2>
@@ -48,12 +48,12 @@ export const FaqSection: React.FC = () => {
                 >
                   {/* Question Header */}
                   <div
-                    className="w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 font-bold text-sm md:text-base select-none transition-colors"
+                    className="w-full p-4 sm:p-6 text-left flex items-center justify-between gap-3 sm:gap-4 font-bold text-sm md:text-base select-none transition-colors"
                     style={{ color: isOpen ? colors.textPrimary : colors.textSecondary }}
                   >
-                    <span className="flex items-center gap-3">
+                    <span className="flex items-center gap-2.5 sm:gap-3">
                       <div
-                        className="w-7 h-7 rounded-xl flex items-center justify-center transition-colors duration-300"
+                        className="w-7 h-7 rounded-xl flex items-center justify-center transition-colors duration-300 flex-shrink-0"
                         style={{
                           backgroundColor: isOpen ? colors.purpleTint : 'rgba(255, 255, 255, 0.05)',
                           color: isOpen ? colors.accent : colors.textTertiary,
@@ -61,7 +61,7 @@ export const FaqSection: React.FC = () => {
                       >
                         <HelpCircle className="w-4 h-4 flex-shrink-0" />
                       </div>
-                      <span className="transition-colors duration-300" style={{ color: isOpen ? colors.textPrimary : colors.textSecondary }}>
+                      <span className="transition-colors duration-300 text-xs sm:text-base" style={{ color: isOpen ? colors.textPrimary : colors.textSecondary }}>
                         {item.question}
                       </span>
                     </span>
@@ -86,7 +86,7 @@ export const FaqSection: React.FC = () => {
                         className="overflow-hidden"
                       >
                         <div
-                          className="px-5 pb-5 pt-1 text-xs md:text-sm leading-relaxed border-t"
+                          className="px-4 pb-4 pt-1 sm:px-6 sm:pb-5 text-xs md:text-sm leading-relaxed border-t"
                           style={{ color: colors.textSecondary, borderColor: colors.borderDim }}
                         >
                           {item.answer}

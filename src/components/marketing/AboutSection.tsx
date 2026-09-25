@@ -13,10 +13,10 @@ export const AboutSection: React.FC = () => {
   const { colors } = useApp();
 
   return (
-    <section id="about-section" className="py-16 md:py-24 relative overflow-hidden">
+    <section id="about-section" className="py-12 sm:py-16 md:py-24 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* ── 1. SECTION HEADER ────── */}
-        <FadeIn delay={0.05} direction="up" className="text-center max-w-2xl mx-auto mb-8 md:mb-10 space-y-2">
+        <FadeIn delay={0.05} direction="up" className="text-center max-w-2xl mx-auto mb-6 sm:mb-8 md:mb-10 space-y-2">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight pt-0.5" style={{ color: colors.textPrimary }}>
             Daily Crypto. Starting at ₹10.
           </h2>
@@ -26,12 +26,12 @@ export const AboutSection: React.FC = () => {
         </FadeIn>
 
         {/* ── 2. THREE-CARD GRID ───── */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-stretch max-w-5xl mx-auto mb-14 md:mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 items-stretch max-w-5xl mx-auto mb-10 sm:mb-14 md:mb-16">
           {/* Card 1: Core Belief */}
           <FadeIn delay={0.1} direction="up" className="h-full">
             <SpotlightCard
               spotlightColor={colors.accentTint}
-              className="rounded-3xl p-6 sm:p-7 lg:p-8 border shadow-xl flex flex-col justify-start h-full backdrop-blur-md transition-all duration-300 hover:scale-[1.02]"
+              className="rounded-3xl p-5 sm:p-7 lg:p-8 border shadow-xl flex flex-col justify-start h-full backdrop-blur-md transition-all duration-300 hover:scale-[1.02]"
               style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
             >
               <div
@@ -53,7 +53,7 @@ export const AboutSection: React.FC = () => {
           <FadeIn delay={0.2} direction="up" className="h-full">
             <SpotlightCard
               spotlightColor={colors.primaryTint}
-              className="rounded-3xl p-6 sm:p-7 lg:p-8 border shadow-xl flex flex-col justify-start h-full backdrop-blur-md transition-all duration-300 hover:scale-[1.02]"
+              className="rounded-3xl p-5 sm:p-7 lg:p-8 border shadow-xl flex flex-col justify-start h-full backdrop-blur-md transition-all duration-300 hover:scale-[1.02]"
               style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
             >
               <div
@@ -75,7 +75,7 @@ export const AboutSection: React.FC = () => {
           <FadeIn delay={0.3} direction="up" className="h-full">
             <SpotlightCard
               spotlightColor={colors.accentTint}
-              className="rounded-3xl p-6 sm:p-7 lg:p-8 border shadow-xl flex flex-col justify-start h-full backdrop-blur-md transition-all duration-300 hover:scale-[1.02]"
+              className="rounded-3xl p-5 sm:p-7 lg:p-8 border shadow-xl flex flex-col justify-start h-full backdrop-blur-md transition-all duration-300 hover:scale-[1.02]"
               style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
             >
               <div
@@ -98,7 +98,7 @@ export const AboutSection: React.FC = () => {
         <FadeIn delay={0.15}>
           <SpotlightCard
             spotlightColor={colors.accentTint}
-            className="rounded-3xl p-7 sm:p-9 lg:p-10 border shadow-xl mb-14 md:mb-16 max-w-5xl mx-auto backdrop-blur-md"
+            className="rounded-3xl p-5 sm:p-8 lg:p-10 border shadow-xl mb-10 sm:mb-14 md:mb-16 max-w-5xl mx-auto backdrop-blur-md"
             style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder }}
           >
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
@@ -141,7 +141,7 @@ export const AboutSection: React.FC = () => {
             </p>
           </FadeIn>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 max-w-4xl mx-auto">
             {/* Founder 1: Sheiden Borges */}
             <FadeIn delay={0.1} direction="up">
               <SpotlightCard
