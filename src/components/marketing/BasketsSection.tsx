@@ -96,7 +96,10 @@ export const BasketsSection: React.FC = () => {
                             <span style={{ color: colors.textPrimary }}>{item.label} ({item.ticker})</span>
                             <span className="font-mono" style={{ color: colors.textSecondary }}>{item.pct}%</span>
                           </div>
-                          <div className="h-1.5 w-full rounded-full overflow-hidden" style={{ backgroundColor: colors.surface }}>
+                          <div
+                            className="h-1.5 w-full rounded-full overflow-hidden"
+                            style={{ backgroundColor: themeMode === 'light' ? '#E2E8F0' : colors.surface }}
+                          >
                             <motion.div
                               className="h-full rounded-full"
                               initial={{ width: 0 }}
@@ -105,6 +108,7 @@ export const BasketsSection: React.FC = () => {
                               transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
                               style={{
                                 backgroundColor: getAssetBarColor(item.ticker, themeMode),
+                                boxShadow: item.ticker === 'ETH' && themeMode === 'light' ? '0 0 0 1px rgba(15, 23, 42, 0.15)' : undefined,
                               }}
                             />
                           </div>

@@ -705,7 +705,13 @@ export const DashboardScreen: React.FC = () => {
                   </div>
 
                   {/* Stacked Proportional Distribution Bar */}
-                  <div className="h-3 w-full rounded-full overflow-hidden flex gap-1 p-0.5" style={{ backgroundColor: colors.card }}>
+                  <div
+                    className="h-3 w-full rounded-full overflow-hidden flex gap-1 p-0.5"
+                    style={{
+                      backgroundColor: themeMode === 'light' ? '#E2E8F0' : colors.card,
+                      border: themeMode === 'light' ? '1px solid #CBD5E1' : 'none',
+                    }}
+                  >
                     {holdingsList.map((item) => {
                       const pct = tabMetrics.marketValue > 0 ? (item.inrValue / tabMetrics.marketValue) * 100 : 0;
                       if (pct <= 0) return null;
@@ -716,6 +722,7 @@ export const DashboardScreen: React.FC = () => {
                           style={{
                             width: `${pct}%`,
                             backgroundColor: item.meta.color,
+                            boxShadow: item.coin === 'ETH' && themeMode === 'light' ? '0 0 0 1px rgba(15, 23, 42, 0.15)' : undefined,
                           }}
                           title={`${item.label} (${item.coin}): ${pct.toFixed(1)}%`}
                         />
@@ -729,7 +736,13 @@ export const DashboardScreen: React.FC = () => {
                       const pct = tabMetrics.marketValue > 0 ? ((item.inrValue / tabMetrics.marketValue) * 100).toFixed(1) : '0.0';
                       return (
                         <div key={item.coin} className="flex items-center gap-1.5">
-                          <span className="w-2.5 h-2.5 rounded-full inline-block" style={{ backgroundColor: item.meta.color }} />
+                          <span
+                            className="w-2.5 h-2.5 rounded-full inline-block"
+                            style={{
+                              backgroundColor: item.meta.color,
+                              boxShadow: item.coin === 'ETH' && themeMode === 'light' ? '0 0 0 1px rgba(15, 23, 42, 0.25)' : undefined,
+                            }}
+                          />
                           <span className="font-bold" style={{ color: colors.textPrimary }}>{item.coin}:</span>
                           <span style={{ color: colors.textSecondary }}>{pct}%</span>
                         </div>

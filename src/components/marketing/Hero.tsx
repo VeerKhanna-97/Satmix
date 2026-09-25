@@ -4,6 +4,7 @@ import { useApp } from '../../context/AppContext';
 import { initReferralCapture, getStoredReferralCode } from '../../utils/referral';
 import { SpotlightCard, BlurText, Magnet, FadeIn, CountUp } from '../ui';
 import { BasketCurrencyIcons } from '../common/BasketCurrencyIcons';
+import { getAssetBarColor } from '../../theme/colors';
 
 export const Hero: React.FC = () => {
   const { colors, themeMode, setViewMode, setAuthSubView, isAuthenticated, triggerConfetti } = useApp();
@@ -604,9 +605,12 @@ export const Hero: React.FC = () => {
                             </div>
                           </div>
                           {/* Visual allocation bar */}
-                          <div className="mt-2.5 h-1.5 w-full rounded-full overflow-hidden flex bg-white/5">
-                            <div className="h-full rounded-l-full" style={{ width: '85%', backgroundColor: '#26a17b' }} title="85% USDT" />
-                            <div className="h-full rounded-r-full" style={{ width: '15%', backgroundColor: '#f7931b' }} title="15% BTC" />
+                          <div
+                            className="mt-2.5 h-1.5 w-full rounded-full overflow-hidden flex"
+                            style={{ backgroundColor: themeMode === 'light' ? '#E2E8F0' : 'rgba(255, 255, 255, 0.08)' }}
+                          >
+                            <div className="h-full rounded-l-full" style={{ width: '85%', backgroundColor: getAssetBarColor('USDT', themeMode) }} title="85% USDT" />
+                            <div className="h-full rounded-r-full" style={{ width: '15%', backgroundColor: getAssetBarColor('BTC', themeMode) }} title="15% BTC" />
                           </div>
                         </div>
 
@@ -635,10 +639,21 @@ export const Hero: React.FC = () => {
                             </div>
                           </div>
                           {/* Visual allocation bar */}
-                          <div className="mt-2.5 h-1.5 w-full rounded-full overflow-hidden flex bg-white/5">
-                            <div className="h-full rounded-l-full" style={{ width: '70%', backgroundColor: '#f7931b' }} title="70% BTC" />
-                            <div className="h-full" style={{ width: '20%', backgroundColor: themeMode === 'light' ? '#0F172A' : '#ffffff' }} title="20% ETH" />
-                            <div className="h-full rounded-r-full" style={{ width: '10%', backgroundColor: '#9945fe' }} title="10% SOL" />
+                          <div
+                            className="mt-2.5 h-1.5 w-full rounded-full overflow-hidden flex"
+                            style={{ backgroundColor: themeMode === 'light' ? '#E2E8F0' : 'rgba(255, 255, 255, 0.08)' }}
+                          >
+                            <div className="h-full rounded-l-full" style={{ width: '70%', backgroundColor: getAssetBarColor('BTC', themeMode) }} title="70% BTC" />
+                            <div
+                              className="h-full"
+                              style={{
+                                width: '20%',
+                                backgroundColor: getAssetBarColor('ETH', themeMode),
+                                boxShadow: themeMode === 'light' ? '0 0 0 1px rgba(15, 23, 42, 0.15)' : undefined,
+                              }}
+                              title="20% ETH"
+                            />
+                            <div className="h-full rounded-r-full" style={{ width: '10%', backgroundColor: getAssetBarColor('SOL', themeMode) }} title="10% SOL" />
                           </div>
                         </div>
 
