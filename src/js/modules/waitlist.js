@@ -25,6 +25,12 @@ export function initWaitlist() {
         return;
       }
       
+      const cleanPhone = phone.replace(/\D/g, '').slice(0, 10);
+      if (cleanPhone.length !== 10 || !/^[6-9]\d{9}$/.test(cleanPhone)) {
+        showToast('Validation Error', 'Please enter a valid 10-digit Indian mobile number.', 'error');
+        return;
+      }
+      
       // Cache prefill credentials for seamless WebApp signup
       try {
         sessionStorage.setItem('satmix_prefill_name', name);

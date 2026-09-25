@@ -94,9 +94,26 @@ export const AuthModal: React.FC = () => {
         setErrorMsg('Please enter your registered email address or mobile number');
         return;
       }
+      const cleanIdent = identifier.trim().replace(/\s+/g, '');
+      if (/^\d+$/.test(cleanIdent)) {
+        if (cleanIdent.length !== 10) {
+          setErrorMsg('Mobile number must be exactly 10 digits');
+          return;
+        }
+      }
     } else {
       if (name.trim().length < 2) {
         setErrorMsg('Please enter your legal full name');
+        return;
+      }
+
+      const cleanPhoneDigits = phone.replace(/\D/g, '').slice(0, 10);
+      if (!cleanPhoneDigits || cleanPhoneDigits.length !== 10) {
+        setErrorMsg('Please enter your 10-digit mobile number (exactly 10 digits required)');
+        return;
+      }
+      if (!/^[6-9]\d{9}$/.test(cleanPhoneDigits)) {
+        setErrorMsg('Please enter a valid Indian mobile number starting with 6, 7, 8, or 9');
         return;
       }
 
@@ -104,12 +121,6 @@ export const AuthModal: React.FC = () => {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(cleanEmail)) {
         setErrorMsg('Please enter a valid email address');
-        return;
-      }
-
-      const cleanPhoneDigits = phone.replace(/\D/g, '').slice(-10);
-      if (phone && (cleanPhoneDigits.length !== 10 || !/^[6-9]\d{9}$/.test(cleanPhoneDigits))) {
-        setErrorMsg('Please enter a valid 10-digit Indian mobile number');
         return;
       }
 
@@ -145,7 +156,7 @@ export const AuthModal: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 py-12 relative overflow-hidden" style={{ backgroundColor: colors.bg }}>
+    <div className="min-h-screen flex items-center justify-center p-3 sm:p-4 py-4 sm:py-6 relative overflow-x-hidden" style={{ backgroundColor: colors.bg }}>
       {/* Background glow */}
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] rounded-full blur-[140px] pointer-events-none opacity-20 animate-ambient-glow"
@@ -154,29 +165,33 @@ export const AuthModal: React.FC = () => {
 
       <SpotlightCard
         spotlightColor={colors.accentTint}
-        className="w-full max-w-md rounded-3xl border shadow-2xl p-6 sm:p-8 backdrop-blur-2xl relative z-10 animate-fade-in"
+        className={`w-full ${isLogin ? 'max-w-md sm:max-w-lg' : 'max-w-xl sm:max-w-2xl'} rounded-3xl border shadow-2xl p-5 sm:p-7 backdrop-blur-2xl relative z-10 transition-all duration-300 animate-fade-in`}
         style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
       >
         {/* Top Navigation Back */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-3 sm:mb-4">
           <button
             onClick={() => setViewMode('marketing')}
-            className="text-xs font-semibold hover:opacity-80 transition-opacity"
+            className="text-xs font-semibold hover:opacity-80 transition-opacity flex items-center gap-1.5"
             style={{ color: colors.textSecondary }}
           >
-            ← Back to Website
+            <span>← Back to Website</span>
           </button>
+          <div className="flex items-center gap-1.5 text-[10px] font-mono px-2 py-0.5 rounded border" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim, color: colors.textTertiary }}>
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+            <span>DPDP & KYC Ready</span>
+          </div>
         </div>
 
         {/* Brand Header */}
-        <div className="text-center mb-6">
-          <div className="w-12 h-12 rounded-2xl mx-auto mb-3 overflow-hidden border p-0.5" style={{ borderColor: colors.borderDim }}>
-            <img src="/assets/images/satmix-logo.jpg" alt="Satmix Logo" className="w-full h-full object-cover rounded-xl" />
+        <div className="text-center mb-4">
+          <div className="w-10 h-10 rounded-xl mx-auto mb-2 overflow-hidden border p-0.5 shadow-sm" style={{ borderColor: colors.borderDim }}>
+            <img src="/assets/images/satmix-logo.jpg" alt="Satmix Logo" className="w-full h-full object-cover rounded-lg" />
           </div>
-          <h2 className="text-2xl font-extrabold tracking-tight" style={{ color: colors.textPrimary }}>
+          <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight" style={{ color: colors.textPrimary }}>
             {isLogin ? 'Welcome Back to Satmix' : 'Create Your Satmix Account'}
           </h2>
-          <p className="text-xs mt-1" style={{ color: colors.textSecondary }}>
+          <p className="text-xs mt-0.5" style={{ color: colors.textSecondary }}>
             {isLogin
               ? 'Enter your registered email address & password'
               : 'Sign up to start automated daily crypto micro-investing'}
@@ -184,13 +199,13 @@ export const AuthModal: React.FC = () => {
         </div>
 
         {/* Tab Switcher */}
-        <div className="flex p-1 rounded-xl mb-6 relative" style={{ backgroundColor: colors.surface }}>
+        <div className="flex p-1 rounded-xl mb-4 relative" style={{ backgroundColor: colors.surface }}>
           <button
             onClick={() => {
               setAuthSubView('login');
               setErrorMsg('');
             }}
-            className="flex-1 py-2 text-xs font-bold rounded-lg transition-all relative z-10"
+            className="flex-1 py-1.5 text-xs font-bold rounded-lg transition-all relative z-10"
             style={{ color: isLogin ? colors.textPrimary : colors.textSecondary }}
           >
             {isLogin && (
@@ -208,7 +223,7 @@ export const AuthModal: React.FC = () => {
               setAuthSubView('signup');
               setErrorMsg('');
             }}
-            className="flex-1 py-2 text-xs font-bold rounded-lg transition-all relative z-10"
+            className="flex-1 py-1.5 text-xs font-bold rounded-lg transition-all relative z-10"
             style={{ color: !isLogin ? colors.textPrimary : colors.textSecondary }}
           >
             {!isLogin && (
@@ -226,7 +241,7 @@ export const AuthModal: React.FC = () => {
         {/* Error Alert */}
         {errorMsg && (
           <div
-            className="p-3 rounded-xl mb-5 flex items-start gap-2.5 text-xs font-medium border"
+            className="p-2.5 rounded-xl mb-3.5 flex items-start gap-2 text-xs font-medium border"
             style={{
               backgroundColor: colors.redTint,
               borderColor: colors.semanticDanger,
@@ -239,40 +254,51 @@ export const AuthModal: React.FC = () => {
         )}
 
         {/* Auth Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit}>
           <AnimatePresence mode="wait">
             {!isLogin ? (
               <motion.div
                 key="signup-fields"
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className="space-y-4 overflow-hidden"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.18 }}
+                className="grid grid-cols-1 sm:grid-cols-2 gap-3"
               >
-                {/* Full Name */}
+                {/* Full Legal Name */}
                 <div>
-                  <label className="block text-[11px] font-bold uppercase tracking-wider mb-1.5" style={{ color: colors.textTertiary }}>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider mb-1" style={{ color: colors.textTertiary }}>
                     Full Legal Name
                   </label>
                   <div className="relative">
-                    <User className="w-4 h-4 absolute left-3.5 top-3.5" style={{ color: colors.textTertiary }} />
+                    <User className="w-4 h-4 absolute left-3 top-3" style={{ color: colors.textTertiary }} />
                     <input
                       type="text"
                       required
                       placeholder="Arjun Sharma"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="w-full pl-10 pr-4 py-3 rounded-xl text-sm border focus:outline-none focus:ring-1 transition-all"
+                      className="w-full h-10 pl-9 pr-3 py-2 rounded-xl text-xs sm:text-sm border focus:outline-none focus:ring-1 transition-all"
                       style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textPrimary }}
                     />
                   </div>
                 </div>
 
-                {/* Mobile Number */}
+                {/* Mobile Number (Exactly 10 Digits) */}
                 <div>
-                  <label className="block text-[11px] font-bold uppercase tracking-wider mb-1.5" style={{ color: colors.textTertiary }}>
-                    Mobile Number (for UPI AutoPay linking)
-                  </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-[11px] font-bold uppercase tracking-wider" style={{ color: colors.textTertiary }}>
+                      Mobile Number
+                    </label>
+                    <span
+                      className="text-[10px] font-mono font-semibold"
+                      style={{
+                        color: phone.length === 10 ? colors.semanticSuccess : colors.textTertiary,
+                      }}
+                    >
+                      {phone.length === 10 ? '✓ 10 Digits' : `${phone.length}/10 digits`}
+                    </span>
+                  </div>
                   <div className="relative flex items-center">
                     <div
                       className="absolute left-3 flex items-center gap-1 text-xs font-mono font-bold pr-2 border-r"
@@ -283,108 +309,85 @@ export const AuthModal: React.FC = () => {
                     </div>
                     <input
                       type="tel"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
                       required
                       maxLength={10}
                       placeholder="98765 43210"
                       value={phone}
+                      onKeyDown={(e) => {
+                        if (!/[0-9]/.test(e.key) && !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Enter'].includes(e.key)) {
+                          e.preventDefault();
+                        }
+                      }}
                       onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                      className="w-full pl-20 pr-4 py-3 rounded-xl text-sm font-mono border focus:outline-none focus:ring-1 transition-all"
-                      style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textPrimary }}
+                      className="w-full h-10 pl-20 pr-3 py-2 rounded-xl text-xs sm:text-sm font-mono border focus:outline-none focus:ring-1 transition-all"
+                      style={{
+                        backgroundColor: colors.surface,
+                        borderColor: phone.length === 10 ? 'rgba(16, 185, 129, 0.5)' : colors.cardBorder,
+                        color: colors.textPrimary,
+                      }}
                     />
                   </div>
                 </div>
 
-                {/* Email Address */}
-                <div>
-                  <label className="block text-[11px] font-bold uppercase tracking-wider mb-1.5" style={{ color: colors.textTertiary }}>
+                {/* Email Address (Full Width across 2 columns) */}
+                <div className="sm:col-span-2">
+                  <label className="block text-[11px] font-bold uppercase tracking-wider mb-1" style={{ color: colors.textTertiary }}>
                     Email Address
                   </label>
                   <div className="relative">
-                    <Mail className="w-4 h-4 absolute left-3.5 top-3.5" style={{ color: colors.textTertiary }} />
+                    <Mail className="w-4 h-4 absolute left-3 top-3" style={{ color: colors.textTertiary }} />
                     <input
                       type="email"
                       required
                       placeholder="arjun@example.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full pl-10 pr-4 py-3 rounded-xl text-sm border focus:outline-none focus:ring-1 transition-all"
+                      className="w-full h-10 pl-9 pr-3 py-2 rounded-xl text-xs sm:text-sm border focus:outline-none focus:ring-1 transition-all"
                       style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textPrimary }}
                     />
                   </div>
                 </div>
-              </motion.div>
-            ) : (
-              <motion.div
-                key="login-fields"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
-                <label className="block text-[11px] font-bold uppercase tracking-wider mb-1.5" style={{ color: colors.textTertiary }}>
-                  Email Address or Mobile Number
-                </label>
-                <div className="relative">
-                  <Mail className="w-4 h-4 absolute left-3.5 top-3.5" style={{ color: colors.textTertiary }} />
-                  <input
-                    type="text"
-                    required
-                    placeholder="arjun@example.com or 9876543210"
-                    value={identifier}
-                    onChange={(e) => setIdentifier(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 rounded-xl text-sm border focus:outline-none focus:ring-1 transition-all"
-                    style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textPrimary }}
-                  />
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
 
-          {/* Password */}
-          <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <label className="block text-[11px] font-bold uppercase tracking-wider" style={{ color: colors.textTertiary }}>
-                Password (min 6 characters)
-              </label>
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="text-[11px] hover:opacity-80 transition-opacity flex items-center gap-1"
-                style={{ color: colors.textSecondary }}
-              >
-                {showPassword ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
-                <span>{showPassword ? 'Hide' : 'Show'}</span>
-              </button>
-            </div>
-
-            <div className="relative">
-              <Lock className="w-4 h-4 absolute left-3.5 top-3.5" style={{ color: colors.textTertiary }} />
-              <input
-                type={showPassword ? 'text' : 'password'}
-                required
-                minLength={6}
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 rounded-xl text-sm border focus:outline-none focus:ring-1 transition-all"
-                style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textPrimary }}
-              />
-            </div>
-          </div>
-
-          <AnimatePresence mode="wait">
-            {!isLogin && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className="overflow-hidden space-y-4"
-              >
+                {/* Password */}
                 <div>
-                  <label className="block text-[11px] font-bold uppercase tracking-wider mb-1.5" style={{ color: colors.textTertiary }}>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-[11px] font-bold uppercase tracking-wider" style={{ color: colors.textTertiary }}>
+                      Password (min 6)
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="text-[10px] hover:opacity-80 transition-opacity flex items-center gap-1"
+                      style={{ color: colors.textSecondary }}
+                    >
+                      {showPassword ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
+                      <span>{showPassword ? 'Hide' : 'Show'}</span>
+                    </button>
+                  </div>
+                  <div className="relative">
+                    <Lock className="w-4 h-4 absolute left-3 top-3" style={{ color: colors.textTertiary }} />
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      required
+                      minLength={6}
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="w-full h-10 pl-9 pr-3 py-2 rounded-xl text-xs sm:text-sm border focus:outline-none focus:ring-1 transition-all"
+                      style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textPrimary }}
+                    />
+                  </div>
+                </div>
+
+                {/* Confirm Password */}
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider mb-1" style={{ color: colors.textTertiary }}>
                     Confirm Password
                   </label>
                   <div className="relative">
-                    <Lock className="w-4 h-4 absolute left-3.5 top-3.5" style={{ color: colors.textTertiary }} />
+                    <Lock className="w-4 h-4 absolute left-3 top-3" style={{ color: colors.textTertiary }} />
                     <input
                       type={showPassword ? 'text' : 'password'}
                       required
@@ -392,14 +395,14 @@ export const AuthModal: React.FC = () => {
                       placeholder="••••••••"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="w-full pl-10 pr-4 py-3 rounded-xl text-sm border focus:outline-none focus:ring-1 transition-all"
+                      className="w-full h-10 pl-9 pr-3 py-2 rounded-xl text-xs sm:text-sm border focus:outline-none focus:ring-1 transition-all"
                       style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textPrimary }}
                     />
                   </div>
                 </div>
 
                 {/* Terms and Privacy Consent */}
-                <div className="flex items-start gap-2 pt-1">
+                <div className="sm:col-span-2 flex items-start gap-2 pt-0.5">
                   <input
                     id="auth-consent"
                     type="checkbox"
@@ -429,25 +432,103 @@ export const AuthModal: React.FC = () => {
                     (DPDP Act 2023).
                   </label>
                 </div>
+
+                {/* Submit Button */}
+                <div className="sm:col-span-2 pt-1">
+                  <button
+                    type="submit"
+                    disabled={loading || phone.length !== 10}
+                    className="w-full h-11 px-6 rounded-xl font-bold text-xs sm:text-sm tracking-wide shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] transition-all hover:brightness-105 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none disabled:active:scale-100 flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                    style={{ backgroundColor: colors.primary, color: colors.primaryText }}
+                  >
+                    {loading ? (
+                      <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <>
+                        <span>Create Account & Start</span>
+                        <ArrowRight className="w-4 h-4 flex-shrink-0" />
+                      </>
+                    )}
+                  </button>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="login-fields"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.18 }}
+                className="space-y-3.5"
+              >
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider mb-1" style={{ color: colors.textTertiary }}>
+                    Email Address or Mobile Number
+                  </label>
+                  <div className="relative">
+                    <Mail className="w-4 h-4 absolute left-3 top-3" style={{ color: colors.textTertiary }} />
+                    <input
+                      type="text"
+                      required
+                      placeholder="arjun@example.com or 9876543210"
+                      value={identifier}
+                      onChange={(e) => setIdentifier(e.target.value)}
+                      className="w-full h-10 pl-9 pr-3 py-2 rounded-xl text-xs sm:text-sm border focus:outline-none focus:ring-1 transition-all"
+                      style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textPrimary }}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-[11px] font-bold uppercase tracking-wider" style={{ color: colors.textTertiary }}>
+                      Password
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="text-[10px] hover:opacity-80 transition-opacity flex items-center gap-1"
+                      style={{ color: colors.textSecondary }}
+                    >
+                      {showPassword ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
+                      <span>{showPassword ? 'Hide' : 'Show'}</span>
+                    </button>
+                  </div>
+                  <div className="relative">
+                    <Lock className="w-4 h-4 absolute left-3 top-3" style={{ color: colors.textTertiary }} />
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      required
+                      minLength={6}
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="w-full h-10 pl-9 pr-3 py-2 rounded-xl text-xs sm:text-sm border focus:outline-none focus:ring-1 transition-all"
+                      style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textPrimary }}
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-1">
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full h-11 px-6 rounded-xl font-bold text-xs sm:text-sm tracking-wide shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] transition-all hover:brightness-105 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none disabled:active:scale-100 flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                    style={{ backgroundColor: colors.primary, color: colors.primaryText }}
+                  >
+                    {loading ? (
+                      <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <>
+                        <span>Sign In to Web App</span>
+                        <ArrowRight className="w-4 h-4 flex-shrink-0" />
+                      </>
+                    )}
+                  </button>
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full h-12 px-6 rounded-xl font-bold text-sm tracking-wide shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] transition-all hover:brightness-105 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none disabled:active:scale-100 flex items-center justify-center gap-2 mt-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
-            style={{ backgroundColor: colors.primary, color: colors.primaryText }}
-          >
-            {loading ? (
-              <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-            ) : (
-              <>
-                <span>{isLogin ? 'Sign In to Web App' : 'Create Account & Start'}</span>
-                <ArrowRight className="w-4 h-4 flex-shrink-0" />
-              </>
-            )}
-          </button>
         </form>
       </SpotlightCard>
     </div>

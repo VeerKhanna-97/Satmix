@@ -40,8 +40,22 @@ export const Hero: React.FC = () => {
     e.preventDefault();
     setSubmitError(null);
 
-    if (!name.trim() || !email.trim()) {
+    const trimmedName = name.trim();
+    const trimmedEmail = email.trim();
+    const cleanPhone = phone.replace(/\D/g, '').slice(0, 10);
+
+    if (!trimmedName || !trimmedEmail) {
       setSubmitError('Please enter your full name and email address.');
+      return;
+    }
+
+    if (cleanPhone.length !== 10) {
+      setSubmitError('Mobile number must be exactly 10 digits.');
+      return;
+    }
+
+    if (!/^[6-9]\d{9}$/.test(cleanPhone)) {
+      setSubmitError('Please enter a valid Indian mobile number starting with 6, 7, 8, or 9.');
       return;
     }
 
@@ -50,9 +64,7 @@ export const Hero: React.FC = () => {
       return;
     }
 
-    const trimmedName = name.trim();
-    const trimmedEmail = email.trim();
-    const trimmedPhone = phone.trim();
+    const trimmedPhone = cleanPhone;
 
     // Cache prefill credentials for instant zero-friction WebApp signup
     try {
@@ -321,21 +333,46 @@ export const Hero: React.FC = () => {
                             </div>
 
                             <div>
-                              <label className="block text-[11px] font-bold uppercase tracking-wider mb-1" style={{ color: colors.textTertiary }}>
-                                Phone Number <span className="text-gray-500 font-normal lowercase">(optional)</span>
-                              </label>
-                              <div className="relative">
-                                <Phone className="w-4 h-4 absolute left-3 top-3" style={{ color: colors.textTertiary }} />
+                              <div className="flex items-center justify-between mb-1">
+                                <label className="block text-[11px] font-bold uppercase tracking-wider" style={{ color: colors.textTertiary }}>
+                                  Mobile Number
+                                </label>
+                                <span
+                                  className="text-[10px] font-mono font-semibold"
+                                  style={{
+                                    color: phone.length === 10 ? colors.semanticSuccess : colors.textTertiary,
+                                  }}
+                                >
+                                  {phone.length === 10 ? '✓ 10 Digits' : `${phone.length}/10 digits`}
+                                </span>
+                              </div>
+                              <div className="relative flex items-center">
+                                <div
+                                  className="absolute left-3 flex items-center gap-1 text-xs font-mono font-bold pr-2 border-r"
+                                  style={{ borderColor: colors.borderDim, color: colors.textSecondary }}
+                                >
+                                  <Phone className="w-3.5 h-3.5 text-amber-400" />
+                                  <span>+91</span>
+                                </div>
                                 <input
                                   type="tel"
+                                  inputMode="numeric"
+                                  pattern="[0-9]*"
+                                  required
+                                  maxLength={10}
                                   value={phone}
-                                  onChange={(e) => setPhone(e.target.value)}
-                                  placeholder="+91 98765 43210"
+                                  onKeyDown={(e) => {
+                                    if (!/[0-9]/.test(e.key) && !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Enter'].includes(e.key)) {
+                                      e.preventDefault();
+                                    }
+                                  }}
+                                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                                  placeholder="98765 43210"
                                   disabled={isSubmitting}
-                                  className="w-full h-10 pl-9 pr-3 py-2 rounded-xl text-sm border focus:outline-none focus:ring-1 transition-all disabled:opacity-50"
+                                  className="w-full h-10 pl-20 pr-3 py-2 rounded-xl text-xs sm:text-sm font-mono border focus:outline-none focus:ring-1 transition-all disabled:opacity-50"
                                   style={{
                                     backgroundColor: colors.surface,
-                                    borderColor: colors.cardBorder,
+                                    borderColor: phone.length === 10 ? 'rgba(16, 185, 129, 0.5)' : colors.cardBorder,
                                     color: colors.textPrimary,
                                   }}
                                 />
@@ -376,7 +413,7 @@ export const Hero: React.FC = () => {
 
                             <button
                               type="submit"
-                              disabled={isSubmitting || !consentAgreed}
+                              disabled={isSubmitting || !consentAgreed || phone.replace(/\D/g, '').length !== 10}
                               className="w-full h-10 sm:h-11 rounded-xl font-semibold text-xs sm:text-sm tracking-[-0.01em] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] transition-[transform,background-color,box-shadow,opacity] duration-150 ease-out active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none disabled:active:scale-100 flex items-center justify-center gap-2 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50 mt-1"
                               style={{ backgroundColor: colors.primary, color: colors.primaryText }}
                             >

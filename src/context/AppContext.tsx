@@ -373,7 +373,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const signUp = useCallback(
     async (name: string, email: string, password = '', phone = ''): Promise<{ success: boolean; error?: string }> => {
       const cleanEmail = email.trim().toLowerCase();
-      const cleanDigits = phone ? phone.replace(/\D/g, '').slice(-10) : '';
+      const cleanDigits = phone ? phone.replace(/\D/g, '').slice(0, 10) : '';
+
+      if (!cleanDigits || cleanDigits.length !== 10) {
+        return {
+          success: false,
+          error: 'A valid 10-digit mobile number is required to register.',
+        };
+      }
 
       // Check if email or phone already registered locally
       const exists = prototypeState.users.some(
