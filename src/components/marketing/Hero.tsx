@@ -3,6 +3,7 @@ import { Shield, ArrowRight, CheckCircle2, Rocket, User, Mail, Phone, Layers, In
 import { useApp } from '../../context/AppContext';
 import { initReferralCapture, getStoredReferralCode } from '../../utils/referral';
 import { SpotlightCard, BlurText, Magnet, FadeIn, CountUp } from '../ui';
+import { BasketCurrencyIcons } from '../common/BasketCurrencyIcons';
 
 export const Hero: React.FC = () => {
   const { colors, setViewMode, setAuthSubView, isAuthenticated, triggerConfetti } = useApp();
@@ -552,9 +553,7 @@ export const Hero: React.FC = () => {
                         >
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2.5">
-                              <div className="p-2 rounded-xl" style={{ backgroundColor: colors.mintTint, color: colors.semanticSuccess }}>
-                                <Shield className="w-4 h-4" />
-                              </div>
+                              <BasketCurrencyIcons basketId="stable" size="md" />
                               <div>
                                 <div className="flex items-center gap-1.5">
                                   <span className="font-bold text-xs" style={{ color: colors.textPrimary }}>Stable Basket</span>
@@ -590,9 +589,7 @@ export const Hero: React.FC = () => {
                         >
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2.5">
-                              <div className="p-2 rounded-xl" style={{ backgroundColor: colors.accentTint, color: colors.accent }}>
-                                <Rocket className="w-4 h-4" />
-                              </div>
+                              <BasketCurrencyIcons basketId="growth" size="md" />
                               <div>
                                 <div className="flex items-center gap-1.5">
                                   <span className="font-bold text-xs" style={{ color: colors.textPrimary }}>Growth Basket</span>

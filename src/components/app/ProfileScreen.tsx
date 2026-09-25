@@ -29,6 +29,7 @@ import { generateTaxStatement, downloadCsvFile } from '../../utils/taxGenerator'
 import { ACHIEVEMENTS } from '../../data/mockData';
 import { SpotlightCard, CountUp, FadeIn, ShinyText } from '../ui';
 import { motion, AnimatePresence } from 'motion/react';
+import { BasketCurrencyIcons } from '../common/BasketCurrencyIcons';
 
 export const ProfileScreen: React.FC = () => {
   const {
@@ -457,7 +458,7 @@ export const ProfileScreen: React.FC = () => {
             <div>
               <div className="flex items-center justify-between mb-1">
                 <div className="flex items-center gap-2">
-                  <Shield className="w-4 h-4 text-emerald-500" />
+                  <BasketCurrencyIcons basketId="stable" size="sm" />
                   <span className="font-bold text-xs" style={{ color: colors.textPrimary }}>Stable Basket</span>
                 </div>
                 <span
@@ -521,7 +522,7 @@ export const ProfileScreen: React.FC = () => {
             <div>
               <div className="flex items-center justify-between mb-1">
                 <div className="flex items-center gap-2">
-                  <Rocket className="w-4 h-4" style={{ color: colors.accent }} />
+                  <BasketCurrencyIcons basketId="growth" size="sm" />
                   <span className="font-bold text-xs" style={{ color: colors.textPrimary }}>Growth Basket</span>
                 </div>
                 <span

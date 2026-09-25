@@ -37,6 +37,7 @@ import { MiniLineChart } from '../common/MiniLineChart';
 import { DepositModal } from '../payment/DepositModal';
 import { WithdrawModal } from '../payment/WithdrawModal';
 import { getBasketById } from '../../data/baskets';
+import { BasketCurrencyIcons } from '../common/BasketCurrencyIcons';
 import { EDUCATIONAL_GUIDES } from '../../data/mockData';
 import { StreakWeeklyTracker } from './StreakWeeklyTracker';
 import { generateChartSeries, generateAssetWeekSeries, ChartTimeframe } from '../../utils/chartSeries';
@@ -933,7 +934,7 @@ export const DashboardScreen: React.FC = () => {
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Shield className="w-4 h-4" style={{ color: isStableConfigured ? colors.semanticSuccess : colors.textTertiary }} />
+                <BasketCurrencyIcons basketId="stable" size="sm" />
                 <h3 className="font-bold text-sm" style={{ color: colors.textPrimary }}>Stable Basket Habit</h3>
               </div>
               <span
@@ -1013,7 +1014,7 @@ export const DashboardScreen: React.FC = () => {
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Zap className="w-4 h-4" style={{ color: isGrowthConfigured ? colors.accent : colors.textTertiary }} />
+                <BasketCurrencyIcons basketId="growth" size="sm" />
                 <h3 className="font-bold text-sm" style={{ color: colors.textPrimary }}>Growth Basket Habit</h3>
               </div>
               <span

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, ArrowDownLeft, ShieldCheck, CheckCircle2, Shield, Rocket, Sparkles } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { BasketId } from '../../types';
+import { BasketCurrencyIcons } from '../common/BasketCurrencyIcons';
 
 interface DepositModalProps {
   isOpen: boolean;
@@ -84,7 +85,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
                 >
                   <div className="flex items-center justify-between mb-1">
                     <div className="flex items-center gap-1.5">
-                      <Shield className="w-3.5 h-3.5 text-emerald-500" />
+                      <BasketCurrencyIcons basketId="stable" size="xs" />
                       <span className="font-bold text-xs" style={{ color: colors.textPrimary }}>Stable Basket</span>
                     </div>
                     {targetBasket === 'stable' && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />}
@@ -103,7 +104,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
                 >
                   <div className="flex items-center justify-between mb-1">
                     <div className="flex items-center gap-1.5">
-                      <Rocket className="w-3.5 h-3.5" style={{ color: colors.accent }} />
+                      <BasketCurrencyIcons basketId="growth" size="xs" />
                       <span className="font-bold text-xs" style={{ color: colors.textPrimary }}>Growth Basket</span>
                     </div>
                     {targetBasket === 'growth' && <CheckCircle2 className="w-3.5 h-3.5" style={{ color: colors.accent }} />}

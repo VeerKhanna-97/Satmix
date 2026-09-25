@@ -9,6 +9,7 @@ import {
 import { useApp } from '../../context/AppContext';
 import { BasketId } from '../../types';
 import { BASKETS, getBasketById } from '../../data/baskets';
+import { BasketCurrencyIcons } from '../common/BasketCurrencyIcons';
 import { SpotlightCard, ShinyText } from '../ui';
 import { motion } from 'motion/react';
 
@@ -73,15 +74,7 @@ export const RecommendScreen: React.FC<RecommendScreenProps> = ({
         >
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
-              <div
-                className="p-3 rounded-2xl"
-                style={{
-                  backgroundColor: colors.accentTint,
-                  color: colors.accent,
-                }}
-              >
-                {selectedId === 'stable' ? <Shield className="w-6 h-6" /> : <TrendingUp className="w-6 h-6" />}
-              </div>
+              <BasketCurrencyIcons basketId={selectedId} size="lg" />
               <div>
                 <div className="flex items-center gap-2">
                   <span

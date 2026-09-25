@@ -4,6 +4,7 @@ import { useApp } from '../../context/AppContext';
 import { BASKETS } from '../../data/baskets';
 import { BasketId } from '../../types';
 import { SpotlightCard, ShinyText, FadeIn } from '../ui';
+import { BasketCurrencyIcons } from '../common/BasketCurrencyIcons';
 import { motion } from 'motion/react';
 
 export const BasketsScreen: React.FC = () => {
@@ -81,15 +82,7 @@ export const BasketsScreen: React.FC = () => {
                   {/* Header */}
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      <div
-                        className="p-3 rounded-2xl"
-                        style={{
-                          backgroundColor: isStable ? colors.mintTint : colors.accentTint,
-                          color: isStable ? colors.semanticSuccess : colors.accent,
-                        }}
-                      >
-                        {isStable ? <Shield className="w-6 h-6" /> : <Rocket className="w-6 h-6" />}
-                      </div>
+                      <BasketCurrencyIcons basketId={basket.id} size="lg" />
                       <div>
                         <span
                           className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md border font-mono"

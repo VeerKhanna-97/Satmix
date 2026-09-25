@@ -2,6 +2,7 @@ import React, { useState, useMemo, useCallback } from 'react';
 import { Shield, Rocket, ArrowRight } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { SpotlightCard, CountUp, Magnet, FadeIn } from '../ui';
+import { BasketCurrencyIcons } from '../common/BasketCurrencyIcons';
 
 export const CalculatorSection: React.FC = () => {
   const { colors, setViewMode, setAuthSubView, isAuthenticated } = useApp();
@@ -86,7 +87,7 @@ export const CalculatorSection: React.FC = () => {
                       }}
                     >
                       <div className="flex items-center gap-1.5 mb-1">
-                        <Shield className="w-4 h-4 text-emerald-500" />
+                        <BasketCurrencyIcons basketId="stable" size="xs" />
                         <span className="font-bold text-xs" style={{ color: colors.textPrimary }}>Stable Basket</span>
                       </div>
                       <div className="flex justify-between items-baseline mt-1">
@@ -105,7 +106,7 @@ export const CalculatorSection: React.FC = () => {
                       }}
                     >
                       <div className="flex items-center gap-1.5 mb-1">
-                        <Rocket className="w-4 h-4" style={{ color: colors.accent }} />
+                        <BasketCurrencyIcons basketId="growth" size="xs" />
                         <span className="font-bold text-xs" style={{ color: colors.textPrimary }}>Growth Basket</span>
                       </div>
                       <div className="flex justify-between items-baseline mt-1">

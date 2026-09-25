@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Shield, Rocket, Sparkles, TrendingUp, Calendar, Zap, CheckCircle2, ArrowRight, Info } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { LineChart } from '../common/LineChart';
+import { BasketCurrencyIcons } from '../common/BasketCurrencyIcons';
 import { UpiMandateModal } from '../payment/UpiMandateModal';
 import { getBasketById, BASKETS } from '../../data/baskets';
 import { BasketId } from '../../types';
@@ -122,7 +123,7 @@ export const InvestScreen: React.FC = () => {
                   >
                     <div className="flex items-center justify-between mb-1">
                       <div className="flex items-center gap-2">
-                        {isStable ? <Shield className="w-4 h-4 text-emerald-400" /> : <Rocket className="w-4 h-4 text-amber-400" />}
+                        <BasketCurrencyIcons basketId={b.id} size="sm" />
                         <span className="font-bold text-sm" style={{ color: colors.textPrimary }}>{b.name}</span>
                       </div>
                       <span className="text-[10px] font-mono font-bold" style={{ color: colors.semanticSuccess }}>
