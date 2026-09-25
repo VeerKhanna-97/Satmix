@@ -120,9 +120,9 @@ export const Hero: React.FC = () => {
   return (
     <section className="relative overflow-hidden py-14 md:py-20 lg:py-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
           {/* Left Column: Heading & Value Proposition */}
-          <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
+          <div className="lg:col-span-7 space-y-6 text-center lg:text-left lg:pt-2">
             <FadeIn delay={0.1}>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1]" style={{ color: colors.textPrimary }}>
                 Put Your Crypto on Autopilot for Just{' '}
@@ -467,13 +467,14 @@ export const Hero: React.FC = () => {
               )}
 
               {/* Slide 1: 4 Steps */}
+              {/* Slide 1: 4 Steps */}
               {activeSlide === 1 && (
-                <div className="space-y-3.5 animate-fade-in">
+                <div className="space-y-4 animate-fade-in">
                   <div>
                     <h3 className="text-base font-bold" style={{ color: colors.textPrimary }}>
                       How Satmix Works
                     </h3>
-                    <p className="text-xs" style={{ color: colors.textSecondary }}>
+                    <p className="text-xs mt-0.5" style={{ color: colors.textSecondary }}>
                       Automated micro-investing in 4 simple steps.
                     </p>
                   </div>
@@ -487,40 +488,49 @@ export const Hero: React.FC = () => {
                     ].map((item) => (
                       <div
                         key={item.step}
-                        className="flex items-start gap-3 p-2.5 rounded-xl border"
+                        className="flex items-start gap-3.5 p-3 rounded-2xl border transition-colors"
                         style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}
                       >
                         <div
-                          className="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs font-mono"
+                          className="w-7 h-7 rounded-xl flex items-center justify-center font-bold text-xs font-mono flex-shrink-0"
                           style={{ backgroundColor: colors.surface, color: colors.accent, border: `1px solid ${colors.borderAccent}` }}
                         >
                           {item.step}
                         </div>
                         <div>
                           <div className="font-bold text-xs" style={{ color: colors.textPrimary }}>{item.title}</div>
-                          <div className="text-[11px]" style={{ color: colors.textSecondary }}>{item.desc}</div>
+                          <div className="text-[11px] mt-0.5" style={{ color: colors.textSecondary }}>{item.desc}</div>
                         </div>
                       </div>
                     ))}
                   </div>
+
+                  <button
+                    onClick={handleStartSaving}
+                    className="w-full h-11 rounded-xl font-semibold text-xs border transition-all duration-150 flex items-center justify-center gap-2 select-none hover:opacity-90 active:scale-[0.98]"
+                    style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.accent }}
+                  >
+                    <span>Start in 30 Seconds</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
                 </div>
               )}
 
               {/* Slide 2: Quick Strategies */}
               {activeSlide === 2 && (
-                <div className="space-y-3 animate-fade-in">
+                <div className="space-y-4 animate-fade-in">
                   <div>
                     <h3 className="text-base font-bold" style={{ color: colors.textPrimary }}>
                       Curated Baskets (V1)
                     </h3>
-                    <p className="text-xs" style={{ color: colors.textSecondary }}>
+                    <p className="text-xs mt-0.5" style={{ color: colors.textSecondary }}>
                       Two transparent baskets tailored to your risk comfort.
                     </p>
                   </div>
 
                   {/* Stable Basket Card */}
                   <div
-                    className="p-3.5 rounded-2xl border flex items-center justify-between cursor-pointer hover:border-white/30"
+                    className="p-4 rounded-2xl border flex items-center justify-between cursor-pointer transition-all duration-200 hover:border-white/30"
                     style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder }}
                     onClick={() => {
                       setAuthSubView('signup');
@@ -528,7 +538,7 @@ export const Hero: React.FC = () => {
                     }}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-xl" style={{ backgroundColor: colors.mintTint, color: colors.semanticSuccess }}>
+                      <div className="p-2.5 rounded-xl" style={{ backgroundColor: colors.mintTint, color: colors.semanticSuccess }}>
                         <Shield className="w-5 h-5" />
                       </div>
                       <div>
@@ -538,17 +548,20 @@ export const Hero: React.FC = () => {
                             Stable
                           </span>
                         </div>
-                        <div className="text-[11px] font-mono" style={{ color: colors.textSecondary }}>
+                        <div className="text-[11px] font-mono mt-0.5" style={{ color: colors.textSecondary }}>
                           85% USDT · 15% BTC
                         </div>
                       </div>
                     </div>
-                    <span className="text-xs font-bold font-mono" style={{ color: colors.semanticSuccess }}>Low Volatility</span>
+                    <div className="text-right">
+                      <span className="text-xs font-bold font-mono block" style={{ color: colors.semanticSuccess }}>Low Volatility</span>
+                      <span className="text-[10px] font-mono" style={{ color: colors.textTertiary }}>From ₹10/day</span>
+                    </div>
                   </div>
 
                   {/* Growth Basket Card */}
                   <div
-                    className="p-3.5 rounded-2xl border flex items-center justify-between cursor-pointer hover:border-white/30"
+                    className="p-4 rounded-2xl border flex items-center justify-between cursor-pointer transition-all duration-200 hover:border-white/30"
                     style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder }}
                     onClick={() => {
                       setAuthSubView('signup');
@@ -556,7 +569,7 @@ export const Hero: React.FC = () => {
                     }}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-xl" style={{ backgroundColor: colors.accentTint, color: colors.accent }}>
+                      <div className="p-2.5 rounded-xl" style={{ backgroundColor: colors.accentTint, color: colors.accent }}>
                         <Rocket className="w-5 h-5" />
                       </div>
                       <div>
@@ -566,12 +579,15 @@ export const Hero: React.FC = () => {
                             Growth
                           </span>
                         </div>
-                        <div className="text-[11px] font-mono" style={{ color: colors.textSecondary }}>
+                        <div className="text-[11px] font-mono mt-0.5" style={{ color: colors.textSecondary }}>
                           70% BTC · 20% ETH · 10% SOL
                         </div>
                       </div>
                     </div>
-                    <span className="text-xs font-bold font-mono" style={{ color: colors.accent }}>Core Upside</span>
+                    <div className="text-right">
+                      <span className="text-xs font-bold font-mono block" style={{ color: colors.accent }}>Core Upside</span>
+                      <span className="text-[10px] font-mono" style={{ color: colors.textTertiary }}>From ₹10/day</span>
+                    </div>
                   </div>
 
                   <button
@@ -579,10 +595,11 @@ export const Hero: React.FC = () => {
                       setAuthSubView('signup');
                       setViewMode('auth');
                     }}
-                    className="w-full py-2.5 text-center text-xs font-bold hover:underline flex items-center justify-center gap-1"
-                    style={{ color: colors.accent }}
+                    className="w-full h-11 rounded-xl font-semibold text-xs border transition-all duration-150 flex items-center justify-center gap-2 select-none hover:opacity-90 active:scale-[0.98]"
+                    style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.accent }}
                   >
-                    Explore in Interactive Web App <ArrowRight className="w-3.5 h-3.5" />
+                    <span>Explore in Interactive Web App</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
               )}
@@ -594,8 +611,9 @@ export const Hero: React.FC = () => {
                     key={idx}
                     onClick={() => setActiveSlide(idx)}
                     className={`h-1.5 rounded-full transition-all duration-300 ${
-                      activeSlide === idx ? 'w-6 bg-white shadow-[0_0_8px_rgba(255,255,255,0.4)]' : 'w-2 bg-gray-600 hover:bg-gray-400'
+                      activeSlide === idx ? 'w-6 bg-white' : 'w-2 bg-gray-600 hover:bg-gray-400'
                     }`}
+                    aria-label={`Go to slide ${idx + 1}`}
                   />
                 ))}
               </div>
