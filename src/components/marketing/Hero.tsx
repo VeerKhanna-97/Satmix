@@ -631,7 +631,7 @@ export const Hero: React.FC = () => {
                             </div>
                             <div className="text-right">
                               <span className="text-xs font-bold font-mono block" style={{ color: colors.accent }}>Core Upside</span>
-                              <span className="text-[10px] font-mono" style={{ color: colors.textTertiary }}>From ₹10/day</span>
+                              <span className="text-[10px] font-mono" style={{ color: colors.textTertiary }}>From ₹30/day</span>
                             </div>
                           </div>
                           {/* Visual allocation bar */}

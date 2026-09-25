@@ -11,42 +11,39 @@ export const CalculatorSection: React.FC = () => {
   const [strategy, setStrategy] = useState<'low' | 'high'>('low');
   const [dailySavings, setDailySavings] = useState(10);
 
+  const minSavings = strategy === 'high' ? 30 : 10;
+
   // Strategy switch logic:
+  // Growth basket starts at ₹30/day so change that accordingly
+  // and have the slider default to that amount if the user has it set at anything lower,
+  // and don't change if not below 30 for the growth basket.
   const handleStrategyChange = useCallback((newStrat: 'low' | 'high') => {
     setStrategy(newStrat);
-    if (dailySavings < 10) {
-      setDailySavings(10);
+    if (newStrat === 'high') {
+      setDailySavings((prev) => (prev < 30 ? 30 : prev));
     }
-  }, [dailySavings]);
+  }, []);
 
   const annualRate = strategy === 'low' ? 0.08 : 0.28;
 
-  // Compounding math based strictly on net portfolio value projection
+  // Projected value calculation matching claimed 8% reference return and 28% historical CAGR
   const calculations = useMemo(() => {
-    const days = 365;
-    const dailyRate = annualRate / 365;
-    let totalInvested = 0;
-    let accumulatedValue = 0;
-
-    for (let d = 0; d < days; d++) {
-      totalInvested += dailySavings;
-      accumulatedValue += dailySavings;
-      accumulatedValue *= 1 + dailyRate;
-    }
-
-    const estimatedGains = Math.max(0, accumulatedValue - totalInvested);
+    const totalInvested = dailySavings * 365;
+    const estimatedGains = Math.round(totalInvested * annualRate);
+    const accumulatedValue = totalInvested + estimatedGains;
 
     return {
-      totalInvested: Math.round(totalInvested),
-      accumulatedValue: Math.round(accumulatedValue),
-      estimatedGains: Math.round(estimatedGains),
+      totalInvested,
+      accumulatedValue,
+      estimatedGains,
+      gainPercent: (annualRate * 100).toFixed(0),
     };
   }, [dailySavings, annualRate]);
 
   // Range fill percentage for ultra-smooth slider track
-  const sliderPercentage = ((dailySavings - 10) / (500 - 10)) * 100;
+  const sliderPercentage = ((dailySavings - minSavings) / (500 - minSavings)) * 100;
 
-  const presets = [10, 25, 50, 100, 250, 500];
+  const presets = strategy === 'high' ? [30, 50, 100, 200, 300, 500] : [10, 25, 50, 100, 250, 500];
 
   return (
     <section id="calc-section" className="py-12 sm:py-16 md:py-24 relative overflow-hidden">
@@ -111,7 +108,7 @@ export const CalculatorSection: React.FC = () => {
                       </div>
                       <div className="flex justify-between items-baseline mt-1">
                         <span className="text-[11px] font-mono text-emerald-500 font-bold">~28% Hist. CAGR</span>
-                        <span className="text-[9px]" style={{ color: colors.textTertiary }}>min ₹10/day</span>
+                        <span className="text-[9px]" style={{ color: colors.textTertiary }}>min ₹30/day</span>
                       </div>
                     </button>
                   </div>
@@ -135,11 +132,11 @@ export const CalculatorSection: React.FC = () => {
                   <div className="relative py-1.5">
                     <input
                       type="range"
-                      min={10}
+                      min={minSavings}
                       max={500}
                       step={5}
                       value={dailySavings}
-                      onChange={(e) => setDailySavings(parseInt(e.target.value, 10))}
+                      onChange={(e) => setDailySavings(Math.max(minSavings, parseInt(e.target.value, 10)))}
                       className="w-full h-2 rounded-lg appearance-none cursor-pointer transition-all focus:outline-none shadow-inner"
                       style={{
                         background: `linear-gradient(to right, ${colors.accent} 0%, ${colors.accent} ${sliderPercentage}%, ${colors.surface} ${sliderPercentage}%, ${colors.surface} 100%)`,
@@ -206,7 +203,7 @@ export const CalculatorSection: React.FC = () => {
                     <span>1-YEAR PROJECTED PORTFOLIO VALUE</span>
                   </span>
                   <span className="text-[10px] px-2 py-0.5 rounded-md font-bold border font-mono tracking-wider" style={{ backgroundColor: colors.mintTint, color: colors.semanticSuccess, borderColor: colors.borderMint }}>
-                    +{((calculations.estimatedGains / calculations.totalInvested) * 100).toFixed(1)}% GAIN
+                    +{calculations.gainPercent}% GAIN
                   </span>
                 </div>
 
@@ -221,7 +218,9 @@ export const CalculatorSection: React.FC = () => {
                     />
                   </div>
                   <div className="text-xs mt-1" style={{ color: colors.textSecondary }}>
-                    Daily Rupee Cost Averaging projection based on {(annualRate * 100).toFixed(0)}% reference baseline
+                    {strategy === 'low'
+                      ? 'Daily Rupee Cost Averaging projection based on 8% reference baseline'
+                      : 'Daily Rupee Cost Averaging projection based on 28% historical CAGR'}
                   </div>
                 </div>
 
