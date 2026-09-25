@@ -3,12 +3,13 @@ import { Shield, Rocket, CheckCircle2, ArrowRight, Zap, Info } from 'lucide-reac
 import { useApp } from '../../context/AppContext';
 import { BASKETS } from '../../data/baskets';
 import { BasketId } from '../../types';
+import { getAssetBarColor } from '../../theme/colors';
 import { SpotlightCard, ShinyText, FadeIn } from '../ui';
 import { BasketCurrencyIcons } from '../common/BasketCurrencyIcons';
 import { motion } from 'motion/react';
 
 export const BasketsScreen: React.FC = () => {
-  const { selectedBasketId, setSelectedBasketId, setActiveTab, prototypeState, colors } = useApp();
+  const { selectedBasketId, setSelectedBasketId, setActiveTab, prototypeState, colors, themeMode } = useApp();
 
   const handleSelect = (id: BasketId) => {
     setSelectedBasketId(id);
@@ -144,7 +145,7 @@ export const BasketsScreen: React.FC = () => {
                             whileInView={{ width: `${item.pct}%` }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                            style={{ backgroundColor: colors[item.colorKey] || colors.primary }}
+                            style={{ backgroundColor: getAssetBarColor(item.ticker, themeMode) }}
                           />
                         </div>
                       </div>

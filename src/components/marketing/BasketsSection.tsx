@@ -3,12 +3,13 @@ import { Shield, Rocket, CheckCircle2, ArrowRight } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { BASKETS } from '../../data/baskets';
 import { BasketId } from '../../types';
+import { getAssetBarColor } from '../../theme/colors';
 import { SpotlightCard, Magnet, FadeIn } from '../ui';
 import { BasketCurrencyIcons } from '../common/BasketCurrencyIcons';
 import { motion } from 'motion/react';
 
 export const BasketsSection: React.FC = () => {
-  const { colors, setViewMode, setAuthSubView, setSelectedBasketId, isAuthenticated } = useApp();
+  const { colors, themeMode, setViewMode, setAuthSubView, setSelectedBasketId, isAuthenticated } = useApp();
 
   const handleSelectBasket = (id: BasketId) => {
     setSelectedBasketId(id);
@@ -103,7 +104,7 @@ export const BasketsSection: React.FC = () => {
                               viewport={{ once: true }}
                               transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
                               style={{
-                                backgroundColor: colors[item.colorKey] || colors.primary,
+                                backgroundColor: getAssetBarColor(item.ticker, themeMode),
                               }}
                             />
                           </div>

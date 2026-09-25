@@ -204,3 +204,20 @@ export const LIGHT_COLORS = {
   borderPurple: 'rgba(93, 23, 235, 0.30)',
   borderMint: 'rgba(5, 150, 105, 0.20)',
 };
+
+// ============================================================
+// 3. ASSET ALLOCATION BAR BRAND COLORS
+// USDT: #26a17b | BTC: #f7931b | ETH: #ffffff | SOL: #9945fe
+// ============================================================
+export const ASSET_COLORS: Record<string, { dark: string; light: string }> = {
+  USDT: { dark: '#26a17b', light: '#26a17b' },
+  BTC: { dark: '#f7931b', light: '#f7931b' },
+  ETH: { dark: '#ffffff', light: '#0F172A' },
+  SOL: { dark: '#9945fe', light: '#9945fe' },
+};
+
+export const getAssetBarColor = (ticker: string, themeMode?: 'dark' | 'light'): string => {
+  const c = ASSET_COLORS[ticker.toUpperCase()];
+  if (!c) return '#5D17EB';
+  return themeMode === 'light' ? c.light : c.dark;
+};

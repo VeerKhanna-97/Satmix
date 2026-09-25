@@ -10,6 +10,7 @@ export interface AssetAllocation {
   ticker: string;
   pct: number;
   colorKey: 'gold' | 'violet' | 'blue' | 'mint' | 'purple' | 'primary';
+  color?: string;
   desc: string;
 }
 

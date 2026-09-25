@@ -9,6 +9,7 @@ import {
 import { useApp } from '../../context/AppContext';
 import { BasketId } from '../../types';
 import { BASKETS, getBasketById } from '../../data/baskets';
+import { getAssetBarColor } from '../../theme/colors';
 import { BasketCurrencyIcons } from '../common/BasketCurrencyIcons';
 import { SpotlightCard, ShinyText } from '../ui';
 import { motion } from 'motion/react';
@@ -24,7 +25,7 @@ export const RecommendScreen: React.FC<RecommendScreenProps> = ({
   quizScore,
   onProceed,
 }) => {
-  const { colors, triggerConfetti } = useApp();
+  const { colors, themeMode, triggerConfetti } = useApp();
   const [selectedId, setSelectedId] = useState<BasketId>(suggestedBasketId);
 
   const activeBasket = getBasketById(selectedId);
@@ -131,7 +132,7 @@ export const RecommendScreen: React.FC<RecommendScreenProps> = ({
                     initial={{ width: 0 }}
                     animate={{ width: `${item.pct}%` }}
                     transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                    style={{ backgroundColor: colors[item.colorKey] || colors.primary }}
+                    style={{ backgroundColor: getAssetBarColor(item.ticker, themeMode) }}
                   />
                 </div>
               </div>

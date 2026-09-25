@@ -6,7 +6,7 @@ import { SpotlightCard, BlurText, Magnet, FadeIn, CountUp } from '../ui';
 import { BasketCurrencyIcons } from '../common/BasketCurrencyIcons';
 
 export const Hero: React.FC = () => {
-  const { colors, setViewMode, setAuthSubView, isAuthenticated, triggerConfetti } = useApp();
+  const { colors, themeMode, setViewMode, setAuthSubView, isAuthenticated, triggerConfetti } = useApp();
   const [activeSlide, setActiveSlide] = useState(0);
 
   // Early Access form state
@@ -605,8 +605,8 @@ export const Hero: React.FC = () => {
                           </div>
                           {/* Visual allocation bar */}
                           <div className="mt-2.5 h-1.5 w-full rounded-full overflow-hidden flex bg-white/5">
-                            <div className="h-full bg-emerald-500 rounded-l-full" style={{ width: '85%' }} title="85% USDT" />
-                            <div className="h-full bg-amber-400 rounded-r-full" style={{ width: '15%' }} title="15% BTC" />
+                            <div className="h-full rounded-l-full" style={{ width: '85%', backgroundColor: '#26a17b' }} title="85% USDT" />
+                            <div className="h-full rounded-r-full" style={{ width: '15%', backgroundColor: '#f7931b' }} title="15% BTC" />
                           </div>
                         </div>
 
@@ -636,9 +636,9 @@ export const Hero: React.FC = () => {
                           </div>
                           {/* Visual allocation bar */}
                           <div className="mt-2.5 h-1.5 w-full rounded-full overflow-hidden flex bg-white/5">
-                            <div className="h-full bg-amber-400 rounded-l-full" style={{ width: '70%' }} title="70% BTC" />
-                            <div className="h-full bg-indigo-500" style={{ width: '20%' }} title="20% ETH" />
-                            <div className="h-full bg-emerald-400 rounded-r-full" style={{ width: '10%' }} title="10% SOL" />
+                            <div className="h-full rounded-l-full" style={{ width: '70%', backgroundColor: '#f7931b' }} title="70% BTC" />
+                            <div className="h-full" style={{ width: '20%', backgroundColor: themeMode === 'light' ? '#0F172A' : '#ffffff' }} title="20% ETH" />
+                            <div className="h-full rounded-r-full" style={{ width: '10%', backgroundColor: '#9945fe' }} title="10% SOL" />
                           </div>
                         </div>
 

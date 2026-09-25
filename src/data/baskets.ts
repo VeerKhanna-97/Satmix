@@ -25,8 +25,8 @@ export const BASKETS: Basket[] = [
     minDailyAmount: 10,
     chips: [10, 20, 30, 50, 100],
     allocation: [
-      { label: 'Tether USD', ticker: 'USDT', pct: 85, colorKey: 'mint', desc: 'USD-pegged stable reserve' },
-      { label: 'Bitcoin', ticker: 'BTC', pct: 15, colorKey: 'gold', desc: 'Store of value' },
+      { label: 'Tether USD', ticker: 'USDT', pct: 85, colorKey: 'mint', color: '#26a17b', desc: 'USD-pegged stable reserve' },
+      { label: 'Bitcoin', ticker: 'BTC', pct: 15, colorKey: 'gold', color: '#f7931b', desc: 'Store of value' },
     ],
   },
   {
@@ -48,9 +48,9 @@ export const BASKETS: Basket[] = [
     minDailyAmount: 30,
     chips: [30, 50, 100, 250, 500],
     allocation: [
-      { label: 'Bitcoin', ticker: 'BTC', pct: 70, colorKey: 'gold', desc: 'Market leader & foundation' },
-      { label: 'Ethereum', ticker: 'ETH', pct: 20, colorKey: 'blue', desc: 'Smart contract layer' },
-      { label: 'Solana', ticker: 'SOL', pct: 10, colorKey: 'purple', desc: 'High-throughput payments' },
+      { label: 'Bitcoin', ticker: 'BTC', pct: 70, colorKey: 'gold', color: '#f7931b', desc: 'Market leader & foundation' },
+      { label: 'Ethereum', ticker: 'ETH', pct: 20, colorKey: 'blue', color: '#ffffff', desc: 'Smart contract layer' },
+      { label: 'Solana', ticker: 'SOL', pct: 10, colorKey: 'purple', color: '#9945fe', desc: 'High-throughput payments' },
     ],
   },
 ];
