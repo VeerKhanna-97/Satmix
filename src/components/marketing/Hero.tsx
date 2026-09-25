@@ -133,8 +133,15 @@ export const Hero: React.FC = () => {
             </FadeIn>
 
             <FadeIn delay={0.25}>
-              <p className="text-base sm:text-lg max-w-2xl mx-auto lg:mx-0 leading-relaxed" style={{ color: colors.textSecondary }}>
-                No coin picking. No market timing. No staring at charts. Auto-invest from ₹10 daily via UPI AutoPay into curated baskets of top crypto assets. Withdraw to your bank anytime.
+              <p className="text-sm sm:text-base lg:text-lg max-w-2xl mx-auto lg:mx-0 leading-relaxed" style={{ color: colors.textSecondary }}>
+                {/* Mobile (< 1024px): Concise, punchy copy */}
+                <span className="block lg:hidden">
+                  Automated crypto baskets from ₹10 via daily UPI. Zero stress, full control.
+                </span>
+                {/* Laptop / Desktop (>= 1024px): 100% untouched original */}
+                <span className="hidden lg:inline">
+                  No coin picking. No market timing. No staring at charts. Auto-invest from ₹10 daily via UPI AutoPay into curated baskets of top crypto assets. Withdraw to your bank anytime.
+                </span>
               </p>
             </FadeIn>
 
