@@ -313,6 +313,7 @@ export const ProfileScreen: React.FC = () => {
                     bg: 'rgba(247, 147, 27, 0.1)',
                     border: 'rgba(247, 147, 27, 0.25)',
                     formatted: tabMetrics.holdings.BTC.units === 0 ? '0.00 BTC' : `${tabMetrics.holdings.BTC.units.toFixed(8)} BTC`,
+                    icon: '/currencies/Bitcoin cursor.png',
                   },
                   {
                     coin: 'ETH',
@@ -323,6 +324,7 @@ export const ProfileScreen: React.FC = () => {
                     bg: themeMode === 'light' ? 'rgba(15, 23, 42, 0.08)' : 'rgba(255, 255, 255, 0.1)',
                     border: themeMode === 'light' ? 'rgba(15, 23, 42, 0.20)' : 'rgba(255, 255, 255, 0.25)',
                     formatted: tabMetrics.holdings.ETH.units === 0 ? '0.00 ETH' : `${tabMetrics.holdings.ETH.units.toFixed(6)} ETH`,
+                    icon: '/currencies/ethereum-eth-logo.png',
                   },
                   {
                     coin: 'SOL',
@@ -333,6 +335,7 @@ export const ProfileScreen: React.FC = () => {
                     bg: 'rgba(153, 69, 254, 0.1)',
                     border: 'rgba(153, 69, 254, 0.25)',
                     formatted: tabMetrics.holdings.SOL.units === 0 ? '0.00 SOL' : `${tabMetrics.holdings.SOL.units.toFixed(4)} SOL`,
+                    icon: '/currencies/Solana.png',
                   },
                   {
                     coin: 'USDT',
@@ -343,6 +346,7 @@ export const ProfileScreen: React.FC = () => {
                     bg: 'rgba(38, 161, 123, 0.1)',
                     border: 'rgba(38, 161, 123, 0.25)',
                     formatted: `${tabMetrics.holdings.USDT.units.toFixed(2)} USDT`,
+                    icon: '/currencies/USDT.png',
                   },
                 ].map((asset) => (
                   <div
@@ -353,10 +357,14 @@ export const ProfileScreen: React.FC = () => {
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
                         <span
-                          className="w-7 h-7 rounded-lg border flex items-center justify-center font-bold text-xs font-mono"
-                          style={{ backgroundColor: asset.bg, borderColor: asset.border, color: asset.color }}
+                          className="w-7 h-7 rounded-lg border flex items-center justify-center p-1 relative overflow-hidden"
+                          style={{ backgroundColor: asset.bg, borderColor: asset.border }}
                         >
-                          {asset.coin}
+                          <img
+                            src={asset.icon}
+                            alt={asset.name}
+                            className="w-full h-full object-contain select-none"
+                          />
                         </span>
                         <span className="font-bold text-xs" style={{ color: colors.textPrimary }}>
                           {asset.name}

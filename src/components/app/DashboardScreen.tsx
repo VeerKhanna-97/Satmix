@@ -142,10 +142,11 @@ export const DashboardScreen: React.FC = () => {
   const holdingsList = useMemo(() => {
     const assetMeta = {
       BTC: {
-        tag: 'Store of Value · L1',
+        tag: 'Store of Value',
         color: '#f7931b',
         bg: 'rgba(247, 147, 27, 0.12)',
         border: 'rgba(247, 147, 27, 0.25)',
+        icon: '/currencies/Bitcoin cursor.png',
         desc: 'Market leader, digital gold reserve, and immutable monetary foundation.',
         basketName: 'Growth Basket (70%) & Stable Basket (15%)',
         basketId: 'growth' as const,
@@ -153,10 +154,11 @@ export const DashboardScreen: React.FC = () => {
         tokenStandard: 'UTXO Native',
       },
       ETH: {
-        tag: 'Smart Contracts · L1',
+        tag: 'Smart Contracts',
         color: themeMode === 'light' ? '#0F172A' : '#ffffff',
         bg: themeMode === 'light' ? 'rgba(15, 23, 42, 0.08)' : 'rgba(255, 255, 255, 0.12)',
         border: themeMode === 'light' ? 'rgba(15, 23, 42, 0.20)' : 'rgba(255, 255, 255, 0.25)',
+        icon: '/currencies/ethereum-eth-logo.png',
         desc: 'Decentralized application ecosystem and global smart contract settlement protocol.',
         basketName: 'Growth Basket (20%)',
         basketId: 'growth' as const,
@@ -164,10 +166,11 @@ export const DashboardScreen: React.FC = () => {
         tokenStandard: 'ERC-20 Native',
       },
       SOL: {
-        tag: 'High Throughput · L1',
+        tag: 'High Throughput',
         color: '#9945fe',
         bg: 'rgba(153, 69, 254, 0.12)',
         border: 'rgba(153, 69, 254, 0.25)',
+        icon: '/currencies/Solana.png',
         desc: 'Ultra-fast sub-second settlement and low-latency payment infrastructure.',
         basketName: 'Growth Basket (10%)',
         basketId: 'growth' as const,
@@ -179,6 +182,7 @@ export const DashboardScreen: React.FC = () => {
         color: '#26a17b',
         bg: 'rgba(38, 161, 123, 0.12)',
         border: 'rgba(38, 161, 123, 0.25)',
+        icon: '/currencies/USDT.png',
         desc: '1:1 USD-pegged reserve asset providing capital protection and zero price volatility.',
         basketName: 'Stable Basket (85%)',
         basketId: 'stable' as const,
@@ -269,16 +273,12 @@ export const DashboardScreen: React.FC = () => {
 
   return (
     <div className="space-y-7 animate-fade-in max-w-5xl mx-auto pb-12">
-      {/* ── TOP GREETING & KYC STATUS ─────────────────────────── */}
+      {/* ── TOP GREETING ─────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight" style={{ color: colors.textPrimary }}>
             {greetingTime}, {user?.name?.split(' ')[0] || 'Investor'}
           </h1>
-          <div className="flex items-center gap-2 mt-1.5 text-xs font-semibold" style={{ color: colors.textSecondary }}>
-            <Shield className="w-3.5 h-3.5" style={{ color: colors.accent }} />
-            <span>Tier 1 KYC Verified · Linked: {user?.bankName || 'HDFC Bank'}</span>
-          </div>
         </div>
 
         <div className="flex items-center gap-2.5 flex-wrap">
@@ -771,17 +771,21 @@ export const DashboardScreen: React.FC = () => {
                           borderColor: colors.borderDim,
                         }}
                       >
-                        {/* Left Column: Coin Badge & Unit Quantity */}
+                        {/* Left Column: Coin Logo Badge & Unit Quantity */}
                         <div className="flex items-center gap-3.5 min-w-0">
                           <div
-                            className="w-12 h-12 rounded-2xl border flex items-center justify-center font-extrabold text-sm font-mono shadow-sm flex-shrink-0"
+                            className="w-12 h-12 rounded-2xl border flex items-center justify-center p-2.5 shadow-sm flex-shrink-0 relative overflow-hidden"
                             style={{
                               backgroundColor: item.meta.bg,
                               borderColor: item.meta.border,
-                              color: item.meta.color,
                             }}
                           >
-                            {item.coin}
+                            <img
+                              src={item.meta.icon}
+                              alt={item.label}
+                              className="w-full h-full object-contain drop-shadow-sm select-none"
+                              loading="lazy"
+                            />
                           </div>
 
                           <div className="min-w-0">
@@ -1262,14 +1266,18 @@ export const DashboardScreen: React.FC = () => {
             <div className="flex items-start justify-between pb-4 border-b" style={{ borderColor: colors.borderDim }}>
               <div className="flex items-center gap-3.5">
                 <div
-                  className="w-12 h-12 rounded-2xl border flex items-center justify-center font-extrabold text-base font-mono shadow-sm flex-shrink-0"
+                  className="w-12 h-12 rounded-2xl border flex items-center justify-center p-2.5 shadow-sm flex-shrink-0 relative overflow-hidden"
                   style={{
                     backgroundColor: selectedAssetModal.meta.bg,
                     borderColor: selectedAssetModal.meta.border,
-                    color: selectedAssetModal.meta.color,
                   }}
                 >
-                  {selectedAssetModal.coin}
+                  <img
+                    src={selectedAssetModal.meta.icon}
+                    alt={selectedAssetModal.label}
+                    className="w-full h-full object-contain drop-shadow-sm select-none"
+                    loading="lazy"
+                  />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
