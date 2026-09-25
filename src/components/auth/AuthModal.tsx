@@ -17,11 +17,35 @@ import { motion, AnimatePresence } from 'motion/react';
 export const AuthModal: React.FC = () => {
   const { authSubView, setAuthSubView, setViewMode, login, signUp, colors } = useApp();
 
-  // Form fields
-  const [name, setName] = useState('');
-  const [identifier, setIdentifier] = useState(''); // Email or Phone for login
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
+  // Form fields with prefill support from waitlist signup
+  const [name, setName] = useState(() => {
+    try {
+      return sessionStorage.getItem('satmix_prefill_name') || '';
+    } catch {
+      return '';
+    }
+  });
+  const [identifier, setIdentifier] = useState(() => {
+    try {
+      return sessionStorage.getItem('satmix_prefill_email') || sessionStorage.getItem('satmix_prefill_phone') || '';
+    } catch {
+      return '';
+    }
+  });
+  const [email, setEmail] = useState(() => {
+    try {
+      return sessionStorage.getItem('satmix_prefill_email') || '';
+    } catch {
+      return '';
+    }
+  });
+  const [phone, setPhone] = useState(() => {
+    try {
+      return sessionStorage.getItem('satmix_prefill_phone') || '';
+    } catch {
+      return '';
+    }
+  });
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -31,6 +55,19 @@ export const AuthModal: React.FC = () => {
   const [errorMsg, setErrorMsg] = useState('');
 
   const isLogin = authSubView === 'login';
+
+  // Synchronize prefill credentials if authSubView opens
+  React.useEffect(() => {
+    try {
+      const storedName = sessionStorage.getItem('satmix_prefill_name');
+      const storedEmail = sessionStorage.getItem('satmix_prefill_email');
+      const storedPhone = sessionStorage.getItem('satmix_prefill_phone');
+      if (storedName && !name) setName(storedName);
+      if (storedEmail && !email) setEmail(storedEmail);
+      if (storedPhone && !phone) setPhone(storedPhone);
+      if ((storedEmail || storedPhone) && !identifier) setIdentifier(storedEmail || storedPhone || '');
+    } catch {}
+  }, [authSubView]);
 
   // Keyboard accessibility: Close on Escape key
   React.useEffect(() => {

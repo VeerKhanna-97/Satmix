@@ -25,6 +25,18 @@ export function initWaitlist() {
         return;
       }
       
+      // Cache prefill credentials for seamless WebApp signup
+      try {
+        sessionStorage.setItem('satmix_prefill_name', name);
+        sessionStorage.setItem('satmix_prefill_email', email);
+        sessionStorage.setItem('satmix_prefill_phone', phone);
+      } catch (e) {}
+
+      // Open WhatsApp Community immediately in new tab
+      try {
+        window.open('https://chat.whatsapp.com/KWW9pIYhZOF3GlcsNvs7Jw', '_blank', 'noopener,noreferrer');
+      } catch (e) {}
+
       // Show loading state
       if (submitBtn) submitBtn.disabled = true;
       if (submitBtn) submitBtn.classList.add('loading');

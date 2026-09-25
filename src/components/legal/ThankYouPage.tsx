@@ -102,13 +102,13 @@ export const ThankYouPage: React.FC = () => {
           <div className="pt-6 border-t flex flex-wrap items-center justify-center gap-4 text-xs font-semibold" style={{ borderColor: colors.borderDim }}>
             <span style={{ color: colors.textTertiary }}>Join our community:</span>
             <a
-              href="https://chat.whatsapp.com/G6EDcuMTq9oBHv6uHYfqJo"
+              href="https://chat.whatsapp.com/KWW9pIYhZOF3GlcsNvs7Jw"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 hover:underline font-medium"
               style={{ color: colors.accent }}
             >
-              <MessageSquare className="w-3.5 h-3.5" /> WhatsApp VIP
+              <MessageSquare className="w-3.5 h-3.5" /> WhatsApp Community
             </a>
             <span className="opacity-40">•</span>
             <a

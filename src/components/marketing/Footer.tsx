@@ -59,7 +59,7 @@ export const Footer: React.FC = () => {
             </a>
 
             <a
-              href="https://chat.whatsapp.com/G6EDcuMTq9oBHv6uHYfqJo"
+              href="https://chat.whatsapp.com/KWW9pIYhZOF3GlcsNvs7Jw"
               target="_blank"
               rel="noopener noreferrer"
               className="p-2.5 rounded-xl border hover:opacity-80 transition-opacity"

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, ArrowRight, CheckCircle2, Rocket, User, Mail, Phone, Layers, Info, BarChart2, Loader2 } from 'lucide-react';
+import { Shield, ArrowRight, CheckCircle2, Rocket, User, Mail, Phone, Layers, Info, BarChart2, Loader2, MessageSquare } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { initReferralCapture, getStoredReferralCode } from '../../utils/referral';
 import { SpotlightCard, BlurText, Magnet, FadeIn, CountUp } from '../ui';
@@ -49,14 +49,33 @@ export const Hero: React.FC = () => {
       return;
     }
 
+    const trimmedName = name.trim();
+    const trimmedEmail = email.trim();
+    const trimmedPhone = phone.trim();
+
+    // Cache prefill credentials for instant zero-friction WebApp signup
+    try {
+      sessionStorage.setItem('satmix_prefill_name', trimmedName);
+      sessionStorage.setItem('satmix_prefill_email', trimmedEmail);
+      sessionStorage.setItem('satmix_prefill_phone', trimmedPhone);
+    } catch (e) {}
+
+    // Open WhatsApp Community immediately in a new tab upon user gesture to prevent popup blocking
+    const WHATSAPP_COMMUNITY_URL = 'https://chat.whatsapp.com/KWW9pIYhZOF3GlcsNvs7Jw';
+    try {
+      window.open(WHATSAPP_COMMUNITY_URL, '_blank', 'noopener,noreferrer');
+    } catch (popupErr) {
+      console.warn('Popup blocked or failed to open:', popupErr);
+    }
+
     setIsSubmitting(true);
 
     try {
       const activeRef = referralCode || getStoredReferralCode();
       const payload = {
-        name: name.trim(),
-        email: email.trim(),
-        phone: phone.trim(),
+        name: trimmedName,
+        email: trimmedEmail,
+        phone: trimmedPhone,
         referralCode: activeRef,
         consentAgreed: true,
         source: 'Satmix Hero Waitlist'
@@ -71,7 +90,7 @@ export const Hero: React.FC = () => {
         body: JSON.stringify(payload)
       });
 
-      const result = await response.json().catch(() => ({}));
+      await response.json().catch(() => ({}));
 
       // Cache submission locally
       try {
@@ -85,15 +104,20 @@ export const Hero: React.FC = () => {
 
       setIsSubmitted(true);
       triggerConfetti();
+
+      // Automatically redirect current tab to WebApp after brief confirmation
+      setTimeout(() => {
+        handleGoToApp();
+      }, 1200);
     } catch (err) {
       console.warn('Network waitlist submission failed, fallback locally:', err);
       // Fallback: still treat as success locally
       try {
         const waitlistDB = JSON.parse(localStorage.getItem('satmix_waitlist') || '[]');
         waitlistDB.push({
-          name: name.trim(),
-          email: email.trim(),
-          phone: phone.trim(),
+          name: trimmedName,
+          email: trimmedEmail,
+          phone: trimmedPhone,
           referralCode: referralCode || getStoredReferralCode(),
           consentAgreed: true,
           timestamp: new Date().toISOString()
@@ -103,6 +127,11 @@ export const Hero: React.FC = () => {
 
       setIsSubmitted(true);
       triggerConfetti();
+
+      // Automatically redirect current tab to WebApp after brief confirmation
+      setTimeout(() => {
+        handleGoToApp();
+      }, 1200);
     } finally {
       setIsSubmitting(false);
     }
@@ -386,7 +415,7 @@ export const Hero: React.FC = () => {
                       </div>
                     </>
                   ) : (
-                    /* Post-Submit Nudge to WebApp */
+                    /* Post-Submit Dual CTAs to WebApp and WhatsApp */
                     <div className="py-4 text-center space-y-4 animate-fade-in">
                       <div
                         className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto border"
@@ -404,18 +433,37 @@ export const Hero: React.FC = () => {
                           You're on the Waitlist!
                         </h4>
                         <p className="text-xs mt-1.5 leading-relaxed" style={{ color: colors.textSecondary }}>
-                          Thanks for signing up{name ? `, ${name}` : ''}! Experience the interactive Satmix WebApp right now.
+                          Thanks for signing up{name ? `, ${name}` : ''}! Launching your WebApp session now...
                         </p>
                       </div>
 
-                      {/* Direct WebApp Launch CTA */}
-                      <button
-                        onClick={handleGoToApp}
-                        className="w-full h-11 rounded-xl font-semibold text-sm shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] transition-[transform,background-color,box-shadow] duration-150 ease-out active:scale-[0.98] flex items-center justify-center gap-2 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
-                        style={{ backgroundColor: colors.primary, color: colors.primaryText }}
-                      >
-                        <span>Launch Web App →</span>
-                      </button>
+                      {/* Dual Action CTAs: WebApp & WhatsApp Community */}
+                      <div className="space-y-2 pt-1">
+                        <button
+                          type="button"
+                          onClick={handleGoToApp}
+                          className="w-full h-11 rounded-xl font-semibold text-sm shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] transition-[transform,background-color,box-shadow] duration-150 ease-out active:scale-[0.98] flex items-center justify-center gap-2 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                          style={{ backgroundColor: colors.primary, color: colors.primaryText }}
+                        >
+                          <span>Launch Web App</span>
+                          <ArrowRight className="w-4 h-4" />
+                        </button>
+
+                        <a
+                          href="https://chat.whatsapp.com/KWW9pIYhZOF3GlcsNvs7Jw"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="w-full h-11 rounded-xl font-semibold text-xs border transition-[transform,background-color,border-color] duration-150 ease-out active:scale-[0.98] flex items-center justify-center gap-2 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50"
+                          style={{
+                            backgroundColor: colors.surface,
+                            borderColor: colors.cardBorder,
+                            color: colors.textPrimary,
+                          }}
+                        >
+                          <MessageSquare className="w-4 h-4 text-emerald-500" />
+                          <span>Join WhatsApp Community</span>
+                        </a>
+                      </div>
 
                       <div className="flex items-center justify-center gap-4 pt-1">
                         <button
