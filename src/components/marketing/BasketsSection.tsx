@@ -50,16 +50,7 @@ export const BasketsSection: React.FC = () => {
                       <div className="flex items-center gap-3">
                         <BasketCurrencyIcons basketId={basket.id} size="lg" />
                         <div>
-                          <span
-                            className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md font-mono"
-                            style={{
-                              backgroundColor: isLow ? colors.mintTint : colors.accentTint,
-                              color: isLow ? colors.semanticSuccess : colors.accent,
-                            }}
-                          >
-                            {basket.riskLabel}
-                          </span>
-                          <h3 className="text-xl font-extrabold mt-0.5" style={{ color: colors.textPrimary }}>
+                          <h3 className="text-xl font-extrabold" style={{ color: colors.textPrimary }}>
                             {basket.name}
                           </h3>
                         </div>

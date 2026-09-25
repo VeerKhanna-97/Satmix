@@ -76,24 +76,14 @@ export const RecommendScreen: React.FC<RecommendScreenProps> = ({
             <div className="flex items-center gap-3">
               <BasketCurrencyIcons basketId={selectedId} size="lg" />
               <div>
-                <div className="flex items-center gap-2">
-                  <span
-                    className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md border font-mono"
-                    style={{
-                      backgroundColor: colors.accentTint,
-                      borderColor: colors.borderAccent,
-                      color: colors.accent,
-                    }}
-                  >
-                    {activeBasket.riskLabel}
-                  </span>
-                  {isSuggested && (
+                {isSuggested && (
+                  <div className="mb-1">
                     <span className="text-[10px] font-bold text-emerald-400 font-mono">
                       ✓ Best Quiz Fit
                     </span>
-                  )}
-                </div>
-                <h3 className="text-xl font-extrabold mt-0.5" style={{ color: colors.textPrimary }}>
+                  </div>
+                )}
+                <h3 className="text-xl font-extrabold" style={{ color: colors.textPrimary }}>
                   {activeBasket.name}
                 </h3>
               </div>

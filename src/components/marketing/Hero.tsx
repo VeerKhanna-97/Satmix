@@ -592,12 +592,7 @@ export const Hero: React.FC = () => {
                             <div className="flex items-center gap-2.5">
                               <BasketCurrencyIcons basketId="stable" size="md" />
                               <div>
-                                <div className="flex items-center gap-1.5">
-                                  <span className="font-bold text-xs" style={{ color: colors.textPrimary }}>Stable Basket</span>
-                                  <span className="text-[9px] px-1.5 py-0.5 rounded font-bold" style={{ backgroundColor: colors.mintTint, color: colors.semanticSuccess }}>
-                                    Stable
-                                  </span>
-                                </div>
+                                <div className="font-bold text-xs" style={{ color: colors.textPrimary }}>Stable Basket</div>
                                 <div className="text-[11px] font-mono mt-0.5" style={{ color: colors.textSecondary }}>
                                   85% USDT · 15% BTC
                                 </div>
@@ -628,12 +623,7 @@ export const Hero: React.FC = () => {
                             <div className="flex items-center gap-2.5">
                               <BasketCurrencyIcons basketId="growth" size="md" />
                               <div>
-                                <div className="flex items-center gap-1.5">
-                                  <span className="font-bold text-xs" style={{ color: colors.textPrimary }}>Growth Basket</span>
-                                  <span className="text-[9px] px-1.5 py-0.5 rounded font-bold" style={{ backgroundColor: colors.accentTint, color: colors.accent }}>
-                                    Growth
-                                  </span>
-                                </div>
+                                <div className="font-bold text-xs" style={{ color: colors.textPrimary }}>Growth Basket</div>
                                 <div className="text-[11px] font-mono mt-0.5" style={{ color: colors.textSecondary }}>
                                   70% BTC · 20% ETH · 10% SOL
                                 </div>

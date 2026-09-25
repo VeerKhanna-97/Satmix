@@ -84,17 +84,7 @@ export const BasketsScreen: React.FC = () => {
                     <div className="flex items-center gap-3">
                       <BasketCurrencyIcons basketId={basket.id} size="lg" />
                       <div>
-                        <span
-                          className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md border font-mono"
-                          style={{
-                            backgroundColor: isStable ? colors.mintTint : colors.accentTint,
-                            borderColor: isStable ? colors.borderMint : colors.borderAccent,
-                            color: isStable ? colors.semanticSuccess : colors.accent,
-                          }}
-                        >
-                          {basket.riskLabel}
-                        </span>
-                        <h3 className="text-xl font-extrabold mt-0.5" style={{ color: colors.textPrimary }}>{basket.name}</h3>
+                        <h3 className="text-xl font-extrabold" style={{ color: colors.textPrimary }}>{basket.name}</h3>
                         <span className="text-[11px]" style={{ color: colors.textTertiary }}>Min: ₹{basket.minDailyAmount}/day</span>
                       </div>
                     </div>
