@@ -59,6 +59,7 @@ export const DashboardScreen: React.FC = () => {
     transactions,
     liveCoins,
     colors,
+    themeMode,
     setActiveTab,
     toggleHabitPause,
     triggerAccrual,
@@ -142,9 +143,9 @@ export const DashboardScreen: React.FC = () => {
     const assetMeta = {
       BTC: {
         tag: 'Store of Value · L1',
-        color: '#F7931A',
-        bg: 'rgba(247, 147, 26, 0.12)',
-        border: 'rgba(247, 147, 26, 0.25)',
+        color: '#f7931b',
+        bg: 'rgba(247, 147, 27, 0.12)',
+        border: 'rgba(247, 147, 27, 0.25)',
         desc: 'Market leader, digital gold reserve, and immutable monetary foundation.',
         basketName: 'Growth Basket (70%) & Stable Basket (15%)',
         basketId: 'growth' as const,
@@ -153,9 +154,9 @@ export const DashboardScreen: React.FC = () => {
       },
       ETH: {
         tag: 'Smart Contracts · L1',
-        color: '#627EEA',
-        bg: 'rgba(98, 126, 234, 0.12)',
-        border: 'rgba(98, 126, 234, 0.25)',
+        color: themeMode === 'light' ? '#0F172A' : '#ffffff',
+        bg: themeMode === 'light' ? 'rgba(15, 23, 42, 0.08)' : 'rgba(255, 255, 255, 0.12)',
+        border: themeMode === 'light' ? 'rgba(15, 23, 42, 0.20)' : 'rgba(255, 255, 255, 0.25)',
         desc: 'Decentralized application ecosystem and global smart contract settlement protocol.',
         basketName: 'Growth Basket (20%)',
         basketId: 'growth' as const,
@@ -164,9 +165,9 @@ export const DashboardScreen: React.FC = () => {
       },
       SOL: {
         tag: 'High Throughput · L1',
-        color: '#14F195',
-        bg: 'rgba(20, 241, 149, 0.12)',
-        border: 'rgba(20, 241, 149, 0.25)',
+        color: '#9945fe',
+        bg: 'rgba(153, 69, 254, 0.12)',
+        border: 'rgba(153, 69, 254, 0.25)',
         desc: 'Ultra-fast sub-second settlement and low-latency payment infrastructure.',
         basketName: 'Growth Basket (10%)',
         basketId: 'growth' as const,
@@ -175,7 +176,7 @@ export const DashboardScreen: React.FC = () => {
       },
       USDT: {
         tag: 'USD Capital Guard',
-        color: '#26A17B',
+        color: '#26a17b',
         bg: 'rgba(38, 161, 123, 0.12)',
         border: 'rgba(38, 161, 123, 0.25)',
         desc: '1:1 USD-pegged reserve asset providing capital protection and zero price volatility.',
@@ -217,7 +218,7 @@ export const DashboardScreen: React.FC = () => {
       },
     ];
     return entries.filter((e) => e.units > 0 || tabMetrics.marketValue === 0);
-  }, [tabMetrics.holdings, tabMetrics.marketValue, prototypeState.activity]);
+  }, [tabMetrics.holdings, tabMetrics.marketValue, prototypeState.activity, themeMode]);
 
   const isStableConfigured = prototypeState.habits.stable?.setupAt !== null;
   const isStableActive = isStableConfigured && !prototypeState.habits.stable.paused;
