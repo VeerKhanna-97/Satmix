@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { CheckCircle2, ArrowRight, Sparkles, MessageSquare, ChevronRight, Clock } from 'lucide-react';
+import { CheckCircle2, ArrowRight, MessageSquare, ChevronRight, Clock } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { Header } from '../marketing/Header';
 import { Footer } from '../marketing/Footer';
@@ -56,17 +56,6 @@ export const ThankYouPage: React.FC = () => {
           </div>
 
           <div className="space-y-3">
-            <span
-              className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[11px] font-semibold font-mono tracking-wider border"
-              style={{
-                backgroundColor: colors.accentTint,
-                borderColor: colors.borderAccent,
-                color: colors.accent,
-              }}
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>VIP PRIORITY ACCESS RESERVED</span>
-            </span>
             <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight" style={{ color: colors.textPrimary }}>
               You're on the Satmix Early Access List!
             </h1>

@@ -22,16 +22,6 @@ export const BasketsScreen: React.FC = () => {
     <div className="space-y-8 animate-fade-in max-w-5xl mx-auto pb-12">
       {/* Page Header */}
       <div>
-        <div
-          className="inline-flex items-center gap-2 px-3 py-1 rounded-md border text-[11px] font-mono font-medium tracking-wider uppercase mb-3"
-          style={{
-            backgroundColor: colors.accentTint,
-            color: colors.accent,
-            borderColor: colors.borderAccent,
-          }}
-        >
-          <span>DUAL STRATEGY ARCHITECTURE</span>
-        </div>
         <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight" style={{ color: colors.textPrimary }}>
           Curated Investment Baskets
         </h1>

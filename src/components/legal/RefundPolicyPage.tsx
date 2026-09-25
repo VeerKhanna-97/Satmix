@@ -29,10 +29,6 @@ export const RefundPolicyPage: React.FC = () => {
 
         {/* Page Header */}
         <div className="mb-10 space-y-3">
-          <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-md text-[11px] font-semibold font-mono tracking-wider border" style={{ backgroundColor: colors.accentTint, borderColor: colors.borderAccent, color: colors.accent }}>
-            <RefreshCw className="w-3.5 h-3.5" />
-            <span>ZERO LOCK-IN POLICY</span>
-          </div>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight" style={{ color: colors.textPrimary }}>
             Refund & Cancellation Policy
           </h1>

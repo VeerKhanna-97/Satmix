@@ -24,16 +24,6 @@ export const BasketsSection: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Title */}
         <FadeIn delay={0.05} direction="up" className="text-center max-w-2xl mx-auto mb-16 space-y-3.5">
-          <div
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-md border text-[11px] font-mono font-medium tracking-wider uppercase"
-            style={{
-              backgroundColor: colors.accentTint,
-              color: colors.accent,
-              borderColor: colors.borderAccent,
-            }}
-          >
-            <span>CURATED ASSET ARCHITECTURE</span>
-          </div>
           <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight" style={{ color: colors.textPrimary }}>
             Choose Your Investment Strategy
           </h2>

@@ -123,21 +123,7 @@ export const Hero: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           {/* Left Column: Heading & Value Proposition */}
           <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
-            {/* Micro-Investing Spec Eyebrow */}
-            <FadeIn delay={0.05} direction="down">
-              <div
-                className="inline-flex items-center gap-2 px-3 py-1 rounded-md border text-[11px] font-mono tracking-wider backdrop-blur-md"
-                style={{
-                  backgroundColor: colors.surface,
-                  borderColor: colors.borderAccent,
-                  color: colors.accent,
-                }}
-              >
-                <span>AUTOMATED MICRO-INVESTING · UPI AUTOPAY</span>
-              </div>
-            </FadeIn>
-
-            <FadeIn delay={0.15}>
+            <FadeIn delay={0.1}>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1]" style={{ color: colors.textPrimary }}>
                 Put Your Crypto on Autopilot for Just{' '}
                 <span className="block font-extrabold mt-1 sm:mt-2" style={{ color: colors.accent }}>

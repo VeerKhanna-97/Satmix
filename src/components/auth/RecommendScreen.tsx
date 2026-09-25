@@ -4,7 +4,6 @@ import {
   TrendingUp,
   CheckCircle2,
   ArrowRight,
-  Sparkles,
   ArrowLeftRight,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
@@ -54,23 +53,12 @@ export const RecommendScreen: React.FC<RecommendScreenProps> = ({
       >
         {/* Top Header */}
         <div className="text-center mb-6">
-          <div
-            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md border text-[11px] font-mono font-bold tracking-wider uppercase mb-2"
-            style={{
-              backgroundColor: colors.accentTint,
-              borderColor: colors.borderAccent,
-              color: colors.accent,
-            }}
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Quiz Score: {quizScore}/6 · Basket Fit Recommendation</span>
-          </div>
-
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight" style={{ color: colors.textPrimary }}>
             Your Recommended Strategy
           </h1>
-          <p className="text-xs sm:text-sm mt-1" style={{ color: colors.textSecondary }}>
-            Based on your answers, we recommend starting with <strong>{getBasketById(suggestedBasketId).name}</strong>.
+          <p className="text-xs sm:text-sm mt-1.5 leading-relaxed" style={{ color: colors.textSecondary }}>
+            Based on your risk profile score ({quizScore}/6), we recommend starting with{' '}
+            <strong style={{ color: colors.textPrimary }}>{getBasketById(suggestedBasketId).name}</strong>.
           </p>
         </div>
 

@@ -14,18 +14,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({ badge, title, subtitle, 
   return (
     <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
       <div>
-        {badge && (
-          <div
-            className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[11px] font-semibold uppercase tracking-wider mb-2 font-mono"
-            style={{
-              backgroundColor: colors.accentTint,
-              color: colors.accent,
-              border: `1px solid ${colors.borderAccent}`,
-            }}
-          >
-            <span>{badge}</span>
-          </div>
-        )}
+
         <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight" style={{ color: colors.textPrimary }}>
           {title}
         </h1>

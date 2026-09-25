@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeft, ChevronRight, Cookie, ShieldCheck, Lock, Info } from 'lucide-react';
+import { ArrowLeft, ChevronRight, ShieldCheck, Lock, Info } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { Header } from '../marketing/Header';
 import { Footer } from '../marketing/Footer';
@@ -29,10 +29,6 @@ export const CookiePolicyPage: React.FC = () => {
 
         {/* Page Header */}
         <div className="mb-10 space-y-3">
-          <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-md text-[11px] font-semibold font-mono tracking-wider border" style={{ backgroundColor: colors.accentTint, borderColor: colors.borderAccent, color: colors.accent }}>
-            <Cookie className="w-3.5 h-3.5" />
-            <span>PRIVACY FIRST COOKIE GOVERNANCE</span>
-          </div>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight" style={{ color: colors.textPrimary }}>
             Cookie Policy & Consent Settings
           </h1>
