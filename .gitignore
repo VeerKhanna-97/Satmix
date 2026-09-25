@@ -42,4 +42,6 @@ __pycache__/
 !public/currencies/*
 !currencies/*
 !icons/*
+!public/icons/*
+
 
