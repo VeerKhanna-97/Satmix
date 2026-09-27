@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { X, ArrowDownLeft, CheckCircle2, CreditCard, Sparkles, ShieldCheck } from 'lucide-react';
+import { X, ArrowDownLeft, CheckCircle2, CreditCard, Sparkles } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { BasketId } from '../../types';
 import { BasketCurrencyIcons } from '../common/BasketCurrencyIcons';
@@ -297,12 +297,6 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
                       Enter at least ₹{minAmount} to preview live asset spot allocation.
                     </div>
                   )}
-                </div>
-
-                {/* Guarantee Banner */}
-                <div className="p-2.5 rounded-xl border flex items-center gap-2 text-[11px] font-mono" style={{ backgroundColor: colors.card, borderColor: colors.borderDim, color: colors.textSecondary }}>
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0" />
-                  <span>Direct custodial settlement into your vault</span>
                 </div>
               </div>
 
