@@ -91,10 +91,10 @@ export function loadPrototypeState(): PrototypeState {
     const growthParsed = parsed.habits?.growth;
 
     // Default SIP rates: 10 for Stable, 30 for Growth (migrate old generic 50 default)
-    const stableDaily = (stableParsed?.dailyAmount === 50 || !stableParsed?.dailyAmount) ? 10 : stableParsed.dailyAmount;
-    const growthDaily = (growthParsed?.dailyAmount === 50 || !growthParsed?.dailyAmount) ? 30 : growthParsed.dailyAmount;
+    const stableDaily = (stableParsed?.dailyAmount === 50 || !stableParsed?.dailyAmount || stableParsed?.dailyAmount < 10) ? 10 : stableParsed.dailyAmount;
+    const growthDaily = (growthParsed?.dailyAmount === 50 || !growthParsed?.dailyAmount || growthParsed?.dailyAmount < 30) ? 30 : growthParsed.dailyAmount;
 
-    return {
+    const migratedState: PrototypeState = {
       ...initial,
       ...parsed,
       habits: {
@@ -110,6 +110,13 @@ export function loadPrototypeState(): PrototypeState {
         },
       },
     };
+
+    // Immediately persist migrated state so stale 50 in localStorage is permanently corrected
+    try {
+      localStorage.setItem(PROTOTYPE_STORAGE_KEY, JSON.stringify(migratedState));
+    } catch {}
+
+    return migratedState;
   } catch (err) {
     console.error('Failed to parse prototype state:', err);
     return createInitialPrototypeState();

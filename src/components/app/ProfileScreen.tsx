@@ -122,14 +122,18 @@ export const ProfileScreen: React.FC = () => {
   const isStableConfigured = prototypeState.habits.stable?.setupAt !== null;
   const isStableActive = isStableConfigured && !prototypeState.habits.stable.paused;
   const stableDailyRate =
-    prototypeState.habits.stable?.dailyAmount === 50 || !prototypeState.habits.stable?.dailyAmount
+    !prototypeState.habits.stable?.dailyAmount ||
+    prototypeState.habits.stable.dailyAmount === 50 ||
+    prototypeState.habits.stable.dailyAmount < 10
       ? 10
       : prototypeState.habits.stable.dailyAmount;
 
   const isGrowthConfigured = prototypeState.habits.growth?.setupAt !== null;
   const isGrowthActive = isGrowthConfigured && !prototypeState.habits.growth.paused;
   const growthDailyRate =
-    prototypeState.habits.growth?.dailyAmount === 50 || !prototypeState.habits.growth?.dailyAmount
+    !prototypeState.habits.growth?.dailyAmount ||
+    prototypeState.habits.growth.dailyAmount === 50 ||
+    prototypeState.habits.growth.dailyAmount < 30
       ? 30
       : prototypeState.habits.growth.dailyAmount;
 
