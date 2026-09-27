@@ -771,15 +771,9 @@ export const DashboardScreen: React.FC = () => {
                           borderColor: colors.borderDim,
                         }}
                       >
-                        {/* Left Column: Coin Logo Badge & Unit Quantity */}
-                        <div className="flex items-center gap-3.5 min-w-0">
-                          <div
-                            className="w-12 h-12 rounded-2xl border flex items-center justify-center p-2.5 shadow-sm flex-shrink-0 relative overflow-hidden"
-                            style={{
-                              backgroundColor: colors.card,
-                              borderColor: colors.borderDim,
-                            }}
-                          >
+                        {/* Left Column: Coin Logo & Unit Quantity */}
+                        <div className="flex items-center gap-4 min-w-0">
+                          <div className="w-10 h-10 flex-shrink-0 flex items-center justify-center">
                             <img
                               src={item.meta.icon}
                               alt={item.label}
@@ -1118,14 +1112,8 @@ export const DashboardScreen: React.FC = () => {
           >
             {/* Modal Header */}
             <div className="flex items-start justify-between pb-4 border-b" style={{ borderColor: colors.borderDim }}>
-              <div className="flex items-center gap-3.5">
-                <div
-                  className="w-12 h-12 rounded-2xl border flex items-center justify-center p-2.5 shadow-sm flex-shrink-0 relative overflow-hidden"
-                  style={{
-                    backgroundColor: colors.card,
-                    borderColor: colors.borderDim,
-                  }}
-                >
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 flex-shrink-0 flex items-center justify-center">
                   <img
                     src={selectedAssetModal.meta.icon}
                     alt={selectedAssetModal.label}
