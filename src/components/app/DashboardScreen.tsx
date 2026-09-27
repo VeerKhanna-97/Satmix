@@ -492,8 +492,7 @@ export const DashboardScreen: React.FC = () => {
 
               <button
                 onClick={() => setWithdrawOpen(true)}
-                disabled={tabMetrics.marketValue <= 0}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 h-9 px-3.5 rounded-lg font-semibold text-xs border transition-[transform,background-color,border-color] duration-150 ease-out hover:bg-white/[0.05] hover:border-white/20 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none disabled:active:scale-100 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 h-9 px-3.5 rounded-lg font-semibold text-xs border transition-[transform,background-color,border-color] duration-150 ease-out hover:bg-white/[0.05] hover:border-white/20 active:scale-[0.98] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                 style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textPrimary }}
               >
                 <ArrowUpRight className="w-4 h-4 flex-shrink-0" />
@@ -805,16 +804,16 @@ export const DashboardScreen: React.FC = () => {
                                 {item.units === 0
                                   ? `0.00 ${item.coin}`
                                   : item.coin === 'BTC'
-                                  ? `${item.units.toFixed(8)} BTC`
+                                  ? `${(item.units || 0).toFixed(8)} BTC`
                                   : item.coin === 'ETH'
-                                  ? `${item.units.toFixed(6)} ETH`
+                                  ? `${(item.units || 0).toFixed(6)} ETH`
                                   : item.coin === 'SOL'
-                                  ? `${item.units.toFixed(4)} SOL`
-                                  : `${item.units.toFixed(2)} USDT`}
+                                  ? `${(item.units || 0).toFixed(4)} SOL`
+                                  : `${(item.units || 0).toFixed(2)} USDT`}
                               </span>
                               {item.usdValue > 0 && (
                                 <span className="text-[11px] font-mono" style={{ color: colors.textTertiary }}>
-                                  (≈ ${item.usdValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD)
+                                  (≈ ${(item.usdValue || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD)
                                 </span>
                               )}
                             </div>
@@ -836,7 +835,7 @@ export const DashboardScreen: React.FC = () => {
                                     : colors.semanticDanger,
                               }}
                             >
-                              {item.investedInr <= 0 ? '₹0.00' : `${isProfit ? '+' : ''}₹${item.gainRupees.toFixed(2)}`}
+                              {item.investedInr <= 0 ? '₹0.00' : `${isProfit ? '+' : ''}₹${(item.gainRupees || 0).toFixed(2)}`}
                             </span>
                           </div>
                           <div className="w-full flex justify-center">
@@ -1172,12 +1171,12 @@ export const DashboardScreen: React.FC = () => {
                 {selectedAssetModal.units === 0
                   ? `0.00 ${selectedAssetModal.coin}`
                   : selectedAssetModal.coin === 'BTC'
-                  ? `${selectedAssetModal.units.toFixed(8)} BTC`
+                  ? `${(selectedAssetModal.units || 0).toFixed(8)} BTC`
                   : selectedAssetModal.coin === 'ETH'
-                  ? `${selectedAssetModal.units.toFixed(6)} ETH`
+                  ? `${(selectedAssetModal.units || 0).toFixed(6)} ETH`
                   : selectedAssetModal.coin === 'SOL'
-                  ? `${selectedAssetModal.units.toFixed(4)} SOL`
-                  : `${selectedAssetModal.units.toFixed(2)} USDT`}
+                  ? `${(selectedAssetModal.units || 0).toFixed(4)} SOL`
+                  : `${(selectedAssetModal.units || 0).toFixed(2)} USDT`}
               </div>
               <div className="flex items-center justify-center gap-2 font-mono text-xs" style={{ color: colors.accent }}>
                 <span className="font-bold">

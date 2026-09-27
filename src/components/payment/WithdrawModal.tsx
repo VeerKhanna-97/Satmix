@@ -178,14 +178,19 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
       setErrorMsg('Please enter a valid withdrawal amount.');
       return;
     }
-    const minRequired = availableBalance < 10 ? availableBalance : 10;
-    if (numAmount < minRequired) {
+    const minRequired = availableBalance < 10 ? Math.floor(availableBalance) : 10;
+    if (numAmount < minRequired && availableBalance >= 10) {
       setErrorMsg(`Minimum withdrawal amount is ₹${minRequired}.`);
       return;
     }
     if (numAmount > availableBalance) {
-      setErrorMsg(`Amount exceeds available balance of ₹${availableBalance.toLocaleString('en-IN')}.`);
-      return;
+      // If user requested an amount slightly above available balance due to spot price movement
+      if (numAmount <= availableBalance + 5 || (availableBalance > 0 && (numAmount - availableBalance) / availableBalance < 0.05)) {
+        setAmount(Math.floor(availableBalance).toString());
+      } else {
+        setErrorMsg(`Amount exceeds available balance of ₹${availableBalance.toLocaleString('en-IN')}. Click MAX (100%) to liquidate full balance.`);
+        return;
+      }
     }
 
     setPin('');
@@ -337,7 +342,9 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
                             setSourceBasket(b.id as any);
                             setErrorMsg('');
                             const newAvail = Math.floor(b.val);
-                            if (numAmount > newAvail) setAmount(newAvail.toString());
+                            if (numAmount > newAvail || numAmount <= 0) {
+                              setAmount(newAvail > 0 ? (newAvail < 500 ? newAvail.toString() : '500') : '0');
+                            }
                           }}
                           className="p-2 rounded-xl border text-center transition-all active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                           style={{
@@ -474,8 +481,8 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
                 {/* Next Button */}
                 <button
                   onClick={handleProceedToPin}
-                  disabled={availableBalance <= 0 || numAmount <= 0 || numAmount > availableBalance}
-                  className="w-full h-11 px-5 rounded-xl font-bold text-xs shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] flex items-center justify-center gap-2 transition-all hover:brightness-105 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none disabled:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                  disabled={availableBalance <= 0 || numAmount <= 0}
+                  className="w-full h-11 px-5 rounded-xl font-bold text-xs shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] flex items-center justify-center gap-2 transition-all hover:brightness-105 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                   style={{ backgroundColor: colors.primary, color: colors.primaryText }}
                 >
                   <span>Proceed to Payout · ₹{netPayout.toLocaleString('en-IN')}</span>

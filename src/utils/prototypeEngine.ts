@@ -449,18 +449,18 @@ export function executeWithdrawal(
   let growthWithdraw = 0;
 
   if (targetBasket === 'stable') {
-    if (amount > stableVal + 2) {
+    if (amount > stableVal + 10 && (stableVal <= 0 || (amount - stableVal) / (stableVal || 1) > 0.05)) {
       return { state, success: false, error: `Requested amount exceeds Stable Basket value of ₹${Math.floor(stableVal).toLocaleString('en-IN')}.` };
     }
     stableWithdraw = Math.min(amount, stableVal);
   } else if (targetBasket === 'growth') {
-    if (amount > growthVal + 2) {
+    if (amount > growthVal + 10 && (growthVal <= 0 || (amount - growthVal) / (growthVal || 1) > 0.05)) {
       return { state, success: false, error: `Requested amount exceeds Growth Basket value of ₹${Math.floor(growthVal).toLocaleString('en-IN')}.` };
     }
     growthWithdraw = Math.min(amount, growthVal);
   } else {
     // Pro-rata across all
-    if (amount > totalVal + 2) {
+    if (amount > totalVal + 10 && (totalVal <= 0 || (amount - totalVal) / (totalVal || 1) > 0.05)) {
       return { state, success: false, error: `Requested amount exceeds total portfolio value of ₹${Math.floor(totalVal).toLocaleString('en-IN')}.` };
     }
     const safeAmount = Math.min(amount, totalVal);

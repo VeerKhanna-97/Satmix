@@ -182,13 +182,17 @@ export const MiniLineChart: React.FC<MiniLineChartProps> = ({
 
     segments.forEach((seg) => {
       let xStart = paddingX;
-      if (seg.startIndex > 0 && valCoords[seg.startIndex - 1]) {
+      if (seg.startIndex > 0 && valCoords[seg.startIndex - 1] && valCoords[seg.startIndex]) {
         xStart = (valCoords[seg.startIndex - 1].x + valCoords[seg.startIndex].x) / 2;
+      } else if (valCoords[seg.startIndex]) {
+        xStart = valCoords[seg.startIndex].x;
       }
 
       let xEnd = width - paddingX;
-      if (seg.endIndex < valCoords.length - 1 && valCoords[seg.endIndex + 1]) {
+      if (seg.endIndex < valCoords.length - 1 && valCoords[seg.endIndex] && valCoords[seg.endIndex + 1]) {
         xEnd = (valCoords[seg.endIndex].x + valCoords[seg.endIndex + 1].x) / 2;
+      } else if (valCoords[seg.endIndex]) {
+        xEnd = valCoords[seg.endIndex].x;
       }
 
       const rectWidth = Math.max(0, xEnd - xStart);
