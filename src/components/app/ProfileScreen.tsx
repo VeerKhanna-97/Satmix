@@ -631,7 +631,7 @@ export const ProfileScreen: React.FC = () => {
         </div>
 
         {prototypeState.activity.length > 0 ? (
-          <div className="divide-y max-h-96 overflow-y-auto pr-1" style={{ borderColor: colors.borderDim }}>
+          <div className="divide-y max-h-96 overflow-y-auto pr-2.5 custom-scrollbar" style={{ borderColor: colors.borderDim }}>
             {prototypeState.activity.map((entry) => {
               const isWd = entry.type === 'withdrawal' || entry.amount < 0;
               const isDep = entry.type === 'deposit';
