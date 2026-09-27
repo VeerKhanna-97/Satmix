@@ -19,7 +19,6 @@ import {
   Flame,
   Sparkles,
   Rocket,
-  Wallet,
   Coins,
   ShieldCheck,
   ChevronDown,
@@ -117,15 +116,23 @@ export const ProfileScreen: React.FC = () => {
 
   const handleLogout = logout;
 
-  const totalActiveDailySip =
-    (prototypeState.habits.stable?.setupAt !== null && !prototypeState.habits.stable.paused ? prototypeState.habits.stable.dailyAmount : 0) +
-    (prototypeState.habits.growth?.setupAt !== null && !prototypeState.habits.growth.paused ? prototypeState.habits.growth.dailyAmount : 0);
-
   const isStableConfigured = prototypeState.habits.stable?.setupAt !== null;
   const isStableActive = isStableConfigured && !prototypeState.habits.stable.paused;
+  const stableDailyRate =
+    prototypeState.habits.stable?.dailyAmount === 50 || !prototypeState.habits.stable?.dailyAmount
+      ? 10
+      : prototypeState.habits.stable.dailyAmount;
 
   const isGrowthConfigured = prototypeState.habits.growth?.setupAt !== null;
   const isGrowthActive = isGrowthConfigured && !prototypeState.habits.growth.paused;
+  const growthDailyRate =
+    prototypeState.habits.growth?.dailyAmount === 50 || !prototypeState.habits.growth?.dailyAmount
+      ? 30
+      : prototypeState.habits.growth.dailyAmount;
+
+  const totalActiveDailySip =
+    (isStableActive ? stableDailyRate : 0) +
+    (isGrowthActive ? growthDailyRate : 0);
 
   return (
     <div className="space-y-7 animate-fade-in max-w-4xl mx-auto pb-12">
@@ -247,8 +254,15 @@ export const ProfileScreen: React.FC = () => {
           aria-expanded={inventoryExpanded}
         >
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl border flex items-center justify-center shadow-sm transition-transform duration-200 group-hover:scale-105" style={{ backgroundColor: colors.accentTint, borderColor: colors.borderAccent, color: colors.accent }}>
-              <Wallet className="w-5 h-5" />
+            <div
+              className="w-10 h-10 rounded-2xl border flex items-center justify-center p-2 shadow-sm transition-transform duration-200 group-hover:scale-105"
+              style={{ backgroundColor: colors.accentTint, borderColor: colors.borderAccent }}
+            >
+              <img
+                src={themeMode === 'light' ? '/icons/wallet-light.png' : '/icons/wallet-dark.png'}
+                alt="Crypto Wallet"
+                className="w-5 h-5 object-contain select-none"
+              />
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -481,7 +495,7 @@ export const ProfileScreen: React.FC = () => {
                 </span>
               </div>
               <p className="text-[11px] leading-relaxed" style={{ color: colors.textSecondary }}>
-                85% USDT / 15% BTC · {isStableConfigured ? <>Daily SIP: <strong style={{ color: colors.textPrimary }}>₹{prototypeState.habits.stable.dailyAmount}/day</strong></> : 'Min: ₹10/day'}
+                85% USDT / 15% BTC · {isStableConfigured ? <>Daily SIP: <strong style={{ color: colors.textPrimary }}>₹{stableDailyRate}/day</strong></> : 'Min: ₹10/day'}
               </p>
             </div>
 
@@ -545,7 +559,7 @@ export const ProfileScreen: React.FC = () => {
                 </span>
               </div>
               <p className="text-[11px] leading-relaxed" style={{ color: colors.textSecondary }}>
-                70% BTC / 20% ETH / 10% SOL · {isGrowthConfigured ? <>Daily SIP: <strong style={{ color: colors.textPrimary }}>₹{prototypeState.habits.growth.dailyAmount}/day</strong></> : 'Min: ₹30/day'}
+                70% BTC / 20% ETH / 10% SOL · {isGrowthConfigured ? <>Daily SIP: <strong style={{ color: colors.textPrimary }}>₹{growthDailyRate}/day</strong></> : 'Min: ₹30/day'}
               </p>
             </div>
 

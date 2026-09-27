@@ -148,7 +148,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [selectedBasketId, setSelectedBasketIdState] = useState<BasketId>(
     prototypeState.suggestedBasketId || 'stable'
   );
-  const [dailyAmount, setDailyAmountState] = useState<number>(50);
+  const [dailyAmount, setDailyAmountState] = useState<number>(() => {
+    const basket = prototypeState.suggestedBasketId || 'stable';
+    return basket === 'growth' ? 30 : 10;
+  });
 
   // Live Spot Prices
   const [livePrices, setLivePrices] = useState<LiveCoinPrices>(FALLBACK_LIVE_PRICES);
@@ -361,6 +364,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     (id: BasketId) => {
       setSelectedBasketIdState(id);
       updateStateAndPersist((s) => ({ ...s, setupBasketId: id }));
+      setDailyAmountState((current) => {
+        const defaultAmt = id === 'growth' ? 30 : 10;
+        if (current < defaultAmt || current === 10 || current === 30 || current === 50) return defaultAmt;
+        return current;
+      });
     },
     [updateStateAndPersist]
   );
@@ -768,10 +776,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       bankName: activeUser?.bankName || 'HDFC Bank',
       accountLast4: '4129',
       vpa: activeUser?.vpa || 'investor@okhdfcbank',
-      dailyAmount: totalDaily || 50,
+      dailyAmount: totalDaily || 10,
       status: hasActive ? 'ACTIVE' : 'NONE',
       executionTime: '08:00 AM IST',
-      maxCapPerDay: Math.max(500, totalDaily * 2),
+      maxCapPerDay: Math.max(500, (totalDaily || 10) * 2),
       umnNumber: hasActive ? 'NPCI/UPI/2026/STMX99281' : '',
       createdAt: 'Today',
       nextExecutionDate: 'Tomorrow, 08:00 AM',

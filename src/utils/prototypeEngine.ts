@@ -85,17 +85,28 @@ export function loadPrototypeState(): PrototypeState {
     const raw = localStorage.getItem(PROTOTYPE_STORAGE_KEY);
     if (!raw) return createInitialPrototypeState();
     const parsed = JSON.parse(raw);
+    const initial = createInitialPrototypeState();
+
+    const stableParsed = parsed.habits?.stable;
+    const growthParsed = parsed.habits?.growth;
+
+    // Default SIP rates: 10 for Stable, 30 for Growth (migrate old generic 50 default)
+    const stableDaily = (stableParsed?.dailyAmount === 50 || !stableParsed?.dailyAmount) ? 10 : stableParsed.dailyAmount;
+    const growthDaily = (growthParsed?.dailyAmount === 50 || !growthParsed?.dailyAmount) ? 30 : growthParsed.dailyAmount;
+
     return {
-      ...createInitialPrototypeState(),
+      ...initial,
       ...parsed,
       habits: {
         stable: {
-          ...createInitialPrototypeState().habits.stable,
-          ...(parsed.habits?.stable || {}),
+          ...initial.habits.stable,
+          ...(stableParsed || {}),
+          dailyAmount: stableDaily,
         },
         growth: {
-          ...createInitialPrototypeState().habits.growth,
-          ...(parsed.habits?.growth || {}),
+          ...initial.habits.growth,
+          ...(growthParsed || {}),
+          dailyAmount: growthDaily,
         },
       },
     };
@@ -330,7 +341,7 @@ export function executeOneTimeDeposit(
 
   const currentHabit = nextState.habits[basketId] || {
     setupAt: null,
-    dailyAmount: 10,
+    dailyAmount: basketId === 'growth' ? 30 : 10,
     paused: true,
     streakStartedAt: null,
     holdings: { BTC: 0, ETH: 0, SOL: 0, USDT: 0 },

@@ -42,9 +42,9 @@ export const InvestScreen: React.FC = () => {
 
   const handleBasketChange = (id: BasketId) => {
     setSelectedBasketId(id);
-    const minAmt = id === 'growth' ? 30 : 10;
-    if (dailyAmount < minAmt) {
-      setDailyAmount(minAmt);
+    const defaultAmt = id === 'growth' ? 30 : 10;
+    if (dailyAmount < defaultAmt || dailyAmount === 10 || dailyAmount === 30 || dailyAmount === 50) {
+      setDailyAmount(defaultAmt);
     }
   };
 

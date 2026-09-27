@@ -22,7 +22,6 @@ import {
   Sliders,
   CheckCircle2,
   RefreshCw,
-  Wallet,
   Coins,
   PieChart,
   ShieldCheck,
@@ -226,9 +225,17 @@ export const DashboardScreen: React.FC = () => {
 
   const isStableConfigured = prototypeState.habits.stable?.setupAt !== null;
   const isStableActive = isStableConfigured && !prototypeState.habits.stable.paused;
+  const stableDailyRate =
+    prototypeState.habits.stable?.dailyAmount === 50 || !prototypeState.habits.stable?.dailyAmount
+      ? 10
+      : prototypeState.habits.stable.dailyAmount;
 
   const isGrowthConfigured = prototypeState.habits.growth?.setupAt !== null;
   const isGrowthActive = isGrowthConfigured && !prototypeState.habits.growth.paused;
+  const growthDailyRate =
+    prototypeState.habits.growth?.dailyAmount === 50 || !prototypeState.habits.growth?.dailyAmount
+      ? 30
+      : prototypeState.habits.growth.dailyAmount;
 
   const [priceFlashMap, setPriceFlashMap] = useState<Record<string, 'up' | 'down' | null>>({});
   const prevPricesRef = useRef<typeof livePrices>(livePrices);
@@ -642,8 +649,15 @@ export const DashboardScreen: React.FC = () => {
           aria-expanded={holdingsExpanded}
         >
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl border flex items-center justify-center shadow-sm transition-transform duration-200 group-hover:scale-105" style={{ backgroundColor: colors.accentTint, borderColor: colors.borderAccent, color: colors.accent }}>
-              <Wallet className="w-5 h-5" />
+            <div
+              className="w-10 h-10 rounded-2xl border flex items-center justify-center p-2 shadow-sm transition-transform duration-200 group-hover:scale-105"
+              style={{ backgroundColor: colors.accentTint, borderColor: colors.borderAccent }}
+            >
+              <img
+                src={themeMode === 'light' ? '/icons/wallet-light.png' : '/icons/wallet-dark.png'}
+                alt="Crypto Wallet"
+                className="w-5 h-5 object-contain select-none"
+              />
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -976,7 +990,7 @@ export const DashboardScreen: React.FC = () => {
                 <div>
                   <span className="text-xs block" style={{ color: colors.textTertiary }}>Daily SIP Rate</span>
                   <span className="text-2xl font-extrabold font-mono" style={{ color: colors.textPrimary }}>
-                    ₹{prototypeState.habits.stable.dailyAmount}/day
+                    ₹{stableDailyRate}/day
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -1056,7 +1070,7 @@ export const DashboardScreen: React.FC = () => {
                 <div>
                   <span className="text-xs block" style={{ color: colors.textTertiary }}>Daily SIP Rate</span>
                   <span className="text-2xl font-extrabold font-mono" style={{ color: colors.textPrimary }}>
-                    ₹{prototypeState.habits.growth.dailyAmount}/day
+                    ₹{growthDailyRate}/day
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
