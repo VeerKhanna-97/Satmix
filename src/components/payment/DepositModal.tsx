@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { X, ArrowDownLeft, ShieldCheck, CheckCircle2, Shield, Zap, Sparkles, Building2, CreditCard } from 'lucide-react';
+import { X, ArrowDownLeft, CheckCircle2, CreditCard, Sparkles, ShieldCheck } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { BasketId } from '../../types';
 import { BasketCurrencyIcons } from '../common/BasketCurrencyIcons';
@@ -10,8 +10,15 @@ interface DepositModalProps {
   onClose: () => void;
 }
 
+const CRYPTO_LOGOS: Record<string, string> = {
+  BTC: '/currencies/Bitcoin cursor.png',
+  ETH: '/currencies/ethereum-eth-logo.png',
+  SOL: '/currencies/Solana.png',
+  USDT: '/currencies/USDT.png',
+};
+
 export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) => {
-  const { colors, user, selectedBasketId, simulateDeposit, livePrices, themeMode } = useApp();
+  const { colors, selectedBasketId, simulateDeposit, livePrices, themeMode } = useApp();
   const [targetBasket, setTargetBasket] = useState<BasketId>(selectedBasketId || 'stable');
   const [amount, setAmount] = useState('500');
   const [method, setMethod] = useState<'GPay' | 'PhonePe' | 'Paytm' | 'IMPS'>('GPay');
@@ -49,6 +56,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
         inrShare,
         units,
         price,
+        logo: CRYPTO_LOGOS[alloc.ticker] || '/currencies/bitcoin.png',
         color:
           alloc.ticker === 'USDT'
             ? '#26a17b'
@@ -87,13 +95,13 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
       <div
-        className="w-full max-w-md rounded-3xl border shadow-2xl overflow-hidden transition-all duration-200"
+        className="w-full max-w-3xl rounded-3xl border shadow-2xl overflow-hidden transition-all duration-200"
         style={{ backgroundColor: colors.cardHigh, borderColor: colors.cardBorder }}
       >
         {/* Header */}
-        <div className="p-5 border-b flex items-center justify-between" style={{ borderColor: colors.borderDim }}>
+        <div className="px-6 py-4 border-b flex items-center justify-between" style={{ borderColor: colors.borderDim }}>
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl" style={{ backgroundColor: colors.accentTint, color: colors.accent }}>
+            <div className="p-1.5 rounded-xl" style={{ backgroundColor: colors.accentTint, color: colors.accent }}>
               <ArrowDownLeft className="w-4 h-4" />
             </div>
             <div>
@@ -105,194 +113,216 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
             onClick={handleClose}
             className="p-1.5 rounded-lg hover:opacity-80 transition-opacity"
             style={{ color: colors.textSecondary }}
+            aria-label="Close"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {!success ? (
-          <div className="p-6 space-y-5 max-h-[85vh] overflow-y-auto scrollbar-none">
-            {/* Target Strategy Selector */}
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider mb-2" style={{ color: colors.textSecondary }}>
-                Target Investment Basket
-              </label>
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setTargetBasket('stable');
-                    if (numAmount < 10) setAmount('10');
-                  }}
-                  className="p-3 rounded-2xl border text-left transition-all relative active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
-                  style={{
-                    backgroundColor: targetBasket === 'stable' ? colors.mintTint : colors.surface,
-                    borderColor: targetBasket === 'stable' ? colors.borderMint : colors.cardBorder,
-                  }}
-                >
-                  <div className="flex items-center justify-between mb-1">
-                    <div className="flex items-center gap-1.5">
-                      <BasketCurrencyIcons basketId="stable" size="xs" />
-                      <span className="font-bold text-xs" style={{ color: colors.textPrimary }}>Stable Basket</span>
-                    </div>
-                    {targetBasket === 'stable' && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />}
-                  </div>
-                  <div className="text-[10px] font-mono" style={{ color: colors.textSecondary }}>85% USDT · 15% BTC</div>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setTargetBasket('growth');
-                    if (numAmount < 30) setAmount('30');
-                  }}
-                  className="p-3 rounded-2xl border text-left transition-all relative active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
-                  style={{
-                    backgroundColor: targetBasket === 'growth' ? colors.accentTint : colors.surface,
-                    borderColor: targetBasket === 'growth' ? colors.borderAccent : colors.cardBorder,
-                  }}
-                >
-                  <div className="flex items-center justify-between mb-1">
-                    <div className="flex items-center gap-1.5">
-                      <BasketCurrencyIcons basketId="growth" size="xs" />
-                      <span className="font-bold text-xs" style={{ color: colors.textPrimary }}>Growth Basket</span>
-                    </div>
-                    {targetBasket === 'growth' && <CheckCircle2 className="w-3.5 h-3.5" style={{ color: colors.accent }} />}
-                  </div>
-                  <div className="text-[10px] font-mono" style={{ color: colors.textSecondary }}>70% BTC · 20% ETH · 10% SOL</div>
-                </button>
-              </div>
-            </div>
-
-            {/* Amount Input */}
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <label className="text-xs font-bold uppercase tracking-wider" style={{ color: colors.textSecondary }}>
-                  Top-Up Amount (INR)
+          <div className="p-6 grid grid-cols-1 md:grid-cols-12 gap-5">
+            {/* Left Section (Controls) */}
+            <div className="md:col-span-7 space-y-4">
+              {/* Target Strategy Selector */}
+              <div>
+                <label className="block text-[11px] font-bold uppercase tracking-wider mb-1.5" style={{ color: colors.textSecondary }}>
+                  Target Investment Basket
                 </label>
-                <span className="text-[10px] font-mono font-semibold" style={{ color: numAmount < minAmount ? colors.semanticDanger : colors.textTertiary }}>
-                  Min ₹{minAmount}
-                </span>
-              </div>
-              <div className="relative">
-                <span className="absolute left-4 top-3.5 text-lg font-bold font-mono" style={{ color: colors.textTertiary }}>₹</span>
-                <input
-                  type="number"
-                  min={minAmount}
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  className="w-full pl-9 pr-4 py-3 rounded-2xl text-xl font-bold font-mono border focus:outline-none focus:ring-1 transition-all"
-                  style={{ backgroundColor: colors.surface, borderColor: numAmount < minAmount && amount ? 'rgba(239, 68, 68, 0.4)' : colors.cardBorder, color: colors.textPrimary }}
-                />
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setTargetBasket('stable');
+                      if (numAmount < 10) setAmount('10');
+                    }}
+                    className="p-2.5 rounded-2xl border text-left transition-all relative active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                    style={{
+                      backgroundColor: targetBasket === 'stable' ? colors.mintTint : colors.surface,
+                      borderColor: targetBasket === 'stable' ? colors.borderMint : colors.cardBorder,
+                    }}
+                  >
+                    <div className="flex items-center justify-between mb-0.5">
+                      <div className="flex items-center gap-1.5">
+                        <BasketCurrencyIcons basketId="stable" size="xs" />
+                        <span className="font-bold text-xs" style={{ color: colors.textPrimary }}>Stable Basket</span>
+                      </div>
+                      {targetBasket === 'stable' && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />}
+                    </div>
+                    <div className="text-[10px] font-mono" style={{ color: colors.textSecondary }}>85% USDT · 15% BTC</div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setTargetBasket('growth');
+                      if (numAmount < 30) setAmount('30');
+                    }}
+                    className="p-2.5 rounded-2xl border text-left transition-all relative active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                    style={{
+                      backgroundColor: targetBasket === 'growth' ? colors.accentTint : colors.surface,
+                      borderColor: targetBasket === 'growth' ? colors.borderAccent : colors.cardBorder,
+                    }}
+                  >
+                    <div className="flex items-center justify-between mb-0.5">
+                      <div className="flex items-center gap-1.5">
+                        <BasketCurrencyIcons basketId="growth" size="xs" />
+                        <span className="font-bold text-xs" style={{ color: colors.textPrimary }}>Growth Basket</span>
+                      </div>
+                      {targetBasket === 'growth' && <CheckCircle2 className="w-3.5 h-3.5" style={{ color: colors.accent }} />}
+                    </div>
+                    <div className="text-[10px] font-mono" style={{ color: colors.textSecondary }}>70% BTC · 20% ETH · 10% SOL</div>
+                  </button>
+                </div>
               </div>
 
-              {/* Preset Chips */}
-              <div className="grid grid-cols-4 gap-2 mt-2.5">
-                {presets.map((preset) => {
-                  const isActive = amount === preset;
-                  return (
-                    <button
-                      key={preset}
-                      type="button"
-                      onClick={() => setAmount(preset)}
-                      className="h-8 rounded-lg text-xs font-bold font-mono border transition-all active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
-                      style={{
-                        backgroundColor: isActive ? colors.accentTint : colors.surface,
-                        borderColor: isActive ? colors.borderAccent : colors.cardBorder,
-                        color: isActive ? colors.accent : colors.textSecondary,
-                        boxShadow: isActive ? 'inset 0 1px 0 0 rgba(255,255,255,0.2)' : 'none',
-                      }}
-                    >
-                      ₹{preset}
-                    </button>
-                  );
-                })}
+              {/* Amount Input */}
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-[11px] font-bold uppercase tracking-wider" style={{ color: colors.textSecondary }}>
+                    Top-Up Amount (INR)
+                  </label>
+                  <span className="text-[10px] font-mono font-semibold" style={{ color: numAmount < minAmount ? colors.semanticDanger : colors.textTertiary }}>
+                    Min ₹{minAmount}
+                  </span>
+                </div>
+                <div className="relative">
+                  <span className="absolute left-3.5 top-2.5 text-base font-bold font-mono" style={{ color: colors.textTertiary }}>₹</span>
+                  <input
+                    type="number"
+                    min={minAmount}
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    className="w-full pl-8 pr-3 py-2 rounded-xl text-lg font-bold font-mono border focus:outline-none focus:ring-1 transition-all"
+                    style={{ backgroundColor: colors.surface, borderColor: numAmount < minAmount && amount ? 'rgba(239, 68, 68, 0.4)' : colors.cardBorder, color: colors.textPrimary }}
+                  />
+                </div>
+
+                {/* Preset Chips */}
+                <div className="grid grid-cols-4 gap-2 mt-2">
+                  {presets.map((preset) => {
+                    const isActive = amount === preset;
+                    return (
+                      <button
+                        key={preset}
+                        type="button"
+                        onClick={() => setAmount(preset)}
+                        className="h-7 rounded-lg text-xs font-bold font-mono border transition-all active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                        style={{
+                          backgroundColor: isActive ? colors.accentTint : colors.surface,
+                          borderColor: isActive ? colors.borderAccent : colors.borderDim,
+                          color: isActive ? colors.accent : colors.textSecondary,
+                        }}
+                      >
+                        ₹{preset}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Payment Gateway Selector */}
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-[11px] font-bold uppercase tracking-wider" style={{ color: colors.textSecondary }}>
+                    Payment Method
+                  </label>
+                  <span className="text-[10px] font-mono text-emerald-500 font-bold">Zero Platform Fee</span>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  {(['GPay', 'PhonePe', 'Paytm', 'IMPS'] as const).map((m) => {
+                    const isSelected = method === m;
+                    return (
+                      <button
+                        key={m}
+                        type="button"
+                        onClick={() => setMethod(m)}
+                        className="h-9 px-3 rounded-xl border text-xs font-bold transition-all text-left flex items-center justify-between active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                        style={{
+                          backgroundColor: isSelected ? colors.accentTint : colors.surface,
+                          borderColor: isSelected ? colors.borderAccent : colors.borderDim,
+                          color: isSelected ? colors.textPrimary : colors.textSecondary,
+                        }}
+                      >
+                        <div className="flex items-center gap-2">
+                          <CreditCard className="w-3.5 h-3.5" style={{ color: isSelected ? colors.accent : colors.textTertiary }} />
+                          <span className="text-[11px]">{m === 'IMPS' ? 'NetBanking (IMPS)' : `${m} UPI`}</span>
+                        </div>
+                        {isSelected && <CheckCircle2 className="w-3 h-3" style={{ color: colors.accent }} />}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             </div>
 
-            {/* Live Spot Allocation Preview */}
-            {estimatedFills.length > 0 && numAmount >= minAmount && (
-              <div className="p-3.5 rounded-2xl border space-y-2.5" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
-                <div className="flex items-center justify-between">
+            {/* Right Section (Spot Breakdown + Action CTA) */}
+            <div className="md:col-span-5 flex flex-col justify-between rounded-2xl border p-4 space-y-3.5" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between border-b pb-2" style={{ borderColor: colors.borderDim }}>
                   <span className="text-[11px] font-bold uppercase tracking-wider" style={{ color: colors.textSecondary }}>
                     Instant Spot Allocation
                   </span>
-                  <span className="text-[10px] font-mono text-emerald-500 font-bold">
-                    0% Slippage · Direct Spot
+                  <span className="text-[10px] font-mono text-emerald-500 font-bold flex items-center gap-1">
+                    <Sparkles className="w-3 h-3" />
+                    <span>0% Slippage</span>
                   </span>
                 </div>
-                <div className="space-y-1.5">
-                  {estimatedFills.map((fill) => (
-                    <div key={fill.asset} className="flex items-center justify-between text-xs py-1 border-b last:border-b-0" style={{ borderColor: colors.borderDim }}>
-                      <div className="flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: fill.color }} />
-                        <span className="font-bold" style={{ color: colors.textPrimary }}>{fill.asset}</span>
-                        <span className="text-[10px] font-mono" style={{ color: colors.textTertiary }}>({fill.pct}%)</span>
+
+                {/* Coin Allocations with Real Logos */}
+                <div className="space-y-2">
+                  {estimatedFills.length > 0 && numAmount >= minAmount ? (
+                    estimatedFills.map((fill) => (
+                      <div key={fill.asset} className="flex items-center justify-between py-1 border-b last:border-b-0" style={{ borderColor: colors.borderDim }}>
+                        <div className="flex items-center gap-2">
+                          <div className="w-5 h-5 rounded-full bg-white flex items-center justify-center overflow-hidden p-0.5 shadow-sm ring-1 ring-black/20 flex-shrink-0">
+                            <img src={fill.logo} alt={fill.asset} className="w-full h-full object-contain" />
+                          </div>
+                          <div>
+                            <span className="font-bold text-xs" style={{ color: colors.textPrimary }}>{fill.asset}</span>
+                            <span className="text-[10px] font-mono ml-1.5" style={{ color: colors.textTertiary }}>({fill.pct}%)</span>
+                          </div>
+                        </div>
+                        <div className="text-right font-mono">
+                          <span className="font-bold text-xs block" style={{ color: colors.textPrimary }}>
+                            ~{fill.asset === 'USDT' ? fill.units.toFixed(2) : fill.units.toFixed(6)} {fill.asset}
+                          </span>
+                          <span className="text-[10px] block" style={{ color: colors.textSecondary }}>
+                            ₹{Math.round(fill.inrShare)}
+                          </span>
+                        </div>
                       </div>
-                      <div className="text-right font-mono">
-                        <span className="font-bold text-xs" style={{ color: colors.textPrimary }}>
-                          ~{fill.asset === 'USDT' ? fill.units.toFixed(2) : fill.units.toFixed(6)} {fill.asset}
-                        </span>
-                        <span className="text-[10px] block" style={{ color: colors.textSecondary }}>
-                          ₹{Math.round(fill.inrShare)}
-                        </span>
-                      </div>
+                    ))
+                  ) : (
+                    <div className="py-6 text-center text-xs font-mono" style={{ color: colors.textTertiary }}>
+                      Enter at least ₹{minAmount} to preview live asset spot allocation.
                     </div>
-                  ))}
+                  )}
+                </div>
+
+                {/* Guarantee Banner */}
+                <div className="p-2.5 rounded-xl border flex items-center gap-2 text-[11px] font-mono" style={{ backgroundColor: colors.card, borderColor: colors.borderDim, color: colors.textSecondary }}>
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0" />
+                  <span>Direct custodial settlement into your vault</span>
                 </div>
               </div>
-            )}
 
-            {/* Payment Gateway */}
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <label className="text-xs font-bold uppercase tracking-wider" style={{ color: colors.textSecondary }}>
-                  Payment Method
-                </label>
-                <span className="text-[10px] font-mono text-emerald-500 font-bold">Zero Platform Fee</span>
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                {['GPay', 'PhonePe', 'Paytm', 'IMPS'].map((m) => {
-                  const isSelected = method === m;
-                  return (
-                    <button
-                      key={m}
-                      type="button"
-                      onClick={() => setMethod(m as any)}
-                      className="h-10 px-3.5 rounded-xl border text-xs font-bold transition-all text-left flex items-center justify-between active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
-                      style={{
-                        backgroundColor: isSelected ? colors.accentTint : colors.surface,
-                        borderColor: isSelected ? colors.borderAccent : colors.cardBorder,
-                        color: isSelected ? colors.textPrimary : colors.textSecondary,
-                      }}
-                    >
-                      <div className="flex items-center gap-2">
-                        <CreditCard className="w-3.5 h-3.5" style={{ color: isSelected ? colors.accent : colors.textTertiary }} />
-                        <span>{m === 'IMPS' ? 'NetBanking (IMPS)' : `${m} UPI`}</span>
-                      </div>
-                      {isSelected && <CheckCircle2 className="w-3.5 h-3.5" style={{ color: colors.accent }} />}
-                    </button>
-                  );
-                })}
-              </div>
+              {/* Action Button */}
+              <button
+                onClick={handleDeposit}
+                disabled={loading || !amount || numAmount < minAmount}
+                className="w-full h-11 px-5 rounded-xl font-bold text-xs shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] flex items-center justify-center gap-2 transition-all hover:brightness-105 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none disabled:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                style={{ backgroundColor: colors.primary, color: colors.primaryText }}
+              >
+                {loading ? (
+                  <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <span>Pay ₹{numAmount > 0 ? numAmount.toLocaleString('en-IN') : '0'} Instantly</span>
+                )}
+              </button>
             </div>
-
-            {/* Submit Button */}
-            <button
-              onClick={handleDeposit}
-              disabled={loading || !amount || numAmount < minAmount}
-              className="w-full h-12 px-6 rounded-xl font-bold text-sm shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] flex items-center justify-center gap-2 transition-all hover:brightness-105 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none disabled:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
-              style={{ backgroundColor: colors.primary, color: colors.primaryText }}
-            >
-              {loading ? (
-                <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-              ) : (
-                <span>Pay ₹{numAmount > 0 ? numAmount.toLocaleString('en-IN') : '0'} Instantly</span>
-              )}
-            </button>
           </div>
         ) : (
-          <div className="p-8 text-center space-y-4 animate-fade-in">
+          <div className="p-8 text-center space-y-4 animate-fade-in max-w-md mx-auto">
             <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto border shadow-lg" style={{ backgroundColor: colors.mintTint, borderColor: colors.borderMint, color: colors.semanticSuccess }}>
               <CheckCircle2 className="w-8 h-8" />
             </div>
