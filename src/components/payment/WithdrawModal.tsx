@@ -10,6 +10,8 @@ import {
   ArrowLeft,
   Building2,
   FileCheck,
+  ChevronUp,
+  ChevronDown,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { Transaction } from '../../types';
@@ -135,6 +137,21 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
     setErrorMsg('');
     const target = Math.floor(availableBalance * (percentage / 100));
     setAmount(Math.max(1, target).toString());
+  };
+
+  const handleStepUp = () => {
+    setErrorMsg('');
+    const cur = parseInt(amount, 10) || 0;
+    const max = Math.floor(availableBalance);
+    const next = Math.min(max, cur + 100);
+    setAmount(next.toString());
+  };
+
+  const handleStepDown = () => {
+    setErrorMsg('');
+    const cur = parseInt(amount, 10) || 0;
+    const next = Math.max(0, cur - 100);
+    setAmount(next.toString());
   };
 
   // Step 1: Proceed from Amount selection to PIN Auth
@@ -351,7 +368,7 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
                     Withdrawal Amount (INR)
                   </label>
                   <div className="relative">
-                    <span className="absolute left-3.5 top-2.5 text-base font-bold font-mono" style={{ color: colors.textTertiary }}>₹</span>
+                    <span className="absolute left-3.5 top-2.5 text-base font-bold font-mono pointer-events-none" style={{ color: colors.textTertiary }}>₹</span>
                     <input
                       type="number"
                       min="1"
@@ -362,9 +379,33 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
                         setAmount(e.target.value);
                       }}
                       placeholder="0"
-                      className="w-full pl-8 pr-3 py-2 rounded-xl text-lg font-bold font-mono border focus:outline-none focus:ring-1 transition-all"
+                      className="w-full pl-8 pr-11 py-2 rounded-xl text-lg font-bold font-mono border focus:outline-none focus:ring-1 transition-all"
                       style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textPrimary }}
                     />
+                    {/* Custom Sleek Stepper Controls */}
+                    <div
+                      className="absolute right-1.5 top-1/2 -translate-y-1/2 flex flex-col items-center border rounded-lg overflow-hidden shadow-xs"
+                      style={{ borderColor: colors.borderDim, backgroundColor: colors.card }}
+                    >
+                      <button
+                        type="button"
+                        onClick={handleStepUp}
+                        className="w-6 h-3.5 flex items-center justify-center hover:opacity-100 hover:bg-white/10 transition-all border-b active:scale-90"
+                        style={{ color: colors.textSecondary, borderColor: colors.borderDim }}
+                        aria-label="Increase amount"
+                      >
+                        <ChevronUp className="w-3 h-3" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleStepDown}
+                        className="w-6 h-3.5 flex items-center justify-center hover:opacity-100 hover:bg-white/10 transition-all active:scale-90"
+                        style={{ color: colors.textSecondary }}
+                        aria-label="Decrease amount"
+                      >
+                        <ChevronDown className="w-3 h-3" />
+                      </button>
+                    </div>
                   </div>
 
                   {/* Quick Preset Percentage Buttons */}

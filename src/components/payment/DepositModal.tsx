@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { X, ArrowDownLeft, CheckCircle2, CreditCard, Sparkles } from 'lucide-react';
+import { X, ArrowDownLeft, CheckCircle2, CreditCard, Sparkles, ChevronUp, ChevronDown } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { BasketId } from '../../types';
 import { BasketCurrencyIcons } from '../common/BasketCurrencyIcons';
@@ -34,6 +34,17 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
   const presets = useMemo(() => {
     return targetBasket === 'stable' ? ['50', '100', '500', '1000'] : ['100', '300', '500', '2000'];
   }, [targetBasket]);
+
+  const stepValue = targetBasket === 'stable' ? 50 : 100;
+  const handleStepUp = () => {
+    const cur = parseInt(amount, 10) || 0;
+    setAmount((cur + stepValue).toString());
+  };
+  const handleStepDown = () => {
+    const cur = parseInt(amount, 10) || 0;
+    const next = Math.max(minAmount, cur - stepValue);
+    setAmount(next.toString());
+  };
 
   // Live estimated fills preview based on live coin spot prices
   const estimatedFills = useMemo(() => {
@@ -204,15 +215,39 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
                   </span>
                 </div>
                 <div className="relative">
-                  <span className="absolute left-3.5 top-2.5 text-base font-bold font-mono" style={{ color: colors.textTertiary }}>₹</span>
+                  <span className="absolute left-3.5 top-2.5 text-base font-bold font-mono pointer-events-none" style={{ color: colors.textTertiary }}>₹</span>
                   <input
                     type="number"
                     min={minAmount}
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
-                    className="w-full pl-8 pr-3 py-2 rounded-xl text-lg font-bold font-mono border focus:outline-none focus:ring-1 transition-all"
+                    className="w-full pl-8 pr-11 py-2 rounded-xl text-lg font-bold font-mono border focus:outline-none focus:ring-1 transition-all"
                     style={{ backgroundColor: colors.surface, borderColor: numAmount < minAmount && amount ? 'rgba(239, 68, 68, 0.4)' : colors.cardBorder, color: colors.textPrimary }}
                   />
+                  {/* Custom Sleek Stepper Controls */}
+                  <div
+                    className="absolute right-1.5 top-1/2 -translate-y-1/2 flex flex-col items-center border rounded-lg overflow-hidden shadow-xs"
+                    style={{ borderColor: colors.borderDim, backgroundColor: colors.card }}
+                  >
+                    <button
+                      type="button"
+                      onClick={handleStepUp}
+                      className="w-6 h-3.5 flex items-center justify-center hover:opacity-100 hover:bg-white/10 transition-all border-b active:scale-90"
+                      style={{ color: colors.textSecondary, borderColor: colors.borderDim }}
+                      aria-label="Increase amount"
+                    >
+                      <ChevronUp className="w-3 h-3" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleStepDown}
+                      className="w-6 h-3.5 flex items-center justify-center hover:opacity-100 hover:bg-white/10 transition-all active:scale-90"
+                      style={{ color: colors.textSecondary }}
+                      aria-label="Decrease amount"
+                    >
+                      <ChevronDown className="w-3 h-3" />
+                    </button>
+                  </div>
                 </div>
 
                 {/* Preset Chips */}
