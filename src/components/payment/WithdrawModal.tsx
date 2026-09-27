@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import {
   X,
   ArrowUpRight,
@@ -82,6 +83,20 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
     }
     prevOpenRef.current = isOpen;
   }, [isOpen, totalVal]);
+
+  // Lock body and html scroll while modal is active
+  useEffect(() => {
+    if (isOpen) {
+      const originalBodyOverflow = document.body.style.overflow;
+      const originalHtmlOverflow = document.documentElement.style.overflow;
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = originalBodyOverflow;
+        document.documentElement.style.overflow = originalHtmlOverflow;
+      };
+    }
+  }, [isOpen]);
 
   // Keyboard navigation (Escape key to close when not processing)
   useEffect(() => {
@@ -188,11 +203,17 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
     onClose();
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 bg-black/75 backdrop-blur-3xl backdrop-saturate-150 animate-fade-in overflow-hidden"
+      onClick={() => {
+        if (step !== 'PROCESSING') handleClose();
+      }}
+    >
       <div
         className="w-full max-w-lg rounded-3xl border shadow-2xl overflow-hidden transition-all duration-300"
         style={{ backgroundColor: colors.cardHigh, borderColor: colors.cardBorder }}
+        onClick={(e) => e.stopPropagation()}
       >
         {/* ── MODAL HEADER ── */}
         <div className="px-5 py-3.5 border-b flex items-center justify-between" style={{ borderColor: colors.borderDim }}>
@@ -603,6 +624,7 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

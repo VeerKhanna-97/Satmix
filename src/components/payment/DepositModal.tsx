@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, ArrowDownLeft, CheckCircle2, CreditCard, Sparkles } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { BasketId } from '../../types';
@@ -71,6 +72,19 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
     });
   }, [numAmount, minAmount, basketDef, livePrices, themeMode]);
 
+  useEffect(() => {
+    if (isOpen) {
+      const originalBodyOverflow = document.body.style.overflow;
+      const originalHtmlOverflow = document.documentElement.style.overflow;
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = originalBodyOverflow;
+        document.documentElement.style.overflow = originalHtmlOverflow;
+      };
+    }
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   const handleDeposit = async () => {
@@ -92,11 +106,15 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
     onClose();
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 bg-black/75 backdrop-blur-3xl backdrop-saturate-150 animate-fade-in overflow-hidden"
+      onClick={handleClose}
+    >
       <div
         className="w-full max-w-3xl rounded-3xl border shadow-2xl overflow-hidden transition-all duration-200"
         style={{ backgroundColor: colors.cardHigh, borderColor: colors.cardBorder }}
+        onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="px-6 py-4 border-b flex items-center justify-between" style={{ borderColor: colors.borderDim }}>
@@ -365,6 +383,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
