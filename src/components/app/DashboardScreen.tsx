@@ -883,14 +883,14 @@ export const DashboardScreen: React.FC = () => {
                               Invested Cost Basis
                             </div>
                             <div className="font-bold text-xs sm:text-sm mt-0.5" style={{ color: colors.textPrimary }}>
-                              ₹{item.investedInr.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                              ₹{(item.investedInr || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                             </div>
                             {item.investedInr > 0 && (
                               <div
                                 className="text-[10px] font-bold mt-0.5 inline-flex items-center gap-0.5"
                                 style={{ color: isProfit ? colors.semanticSuccess : colors.semanticDanger }}
                               >
-                                <span>{isProfit ? '+' : ''}₹{item.gainRupees.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                                <span>{isProfit ? '+' : ''}₹{(item.gainRupees || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                                 <span>({isProfit ? '+' : ''}{item.gainPercentage}%)</span>
                               </div>
                             )}
@@ -902,10 +902,10 @@ export const DashboardScreen: React.FC = () => {
                               Current Valuation
                             </div>
                             <div className="font-extrabold text-sm sm:text-base" style={{ color: colors.textPrimary }}>
-                              ₹{item.inrValue.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                              ₹{(item.inrValue || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                             </div>
                             <div className="text-[10px] font-semibold mt-0.5 flex items-center justify-end gap-1.5" style={{ color: colors.accent }}>
-                              <span>Spot: ₹{item.priceInr >= 100000 ? `${(item.priceInr / 100000).toFixed(2)}L` : item.priceInr.toLocaleString('en-IN')}</span>
+                              <span>Spot: ₹{item.priceInr && item.priceInr >= 100000 ? `${(item.priceInr / 100000).toFixed(2)}L` : (item.priceInr || 0).toLocaleString('en-IN')}</span>
                               <span>· {allocationPct}%</span>
                             </div>
                           </div>

@@ -449,28 +449,29 @@ export function executeWithdrawal(
   let growthWithdraw = 0;
 
   if (targetBasket === 'stable') {
-    if (amount > stableVal + 0.5) {
+    if (amount > stableVal + 2) {
       return { state, success: false, error: `Requested amount exceeds Stable Basket value of ₹${Math.floor(stableVal).toLocaleString('en-IN')}.` };
     }
     stableWithdraw = Math.min(amount, stableVal);
   } else if (targetBasket === 'growth') {
-    if (amount > growthVal + 0.5) {
+    if (amount > growthVal + 2) {
       return { state, success: false, error: `Requested amount exceeds Growth Basket value of ₹${Math.floor(growthVal).toLocaleString('en-IN')}.` };
     }
     growthWithdraw = Math.min(amount, growthVal);
   } else {
     // Pro-rata across all
-    if (amount > totalVal + 0.5) {
+    if (amount > totalVal + 2) {
       return { state, success: false, error: `Requested amount exceeds total portfolio value of ₹${Math.floor(totalVal).toLocaleString('en-IN')}.` };
     }
-    const ratio = Math.min(1, amount / (totalVal || 1));
-    stableWithdraw = stableVal * ratio;
-    growthWithdraw = growthVal * ratio;
+    const safeAmount = Math.min(amount, totalVal);
+    const ratio = Math.min(1, safeAmount / (totalVal || 1));
+    stableWithdraw = Math.min(stableVal, stableVal * ratio);
+    growthWithdraw = Math.min(growthVal, growthVal * ratio);
   }
 
-    const processBasketWithdrawal = (bId: BasketId, wAmt: number, currentVal: number) => {
+  const processBasketWithdrawal = (bId: BasketId, wAmt: number, currentVal: number) => {
     if (wAmt <= 0 || currentVal <= 0) return;
-    const isFullLiquidation = wAmt >= currentVal - 0.5;
+    const isFullLiquidation = wAmt >= currentVal - 1 || (currentVal > 0 && wAmt / currentVal >= 0.99);
     const fraction = isFullLiquidation ? 1 : Math.min(1, wAmt / currentVal);
     const costBasis = Math.max(0, getBasketInvested(bId));
     const costReduction = isFullLiquidation ? costBasis : Math.round(costBasis * fraction * 100) / 100;

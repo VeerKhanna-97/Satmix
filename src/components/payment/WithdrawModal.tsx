@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import {
   X,
@@ -43,8 +43,6 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
   const [processingStatus, setProcessingStatus] = useState<string>('Initiating IMPS Rail...');
   const [completedTx, setCompletedTx] = useState<Transaction | null>(null);
 
-  const prevOpenRef = useRef(false);
-
   // Compute live valuations for each basket
   const stableVal = useMemo(() => {
     const h = prototypeState.habits.stable?.holdings || { BTC: 0, ETH: 0, SOL: 0, USDT: 0 };
@@ -64,9 +62,9 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
     return Math.floor(totalVal * 100) / 100;
   }, [sourceBasket, stableVal, growthVal, totalVal]);
 
-  // Set smart default amount ONLY when modal first opens
+  // Reset modal state and initialize amount whenever modal opens
   useEffect(() => {
-    if (isOpen && !prevOpenRef.current) {
+    if (isOpen) {
       setStep('AMOUNT');
       setSourceBasket('all');
       setPin('');
@@ -83,8 +81,7 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
         setAmount('500');
       }
     }
-    prevOpenRef.current = isOpen;
-  }, [isOpen, totalVal]);
+  }, [isOpen]);
 
   // Lock body and html scroll while modal is active
   useEffect(() => {
@@ -110,6 +107,22 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, step]);
+
+  // Physical keyboard PIN entry during PIN_AUTH step
+  useEffect(() => {
+    if (!isOpen || step !== 'PIN_AUTH') return;
+    const handlePinKeys = (e: KeyboardEvent) => {
+      if (e.key >= '0' && e.key <= '9') {
+        setPin((prev) => (prev.length < 4 ? prev + e.key : prev));
+        setPinError('');
+      } else if (e.key === 'Backspace') {
+        setPin((prev) => prev.slice(0, -1));
+        setPinError('');
+      }
+    };
+    window.addEventListener('keydown', handlePinKeys);
+    return () => window.removeEventListener('keydown', handlePinKeys);
   }, [isOpen, step]);
 
   if (!isOpen) return null;

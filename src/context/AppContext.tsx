@@ -845,42 +845,33 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       amount: number,
       targetBasket: 'all' | 'stable' | 'growth' = 'all'
     ): Promise<{ success: boolean; tx?: Transaction; error?: string }> => {
-      await new Promise((resolve) => setTimeout(resolve, 900));
+      await new Promise((resolve) => setTimeout(resolve, 800));
 
-      let resultError: string | undefined;
-      let actualWithdrawn = amount;
-
-      updateStateAndPersist((prev) => {
-        const res = executeWithdrawal(prev, targetBasket, amount, livePrices);
-        if (!res.success) {
-          resultError = res.error || 'Failed to process withdrawal.';
-          return prev;
-        }
-
-        actualWithdrawn = res.actualWithdrawn || amount;
-
-        // Sync to cloud in background
-        try {
-          fetch('/api/auth', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              action: 'sync',
-              userId: prev.sessionUserId,
-              userState: {
-                activity: res.state.activity,
-                habits: res.state.habits,
-              },
-            }),
-          }).catch(() => {});
-        } catch {}
-
-        return res.state;
-      });
-
-      if (resultError) {
-        return { success: false, error: resultError };
+      const res = executeWithdrawal(prototypeState, targetBasket, amount, livePrices);
+      if (!res.success) {
+        return { success: false, error: res.error || 'Failed to process withdrawal.' };
       }
+
+      const actualWithdrawn = res.actualWithdrawn || amount;
+
+      // Persist state synchronously to localStorage and React state
+      updateStateAndPersist(() => res.state);
+
+      // Sync to cloud in background
+      try {
+        fetch('/api/auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'sync',
+            userId: res.state.sessionUserId,
+            userState: {
+              activity: res.state.activity,
+              habits: res.state.habits,
+            },
+          }),
+        }).catch(() => {});
+      } catch {}
 
       const tx: Transaction = {
         id: `tx_wd_${Date.now().toString().slice(-6)}`,
@@ -903,7 +894,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
       return { success: true, tx };
     },
-    [livePrices, updateStateAndPersist, activeUser]
+    [prototypeState, livePrices, updateStateAndPersist, activeUser]
   );
 
   // Update Profile
