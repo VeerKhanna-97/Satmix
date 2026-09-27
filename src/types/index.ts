@@ -72,6 +72,7 @@ export interface ActivityEntry {
   status: 'recorded';
   type?: 'habit_accrual' | 'deposit' | 'withdrawal';
   fills?: ActivityFill[];
+  costBasisReduction?: number;
 }
 
 export interface ValueHistoryPoint {

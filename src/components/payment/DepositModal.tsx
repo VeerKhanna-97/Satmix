@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { X, ArrowDownLeft, ShieldCheck, CheckCircle2, Shield, Rocket, Sparkles } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { X, ArrowDownLeft, ShieldCheck, CheckCircle2, Shield, Zap, Sparkles, Building2, CreditCard } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { BasketId } from '../../types';
 import { BasketCurrencyIcons } from '../common/BasketCurrencyIcons';
+import { getBasketById } from '../../data/baskets';
 
 interface DepositModalProps {
   isOpen: boolean;
@@ -10,7 +11,7 @@ interface DepositModalProps {
 }
 
 export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) => {
-  const { colors, user, selectedBasketId, simulateDeposit } = useApp();
+  const { colors, user, selectedBasketId, simulateDeposit, livePrices, themeMode } = useApp();
   const [targetBasket, setTargetBasket] = useState<BasketId>(selectedBasketId || 'stable');
   const [amount, setAmount] = useState('500');
   const [method, setMethod] = useState<'GPay' | 'PhonePe' | 'Paytm' | 'IMPS'>('GPay');
@@ -18,17 +19,60 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
   const [success, setSuccess] = useState(false);
   const [generatedUtr, setGeneratedUtr] = useState('');
 
+  const minAmount = targetBasket === 'growth' ? 30 : 10;
+  const numAmount = parseInt(amount, 10) || 0;
+  const basketDef = getBasketById(targetBasket);
+
+  const presets = useMemo(() => {
+    return targetBasket === 'stable' ? ['50', '100', '500', '1000'] : ['100', '300', '500', '2000'];
+  }, [targetBasket]);
+
+  // Live estimated fills preview based on live coin spot prices
+  const estimatedFills = useMemo(() => {
+    if (numAmount < minAmount) return [];
+    return basketDef.allocation.map((alloc) => {
+      const inrShare = numAmount * (alloc.pct / 100);
+      const price =
+        alloc.ticker === 'BTC'
+          ? livePrices.BTC
+          : alloc.ticker === 'ETH'
+          ? livePrices.ETH
+          : alloc.ticker === 'SOL'
+          ? livePrices.SOL
+          : livePrices.USDT;
+
+      const units = price > 0 ? inrShare / price : 0;
+      return {
+        asset: alloc.ticker,
+        label: alloc.label,
+        pct: alloc.pct,
+        inrShare,
+        units,
+        price,
+        color:
+          alloc.ticker === 'USDT'
+            ? '#26a17b'
+            : alloc.ticker === 'BTC'
+            ? '#f7931b'
+            : alloc.ticker === 'ETH'
+            ? themeMode === 'light'
+              ? '#0F172A'
+              : '#ffffff'
+            : '#9945fe',
+      };
+    });
+  }, [numAmount, minAmount, basketDef, livePrices, themeMode]);
+
   if (!isOpen) return null;
 
   const handleDeposit = async () => {
-    const amt = parseInt(amount, 10);
-    if (isNaN(amt) || amt < 10) return;
+    if (isNaN(numAmount) || numAmount < minAmount) return;
 
     setLoading(true);
     const utr = `50${Date.now().toString().slice(-10)}`;
     setGeneratedUtr(utr);
 
-    await simulateDeposit(amt, `UPI Instant · ${method}`, targetBasket);
+    await simulateDeposit(numAmount, `UPI Instant · ${method}`, targetBasket);
     setLoading(false);
     setSuccess(true);
   };
@@ -43,7 +87,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
       <div
-        className="w-full max-w-md rounded-3xl border shadow-2xl overflow-hidden transition-all"
+        className="w-full max-w-md rounded-3xl border shadow-2xl overflow-hidden transition-all duration-200"
         style={{ backgroundColor: colors.cardHigh, borderColor: colors.cardBorder }}
       >
         {/* Header */}
@@ -54,7 +98,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
             </div>
             <div>
               <span className="font-bold text-sm block" style={{ color: colors.textPrimary }}>Instant Capital Top-Up</span>
-              <span className="text-[10px]" style={{ color: colors.textTertiary }}>One-time spot buy · No impact on daily SIP</span>
+              <span className="text-[10px] font-mono" style={{ color: colors.textTertiary }}>Spot Buy · Zero Impact on Recurring SIP</span>
             </div>
           </div>
           <button
@@ -67,7 +111,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
         </div>
 
         {!success ? (
-          <div className="p-6 space-y-5">
+          <div className="p-6 space-y-5 max-h-[85vh] overflow-y-auto scrollbar-none">
             {/* Target Strategy Selector */}
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider mb-2" style={{ color: colors.textSecondary }}>
@@ -76,7 +120,10 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
               <div className="grid grid-cols-2 gap-2">
                 <button
                   type="button"
-                  onClick={() => setTargetBasket('stable')}
+                  onClick={() => {
+                    setTargetBasket('stable');
+                    if (numAmount < 10) setAmount('10');
+                  }}
                   className="p-3 rounded-2xl border text-left transition-all relative active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                   style={{
                     backgroundColor: targetBasket === 'stable' ? colors.mintTint : colors.surface,
@@ -95,7 +142,10 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
 
                 <button
                   type="button"
-                  onClick={() => setTargetBasket('growth')}
+                  onClick={() => {
+                    setTargetBasket('growth');
+                    if (numAmount < 30) setAmount('30');
+                  }}
                   className="p-3 rounded-2xl border text-left transition-all relative active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                   style={{
                     backgroundColor: targetBasket === 'growth' ? colors.accentTint : colors.surface,
@@ -120,23 +170,25 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
                 <label className="text-xs font-bold uppercase tracking-wider" style={{ color: colors.textSecondary }}>
                   Top-Up Amount (INR)
                 </label>
-                <span className="text-[10px]" style={{ color: colors.textTertiary }}>Min ₹10</span>
+                <span className="text-[10px] font-mono font-semibold" style={{ color: numAmount < minAmount ? colors.semanticDanger : colors.textTertiary }}>
+                  Min ₹{minAmount}
+                </span>
               </div>
               <div className="relative">
                 <span className="absolute left-4 top-3.5 text-lg font-bold font-mono" style={{ color: colors.textTertiary }}>₹</span>
                 <input
                   type="number"
-                  min="10"
+                  min={minAmount}
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   className="w-full pl-9 pr-4 py-3 rounded-2xl text-xl font-bold font-mono border focus:outline-none focus:ring-1 transition-all"
-                  style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textPrimary }}
+                  style={{ backgroundColor: colors.surface, borderColor: numAmount < minAmount && amount ? 'rgba(239, 68, 68, 0.4)' : colors.cardBorder, color: colors.textPrimary }}
                 />
               </div>
 
               {/* Preset Chips */}
               <div className="grid grid-cols-4 gap-2 mt-2.5">
-                {['100', '500', '1000', '5000'].map((preset) => {
+                {presets.map((preset) => {
                   const isActive = amount === preset;
                   return (
                     <button
@@ -151,18 +203,54 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
                         boxShadow: isActive ? 'inset 0 1px 0 0 rgba(255,255,255,0.2)' : 'none',
                       }}
                     >
-                      +₹{preset}
+                      ₹{preset}
                     </button>
                   );
                 })}
               </div>
             </div>
 
-            {/* Payment Method */}
+            {/* Live Spot Allocation Preview */}
+            {estimatedFills.length > 0 && numAmount >= minAmount && (
+              <div className="p-3.5 rounded-2xl border space-y-2.5" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-bold uppercase tracking-wider" style={{ color: colors.textSecondary }}>
+                    Instant Spot Allocation
+                  </span>
+                  <span className="text-[10px] font-mono text-emerald-500 font-bold">
+                    0% Slippage · Direct Spot
+                  </span>
+                </div>
+                <div className="space-y-1.5">
+                  {estimatedFills.map((fill) => (
+                    <div key={fill.asset} className="flex items-center justify-between text-xs py-1 border-b last:border-b-0" style={{ borderColor: colors.borderDim }}>
+                      <div className="flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: fill.color }} />
+                        <span className="font-bold" style={{ color: colors.textPrimary }}>{fill.asset}</span>
+                        <span className="text-[10px] font-mono" style={{ color: colors.textTertiary }}>({fill.pct}%)</span>
+                      </div>
+                      <div className="text-right font-mono">
+                        <span className="font-bold text-xs" style={{ color: colors.textPrimary }}>
+                          ~{fill.asset === 'USDT' ? fill.units.toFixed(2) : fill.units.toFixed(6)} {fill.asset}
+                        </span>
+                        <span className="text-[10px] block" style={{ color: colors.textSecondary }}>
+                          ₹{Math.round(fill.inrShare)}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Payment Gateway */}
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider mb-2" style={{ color: colors.textSecondary }}>
-                Payment Gateway
-              </label>
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-xs font-bold uppercase tracking-wider" style={{ color: colors.textSecondary }}>
+                  Payment Method
+                </label>
+                <span className="text-[10px] font-mono text-emerald-500 font-bold">Zero Platform Fee</span>
+              </div>
               <div className="grid grid-cols-2 gap-2">
                 {['GPay', 'PhonePe', 'Paytm', 'IMPS'].map((m) => {
                   const isSelected = method === m;
@@ -178,7 +266,10 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
                         color: isSelected ? colors.textPrimary : colors.textSecondary,
                       }}
                     >
-                      <span>{m}</span>
+                      <div className="flex items-center gap-2">
+                        <CreditCard className="w-3.5 h-3.5" style={{ color: isSelected ? colors.accent : colors.textTertiary }} />
+                        <span>{m === 'IMPS' ? 'NetBanking (IMPS)' : `${m} UPI`}</span>
+                      </div>
                       {isSelected && <CheckCircle2 className="w-3.5 h-3.5" style={{ color: colors.accent }} />}
                     </button>
                   );
@@ -189,14 +280,14 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
             {/* Submit Button */}
             <button
               onClick={handleDeposit}
-              disabled={loading || !amount || parseInt(amount, 10) < 10}
+              disabled={loading || !amount || numAmount < minAmount}
               className="w-full h-12 px-6 rounded-xl font-bold text-sm shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] flex items-center justify-center gap-2 transition-all hover:brightness-105 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none disabled:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
               style={{ backgroundColor: colors.primary, color: colors.primaryText }}
             >
               {loading ? (
                 <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
               ) : (
-                <span>Pay ₹{amount ? parseInt(amount, 10).toLocaleString('en-IN') : '0'} Instantly</span>
+                <span>Pay ₹{numAmount > 0 ? numAmount.toLocaleString('en-IN') : '0'} Instantly</span>
               )}
             </button>
           </div>
@@ -206,9 +297,12 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
               <CheckCircle2 className="w-8 h-8" />
             </div>
             <div>
-              <h3 className="text-xl font-bold" style={{ color: colors.textPrimary }}>Top-Up Executed!</h3>
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded font-mono" style={{ backgroundColor: colors.mintTint, color: colors.semanticSuccess }}>
+                Spot Order Filled
+              </span>
+              <h3 className="text-xl font-bold mt-1.5" style={{ color: colors.textPrimary }}>Capital Top-Up Complete!</h3>
               <p className="text-xs mt-1" style={{ color: colors.textSecondary }}>
-                ₹{parseInt(amount, 10).toLocaleString('en-IN')} allocated instantly into{' '}
+                ₹{numAmount.toLocaleString('en-IN')} allocated directly into{' '}
                 <strong style={{ color: colors.textPrimary }}>{targetBasket === 'stable' ? 'Stable Basket' : 'Growth Basket'}</strong>.
               </p>
             </div>
@@ -217,19 +311,23 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
             <div className="p-3.5 rounded-2xl border text-left space-y-2 font-mono text-xs" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
               <div className="flex justify-between">
                 <span style={{ color: colors.textTertiary }}>Settled Amount:</span>
-                <span className="font-bold" style={{ color: colors.textPrimary }}>₹{parseInt(amount, 10).toLocaleString('en-IN')}</span>
+                <span className="font-bold" style={{ color: colors.textPrimary }}>₹{numAmount.toLocaleString('en-IN')}</span>
               </div>
               <div className="flex justify-between">
                 <span style={{ color: colors.textTertiary }}>Target Basket:</span>
                 <span className="font-bold" style={{ color: colors.accent }}>{targetBasket === 'stable' ? 'Stable Basket' : 'Growth Basket'}</span>
               </div>
               <div className="flex justify-between">
+                <span style={{ color: colors.textTertiary }}>Payment Channel:</span>
+                <span className="font-bold" style={{ color: colors.textPrimary }}>{method} Instant</span>
+              </div>
+              <div className="flex justify-between">
                 <span style={{ color: colors.textTertiary }}>UTR Ref:</span>
                 <span className="font-bold" style={{ color: colors.textPrimary }}>{generatedUtr || '502918273615'}</span>
               </div>
-              <div className="flex justify-between">
-                <span style={{ color: colors.textTertiary }}>Daily SIP Status:</span>
-                <span className="font-bold text-emerald-500">Unchanged (Protected)</span>
+              <div className="flex justify-between pt-1 border-t" style={{ borderColor: colors.borderDim }}>
+                <span style={{ color: colors.textTertiary }}>Recurring Habit:</span>
+                <span className="font-bold text-emerald-500">Intact & Active</span>
               </div>
             </div>
 

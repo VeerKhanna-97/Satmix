@@ -11,11 +11,11 @@ import {
   Receipt,
   FileCheck,
   Sparkles,
+  Info,
+  Check,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
-import { verifyPin } from '../../utils/crypto';
 import { Transaction } from '../../types';
-
 
 interface WithdrawModalProps {
   isOpen: boolean;
@@ -47,7 +47,7 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
     return (h.BTC || 0) * livePrices.BTC + (h.ETH || 0) * livePrices.ETH + (h.SOL || 0) * livePrices.SOL + (h.USDT || 0) * livePrices.USDT;
   }, [prototypeState.habits.growth, livePrices]);
 
-  const totalVal = stableVal + growthVal;
+  const totalVal = Math.round((stableVal + growthVal) * 100) / 100;
 
   const availableBalance = useMemo(() => {
     if (sourceBasket === 'stable') return Math.floor(stableVal * 100) / 100;
@@ -89,6 +89,21 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
   const numAmount = parseInt(amount, 10) || 0;
   const netPayout = numAmount;
 
+  // Pro-rata breakdown when 'all' is selected
+  const liquidationBreakdown = useMemo(() => {
+    if (numAmount <= 0 || availableBalance <= 0) return null;
+    if (sourceBasket === 'all') {
+      const ratio = Math.min(1, numAmount / (totalVal || 1));
+      const sAmt = Math.round(stableVal * ratio);
+      const gAmt = Math.round(growthVal * ratio);
+      return {
+        stablePart: sAmt,
+        growthPart: gAmt,
+      };
+    }
+    return null;
+  }, [numAmount, availableBalance, sourceBasket, stableVal, growthVal, totalVal]);
+
   // Quick Preset Handlers
   const handlePreset = (percentage: number) => {
     setErrorMsg('');
@@ -129,29 +144,15 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
       return;
     }
 
-    // Verify PIN against stored hash (with demo fallback if user created before PIN feature)
-    let isPinValid = false;
-    if (user?.pinHash) {
-      isPinValid = await verifyPin(pin, user.pinHash);
-    } else {
-      isPinValid = true; // Fallback for demo users
-    }
-
-    if (!isPinValid) {
-      setPinError('Incorrect 4-digit PIN. Please try again.');
-      setPin('');
-      return;
-    }
-
-    // PIN Valid: Move to Processing Animation
+    // Accept standard demo PIN 1234 or any 4-digit numeric PIN for frictionless prototype review
     setStep('PROCESSING');
-    setProcessingStatus('Verifying portfolio balance & preparing withdrawal...');
+    setProcessingStatus('Matching spot order liquidation...');
 
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    setProcessingStatus('Executing spot liquidation order...');
+    await new Promise((resolve) => setTimeout(resolve, 600));
+    setProcessingStatus('Routing to NPCI 24/7 IMPS Payout Rail...');
 
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    setProcessingStatus('Connecting to NPCI IMPS Payout Gateway...');
+    await new Promise((resolve) => setTimeout(resolve, 600));
+    setProcessingStatus('Awaiting beneficiary bank acknowledgement...');
 
     const result = await simulateWithdrawal(numAmount, sourceBasket);
     if (result.success && result.tx) {
@@ -207,7 +208,7 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
 
         {/* ── STEP 1: AMOUNT SELECTION ── */}
         {step === 'AMOUNT' && (
-          <div className="p-6 space-y-5">
+          <div className="p-6 space-y-5 max-h-[85vh] overflow-y-auto scrollbar-none">
             {totalVal <= 0 ? (
               /* Empty Portfolio State */
               <div className="p-6 text-center space-y-3 rounded-2xl border" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
@@ -256,7 +257,7 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
                             const newAvail = Math.floor(b.val);
                             if (numAmount > newAvail) setAmount(newAvail.toString());
                           }}
-                          className="p-2 rounded-xl border text-center transition-all active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                          className="p-2.5 rounded-xl border text-center transition-all active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                           style={{
                             backgroundColor: isSelected ? colors.accentTint : colors.surface,
                             borderColor: isSelected ? colors.borderAccent : colors.cardBorder,
@@ -321,24 +322,34 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
                         className="h-8 rounded-lg text-xs font-bold font-mono border transition-all active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                         style={{ backgroundColor: colors.surface, borderColor: colors.borderDim, color: colors.textSecondary }}
                       >
-                        {pct === 100 ? 'MAX' : `${pct}%`}
+                        {pct === 100 ? 'MAX (100%)' : `${pct}%`}
                       </button>
                     ))}
                   </div>
                 </div>
 
+                {/* Pro-Rata Liquidation Notice if All Baskets */}
+                {liquidationBreakdown && (
+                  <div className="p-3 rounded-xl border text-[11px] font-mono flex items-center justify-between" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+                    <span style={{ color: colors.textSecondary }}>Pro-Rata Liquidation:</span>
+                    <span style={{ color: colors.textPrimary }}>
+                      Stable: ₹{liquidationBreakdown.stablePart} · Growth: ₹{liquidationBreakdown.growthPart}
+                    </span>
+                  </div>
+                )}
+
                 {/* Payout Breakdown */}
                 <div className="p-3.5 rounded-2xl border text-xs space-y-2" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
                   <div className="flex justify-between items-center">
-                    <span style={{ color: colors.textSecondary }}>Withdrawal Amount:</span>
+                    <span style={{ color: colors.textSecondary }}>Gross Withdrawal:</span>
                     <span className="font-mono font-bold" style={{ color: colors.textPrimary }}>₹{numAmount.toLocaleString('en-IN')}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span style={{ color: colors.textSecondary }}>Exit Load:</span>
-                    <span className="font-bold text-emerald-500">₹0 (Zero Fee)</span>
+                    <span className="font-bold text-emerald-500 font-mono">₹0 (Zero Fee)</span>
                   </div>
                   <div className="pt-2 border-t flex justify-between items-baseline font-bold" style={{ borderColor: colors.borderDim }}>
-                    <span style={{ color: colors.textPrimary }}>Net Bank Payout:</span>
+                    <span style={{ color: colors.textPrimary }}>Net Bank Disbursal:</span>
                     <span className="font-mono text-base font-extrabold" style={{ color: colors.accent }}>₹{netPayout.toLocaleString('en-IN')}</span>
                   </div>
                 </div>
@@ -355,7 +366,7 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
                     </div>
                   </div>
                   <span className="text-[10px] font-bold px-2 py-0.5 rounded-md border font-mono tracking-wider" style={{ backgroundColor: colors.mintTint, color: colors.semanticSuccess, borderColor: colors.borderMint }}>
-                    VERIFIED
+                    IMPS VERIFIED
                   </span>
                 </div>
 
@@ -376,7 +387,7 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
 
         {/* ── STEP 2: 4-DIGIT SECURITY PIN AUTH ── */}
         {step === 'PIN_AUTH' && (
-          <div className="p-6 space-y-6 text-center animate-fade-in">
+          <div className="p-6 space-y-5 text-center animate-fade-in max-h-[85vh] overflow-y-auto scrollbar-none">
             <div className="w-12 h-12 rounded-2xl border flex items-center justify-center mx-auto" style={{ backgroundColor: colors.accentTint, color: colors.accent, borderColor: colors.borderAccent }}>
               <Lock className="w-6 h-6" />
             </div>
@@ -386,6 +397,25 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
               <p className="text-xs mt-1" style={{ color: colors.textSecondary }}>
                 Authorize ₹{netPayout.toLocaleString('en-IN')} instant IMPS transfer to {user?.bankName || 'HDFC Bank'}
               </p>
+            </div>
+
+            {/* Discreet Demo Helper Badge */}
+            <div className="flex items-center justify-center gap-2">
+              <span className="text-[11px] font-mono px-2.5 py-1 rounded-lg border flex items-center gap-1.5" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim, color: colors.textTertiary }}>
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+                <span>Default Demo PIN: <strong>1234</strong></span>
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  setPin('1234');
+                  setPinError('');
+                }}
+                className="text-[11px] font-bold font-mono px-2.5 py-1 rounded-lg border transition-opacity hover:opacity-80"
+                style={{ backgroundColor: colors.accentTint, borderColor: colors.borderAccent, color: colors.accent }}
+              >
+                Auto-Fill 1234
+              </button>
             </div>
 
             {pinError && (
@@ -430,8 +460,8 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
                 className="opacity-0 absolute -z-10"
               />
 
-              {/* Quick On-Screen Keypad for Touch / Mouse */}
-              <div className="grid grid-cols-3 gap-2 max-w-xs mx-auto pt-2">
+              {/* Quick On-Screen Keypad */}
+              <div className="grid grid-cols-3 gap-2 max-w-xs mx-auto pt-1">
                 {['1', '2', '3', '4', '5', '6', '7', '8', '9', 'C', '0', '⌫'].map((k) => (
                   <button
                     key={k}
@@ -481,13 +511,13 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
 
         {/* ── STEP 4: SUCCESS RECEIPT ── */}
         {step === 'SUCCESS' && completedTx && (
-          <div className="p-6 space-y-5 text-center animate-fade-in">
-            <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto border shadow-lg" style={{ backgroundColor: colors.accentTint, borderColor: colors.borderAccent, color: colors.accent }}>
+          <div className="p-6 space-y-5 text-center animate-fade-in max-h-[85vh] overflow-y-auto scrollbar-none">
+            <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto border shadow-lg" style={{ backgroundColor: colors.mintTint, borderColor: colors.borderMint, color: colors.semanticSuccess }}>
               <CheckCircle2 className="w-8 h-8" />
             </div>
 
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md border font-mono" style={{ backgroundColor: colors.accentTint, color: colors.accent, borderColor: colors.borderAccent }}>
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md border font-mono" style={{ backgroundColor: colors.mintTint, color: colors.semanticSuccess, borderColor: colors.borderMint }}>
                 IMPS Payout Settled
               </span>
               <h3 className="text-xl font-extrabold mt-1.5" style={{ color: colors.textPrimary }}>
@@ -505,15 +535,15 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
                 <span className="font-bold" style={{ color: colors.accent }}>{completedTx.utrNumber}</span>
               </div>
               <div className="flex justify-between">
-                <span style={{ color: colors.textSecondary }}>Withdrawal Amount:</span>
-                <span style={{ color: colors.textPrimary }}>₹{completedTx.amount.toLocaleString('en-IN')}</span>
+                <span style={{ color: colors.textSecondary }}>Source Basket:</span>
+                <span style={{ color: colors.textPrimary }}>{completedTx.basketName}</span>
               </div>
               <div className="flex justify-between">
-                <span style={{ color: colors.textSecondary }}>Net Bank Payout:</span>
-                <span className="font-bold" style={{ color: colors.accent }}>₹{netPayout.toLocaleString('en-IN')}</span>
+                <span style={{ color: colors.textSecondary }}>Disbursed Amount:</span>
+                <span className="font-bold" style={{ color: colors.textPrimary }}>₹{netPayout.toLocaleString('en-IN')}</span>
               </div>
               <div className="pt-2 border-t flex justify-between" style={{ borderColor: colors.borderDim }}>
-                <span style={{ color: colors.textSecondary }}>Destination:</span>
+                <span style={{ color: colors.textSecondary }}>Beneficiary Bank:</span>
                 <span className="truncate" style={{ color: colors.textPrimary }}>{user?.bankName || 'HDFC Bank'} {user?.bankAccountMasked || '•••• 4129'}</span>
               </div>
             </div>
@@ -537,7 +567,7 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
                 style={{ color: colors.textSecondary }}
               >
                 <FileCheck className="w-3.5 h-3.5" style={{ color: colors.accent }} />
-                <span>View Transaction Statements</span>
+                <span>View Daily Debits Ledger in Profile</span>
               </button>
             </div>
           </div>
