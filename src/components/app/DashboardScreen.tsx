@@ -734,19 +734,15 @@ export const DashboardScreen: React.FC = () => {
                     })}
                   </div>
 
-                  {/* Distribution Badges */}
+                  {/* Distribution Badges with Mini Token Icons */}
                   <div className="flex flex-wrap items-center gap-3 pt-1 text-[11px] font-mono">
                     {holdingsList.map((item) => {
                       const pct = tabMetrics.marketValue > 0 ? ((item.inrValue / tabMetrics.marketValue) * 100).toFixed(1) : '0.0';
                       return (
                         <div key={item.coin} className="flex items-center gap-1.5">
-                          <span
-                            className="w-2.5 h-2.5 rounded-full inline-block"
-                            style={{
-                              backgroundColor: item.meta.color,
-                              boxShadow: item.coin === 'ETH' && themeMode === 'light' ? '0 0 0 1px rgba(15, 23, 42, 0.25)' : undefined,
-                            }}
-                          />
+                          <div className="w-3.5 h-3.5 rounded-full bg-white flex items-center justify-center overflow-hidden p-0.5 shadow-sm ring-1 ring-black/20 flex-shrink-0">
+                            <img src={item.meta.icon} alt={item.coin} className="w-full h-full object-contain" />
+                          </div>
                           <span className="font-bold" style={{ color: colors.textPrimary }}>{item.coin}:</span>
                           <span style={{ color: colors.textSecondary }}>{pct}%</span>
                         </div>
@@ -780,8 +776,8 @@ export const DashboardScreen: React.FC = () => {
                           <div
                             className="w-12 h-12 rounded-2xl border flex items-center justify-center p-2.5 shadow-sm flex-shrink-0 relative overflow-hidden"
                             style={{
-                              backgroundColor: item.meta.bg,
-                              borderColor: item.meta.border,
+                              backgroundColor: colors.card,
+                              borderColor: colors.borderDim,
                             }}
                           >
                             <img
@@ -800,9 +796,9 @@ export const DashboardScreen: React.FC = () => {
                               <span
                                 className="text-[10px] font-mono px-2 py-0.5 rounded-md border font-semibold flex-shrink-0"
                                 style={{
-                                  backgroundColor: item.meta.bg,
-                                  borderColor: item.meta.border,
-                                  color: item.meta.color,
+                                  backgroundColor: colors.card,
+                                  borderColor: colors.borderDim,
+                                  color: colors.textSecondary,
                                 }}
                               >
                                 {item.meta.tag}
@@ -1126,8 +1122,8 @@ export const DashboardScreen: React.FC = () => {
                 <div
                   className="w-12 h-12 rounded-2xl border flex items-center justify-center p-2.5 shadow-sm flex-shrink-0 relative overflow-hidden"
                   style={{
-                    backgroundColor: selectedAssetModal.meta.bg,
-                    borderColor: selectedAssetModal.meta.border,
+                    backgroundColor: colors.card,
+                    borderColor: colors.borderDim,
                   }}
                 >
                   <img
@@ -1145,9 +1141,9 @@ export const DashboardScreen: React.FC = () => {
                     <span
                       className="text-[10px] font-mono px-2 py-0.5 rounded-md border font-bold uppercase"
                       style={{
-                        backgroundColor: selectedAssetModal.meta.bg,
-                        borderColor: selectedAssetModal.meta.border,
-                        color: selectedAssetModal.meta.color,
+                        backgroundColor: colors.card,
+                        borderColor: colors.borderDim,
+                        color: colors.textSecondary,
                       }}
                     >
                       {selectedAssetModal.meta.tokenStandard}
