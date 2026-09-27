@@ -10,9 +10,7 @@ import {
   AlertCircle,
   Calendar,
   Layers,
-  BookOpen,
   ArrowRight,
-  Clock,
   Sparkles,
   ChevronRight,
   ChevronDown,
@@ -37,7 +35,6 @@ import { DepositModal } from '../payment/DepositModal';
 import { WithdrawModal } from '../payment/WithdrawModal';
 import { getBasketById } from '../../data/baskets';
 import { BasketCurrencyIcons } from '../common/BasketCurrencyIcons';
-import { EDUCATIONAL_GUIDES } from '../../data/mockData';
 import { StreakWeeklyTracker } from './StreakWeeklyTracker';
 import { generateChartSeries, generateAssetWeekSeries, ChartTimeframe } from '../../utils/chartSeries';
 import { CustomDateRangePicker } from '../common/CustomDateRangePicker';
@@ -91,7 +88,6 @@ export const DashboardScreen: React.FC = () => {
   // Modals
   const [depositOpen, setDepositOpen] = useState(false);
   const [withdrawOpen, setWithdrawOpen] = useState(false);
-  const [selectedGuide, setSelectedGuide] = useState<typeof EDUCATIONAL_GUIDES[0] | null>(null);
   const [selectedAssetModal, setSelectedAssetModal] = useState<any | null>(null);
   const [holdingsExpanded, setHoldingsExpanded] = useState(false);
 
@@ -124,16 +120,6 @@ export const DashboardScreen: React.FC = () => {
     if (hr < 17) return 'Good afternoon';
     return 'Good evening';
   }, []);
-
-  // Filtered activity for daily debits ledger
-  const filteredActivity = useMemo(() => {
-    if (activeTabFilter === 'all') {
-      return prototypeState.activity;
-    }
-    return prototypeState.activity.filter(
-      (a) => a.basketId.toLowerCase() === activeTabFilter.toLowerCase()
-    );
-  }, [prototypeState.activity, activeTabFilter]);
 
   const isPositiveGain = tabMetrics.netDeltaRupees >= 0;
 
@@ -1122,152 +1108,6 @@ export const DashboardScreen: React.FC = () => {
       <FadeIn delay={0.12}>
         <StreakWeeklyTracker onQuickDeposit={() => setDepositOpen(true)} />
       </FadeIn>
-
-      {/* ── DAILY DEBITS & ACTIVITY LEDGER ────────────────────── */}
-      <SpotlightCard
-        spotlightColor={colors.purpleTint}
-        className="rounded-3xl p-6 border shadow-lg space-y-4"
-        style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
-      >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Clock className="w-4 h-4" style={{ color: colors.accent }} />
-            <h3 className="font-bold text-sm" style={{ color: colors.textPrimary }}>
-              Daily Debits & Auto-Buys ({activeTabFilter.toUpperCase()})
-            </h3>
-          </div>
-          <span className="text-xs font-mono" style={{ color: colors.textTertiary }}>
-            {filteredActivity.length} Executions
-          </span>
-        </div>
-
-        {filteredActivity.length > 0 ? (
-          <div className="divide-y" style={{ borderColor: colors.borderDim }}>
-            {filteredActivity.slice(0, 15).map((entry) => {
-              const isWd = entry.type === 'withdrawal' || entry.amount < 0;
-              const isDep = entry.type === 'deposit';
-
-              const fillsSummary = entry.fills && entry.fills.length > 0
-                ? entry.fills.map((f) => `${Math.abs(f.units).toFixed(f.asset === 'USDT' ? 2 : 6)} ${f.asset}`).join(', ')
-                : `${Math.abs(entry.amount)} INR`;
-
-              return (
-                <div key={entry.id} className="py-3.5 flex items-center justify-between text-xs hover:bg-white/[0.02] px-2 rounded-xl transition-colors">
-                  <div className="flex items-center gap-3">
-                    <div
-                      className="p-2.5 rounded-xl flex-shrink-0"
-                      style={{
-                        backgroundColor: isWd ? 'rgba(244, 63, 94, 0.12)' : isDep ? colors.accentTint : colors.mintTint,
-                        color: isWd ? '#FB7185' : isDep ? colors.accent : colors.semanticSuccess,
-                      }}
-                    >
-                      {isWd ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownLeft className="w-4 h-4" />}
-                    </div>
-                    <div>
-                      <div className="font-bold flex items-center gap-2" style={{ color: colors.textPrimary }}>
-                        <span>
-                          {entry.basketId === 'stable' ? 'Stable Basket' : 'Growth Basket'}{' '}
-                          {isWd ? 'Withdrawal' : isDep ? 'Instant Top-Up' : 'Daily SIP'}
-                        </span>
-                        <span
-                          className="text-[10px] px-1.5 py-0.2 rounded font-mono font-bold"
-                          style={{
-                            backgroundColor: isWd ? 'rgba(244, 63, 94, 0.15)' : colors.accentTint,
-                            color: isWd ? '#FB7185' : colors.accent,
-                          }}
-                        >
-                          {isWd ? 'IMPS SETTLED' : isDep ? 'INSTANT SPOT' : 'AUTOPAY'}
-                        </span>
-                      </div>
-                      <div className="text-[11px] font-mono mt-0.5" style={{ color: colors.textSecondary }}>
-                        {entry.date} · {isWd ? `Liquidated: ${fillsSummary}` : `Credited: ${fillsSummary}`}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="text-right font-mono">
-                    <div
-                      className="font-bold text-sm"
-                      style={{ color: isWd ? '#FB7185' : colors.textPrimary }}
-                    >
-                      {isWd ? '-' : '+'}₹{Math.abs(entry.amount).toLocaleString('en-IN')}
-                    </div>
-                    <span className="text-[10px]" style={{ color: colors.textTertiary }}>
-                      {isWd ? 'Bank Payout' : isDep ? 'Lump-Sum' : 'Daily 8 AM SIP'}
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        ) : (
-          <div className="p-8 text-center text-xs border rounded-2xl border-dashed" style={{ color: colors.textTertiary, borderColor: colors.borderDim }}>
-            No transaction records in this tab yet. Top up or activate your habit to accumulate daily fills!
-          </div>
-        )}
-      </SpotlightCard>
-
-      {/* ── EDUCATIONAL GUIDES FEED ───────────────────────────── */}
-      <div className="rounded-3xl p-6 border shadow-lg space-y-4" style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <BookOpen className="w-4 h-4" style={{ color: colors.accent }} />
-            <h3 className="font-bold text-sm" style={{ color: colors.textPrimary }}>Educational Knowledge Feed</h3>
-          </div>
-          <span className="text-xs font-semibold" style={{ color: colors.textTertiary }}>Micro-Lessons</span>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {EDUCATIONAL_GUIDES.map((guide) => (
-            <SpotlightCard
-              key={guide.id}
-              spotlightColor={colors.purpleTint}
-              onClick={() => setSelectedGuide(guide)}
-              className="p-4 rounded-2xl border cursor-pointer transition-all hover:scale-[1.01] flex flex-col justify-between"
-              style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder }}
-            >
-              <div>
-                <div className="flex justify-between text-[10px] font-bold uppercase tracking-wider mb-2">
-                  <span style={{ color: colors.accent }}>{guide.category}</span>
-                  <span className="font-mono" style={{ color: colors.textTertiary }}>{guide.readTime}</span>
-                </div>
-                <h4 className="text-xs font-bold mb-1.5 leading-snug" style={{ color: colors.textPrimary }}>{guide.title}</h4>
-                <p className="text-[11px] leading-relaxed line-clamp-2" style={{ color: colors.textSecondary }}>{guide.summary}</p>
-              </div>
-              <span className="text-[11px] font-bold inline-flex items-center gap-1 mt-3" style={{ color: colors.accent }}>
-                Read Guide <ArrowRight className="w-3 h-3" />
-              </span>
-            </SpotlightCard>
-          ))}
-        </div>
-      </div>
-
-      {/* Guide Details Modal */}
-      {selectedGuide && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
-          <div className="w-full max-w-lg rounded-3xl p-6 border shadow-2xl space-y-4" style={{ backgroundColor: colors.cardHigh, borderColor: colors.cardBorder }}>
-            <div className="flex justify-between items-start">
-              <div>
-                <span className="text-xs font-bold uppercase" style={{ color: colors.accent }}>{selectedGuide.category}</span>
-                <h3 className="text-lg font-bold mt-1" style={{ color: colors.textPrimary }}>{selectedGuide.title}</h3>
-              </div>
-              <button onClick={() => setSelectedGuide(null)} className="p-1 hover:opacity-80 transition-opacity" style={{ color: colors.textTertiary }}>
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <p className="text-xs md:text-sm leading-relaxed pt-2 border-t" style={{ color: colors.textSecondary, borderColor: colors.borderDim }}>
-              {selectedGuide.content}
-            </p>
-            <button
-              onClick={() => setSelectedGuide(null)}
-              className="w-full py-3 rounded-xl font-bold text-xs shadow-md transition-opacity hover:opacity-90"
-              style={{ backgroundColor: colors.primary, color: colors.primaryText }}
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* ── ASSET DETAIL INSPECTION MODAL ────────────────────── */}
       {selectedAssetModal && (

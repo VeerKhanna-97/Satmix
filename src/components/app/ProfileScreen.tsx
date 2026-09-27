@@ -22,6 +22,9 @@ import {
   Coins,
   ShieldCheck,
   ChevronDown,
+  Clock,
+  ArrowUpRight,
+  ArrowDownLeft,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { generateTaxStatement, downloadCsvFile } from '../../utils/taxGenerator';
@@ -603,6 +606,90 @@ export const ProfileScreen: React.FC = () => {
             </div>
           </div>
         </div>
+      </SpotlightCard>
+
+      {/* ── DAILY DEBITS & AUTO-BUYS (ALL) ────────────────────── */}
+      <SpotlightCard
+        spotlightColor={colors.purpleTint}
+        className="rounded-3xl p-6 border shadow-lg space-y-4"
+        style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Clock className="w-4 h-4" style={{ color: colors.accent }} />
+            <h3 className="font-bold text-sm" style={{ color: colors.textPrimary }}>
+              Daily Debits & Auto-Buys (ALL)
+            </h3>
+          </div>
+          <span className="text-xs font-mono" style={{ color: colors.textTertiary }}>
+            {prototypeState.activity.length} Executions
+          </span>
+        </div>
+
+        {prototypeState.activity.length > 0 ? (
+          <div className="divide-y max-h-96 overflow-y-auto pr-1" style={{ borderColor: colors.borderDim }}>
+            {prototypeState.activity.map((entry) => {
+              const isWd = entry.type === 'withdrawal' || entry.amount < 0;
+              const isDep = entry.type === 'deposit';
+
+              const fillsSummary = entry.fills && entry.fills.length > 0
+                ? entry.fills.map((f) => `${Math.abs(f.units).toFixed(f.asset === 'USDT' ? 2 : 6)} ${f.asset}`).join(', ')
+                : `${Math.abs(entry.amount)} INR`;
+
+              return (
+                <div key={entry.id} className="py-3.5 flex items-center justify-between text-xs hover:bg-white/[0.02] px-2 rounded-xl transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="p-2.5 rounded-xl flex-shrink-0"
+                      style={{
+                        backgroundColor: isWd ? 'rgba(244, 63, 94, 0.12)' : isDep ? colors.accentTint : colors.mintTint,
+                        color: isWd ? '#FB7185' : isDep ? colors.accent : colors.semanticSuccess,
+                      }}
+                    >
+                      {isWd ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownLeft className="w-4 h-4" />}
+                    </div>
+                    <div>
+                      <div className="font-bold flex items-center gap-2" style={{ color: colors.textPrimary }}>
+                        <span>
+                          {entry.basketId === 'stable' ? 'Stable Basket' : 'Growth Basket'}{' '}
+                          {isWd ? 'Withdrawal' : isDep ? 'Instant Top-Up' : 'Daily SIP'}
+                        </span>
+                        <span
+                          className="text-[10px] px-1.5 py-0.2 rounded font-mono font-bold"
+                          style={{
+                            backgroundColor: isWd ? 'rgba(244, 63, 94, 0.15)' : colors.accentTint,
+                            color: isWd ? '#FB7185' : colors.accent,
+                          }}
+                        >
+                          {isWd ? 'IMPS SETTLED' : isDep ? 'INSTANT SPOT' : 'AUTOPAY'}
+                        </span>
+                      </div>
+                      <div className="text-[11px] font-mono mt-0.5" style={{ color: colors.textSecondary }}>
+                        {entry.date} · {isWd ? `Liquidated: ${fillsSummary}` : `Credited: ${fillsSummary}`}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="text-right font-mono">
+                    <div
+                      className="font-bold text-sm"
+                      style={{ color: isWd ? '#FB7185' : colors.textPrimary }}
+                    >
+                      {isWd ? '-' : '+'}₹{Math.abs(entry.amount).toLocaleString('en-IN')}
+                    </div>
+                    <span className="text-[10px]" style={{ color: colors.textTertiary }}>
+                      {isWd ? 'Bank Payout' : isDep ? 'Lump-Sum' : 'Daily 8 AM SIP'}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="p-8 text-center text-xs border rounded-2xl border-dashed" style={{ color: colors.textTertiary, borderColor: colors.borderDim }}>
+            No transaction records yet. Top up or activate your habit to accumulate daily fills!
+          </div>
+        )}
       </SpotlightCard>
 
       {/* ── ACCOUNT STATEMENTS & REPORTS (LATEST FY) ───────────── */}
