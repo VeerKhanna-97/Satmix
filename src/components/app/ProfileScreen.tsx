@@ -222,10 +222,21 @@ export const ProfileScreen: React.FC = () => {
           className="rounded-2xl p-4 border"
           style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
         >
-          <div className="flex items-center gap-1.5 text-xs font-sans mb-1" style={{ color: colors.accent }}>
-            <Flame className="w-3.5 h-3.5 fill-current" /> Active Streak
+          <div
+            className="flex items-center gap-1.5 text-xs font-sans mb-1"
+            style={{ color: streakState.status === 'FROZEN' ? '#22D3EE' : colors.accent }}
+          >
+            {streakState.status === 'FROZEN' ? (
+              <Shield className="w-3.5 h-3.5 text-cyan-400" />
+            ) : (
+              <Flame className="w-3.5 h-3.5 fill-current" />
+            )}
+            <span>{streakState.status === 'FROZEN' ? 'Shield Protected' : 'Active Streak'}</span>
           </div>
-          <div className="text-lg font-bold" style={{ color: colors.accent }}>
+          <div
+            className="text-lg font-bold"
+            style={{ color: streakState.status === 'FROZEN' ? '#22D3EE' : colors.accent }}
+          >
             <CountUp to={streakDays} suffix=" Days" duration={1} />
           </div>
           <div className="text-[10px] mt-1 font-mono" style={{ color: colors.textTertiary }}>

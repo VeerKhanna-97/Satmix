@@ -217,7 +217,7 @@ export function getCurrentCalendarWeek(
  */
 export function calculateStreakState(
   transactions: Transaction[],
-  savedStreakState?: Partial<StreakState> | null
+  savedStreakState?: { longestStreak?: number; freezeUsedDates?: string[] } | null
 ): StreakState {
   const todayDate = new Date();
   const todayKey = toDateKey(todayDate);
@@ -240,65 +240,101 @@ export function calculateStreakState(
       }
     });
 
-  const uniqueInvestedDates = Object.keys(historyMap).sort();
+  // Pre-load previously used freeze dates into historyMap so past shields bridge the streak permanently
+  let freezeUsedDates: string[] = savedStreakState?.freezeUsedDates ? [...savedStreakState.freezeUsedDates] : [];
+  freezeUsedDates.forEach((fDate) => {
+    if (!historyMap[fDate]) {
+      historyMap[fDate] = { invested: false, amount: 0, frozenWithShield: true };
+    } else {
+      historyMap[fDate].frozenWithShield = true;
+    }
+  });
+
+  const uniqueInvestedDates = Object.keys(historyMap).filter((k) => historyMap[k].invested).sort();
   const totalInvestedDays = uniqueInvestedDates.length;
 
+  // 2. Determine freeze shields inventory:
+  // Every user receives 1 Starter Shield upon joining to protect habit momentum.
+  // Earn +1 Shield every 14 streak/invested days, capped at a maximum of 2 Shields.
+  const streakBasis = Math.max(totalInvestedDays, savedStreakState?.longestStreak || 0);
+  const earnedBonusShields = Math.floor(streakBasis / 14);
+  const totalEntitledShields = Math.min(2, 1 + earnedBonusShields);
+  let availableShields = Math.max(0, totalEntitledShields - freezeUsedDates.length);
+
+  // If user has zero transactions at all, return empty state with starter shield ready
   if (totalInvestedDays === 0) {
-    return createEmptyStreakState();
+    return createEmptyStreakState(availableShields);
   }
 
-  // 2. Determine freeze shields available (1 shield earned per 14 active days, cap at 2)
-  const earnedShields = Math.min(2, Math.floor(totalInvestedDays / 14));
-  let freezeUsedDates: string[] = savedStreakState?.freezeUsedDates || [];
-  let availableShields = Math.max(0, earnedShields - freezeUsedDates.length);
-
-  // 3. Calculate consecutive days ending at today or yesterday
-  let currentStreak = 0;
-  let cursorDate = todayKey;
-  let status: StreakStatus = 'INACTIVE';
-
   const hasToday = Boolean(historyMap[todayKey]?.invested);
-  const hasYesterday = Boolean(historyMap[yesterdayKey]?.invested);
+  const hasYesterday = Boolean(historyMap[yesterdayKey]?.invested || historyMap[yesterdayKey]?.frozenWithShield);
+
+  // Auto-protect yesterday if missed and shield is available
+  if (!hasToday && !hasYesterday && availableShields > 0 && uniqueInvestedDates.length > 0) {
+    const dayBeforeYesterday = shiftDateKey(yesterdayKey, -1);
+    const hadPriorActivity = Boolean(
+      historyMap[dayBeforeYesterday]?.invested || historyMap[dayBeforeYesterday]?.frozenWithShield
+    );
+    if (hadPriorActivity) {
+      if (!freezeUsedDates.includes(yesterdayKey)) {
+        freezeUsedDates.push(yesterdayKey);
+        availableShields = Math.max(0, availableShields - 1);
+      }
+      historyMap[yesterdayKey] = {
+        invested: false,
+        amount: 0,
+        frozenWithShield: true,
+      };
+    }
+  }
+
+  // Determine current live status & cursorDate
+  let status: StreakStatus = 'INACTIVE';
+  let cursorDate = todayKey;
+
+  const yesterdayIsFrozen = Boolean(historyMap[yesterdayKey]?.frozenWithShield);
 
   if (hasToday) {
     status = 'ACTIVE';
     cursorDate = todayKey;
   } else if (hasYesterday) {
-    status = 'AT_RISK';
-    cursorDate = yesterdayKey;
-  } else {
-    // Check if yesterday can be saved by a freeze shield
-    if (availableShields > 0 && uniqueInvestedDates.length > 0) {
-      const lastActive = uniqueInvestedDates[uniqueInvestedDates.length - 1];
-      const gap = getDaysDifference(todayKey, lastActive);
-      if (gap === 2) {
-        // Missed only yesterday, freeze shield can save it
-        if (!freezeUsedDates.includes(yesterdayKey)) {
-          freezeUsedDates = [...freezeUsedDates, yesterdayKey];
-          availableShields = Math.max(0, availableShields - 1);
-        }
-        historyMap[yesterdayKey] = {
-          invested: false,
-          amount: 0,
-          frozenWithShield: true,
-        };
-        status = 'FROZEN';
-        cursorDate = yesterdayKey;
-      } else {
-        status = 'INACTIVE';
-      }
+    if (yesterdayIsFrozen) {
+      status = 'FROZEN';
+      cursorDate = yesterdayKey;
     } else {
-      status = 'INACTIVE';
+      status = 'AT_RISK';
+      cursorDate = yesterdayKey;
     }
+  } else {
+    status = 'INACTIVE';
   }
 
-  // Count consecutive days backward from cursorDate
+  // 3. Count consecutive unbroken streak backward from cursorDate
+  let currentStreak = 0;
   if (status !== 'INACTIVE') {
     let checkDate = cursorDate;
     while (true) {
       if (historyMap[checkDate]?.invested || historyMap[checkDate]?.frozenWithShield) {
         currentStreak += 1;
         checkDate = shiftDateKey(checkDate, -1);
+      } else if (availableShields > 0) {
+        // Can an isolated historical gap be bridged by an available shield?
+        const priorDate = shiftDateKey(checkDate, -1);
+        if (historyMap[priorDate]?.invested || historyMap[priorDate]?.frozenWithShield) {
+          if (!freezeUsedDates.includes(checkDate)) {
+            freezeUsedDates.push(checkDate);
+            availableShields = Math.max(0, availableShields - 1);
+          }
+          historyMap[checkDate] = {
+            invested: false,
+            amount: 0,
+            frozenWithShield: true,
+          };
+          currentStreak += 1;
+          checkDate = priorDate;
+        } else {
+          break;
+        }
       } else {
         break;
       }
@@ -346,7 +382,7 @@ export function calculateStreakState(
   };
 }
 
-export function createEmptyStreakState(): StreakState {
+export function createEmptyStreakState(shieldsAvailable: number = 1): StreakState {
   const weeklyHistory = getCurrentCalendarWeek({}, new Date());
 
   return {
@@ -354,7 +390,7 @@ export function createEmptyStreakState(): StreakState {
     longestStreak: 0,
     lastActiveDate: null,
     status: 'INACTIVE',
-    freezeShieldsAvailable: 0,
+    freezeShieldsAvailable: shieldsAvailable,
     freezeUsedDates: [],
     totalInvestedDays: 0,
     nextMilestone: {

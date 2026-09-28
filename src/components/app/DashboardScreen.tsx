@@ -338,10 +338,16 @@ export const DashboardScreen: React.FC = () => {
               <Flame className="w-4 h-4 fill-amber-400 text-amber-400 animate-pulse" />
             ) : streakState.status === 'AT_RISK' ? (
               <AlertCircle className="w-4 h-4 text-red-400" />
+            ) : streakState.status === 'FROZEN' ? (
+              <Shield className="w-4 h-4 text-cyan-400 fill-cyan-400/20" />
             ) : (
               <Zap className="w-4 h-4 text-amber-400" />
             )}
-            <span>{streakDays}d Streak</span>
+            <span>
+              {streakState.status === 'FROZEN'
+                ? `${streakState.currentStreak}d Protected`
+                : `${streakState.currentStreak}d Streak`}
+            </span>
           </div>
         </div>
       </div>

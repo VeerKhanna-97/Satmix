@@ -367,12 +367,28 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
   }, [tabMetrics, activeTabFilter]);
 
-  // Deterministic Streak State
+  // Deterministic Streak State (with persisted shield usage & longest streak)
   const streakState: StreakState = useMemo(() => {
-    return calculateStreakState(transactions, null);
-  }, [transactions]);
+    return calculateStreakState(transactions, prototypeState.savedStreak);
+  }, [transactions, prototypeState.savedStreak]);
 
-  const streakDays = tabMetrics.streakDays;
+  // Synchronize streak changes (longestStreak or used shields) into prototypeState
+  useEffect(() => {
+    const saved = prototypeState.savedStreak;
+    const longestChanged = streakState.longestStreak > (saved?.longestStreak || 0);
+    const usedChanged = streakState.freezeUsedDates.length !== (saved?.freezeUsedDates?.length || 0);
+    if (longestChanged || usedChanged) {
+      updateStateAndPersist((prev) => ({
+        ...prev,
+        savedStreak: {
+          longestStreak: Math.max(streakState.longestStreak, prev.savedStreak?.longestStreak || 0),
+          freezeUsedDates: streakState.freezeUsedDates,
+        },
+      }));
+    }
+  }, [streakState.longestStreak, streakState.freezeUsedDates, prototypeState.savedStreak, updateStateAndPersist]);
+
+  const streakDays = streakState.currentStreak;
 
   // Selected Basket & Amount Setters
   const setSelectedBasketId = useCallback(

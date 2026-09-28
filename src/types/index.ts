@@ -104,6 +104,10 @@ export interface PrototypeState {
   valueHistory: ValueHistoryPoint[];
   lastAccruedDate: string | null;
   lastPricesAt: string | null;
+  savedStreak?: {
+    longestStreak: number;
+    freezeUsedDates: string[];
+  };
 }
 
 export interface UserProfile {

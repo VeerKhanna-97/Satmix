@@ -76,6 +76,10 @@ export function createInitialPrototypeState(): PrototypeState {
     valueHistory: [],
     lastAccruedDate: null,
     lastPricesAt: null,
+    savedStreak: {
+      longestStreak: 0,
+      freezeUsedDates: [],
+    },
   };
 }
 

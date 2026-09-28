@@ -116,7 +116,7 @@ export const StreakWeeklyTracker: React.FC<StreakWeeklyTrackerProps> = ({ onQuic
                 : status === 'AT_RISK'
                 ? 'Invest ₹10 today before 11:59 PM to save your streak'
                 : status === 'FROZEN'
-                ? 'Streak freeze shield automatically consumed'
+                ? 'Streak Freeze Shield active · Yesterday protected automatically'
                 : 'Activate AutoPay or deposit ₹10 to begin'}
             </p>
           </div>
@@ -131,7 +131,11 @@ export const StreakWeeklyTracker: React.FC<StreakWeeklyTrackerProps> = ({ onQuic
               borderColor: freezeShieldsAvailable > 0 ? 'rgba(6, 182, 212, 0.25)' : colors.borderDim,
               color: freezeShieldsAvailable > 0 ? '#22D3EE' : '#94A3B8',
             }}
-            title="Earn 1 Streak Freeze Shield every 14 days of unbroken investing (Max 2)"
+            title={
+              freezeShieldsAvailable > 0
+                ? `${freezeShieldsAvailable}/2 Shields active · Auto-protects missed days`
+                : '0/2 Shields · Shield used to protect streak. Earn +1 at Day 14'
+            }
           >
             <Shield className="w-3.5 h-3.5" />
             <span>{freezeShieldsAvailable}/2 Shields</span>
