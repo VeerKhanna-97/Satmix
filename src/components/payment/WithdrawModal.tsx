@@ -45,14 +45,14 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
 
   // Compute live valuations for each basket
   const stableVal = useMemo(() => {
-    const h = prototypeState.habits.stable?.holdings || { BTC: 0, ETH: 0, SOL: 0, USDT: 0 };
-    return (h.BTC || 0) * livePrices.BTC + (h.ETH || 0) * livePrices.ETH + (h.SOL || 0) * livePrices.SOL + (h.USDT || 0) * livePrices.USDT;
-  }, [prototypeState.habits.stable, livePrices]);
+    const h = prototypeState?.habits?.stable?.holdings || { BTC: 0, ETH: 0, SOL: 0, USDT: 0 };
+    return (h.BTC || 0) * (livePrices.BTC || 0) + (h.ETH || 0) * (livePrices.ETH || 0) + (h.SOL || 0) * (livePrices.SOL || 0) + (h.USDT || 0) * (livePrices.USDT || 0);
+  }, [prototypeState?.habits?.stable?.holdings, livePrices]);
 
   const growthVal = useMemo(() => {
-    const h = prototypeState.habits.growth?.holdings || { BTC: 0, ETH: 0, SOL: 0, USDT: 0 };
-    return (h.BTC || 0) * livePrices.BTC + (h.ETH || 0) * livePrices.ETH + (h.SOL || 0) * livePrices.SOL + (h.USDT || 0) * livePrices.USDT;
-  }, [prototypeState.habits.growth, livePrices]);
+    const h = prototypeState?.habits?.growth?.holdings || { BTC: 0, ETH: 0, SOL: 0, USDT: 0 };
+    return (h.BTC || 0) * (livePrices.BTC || 0) + (h.ETH || 0) * (livePrices.ETH || 0) + (h.SOL || 0) * (livePrices.SOL || 0) + (h.USDT || 0) * (livePrices.USDT || 0);
+  }, [prototypeState?.habits?.growth?.holdings, livePrices]);
 
   const totalVal = Math.round((stableVal + growthVal) * 100) / 100;
 
@@ -61,6 +61,24 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
     if (sourceBasket === 'growth') return Math.floor(growthVal * 100) / 100;
     return Math.floor(totalVal * 100) / 100;
   }, [sourceBasket, stableVal, growthVal, totalVal]);
+
+  const numAmount = parseInt(amount, 10) || 0;
+  const netPayout = numAmount;
+
+  // Pro-rata breakdown when 'all' is selected (computed before early returns to obey Rules of Hooks)
+  const liquidationBreakdown = useMemo(() => {
+    if (numAmount <= 0 || availableBalance <= 0) return null;
+    if (sourceBasket === 'all') {
+      const ratio = Math.min(1, numAmount / (totalVal || 1));
+      const sAmt = Math.round(stableVal * ratio);
+      const gAmt = Math.round(growthVal * ratio);
+      return {
+        stablePart: sAmt,
+        growthPart: gAmt,
+      };
+    }
+    return null;
+  }, [numAmount, availableBalance, sourceBasket, stableVal, growthVal, totalVal]);
 
   // Reset modal state and initialize amount whenever modal opens
   useEffect(() => {
@@ -126,24 +144,6 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
   }, [isOpen, step]);
 
   if (!isOpen) return null;
-
-  const numAmount = parseInt(amount, 10) || 0;
-  const netPayout = numAmount;
-
-  // Pro-rata breakdown when 'all' is selected
-  const liquidationBreakdown = useMemo(() => {
-    if (numAmount <= 0 || availableBalance <= 0) return null;
-    if (sourceBasket === 'all') {
-      const ratio = Math.min(1, numAmount / (totalVal || 1));
-      const sAmt = Math.round(stableVal * ratio);
-      const gAmt = Math.round(growthVal * ratio);
-      return {
-        stablePart: sAmt,
-        growthPart: gAmt,
-      };
-    }
-    return null;
-  }, [numAmount, availableBalance, sourceBasket, stableVal, growthVal, totalVal]);
 
   // Quick Preset Handlers
   const handlePreset = (percentage: number) => {
@@ -215,7 +215,9 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
     setProcessingStatus('Awaiting beneficiary bank acknowledgement...');
 
     try {
-      const result = await simulateWithdrawal(numAmount, sourceBasket);
+      const parsedAmt = parseInt(amount, 10) || 0;
+      const safeAmount = Math.max(1, Math.min(parsedAmt, Math.floor(availableBalance)));
+      const result = await simulateWithdrawal(safeAmount, sourceBasket);
       if (result.success && result.tx) {
         setCompletedTx(result.tx);
         setStep('SUCCESS');

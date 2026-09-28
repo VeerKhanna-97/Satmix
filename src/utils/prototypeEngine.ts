@@ -477,41 +477,44 @@ export function executeWithdrawal(
     const costReduction = isFullLiquidation ? costBasis : Math.round(costBasis * fraction * 100) / 100;
     const roundedWAmt = Math.round(wAmt * 100) / 100;
 
-    const habit = nextState.habits[bId];
+    const habit = nextState.habits?.[bId];
     if (!habit) return;
+    if (!habit.holdings) {
+      habit.holdings = { BTC: 0, ETH: 0, SOL: 0, USDT: 0 };
+    }
     const oldH = habit.holdings;
     const soldFills: ActivityFill[] = [];
 
     if (isFullLiquidation) {
-      if (oldH.BTC > 0) soldFills.push({ asset: 'BTC', inr: -Math.round(oldH.BTC * livePrices.BTC * 100) / 100, units: -oldH.BTC, priceInr: livePrices.BTC });
-      if (oldH.ETH > 0) soldFills.push({ asset: 'ETH', inr: -Math.round(oldH.ETH * livePrices.ETH * 100) / 100, units: -oldH.ETH, priceInr: livePrices.ETH });
-      if (oldH.SOL > 0) soldFills.push({ asset: 'SOL', inr: -Math.round(oldH.SOL * livePrices.SOL * 100) / 100, units: -oldH.SOL, priceInr: livePrices.SOL });
-      if (oldH.USDT > 0) soldFills.push({ asset: 'USDT', inr: -Math.round(oldH.USDT * livePrices.USDT * 100) / 100, units: -oldH.USDT, priceInr: livePrices.USDT });
+      if ((oldH.BTC || 0) > 0) soldFills.push({ asset: 'BTC', inr: -Math.round(oldH.BTC * (livePrices.BTC || 0) * 100) / 100, units: -oldH.BTC, priceInr: livePrices.BTC || 0 });
+      if ((oldH.ETH || 0) > 0) soldFills.push({ asset: 'ETH', inr: -Math.round(oldH.ETH * (livePrices.ETH || 0) * 100) / 100, units: -oldH.ETH, priceInr: livePrices.ETH || 0 });
+      if ((oldH.SOL || 0) > 0) soldFills.push({ asset: 'SOL', inr: -Math.round(oldH.SOL * (livePrices.SOL || 0) * 100) / 100, units: -oldH.SOL, priceInr: livePrices.SOL || 0 });
+      if ((oldH.USDT || 0) > 0) soldFills.push({ asset: 'USDT', inr: -Math.round(oldH.USDT * (livePrices.USDT || 0) * 100) / 100, units: -oldH.USDT, priceInr: livePrices.USDT || 0 });
 
       habit.holdings = { BTC: 0, ETH: 0, SOL: 0, USDT: 0 };
     } else {
       const remainingMultiplier = Math.max(0, 1 - fraction);
-      if (oldH.BTC > 0) {
+      if ((oldH.BTC || 0) > 0) {
         const soldUnits = oldH.BTC * fraction;
-        soldFills.push({ asset: 'BTC', inr: -Math.round(soldUnits * livePrices.BTC * 100) / 100, units: -soldUnits, priceInr: livePrices.BTC });
+        soldFills.push({ asset: 'BTC', inr: -Math.round(soldUnits * (livePrices.BTC || 0) * 100) / 100, units: -soldUnits, priceInr: livePrices.BTC || 0 });
         const nextUnits = oldH.BTC * remainingMultiplier;
         oldH.BTC = nextUnits < 0.00000001 ? 0 : nextUnits;
       }
-      if (oldH.ETH > 0) {
+      if ((oldH.ETH || 0) > 0) {
         const soldUnits = oldH.ETH * fraction;
-        soldFills.push({ asset: 'ETH', inr: -Math.round(soldUnits * livePrices.ETH * 100) / 100, units: -soldUnits, priceInr: livePrices.ETH });
+        soldFills.push({ asset: 'ETH', inr: -Math.round(soldUnits * (livePrices.ETH || 0) * 100) / 100, units: -soldUnits, priceInr: livePrices.ETH || 0 });
         const nextUnits = oldH.ETH * remainingMultiplier;
         oldH.ETH = nextUnits < 0.00000001 ? 0 : nextUnits;
       }
-      if (oldH.SOL > 0) {
+      if ((oldH.SOL || 0) > 0) {
         const soldUnits = oldH.SOL * fraction;
-        soldFills.push({ asset: 'SOL', inr: -Math.round(soldUnits * livePrices.SOL * 100) / 100, units: -soldUnits, priceInr: livePrices.SOL });
+        soldFills.push({ asset: 'SOL', inr: -Math.round(soldUnits * (livePrices.SOL || 0) * 100) / 100, units: -soldUnits, priceInr: livePrices.SOL || 0 });
         const nextUnits = oldH.SOL * remainingMultiplier;
         oldH.SOL = nextUnits < 0.00000001 ? 0 : nextUnits;
       }
-      if (oldH.USDT > 0) {
+      if ((oldH.USDT || 0) > 0) {
         const soldUnits = oldH.USDT * fraction;
-        soldFills.push({ asset: 'USDT', inr: -Math.round(soldUnits * livePrices.USDT * 100) / 100, units: -soldUnits, priceInr: livePrices.USDT });
+        soldFills.push({ asset: 'USDT', inr: -Math.round(soldUnits * (livePrices.USDT || 0) * 100) / 100, units: -soldUnits, priceInr: livePrices.USDT || 0 });
         const nextUnits = oldH.USDT * remainingMultiplier;
         oldH.USDT = nextUnits < 0.00000001 ? 0 : nextUnits;
       }

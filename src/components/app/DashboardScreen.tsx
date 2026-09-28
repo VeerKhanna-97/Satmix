@@ -480,10 +480,14 @@ export const DashboardScreen: React.FC = () => {
             </div>
 
             {/* Quick Actions (Deposit & Withdraw) */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 relative z-20">
               <button
-                onClick={() => setDepositOpen(true)}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 h-9 px-3.5 rounded-lg font-semibold text-xs shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_1px_3px_rgba(0,0,0,0.3)] transition-[transform,background-color,box-shadow] duration-150 ease-out active:scale-[0.98] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setDepositOpen(true);
+                }}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 h-9 px-3.5 rounded-lg font-semibold text-xs shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_1px_3px_rgba(0,0,0,0.3)] transition-[transform,background-color,box-shadow] duration-150 ease-out active:scale-[0.98] select-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                 style={{ backgroundColor: colors.primary, color: colors.primaryText }}
               >
                 <ArrowDownLeft className="w-4 h-4 flex-shrink-0" />
@@ -491,8 +495,12 @@ export const DashboardScreen: React.FC = () => {
               </button>
 
               <button
-                onClick={() => setWithdrawOpen(true)}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 h-9 px-3.5 rounded-lg font-semibold text-xs border transition-[transform,background-color,border-color] duration-150 ease-out hover:bg-white/[0.05] hover:border-white/20 active:scale-[0.98] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setWithdrawOpen(true);
+                }}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 h-9 px-3.5 rounded-lg font-semibold text-xs border transition-[transform,background-color,border-color] duration-150 ease-out hover:bg-white/[0.05] hover:border-white/20 active:scale-[0.98] select-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                 style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textPrimary }}
               >
                 <ArrowUpRight className="w-4 h-4 flex-shrink-0" />

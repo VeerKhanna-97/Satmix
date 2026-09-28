@@ -847,15 +847,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     ): Promise<{ success: boolean; tx?: Transaction; error?: string }> => {
       await new Promise((resolve) => setTimeout(resolve, 800));
 
-      const res = executeWithdrawal(prototypeState, targetBasket, amount, livePrices);
-      if (!res.success) {
-        return { success: false, error: res.error || 'Failed to process withdrawal.' };
+      let executionRes: any = null;
+
+      updateStateAndPersist((currentState) => {
+        const res = executeWithdrawal(currentState, targetBasket, amount, livePrices);
+        executionRes = res;
+        return res.success ? res.state : currentState;
+      });
+
+      if (!executionRes?.success) {
+        return { success: false, error: executionRes?.error || 'Failed to process withdrawal.' };
       }
 
-      const actualWithdrawn = res.actualWithdrawn || amount;
-
-      // Persist state synchronously to localStorage and React state
-      updateStateAndPersist(() => res.state);
+      const actualWithdrawn = executionRes.actualWithdrawn || amount;
 
       // Sync to cloud in background
       try {
@@ -864,10 +868,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             action: 'sync',
-            userId: res.state.sessionUserId,
+            userId: executionRes.state?.sessionUserId,
             userState: {
-              activity: res.state.activity,
-              habits: res.state.habits,
+              activity: executionRes.state?.activity,
+              habits: executionRes.state?.habits,
             },
           }),
         }).catch(() => {});
@@ -894,7 +898,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
       return { success: true, tx };
     },
-    [prototypeState, livePrices, updateStateAndPersist, activeUser]
+    [livePrices, updateStateAndPersist, activeUser]
   );
 
   // Update Profile
