@@ -31,12 +31,32 @@ const CRYPTO_LOGOS: Record<string, string> = {
   USDT: '/currencies/USDT.png',
 };
 
+interface AssetLiquidationFill {
+  asset: 'BTC' | 'ETH' | 'SOL' | 'USDT';
+  label: string;
+  logo: string;
+  pct: number;
+  inrShare: number;
+  units: number;
+}
+
+interface LiquidationBreakdown {
+  view: 'all' | 'stable' | 'growth';
+  stablePart?: number;
+  growthPart?: number;
+  fills: AssetLiquidationFill[];
+}
+
+const formatINR = (val: number) =>
+  val.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
 export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose }) => {
   const { colors, user, prototypeState, livePrices, simulateWithdrawal, setActiveTab } = useApp();
 
   const [step, setStep] = useState<WithdrawStep>('AMOUNT');
   const [sourceBasket, setSourceBasket] = useState<'all' | 'stable' | 'growth'>('all');
-  const [amount, setAmount] = useState<string>('500');
+  const [amount, setAmount] = useState<string>('0');
+  const [selectedPreset, setSelectedPreset] = useState<number | null>(100);
   const [pin, setPin] = useState<string>('');
   const [pinError, setPinError] = useState<string>('');
   const [errorMsg, setErrorMsg] = useState<string>('');
@@ -65,39 +85,196 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
   const numAmount = parseInt(amount, 10) || 0;
   const netPayout = numAmount;
 
-  // Pro-rata breakdown when 'all' is selected (computed before early returns to obey Rules of Hooks)
-  const liquidationBreakdown = useMemo(() => {
+  // Comprehensive multi-view liquidation breakdown for All Baskets, Stable, and Growth
+  const liquidationBreakdown = useMemo((): LiquidationBreakdown | null => {
     if (numAmount <= 0 || availableBalance <= 0) return null;
+
+    const stableH = prototypeState?.habits?.stable?.holdings || { BTC: 0, ETH: 0, SOL: 0, USDT: 0 };
+    const growthH = prototypeState?.habits?.growth?.holdings || { BTC: 0, ETH: 0, SOL: 0, USDT: 0 };
+
     if (sourceBasket === 'all') {
       const ratio = Math.min(1, numAmount / (totalVal || 1));
-      const sAmt = Math.round(stableVal * ratio);
-      const gAmt = Math.round(growthVal * ratio);
+      let sAmt = Math.round(stableVal * ratio);
+      let gAmt = numAmount - sAmt; // Exactly sums to numAmount
+
+      if (sAmt > stableVal) {
+        sAmt = Math.floor(stableVal);
+        gAmt = Math.max(0, numAmount - sAmt);
+      } else if (gAmt > growthVal) {
+        gAmt = Math.floor(growthVal);
+        sAmt = Math.max(0, numAmount - gAmt);
+      }
+
+      const stableRatio = stableVal > 0 ? sAmt / stableVal : 0;
+      const usdtInr = (stableH.USDT || 0) * (livePrices.USDT || 0) * stableRatio;
+      const btcFromStable = (stableH.BTC || 0) * (livePrices.BTC || 0) * stableRatio;
+
+      const growthRatio = growthVal > 0 ? gAmt / growthVal : 0;
+      const btcFromGrowth = (growthH.BTC || 0) * (livePrices.BTC || 0) * growthRatio;
+      const ethInr = (growthH.ETH || 0) * (livePrices.ETH || 0) * growthRatio;
+      const solInr = (growthH.SOL || 0) * (livePrices.SOL || 0) * growthRatio;
+
+      const btcTotalInr = btcFromStable + btcFromGrowth;
+
+      const rawFills: { asset: 'BTC' | 'ETH' | 'SOL' | 'USDT'; inr: number }[] = [
+        { asset: 'USDT', inr: usdtInr },
+        { asset: 'BTC', inr: btcTotalInr },
+        { asset: 'ETH', inr: ethInr },
+        { asset: 'SOL', inr: solInr },
+      ];
+
+      const totalRaw = rawFills.reduce((sum, f) => sum + f.inr, 0);
+      let finalFills = rawFills;
+      if (totalRaw <= 0) {
+        const fallbackUsdt = sAmt * 0.85;
+        const fallbackBtc = sAmt * 0.15 + gAmt * 0.70;
+        const fallbackEth = gAmt * 0.20;
+        const fallbackSol = gAmt * 0.10;
+        finalFills = [
+          { asset: 'USDT', inr: fallbackUsdt },
+          { asset: 'BTC', inr: fallbackBtc },
+          { asset: 'ETH', inr: fallbackEth },
+          { asset: 'SOL', inr: fallbackSol },
+        ];
+      }
+
+      const roundedFills: AssetLiquidationFill[] = finalFills
+        .filter((f) => f.inr > 0 || numAmount > 0)
+        .map((f) => {
+          const roundedInr = Math.round(f.inr);
+          const price = livePrices[f.asset] || 1;
+          const units = price > 0 ? roundedInr / price : 0;
+          const pct = numAmount > 0 ? Math.round((roundedInr / numAmount) * 100) : 0;
+          return {
+            asset: f.asset,
+            label: f.asset === 'BTC' ? 'Bitcoin' : f.asset === 'ETH' ? 'Ethereum' : f.asset === 'SOL' ? 'Solana' : 'Tether USD',
+            logo: CRYPTO_LOGOS[f.asset],
+            pct,
+            inrShare: roundedInr,
+            units,
+          };
+        });
+
+      // Ensure exact reconciliation down to single rupee
+      const sumRounded = roundedFills.reduce((acc, f) => acc + f.inrShare, 0);
+      const diff = numAmount - sumRounded;
+      if (diff !== 0 && roundedFills.length > 0) {
+        const largest = roundedFills.reduce((max, cur) => (cur.inrShare > max.inrShare ? cur : max), roundedFills[0]);
+        largest.inrShare += diff;
+        largest.pct = numAmount > 0 ? Math.round((largest.inrShare / numAmount) * 100) : 0;
+      }
+
       return {
+        view: 'all',
         stablePart: sAmt,
         growthPart: gAmt,
+        fills: roundedFills,
       };
     }
+
+    if (sourceBasket === 'stable') {
+      const fraction = stableVal > 0 ? Math.min(1, numAmount / stableVal) : 0;
+      let usdtInr = (stableH.USDT || 0) * (livePrices.USDT || 0) * fraction;
+      let btcInr = (stableH.BTC || 0) * (livePrices.BTC || 0) * fraction;
+
+      if (usdtInr + btcInr <= 0) {
+        usdtInr = numAmount * 0.85;
+        btcInr = numAmount * 0.15;
+      }
+
+      const roundedUsdt = Math.round(usdtInr);
+      const roundedBtc = numAmount - roundedUsdt;
+
+      const fills: AssetLiquidationFill[] = [
+        {
+          asset: 'USDT',
+          label: 'Tether USD',
+          logo: CRYPTO_LOGOS.USDT,
+          pct: numAmount > 0 ? Math.round((roundedUsdt / numAmount) * 100) : 85,
+          inrShare: roundedUsdt,
+          units: livePrices.USDT > 0 ? roundedUsdt / livePrices.USDT : 0,
+        },
+        {
+          asset: 'BTC',
+          label: 'Bitcoin',
+          logo: CRYPTO_LOGOS.BTC,
+          pct: numAmount > 0 ? Math.round((roundedBtc / numAmount) * 100) : 15,
+          inrShare: roundedBtc,
+          units: livePrices.BTC > 0 ? roundedBtc / livePrices.BTC : 0,
+        },
+      ];
+
+      return {
+        view: 'stable',
+        fills,
+      };
+    }
+
+    if (sourceBasket === 'growth') {
+      const fraction = growthVal > 0 ? Math.min(1, numAmount / growthVal) : 0;
+      let btcInr = (growthH.BTC || 0) * (livePrices.BTC || 0) * fraction;
+      let ethInr = (growthH.ETH || 0) * (livePrices.ETH || 0) * fraction;
+      let solInr = (growthH.SOL || 0) * (livePrices.SOL || 0) * fraction;
+
+      if (btcInr + ethInr + solInr <= 0) {
+        btcInr = numAmount * 0.70;
+        ethInr = numAmount * 0.20;
+        solInr = numAmount * 0.10;
+      }
+
+      const roundedBtc = Math.round(btcInr);
+      const roundedEth = Math.round(ethInr);
+      const roundedSol = numAmount - roundedBtc - roundedEth;
+
+      const fills: AssetLiquidationFill[] = [
+        {
+          asset: 'BTC',
+          label: 'Bitcoin',
+          logo: CRYPTO_LOGOS.BTC,
+          pct: numAmount > 0 ? Math.round((roundedBtc / numAmount) * 100) : 70,
+          inrShare: roundedBtc,
+          units: livePrices.BTC > 0 ? roundedBtc / livePrices.BTC : 0,
+        },
+        {
+          asset: 'ETH',
+          label: 'Ethereum',
+          logo: CRYPTO_LOGOS.ETH,
+          pct: numAmount > 0 ? Math.round((roundedEth / numAmount) * 100) : 20,
+          inrShare: roundedEth,
+          units: livePrices.ETH > 0 ? roundedEth / livePrices.ETH : 0,
+        },
+        {
+          asset: 'SOL',
+          label: 'Solana',
+          logo: CRYPTO_LOGOS.SOL,
+          pct: numAmount > 0 ? Math.round((roundedSol / numAmount) * 100) : 10,
+          inrShare: roundedSol,
+          units: livePrices.SOL > 0 ? roundedSol / livePrices.SOL : 0,
+        },
+      ];
+
+      return {
+        view: 'growth',
+        fills,
+      };
+    }
+
     return null;
-  }, [numAmount, availableBalance, sourceBasket, stableVal, growthVal, totalVal]);
+  }, [numAmount, availableBalance, sourceBasket, stableVal, growthVal, totalVal, prototypeState?.habits, livePrices]);
 
   // Reset modal state and initialize amount whenever modal opens
   useEffect(() => {
     if (isOpen) {
       setStep('AMOUNT');
       setSourceBasket('all');
+      setSelectedPreset(100);
       setPin('');
       setPinError('');
       setErrorMsg('');
       setCompletedTx(null);
 
       const available = Math.floor(totalVal);
-      if (available <= 0) {
-        setAmount('0');
-      } else if (available < 500) {
-        setAmount(available.toString());
-      } else {
-        setAmount('500');
-      }
+      setAmount(available > 0 ? available.toString() : '0');
     }
   }, [isOpen]);
 
@@ -145,25 +322,47 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
 
   if (!isOpen) return null;
 
+  // Source basket switcher: dynamically updates numbers as per selected basket
+  const handleSelectBasket = (bId: 'all' | 'stable' | 'growth') => {
+    setSourceBasket(bId);
+    setErrorMsg('');
+    const targetVal = bId === 'stable' ? stableVal : bId === 'growth' ? growthVal : totalVal;
+    const newAvail = Math.floor(targetVal);
+
+    if (selectedPreset !== null) {
+      const nextAmt = Math.floor(newAvail * (selectedPreset / 100));
+      setAmount(nextAmt > 0 ? nextAmt.toString() : '0');
+    } else {
+      const cur = parseInt(amount, 10) || 0;
+      if (cur > newAvail || cur === 0) {
+        setAmount(newAvail > 0 ? newAvail.toString() : '0');
+      }
+    }
+  };
+
   // Quick Preset Handlers
   const handlePreset = (percentage: number) => {
     setErrorMsg('');
+    setSelectedPreset(percentage);
     const target = Math.floor(availableBalance * (percentage / 100));
-    setAmount(Math.max(1, target).toString());
+    setAmount(target > 0 ? target.toString() : '0');
   };
 
   const handleStepUp = () => {
     setErrorMsg('');
+    setSelectedPreset(null);
     const cur = parseInt(amount, 10) || 0;
     const max = Math.floor(availableBalance);
-    const next = Math.min(max, cur + 100);
+    const next = Math.min(max, cur + 50);
     setAmount(next.toString());
+    if (next === max) setSelectedPreset(100);
   };
 
   const handleStepDown = () => {
     setErrorMsg('');
+    setSelectedPreset(null);
     const cur = parseInt(amount, 10) || 0;
-    const next = Math.max(0, cur - 100);
+    const next = Math.max(0, cur - 50);
     setAmount(next.toString());
   };
 
@@ -340,14 +539,7 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
                         <button
                           key={b.id}
                           type="button"
-                          onClick={() => {
-                            setSourceBasket(b.id as any);
-                            setErrorMsg('');
-                            const newAvail = Math.floor(b.val);
-                            if (numAmount > newAvail || numAmount <= 0) {
-                              setAmount(newAvail > 0 ? (newAvail < 500 ? newAvail.toString() : '500') : '0');
-                            }
-                          }}
+                          onClick={() => handleSelectBasket(b.id as any)}
                           className="p-2 rounded-xl border text-center transition-all active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                           style={{
                             backgroundColor: isSelected ? colors.accentTint : colors.surface,
@@ -360,8 +552,8 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
                               {b.label}
                             </span>
                           </div>
-                          <span className="text-[10px] font-mono block" style={{ color: colors.textSecondary }}>
-                            ₹{Math.floor(b.val).toLocaleString('en-IN')}
+                          <span className="text-[10px] font-mono block tabular-nums" style={{ color: isSelected ? colors.textPrimary : colors.textSecondary }}>
+                            ₹{formatINR(b.val)}
                           </span>
                         </button>
                       );
@@ -372,8 +564,8 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
                 {/* Available Balance Notice */}
                 <div className="flex justify-between items-center text-xs px-3.5 py-2.5 rounded-xl border" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
                   <span style={{ color: colors.textSecondary }}>Available to Withdraw:</span>
-                  <span className="font-extrabold font-mono text-sm" style={{ color: colors.textPrimary }}>
-                    ₹{availableBalance.toLocaleString('en-IN')}{Number.isInteger(availableBalance) ? '.00' : ''}
+                  <span className="font-extrabold font-mono text-sm tabular-nums" style={{ color: colors.textPrimary }}>
+                    ₹{formatINR(availableBalance)}
                   </span>
                 </div>
 
@@ -386,22 +578,46 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
 
                 {/* Amount Input */}
                 <div>
-                  <label className="block text-[11px] font-bold uppercase tracking-wider mb-1.5" style={{ color: colors.textSecondary }}>
-                    Withdrawal Amount (INR)
-                  </label>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="text-[11px] font-bold uppercase tracking-wider" style={{ color: colors.textSecondary }}>
+                      Withdrawal Amount (INR)
+                    </label>
+                    <span className="text-[10px] font-mono text-slate-400">
+                      Available: ₹{formatINR(availableBalance)}
+                    </span>
+                  </div>
                   <div className="relative">
-                    <span className="absolute left-3.5 top-2.5 text-base font-bold font-mono pointer-events-none" style={{ color: colors.textTertiary }}>₹</span>
+                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-base font-bold font-mono pointer-events-none" style={{ color: colors.textTertiary }}>₹</span>
                     <input
-                      type="number"
-                      min="1"
-                      max={availableBalance}
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
                       value={amount}
                       onChange={(e) => {
                         setErrorMsg('');
-                        setAmount(e.target.value);
+                        setSelectedPreset(null);
+                        const raw = e.target.value.replace(/[^0-9]/g, '');
+                        if (!raw) {
+                          setAmount('');
+                          return;
+                        }
+                        const val = parseInt(raw, 10);
+                        const maxVal = Math.floor(availableBalance);
+                        if (val > maxVal) {
+                          setAmount(maxVal.toString());
+                          setSelectedPreset(100);
+                        } else {
+                          setAmount(val.toString());
+                          if (val === maxVal) setSelectedPreset(100);
+                          else if (val === Math.floor(maxVal * 0.75)) setSelectedPreset(75);
+                          else if (val === Math.floor(maxVal * 0.50)) setSelectedPreset(50);
+                          else if (val === Math.floor(maxVal * 0.25)) setSelectedPreset(25);
+                        }
                       }}
                       placeholder="0"
-                      className="w-full pl-8 pr-11 py-2 rounded-xl text-lg font-bold font-mono border focus:outline-none focus:ring-1 transition-all"
+                      className={`w-full pl-8 pr-11 py-2 rounded-xl font-bold font-mono border focus:outline-none focus:ring-1 transition-all ${
+                        amount.length >= 7 ? 'text-base sm:text-lg' : 'text-lg sm:text-xl'
+                      }`}
                       style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textPrimary }}
                     />
                     {/* Custom Sleek Stepper Controls */}
@@ -432,27 +648,90 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
 
                   {/* Quick Preset Percentage Buttons */}
                   <div className="grid grid-cols-4 gap-2 mt-2">
-                    {[25, 50, 75, 100].map((pct) => (
-                      <button
-                        key={pct}
-                        type="button"
-                        onClick={() => handlePreset(pct)}
-                        className="h-7 rounded-lg text-xs font-bold font-mono border transition-all active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
-                        style={{ backgroundColor: colors.surface, borderColor: colors.borderDim, color: colors.textSecondary }}
-                      >
-                        {pct === 100 ? 'MAX (100%)' : `${pct}%`}
-                      </button>
-                    ))}
+                    {[25, 50, 75, 100].map((pct) => {
+                      const isSelected = selectedPreset === pct;
+                      return (
+                        <button
+                          key={pct}
+                          type="button"
+                          onClick={() => handlePreset(pct)}
+                          className="h-7 rounded-lg text-xs font-bold font-mono border transition-all active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                          style={{
+                            backgroundColor: isSelected ? colors.accentTint : colors.surface,
+                            borderColor: isSelected ? colors.borderAccent : colors.borderDim,
+                            color: isSelected ? colors.accent : colors.textSecondary,
+                          }}
+                        >
+                          {pct === 100 ? 'MAX (100%)' : `${pct}%`}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
 
-                {/* Pro-Rata Liquidation Notice if All Baskets */}
+                {/* Liquidation Allocation Breakdown for all 3 views */}
                 {liquidationBreakdown && (
-                  <div className="p-2.5 rounded-xl border text-[11px] font-mono flex items-center justify-between" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
-                    <span style={{ color: colors.textSecondary }}>Pro-Rata Liquidation:</span>
-                    <span style={{ color: colors.textPrimary }}>
-                      Stable: ₹{liquidationBreakdown.stablePart} · Growth: ₹{liquidationBreakdown.growthPart}
-                    </span>
+                  <div
+                    className="p-3 rounded-2xl border space-y-2.5 text-xs font-mono transition-all animate-fade-in"
+                    style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}
+                  >
+                    <div className="flex items-center justify-between border-b pb-1.5" style={{ borderColor: colors.borderDim }}>
+                      <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: colors.textSecondary }}>
+                        {liquidationBreakdown.view === 'all'
+                          ? 'Pro-Rata Portfolio Liquidation'
+                          : liquidationBreakdown.view === 'stable'
+                          ? 'Stable Basket Spot Liquidation'
+                          : 'Growth Basket Spot Liquidation'}
+                      </span>
+                      {liquidationBreakdown.view === 'all' && (
+                        <span className="text-[10px] font-bold" style={{ color: colors.accent }}>
+                          Stable: ₹{liquidationBreakdown.stablePart} · Growth: ₹{liquidationBreakdown.growthPart}
+                        </span>
+                      )}
+                      {liquidationBreakdown.view === 'stable' && (
+                        <span className="text-[10px] font-bold text-emerald-500">
+                          85% USDT · 15% BTC
+                        </span>
+                      )}
+                      {liquidationBreakdown.view === 'growth' && (
+                        <span className="text-[10px] font-bold" style={{ color: colors.accent }}>
+                          70% BTC · 20% ETH · 10% SOL
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Coin Liquidation Breakdown Grid */}
+                    <div className={`grid gap-2 ${liquidationBreakdown.fills.length === 2 ? 'grid-cols-2' : liquidationBreakdown.fills.length === 3 ? 'grid-cols-3' : 'grid-cols-2 sm:grid-cols-4'}`}>
+                      {liquidationBreakdown.fills.map((f) => (
+                        <div
+                          key={f.asset}
+                          className="flex items-center justify-between p-2 rounded-xl border min-w-0"
+                          style={{ backgroundColor: colors.card, borderColor: colors.borderDim }}
+                        >
+                          <div className="flex items-center gap-1.5 min-w-0">
+                            <div className="w-5 h-5 rounded-full bg-white flex items-center justify-center p-0.5 shadow-xs flex-shrink-0">
+                              <img src={f.logo} alt={f.asset} className="w-full h-full object-contain" />
+                            </div>
+                            <div className="min-w-0">
+                              <span className="font-bold text-xs truncate block" style={{ color: colors.textPrimary }}>
+                                {f.asset}
+                              </span>
+                              <span className="text-[9px] block text-slate-400" style={{ color: colors.textTertiary }}>
+                                {f.pct}%
+                              </span>
+                            </div>
+                          </div>
+                          <div className="text-right font-mono min-w-0 pl-1">
+                            <span className="text-xs font-bold block tabular-nums truncate" style={{ color: colors.textPrimary }}>
+                              ₹{f.inrShare.toLocaleString('en-IN')}
+                            </span>
+                            <span className="text-[9px] block tabular-nums truncate" style={{ color: colors.textSecondary }}>
+                              ~{f.asset === 'USDT' ? f.units.toFixed(2) : f.units.toFixed(6)}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )}
 
