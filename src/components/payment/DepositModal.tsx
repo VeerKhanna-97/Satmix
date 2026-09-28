@@ -231,6 +231,9 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
                     type="text"
                     inputMode="numeric"
                     pattern="[0-9]*"
+                    data-clarity-mask="true"
+                    data-sentry-mask="true"
+                    data-private="true"
                     value={amount}
                     onChange={(e) => {
                       const raw = e.target.value.replace(/[^0-9]/g, '');

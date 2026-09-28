@@ -78,6 +78,9 @@ export const Footer: React.FC = () => {
             <p className="max-w-2xl text-[11px] leading-relaxed" style={{ color: colors.textTertiary }}>
               Disclaimer: Digital assets and cryptocurrencies are volatile and subject to market risk. Satmix facilitates automated spot order execution with institutional custodial partners, and is not a SEBI-registered investment adviser or portfolio manager. Past performance does not guarantee future results.
             </p>
+            <p className="text-[10px]" style={{ color: colors.textTertiary }}>
+              Registered Office: Satmix Technologies Pvt. Ltd., #44, Hosur Road, Koramangala / Dairy Circle, Bengaluru, Karnataka 560029, India.
+            </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-3 text-xs font-semibold">
@@ -111,6 +114,14 @@ export const Footer: React.FC = () => {
               style={{ color: colors.textSecondary }}
             >
               Cookie Policy
+            </button>
+            <span className="opacity-40">•</span>
+            <button
+              onClick={() => setViewMode('unsubscribe')}
+              className="hover:opacity-80 transition-opacity"
+              style={{ color: colors.textSecondary }}
+            >
+              Unsubscribe
             </button>
             <span className="opacity-40">•</span>
             <a href="#faq-section" onClick={() => setViewMode('marketing')} className="hover:opacity-80 transition-opacity" style={{ color: colors.textSecondary }}>

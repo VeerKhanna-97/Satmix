@@ -18,7 +18,7 @@ export const UpiMandateModal: React.FC<UpiMandateModalProps> = ({ isOpen, onClos
   const [step, setStep] = useState<'details' | 'pin' | 'processing' | 'success'>('details');
   const [upiPin, setUpiPin] = useState('');
   const [loading, setLoading] = useState(false);
-  const [mandateConsent, setMandateConsent] = useState(true);
+  const [mandateConsent, setMandateConsent] = useState(false);
 
   // Close on Escape key press
   React.useEffect(() => {
@@ -138,17 +138,31 @@ export const UpiMandateModal: React.FC<UpiMandateModalProps> = ({ isOpen, onClos
               </div>
             </div>
 
+            {/* Auto-Renewal Terms & Disclosure (FTC ROSCA & RBI e-Mandate Framework compliant) */}
+            <div className="p-3.5 rounded-xl border text-[11px] space-y-1.5" style={{ backgroundColor: 'rgba(93, 23, 235, 0.04)', borderColor: colors.borderDim }}>
+              <div className="font-bold flex items-center justify-between text-xs" style={{ color: colors.textPrimary }}>
+                <span>Recurring Renewal Terms</span>
+                <span className="font-mono text-emerald-400 font-semibold">₹{dailyAmount}/day</span>
+              </div>
+              <ul className="space-y-1 leading-relaxed list-disc list-inside" style={{ color: colors.textSecondary }}>
+                <li>Auto-renews daily at 08:00 AM IST via NPCI UPI AutoPay through {selectedApp}.</li>
+                <li>Continuous recurring savings plan with zero lock-in commitment.</li>
+                <li>Pause, modify, or cancel anytime with 1 tap in Profile settings or your UPI app with ₹0 penalty.</li>
+              </ul>
+            </div>
+
             {/* Mandate Consent Checkbox */}
-            <div className="flex items-start gap-2 pt-1">
+            <div className="flex items-start gap-2 pt-0.5">
               <input
                 id="mandate-consent"
                 type="checkbox"
                 checked={mandateConsent}
                 onChange={(e) => setMandateConsent(e.target.checked)}
                 className="mt-0.5 w-3.5 h-3.5 rounded border-gray-700 cursor-pointer accent-[#5D17EB]"
+                required
               />
               <label htmlFor="mandate-consent" className="text-[11px] leading-tight select-none cursor-pointer" style={{ color: colors.textSecondary }}>
-                I authorize a recurring daily UPI AutoPay mandate of ₹{dailyAmount}/day with zero lock-in (can be paused or revoked anytime).
+                I authorize a recurring daily UPI AutoPay mandate of <strong className="text-white font-semibold">₹{dailyAmount}/day</strong> from {bankName} under the renewal terms above.
               </label>
             </div>
 
@@ -158,7 +172,7 @@ export const UpiMandateModal: React.FC<UpiMandateModalProps> = ({ isOpen, onClos
               className="w-full h-12 px-6 rounded-xl font-bold text-sm shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none disabled:active:scale-100 transition-all hover:brightness-105 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
               style={{ backgroundColor: colors.primary, color: colors.primaryText }}
             >
-              <span>Proceed to Enter UPI PIN</span>
+              <span>Authorize Mandate & Enter UPI PIN</span>
               <ArrowRight className="w-4 h-4 flex-shrink-0" />
             </button>
           </div>

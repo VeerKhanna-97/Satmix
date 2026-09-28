@@ -18,6 +18,7 @@ import { PrivacyPolicyPage } from './components/legal/PrivacyPolicyPage';
 import { TermsConditionsPage } from './components/legal/TermsConditionsPage';
 import { RefundPolicyPage } from './components/legal/RefundPolicyPage';
 import { CookiePolicyPage } from './components/legal/CookiePolicyPage';
+import { UnsubscribePage } from './components/legal/UnsubscribePage';
 import { ThankYouPage } from './components/legal/ThankYouPage';
 import { NotFoundPage } from './components/legal/NotFoundPage';
 import { CookieBanner } from './components/common/CookieBanner';
@@ -69,10 +70,13 @@ export function AppContent() {
       {/* 7. COOKIE POLICY & PREFERENCES PAGE */}
       {viewMode === 'cookies' && <CookiePolicyPage />}
 
-      {/* 8. THANK YOU / CONFIRMATION PAGE */}
+      {/* 8. EMAIL UNSUBSCRIBE & PREFERENCES (CAN-SPAM & DPDP ACT) */}
+      {viewMode === 'unsubscribe' && <UnsubscribePage />}
+
+      {/* 9. THANK YOU / CONFIRMATION PAGE */}
       {viewMode === 'thank-you' && <ThankYouPage />}
 
-      {/* 9. CUSTOM 404 ERROR PAGE */}
+      {/* 10. CUSTOM 404 ERROR PAGE */}
       {viewMode === '404' && <NotFoundPage />}
 
       {/* Floating Feedback / Reviews (renders strictly inside Web App) */}

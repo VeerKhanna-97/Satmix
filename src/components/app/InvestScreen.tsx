@@ -310,9 +310,20 @@ export const InvestScreen: React.FC = () => {
               </button>
             )}
 
+            {/* Auto-Renewal Terms Notice (ROSCA & RBI Recurring Mandate compliant) */}
+            <div className="p-3.5 rounded-xl border text-[11px] space-y-1" style={{ backgroundColor: 'rgba(93, 23, 235, 0.04)', borderColor: colors.borderDim }}>
+              <div className="flex items-center justify-between text-xs font-bold" style={{ color: colors.textPrimary }}>
+                <span>Auto-Renewal Terms</span>
+                <span className="font-mono text-emerald-400">₹{dailyAmount}/day</span>
+              </div>
+              <p className="leading-relaxed" style={{ color: colors.textSecondary }}>
+                Auto-renews daily at 08:00 AM IST via NPCI UPI AutoPay. Continuous recurring micro-investment with zero lock-in commitment. You can pause, modify the daily rate, or cancel anytime with 1 tap in Profile settings or your bank UPI app with ₹0 cancellation fee.
+              </p>
+            </div>
+
             <div className="flex items-center justify-center gap-1.5 text-[11px]" style={{ color: colors.textTertiary }}>
               <Shield className="w-3.5 h-3.5" style={{ color: colors.accent }} />
-              <span>UPI AutoPay at launch · Secure custodial spot execution · Pause anytime.</span>
+              <span>UPI AutoPay at launch · Non-custodial spot execution · Cancel anytime.</span>
             </div>
           </div>
         </SpotlightCard>

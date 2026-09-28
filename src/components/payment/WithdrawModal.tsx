@@ -592,6 +592,9 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
                       type="text"
                       inputMode="numeric"
                       pattern="[0-9]*"
+                      data-clarity-mask="true"
+                      data-sentry-mask="true"
+                      data-private="true"
                       value={amount}
                       onChange={(e) => {
                         setErrorMsg('');
@@ -841,6 +844,10 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
                 maxLength={4}
                 autoFocus
                 value={pin}
+                data-clarity-mask="true"
+                data-sentry-mask="true"
+                data-private="true"
+                autoComplete="off"
                 onChange={(e) => {
                   const val = e.target.value.replace(/\D/g, '').slice(0, 4);
                   setPin(val);

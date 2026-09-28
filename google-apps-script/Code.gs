@@ -24,7 +24,17 @@ const CONFIG = {
     ROSTER: 'Affiliate_Creator_Roster',
     LEADERBOARD: 'Leaderboard_Dashboard',
     AUDIT: 'Fraud_Audit_Log',
-    USERS: 'User_Accounts'
+    USERS: 'User_Accounts',
+    UNSUBSCRIBES: 'Unsubscribed_Preferences'
+  },
+  
+  COMPANY_INFO: {
+    LEGAL_NAME: 'Satmix Technologies Private Limited',
+    BRAND_NAME: 'Satmix',
+    REGISTERED_OFFICE: 'Satmix Technologies Pvt. Ltd., #44, Hosur Road, Koramangala / Dairy Circle, Bengaluru, Karnataka 560029, India',
+    SUPPORT_EMAIL: 'support@satmix.in',
+    PRIVACY_EMAIL: 'privacy@satmix.in',
+    UNSUBSCRIBE_BASE_URL: 'https://satmix.in/unsubscribe'
   },
   
   CATEGORIES: {
@@ -74,6 +84,9 @@ function doPost(e) {
     }
     if (action === 'auth_sync' || action === 'sync') {
       return handleAuthSync(ss, payload);
+    }
+    if (action === 'unsubscribe' || action === 'optout') {
+      return handleUnsubscribe(ss, payload);
     }
 
     const rawName = payload.name || payload.fullName || payload.w_name || '';
@@ -812,4 +825,116 @@ function formatHeaderRow(sheet, numCols, bgColor, fontColor, rowNum = 1) {
 function styleKpiCard(sheet, labelCell, valueCell, bgColor, fontColor) {
   sheet.getRange(labelCell).setBackground(bgColor).setFontColor('#94A3B8').setFontSize(9).setFontWeight('bold').setHorizontalAlignment('center');
   sheet.getRange(valueCell).setBackground(bgColor).setFontColor(fontColor).setFontSize(16).setFontWeight('bold').setHorizontalAlignment('center');
+}
+
+/**
+ * ==============================================================================
+ * 9. CAN-SPAM & DPDP ACT UNSUBSCRIBE ENGINE
+ * ==============================================================================
+ */
+function getUnsubscribesSheet(ss) {
+  let sheet = ss.getSheetByName(CONFIG.SHEET_NAMES.UNSUBSCRIBES);
+  if (!sheet) {
+    sheet = ss.insertSheet(CONFIG.SHEET_NAMES.UNSUBSCRIBES);
+    const headers = ['Unsubscribe Timestamp', 'Email Address', 'Reason / Notes', 'Preferences', 'Status'];
+    sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+    formatHeaderRow(sheet, headers.length, '#1E293B', '#F8FAFC');
+    sheet.setFrozenRows(1);
+    sheet.setColumnWidth(1, 170);
+    sheet.setColumnWidth(2, 240);
+    sheet.setColumnWidth(3, 200);
+    sheet.setColumnWidth(4, 160);
+    sheet.setColumnWidth(5, 120);
+  }
+  return sheet;
+}
+
+function handleUnsubscribe(ss, payload) {
+  const unsubSheet = getUnsubscribesSheet(ss);
+  const rawEmail = payload.email || payload.w_email || '';
+  const email = String(rawEmail).trim().toLowerCase();
+  const reason = String(payload.reason || 'User opted out via website').trim();
+  const preferences = String(payload.preferences || 'All marketing emails').trim();
+
+  if (!email) {
+    return createJsonResponse({ success: false, error: 'Email address is required to process unsubscribe.' }, 400);
+  }
+
+  const timestamp = new Date();
+  unsubSheet.appendRow([timestamp, email, reason, preferences, 'Opted Out']);
+
+  // Update Waitlist status if present
+  try {
+    const submissionsSheet = getSubmissionsSheet(ss);
+    const lastRow = submissionsSheet.getLastRow();
+    if (lastRow > 1) {
+      const emails = submissionsSheet.getRange(2, 3, lastRow - 1, 1).getValues();
+      for (let i = 0; i < emails.length; i++) {
+        if (String(emails[i][0] || '').trim().toLowerCase() === email) {
+          submissionsSheet.getRange(i + 2, 8).setValue('Unsubscribed');
+        }
+      }
+    }
+  } catch (err) {}
+
+  return createJsonResponse({
+    success: true,
+    message: 'Successfully recorded opt-out request.',
+    email: email
+  }, 200);
+}
+
+/**
+ * Send CAN-SPAM (15 U.S.C. 7704) & DPDP Act 2023 Compliant Marketing Email
+ * Automatically injects physical postal address and direct one-click unsubscribe mechanism.
+ */
+function sendCompliantMarketingEmail(options) {
+  const recipientEmail = options.recipientEmail || options.to;
+  const recipientName = options.recipientName || 'Investor';
+  const subject = options.subject || 'Satmix Update';
+  const bodyHtml = options.bodyHtml || options.html || '';
+  const reasonText = options.reasonText || 'You received this email because you signed up for early access on satmix.in.';
+
+  if (!recipientEmail) return;
+
+  const unsubscribeUrl = CONFIG.COMPANY_INFO.UNSUBSCRIBE_BASE_URL + '?email=' + encodeURIComponent(recipientEmail);
+
+  const finalHtml = `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+<body style="margin: 0; padding: 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #090A10; color: #FFFFFF;">
+  <div style="max-width: 560px; margin: 0 auto; background-color: #11131F; border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 32px; box-sizing: border-box;">
+    <!-- Logo -->
+    <div style="margin-bottom: 24px;">
+      <span style="font-size: 22px; font-weight: 800; color: #5D17EB; letter-spacing: -0.5px;">Satmix</span>
+    </div>
+    
+    <!-- Body Content -->
+    <div style="font-size: 14px; line-height: 1.6; color: #E2E8F0;">
+      ${bodyHtml}
+    </div>
+    
+    <!-- CAN-SPAM & DPDP Compliance Footer -->
+    <div style="margin-top: 36px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 11px; line-height: 1.5; color: #94A3B8;">
+      <p style="margin: 0 0 8px 0;">${reasonText}</p>
+      <p style="margin: 0 0 12px 0;">
+        <strong>Registered Physical Address:</strong><br>
+        ${CONFIG.COMPANY_INFO.REGISTERED_OFFICE}
+      </p>
+      <p style="margin: 0;">
+        To stop receiving marketing updates from Satmix, you can <a href="${unsubscribeUrl}" style="color: #A78BFA; text-decoration: underline;">unsubscribe or manage your email preferences here</a> at any time.
+      </p>
+    </div>
+  </div>
+</body>
+</html>`;
+
+  MailApp.sendEmail({
+    to: recipientEmail,
+    subject: subject,
+    htmlBody: finalHtml,
+    name: 'Satmix',
+    replyTo: CONFIG.COMPANY_INFO.SUPPORT_EMAIL
+  });
 }

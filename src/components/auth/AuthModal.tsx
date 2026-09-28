@@ -49,7 +49,8 @@ export const AuthModal: React.FC = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [consentAgreed, setConsentAgreed] = useState(true);
+  const [consentAgreed, setConsentAgreed] = useState(false);
+  const [ageConfirmed, setAgeConfirmed] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -126,6 +127,10 @@ export const AuthModal: React.FC = () => {
 
       if (password !== confirmPassword) {
         setErrorMsg('Passwords do not match');
+        return;
+      }
+      if (!ageConfirmed) {
+        setErrorMsg('You must certify that you are at least 18 years old and legally competent to invest');
         return;
       }
       if (!consentAgreed) {
@@ -278,6 +283,9 @@ export const AuthModal: React.FC = () => {
                       placeholder="Arjun Sharma"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
+                      data-clarity-mask="true"
+                      data-sentry-mask="true"
+                      data-private="true"
                       className="w-full h-10 pl-9 pr-3 py-2 rounded-xl text-xs sm:text-sm border focus:outline-none focus:ring-1 transition-all"
                       style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textPrimary }}
                     />
@@ -287,7 +295,7 @@ export const AuthModal: React.FC = () => {
                 {/* Mobile Number (Exactly 10 Digits) */}
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label className="block text-[11px] font-bold uppercase tracking-wider" style={{ color: colors.textTertiary }}>
+                    <label className="block text-[11px] font-bold uppercase tracking-wider mb-1" style={{ color: colors.textTertiary }}>
                       Mobile Number
                     </label>
                     <span
@@ -315,6 +323,9 @@ export const AuthModal: React.FC = () => {
                       maxLength={10}
                       placeholder="98765 43210"
                       value={phone}
+                      data-clarity-mask="true"
+                      data-sentry-mask="true"
+                      data-private="true"
                       onKeyDown={(e) => {
                         if (!/[0-9]/.test(e.key) && !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Enter'].includes(e.key)) {
                           e.preventDefault();
@@ -344,6 +355,9 @@ export const AuthModal: React.FC = () => {
                       placeholder="arjun@example.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
+                      data-clarity-mask="true"
+                      data-sentry-mask="true"
+                      data-private="true"
                       className="w-full h-10 pl-9 pr-3 py-2 rounded-xl text-xs sm:text-sm border focus:outline-none focus:ring-1 transition-all"
                       style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textPrimary }}
                     />
@@ -375,6 +389,9 @@ export const AuthModal: React.FC = () => {
                       placeholder="••••••••"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
+                      data-clarity-mask="true"
+                      data-sentry-mask="true"
+                      data-private="true"
                       className="w-full h-10 pl-9 pr-3 py-2 rounded-xl text-xs sm:text-sm border focus:outline-none focus:ring-1 transition-all"
                       style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textPrimary }}
                     />
@@ -395,10 +412,28 @@ export const AuthModal: React.FC = () => {
                       placeholder="••••••••"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
+                      data-clarity-mask="true"
+                      data-sentry-mask="true"
+                      data-private="true"
                       className="w-full h-10 pl-9 pr-3 py-2 rounded-xl text-xs sm:text-sm border focus:outline-none focus:ring-1 transition-all"
                       style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textPrimary }}
                     />
                   </div>
+                </div>
+
+                {/* Age Gate Certification (Indian Contract Act 1872 & DPDP Act 2023) */}
+                <div className="sm:col-span-2 flex items-start gap-2 pt-0.5">
+                  <input
+                    id="auth-age-gate"
+                    type="checkbox"
+                    checked={ageConfirmed}
+                    onChange={(e) => setAgeConfirmed(e.target.checked)}
+                    className="mt-0.5 w-3.5 h-3.5 rounded cursor-pointer accent-[#5D17EB]"
+                    required
+                  />
+                  <label htmlFor="auth-age-gate" className="text-[11px] leading-tight select-none cursor-pointer" style={{ color: colors.textSecondary }}>
+                    I certify that I am at least <span className="font-bold" style={{ color: colors.textPrimary }}>18 years of age</span>, an Indian resident, and legally competent to enter into financial contracts (Indian Contract Act & DPDP Act 2023).
+                  </label>
                 </div>
 
                 {/* Terms and Privacy Consent */}
@@ -409,6 +444,7 @@ export const AuthModal: React.FC = () => {
                     checked={consentAgreed}
                     onChange={(e) => setConsentAgreed(e.target.checked)}
                     className="mt-0.5 w-3.5 h-3.5 rounded cursor-pointer accent-[#5D17EB]"
+                    required
                   />
                   <label htmlFor="auth-consent" className="text-[11px] leading-tight select-none cursor-pointer" style={{ color: colors.textSecondary }}>
                     I agree to Satmix's{' '}
@@ -437,7 +473,7 @@ export const AuthModal: React.FC = () => {
                 <div className="sm:col-span-2 pt-1">
                   <button
                     type="submit"
-                    disabled={loading || phone.length !== 10}
+                    disabled={loading || phone.length !== 10 || !ageConfirmed || !consentAgreed}
                     className="w-full h-11 px-6 rounded-xl font-bold text-xs sm:text-sm tracking-wide shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] transition-all hover:brightness-105 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none disabled:active:scale-100 flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                     style={{ backgroundColor: colors.primary, color: colors.primaryText }}
                   >
@@ -473,6 +509,9 @@ export const AuthModal: React.FC = () => {
                       placeholder="arjun@example.com or 9876543210"
                       value={identifier}
                       onChange={(e) => setIdentifier(e.target.value)}
+                      data-clarity-mask="true"
+                      data-sentry-mask="true"
+                      data-private="true"
                       className="w-full h-10 pl-9 pr-3 py-2 rounded-xl text-xs sm:text-sm border focus:outline-none focus:ring-1 transition-all"
                       style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textPrimary }}
                     />
@@ -503,6 +542,9 @@ export const AuthModal: React.FC = () => {
                       placeholder="••••••••"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
+                      data-clarity-mask="true"
+                      data-sentry-mask="true"
+                      data-private="true"
                       className="w-full h-10 pl-9 pr-3 py-2 rounded-xl text-xs sm:text-sm border focus:outline-none focus:ring-1 transition-all"
                       style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textPrimary }}
                     />

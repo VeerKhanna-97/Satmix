@@ -36,7 +36,7 @@ import { fetchLiveCryptoPrices, FALLBACK_COINS } from '../utils/pricing';
 import { calculateStreakState, createEmptyStreakState } from '../utils/streakEngine';
 import { getBasketById } from '../data/baskets';
 
-export type ViewMode = 'marketing' | 'auth' | 'app' | 'privacy' | 'terms' | 'refund' | 'cookies' | 'thank-you' | '404';
+export type ViewMode = 'marketing' | 'auth' | 'app' | 'privacy' | 'terms' | 'refund' | 'cookies' | 'thank-you' | '404' | 'unsubscribe';
 export type AppTab = 'dashboard' | 'baskets' | 'invest' | 'profile';
 export type DeviceFrame = 'full' | 'mobile';
 export type CookieConsentChoice = 'all' | 'essential' | null;
@@ -130,8 +130,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Device Frame
   const [deviceFrame, setDeviceFrame] = useState<DeviceFrame>('full');
 
-  // Navigation state
-  const [viewMode, setViewMode] = useState<ViewMode>('marketing');
+  // Navigation state with URL route auto-detection
+  const [viewMode, setViewMode] = useState<ViewMode>(() => {
+    try {
+      const path = window.location.pathname.toLowerCase();
+      const params = new URLSearchParams(window.location.search);
+      if (path.includes('unsubscribe') || params.get('view') === 'unsubscribe') return 'unsubscribe';
+      if (path.includes('privacy') || params.get('view') === 'privacy') return 'privacy';
+      if (path.includes('terms') || params.get('view') === 'terms') return 'terms';
+      if (path.includes('refund') || params.get('view') === 'refund') return 'refund';
+      if (path.includes('cookies') || params.get('view') === 'cookies') return 'cookies';
+      if (path.includes('thank-you') || params.get('view') === 'thank-you') return 'thank-you';
+      return 'marketing';
+    } catch {
+      return 'marketing';
+    }
+  });
   const [activeTab, setActiveTab] = useState<AppTab>('dashboard');
   const [authSubView, setAuthSubView] = useState<'login' | 'signup' | 'quiz'>('login');
 
@@ -289,6 +303,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       cookies: 'Cookie Policy & Consent Settings : Satmix',
       'thank-you': 'Early Access Confirmed : Welcome to Satmix',
       '404': '404 Page Not Found : Satmix',
+      unsubscribe: 'Email Preferences & Unsubscribe : Satmix (CAN-SPAM & DPDP Compliant)',
     };
 
     document.title = titleMap[viewMode] || 'Satmix : Automated Daily Crypto Micro-Investing';
