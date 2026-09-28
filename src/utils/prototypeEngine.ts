@@ -15,6 +15,8 @@ import {
 } from '../types';
 import { BASKETS, getBasketById } from '../data/baskets';
 
+export type LedgerEntry = ActivityEntry;
+
 export const PROTOTYPE_STORAGE_KEY = 'satmix-prototype-v6';
 
 export interface LiveCoinPrices {
@@ -346,6 +348,9 @@ export function executeOneTimeDeposit(
   const nextState: PrototypeState = JSON.parse(JSON.stringify(state));
   const todayKey = formatDateKey(new Date());
 
+  // Enforce upper limit of ₹10,00,000 (10 Lakh INR)
+  const cappedAmount = Math.min(Math.max(0, amount), 1_000_000);
+
   const currentHabit = nextState.habits[basketId] || {
     setupAt: null,
     dailyAmount: basketId === 'growth' ? 30 : 10,
@@ -356,7 +361,7 @@ export function executeOneTimeDeposit(
 
   // Split deposit across basket weights
   const fills: ActivityFill[] = basketDef.allocation.map((alloc) => {
-    const inrShare = amount * (alloc.pct / 100);
+    const inrShare = cappedAmount * (alloc.pct / 100);
     const priceInr =
       alloc.ticker === 'BTC'
         ? livePrices.BTC

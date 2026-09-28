@@ -27,6 +27,8 @@ import {
   Info,
   ExternalLink,
   Activity,
+  LayoutGrid,
+  Table,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { LineChart } from '../common/LineChart';
@@ -40,6 +42,8 @@ import { generateChartSeries, generateAssetWeekSeries, ChartTimeframe } from '..
 import { CustomDateRangePicker } from '../common/CustomDateRangePicker';
 import { SpotlightCard, CountUp, Magnet, ShinyText, FadeIn } from '../ui';
 import { motion, AnimatePresence } from 'motion/react';
+import { HoldingsMatrixTable } from './HoldingsMatrixTable';
+import { useSatmixPortfolio } from '../../hooks/useSatmixPortfolio';
 
 export const DashboardScreen: React.FC = () => {
   const {
@@ -85,11 +89,14 @@ export const DashboardScreen: React.FC = () => {
     return `${s1} – ${s2}`;
   }, []);
 
-  // Modals
+  // Modals & View Modes
   const [depositOpen, setDepositOpen] = useState(false);
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [selectedAssetModal, setSelectedAssetModal] = useState<any | null>(null);
   const [holdingsExpanded, setHoldingsExpanded] = useState(false);
+  const [holdingsViewMode, setHoldingsViewMode] = useState<'cards' | 'matrix'>('cards');
+
+  const { holdings: matrixHoldings } = useSatmixPortfolio();
 
   const stableBasket = getBasketById('stable');
   const growthBasket = getBasketById('growth');
@@ -759,8 +766,58 @@ export const DashboardScreen: React.FC = () => {
                 </div>
               )}
 
-              {/* ── ASSET CARDS LIST ── */}
-              {holdingsList.length > 0 ? (
+              {/* ── VIEW SWITCHER (CARDS VS MATRIX) ── */}
+              <div className="flex items-center justify-between gap-3 pt-1">
+                <span className="text-[11px] font-bold uppercase tracking-wider font-mono" style={{ color: colors.textTertiary }}>
+                  {holdingsViewMode === 'cards' ? 'Asset Cards & Trajectory' : 'Institutional Ledger Matrix'}
+                </span>
+                <div
+                  className="flex items-center p-0.5 rounded-xl border"
+                  style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}
+                >
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setHoldingsViewMode('cards');
+                    }}
+                    className="px-2.5 py-1 rounded-lg text-xs font-bold font-mono transition-all flex items-center gap-1.5 active:scale-95"
+                    style={{
+                      backgroundColor: holdingsViewMode === 'cards' ? colors.primary : 'transparent',
+                      color: holdingsViewMode === 'cards' ? colors.primaryText : colors.textSecondary,
+                    }}
+                    aria-label="Cards View"
+                  >
+                    <LayoutGrid className="w-3.5 h-3.5" />
+                    <span>Cards</span>
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setHoldingsViewMode('matrix');
+                    }}
+                    className="px-2.5 py-1 rounded-lg text-xs font-bold font-mono transition-all flex items-center gap-1.5 active:scale-95"
+                    style={{
+                      backgroundColor: holdingsViewMode === 'matrix' ? colors.primary : 'transparent',
+                      color: holdingsViewMode === 'matrix' ? colors.primaryText : colors.textSecondary,
+                    }}
+                    aria-label="Matrix Table View"
+                  >
+                    <Table className="w-3.5 h-3.5" />
+                    <span>Matrix</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* ── HOLDINGS DISPLAY: MATRIX TABLE OR CARDS LIST ── */}
+              {holdingsViewMode === 'matrix' ? (
+                <HoldingsMatrixTable
+                  holdings={matrixHoldings}
+                  onSelectAsset={(coin) => {
+                    const found = holdingsList.find((h) => h.coin === coin);
+                    if (found) setSelectedAssetModal(found);
+                  }}
+                />
+              ) : holdingsList.length > 0 ? (
                 <div className="space-y-3">
                   {holdingsList.map((item) => {
                     const allocationPct = tabMetrics.marketValue > 0

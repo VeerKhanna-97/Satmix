@@ -18,6 +18,8 @@ const CRYPTO_LOGOS: Record<string, string> = {
   USDT: '/currencies/USDT.png',
 };
 
+const MAX_DEPOSIT = 1000000; // Upper limit of ₹10,00,000 (10 Lakh INR)
+
 export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) => {
   const { colors, selectedBasketId, simulateDeposit, livePrices, themeMode } = useApp();
   const [targetBasket, setTargetBasket] = useState<BasketId>(selectedBasketId || 'stable');
@@ -38,11 +40,12 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
   const stepValue = targetBasket === 'stable' ? 50 : 100;
   const handleStepUp = () => {
     const cur = parseInt(amount, 10) || 0;
-    setAmount((cur + stepValue).toString());
+    const next = Math.min(MAX_DEPOSIT, cur + stepValue);
+    setAmount(next.toString());
   };
   const handleStepDown = () => {
     const cur = parseInt(amount, 10) || 0;
-    const next = Math.max(minAmount, cur - stepValue);
+    const next = Math.max(minAmount, Math.min(MAX_DEPOSIT, cur - stepValue));
     setAmount(next.toString());
   };
 
@@ -99,7 +102,7 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
   if (!isOpen) return null;
 
   const handleDeposit = async () => {
-    if (isNaN(numAmount) || numAmount < minAmount) return;
+    if (isNaN(numAmount) || numAmount < minAmount || numAmount > MAX_DEPOSIT) return;
 
     setLoading(true);
     const utr = `50${Date.now().toString().slice(-10)}`;
@@ -210,19 +213,51 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
                   <label className="text-[11px] font-bold uppercase tracking-wider" style={{ color: colors.textSecondary }}>
                     Top-Up Amount (INR)
                   </label>
-                  <span className="text-[10px] font-mono font-semibold" style={{ color: numAmount < minAmount ? colors.semanticDanger : colors.textTertiary }}>
-                    Min ₹{minAmount}
+                  <span
+                    className="text-[10px] font-mono font-semibold"
+                    style={{
+                      color:
+                        numAmount > MAX_DEPOSIT || (numAmount < minAmount && !!amount)
+                          ? colors.semanticDanger
+                          : colors.textTertiary,
+                    }}
+                  >
+                    Min ₹{minAmount} · Max ₹10,00,000
                   </span>
                 </div>
                 <div className="relative">
-                  <span className="absolute left-3.5 top-2.5 text-base font-bold font-mono pointer-events-none" style={{ color: colors.textTertiary }}>₹</span>
+                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-base font-bold font-mono pointer-events-none" style={{ color: colors.textTertiary }}>₹</span>
                   <input
-                    type="number"
-                    min={minAmount}
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
                     value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    className="w-full pl-8 pr-11 py-2 rounded-xl text-lg font-bold font-mono border focus:outline-none focus:ring-1 transition-all"
-                    style={{ backgroundColor: colors.surface, borderColor: numAmount < minAmount && amount ? 'rgba(239, 68, 68, 0.4)' : colors.cardBorder, color: colors.textPrimary }}
+                    onChange={(e) => {
+                      const raw = e.target.value.replace(/[^0-9]/g, '');
+                      if (!raw) {
+                        setAmount('');
+                        return;
+                      }
+                      const parsed = parseInt(raw, 10);
+                      if (parsed > MAX_DEPOSIT) {
+                        setAmount(MAX_DEPOSIT.toString());
+                      } else {
+                        setAmount(parsed.toString());
+                      }
+                    }}
+                    placeholder={`Min ${minAmount}`}
+                    className={`w-full pl-8 pr-11 py-2 rounded-xl font-bold font-mono border focus:outline-none focus:ring-1 transition-all ${
+                      amount.length >= 7
+                        ? 'text-sm sm:text-base'
+                        : amount.length >= 5
+                        ? 'text-base sm:text-lg'
+                        : 'text-lg sm:text-xl'
+                    }`}
+                    style={{
+                      backgroundColor: colors.surface,
+                      borderColor: (numAmount < minAmount && !!amount) || numAmount > MAX_DEPOSIT ? 'rgba(239, 68, 68, 0.4)' : colors.cardBorder,
+                      color: colors.textPrimary,
+                    }}
                   />
                   {/* Custom Sleek Stepper Controls */}
                   <div
@@ -309,38 +344,42 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
             </div>
 
             {/* Right Section (Spot Breakdown + Action CTA) */}
-            <div className="md:col-span-5 flex flex-col justify-between rounded-2xl border p-4 space-y-3.5" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
-              <div className="space-y-3">
+            <div className="md:col-span-5 flex flex-col justify-between rounded-2xl border p-4 space-y-3.5 min-w-0" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+              <div className="space-y-3 min-w-0">
                 <div className="flex items-center justify-between border-b pb-2" style={{ borderColor: colors.borderDim }}>
-                  <span className="text-[11px] font-bold uppercase tracking-wider" style={{ color: colors.textSecondary }}>
+                  <span className="text-[11px] font-bold uppercase tracking-wider truncate" style={{ color: colors.textSecondary }}>
                     Instant Spot Allocation
                   </span>
-                  <span className="text-[10px] font-mono text-emerald-500 font-bold flex items-center gap-1">
+                  <span className="text-[10px] font-mono text-emerald-500 font-bold flex items-center gap-1 flex-shrink-0">
                     <Sparkles className="w-3 h-3" />
                     <span>0% Slippage</span>
                   </span>
                 </div>
 
                 {/* Coin Allocations with Real Logos */}
-                <div className="space-y-2">
+                <div className="space-y-2 min-w-0">
                   {estimatedFills.length > 0 && numAmount >= minAmount ? (
                     estimatedFills.map((fill) => (
-                      <div key={fill.asset} className="flex items-center justify-between py-1 border-b last:border-b-0" style={{ borderColor: colors.borderDim }}>
-                        <div className="flex items-center gap-2">
+                      <div key={fill.asset} className="flex items-center justify-between py-1.5 border-b last:border-b-0 gap-2 min-w-0" style={{ borderColor: colors.borderDim }}>
+                        <div className="flex items-center gap-2 min-w-0 flex-shrink-0">
                           <div className="w-5 h-5 rounded-full bg-white flex items-center justify-center overflow-hidden p-0.5 shadow-sm ring-1 ring-black/20 flex-shrink-0">
                             <img src={fill.logo} alt={fill.asset} className="w-full h-full object-contain" />
                           </div>
-                          <div>
+                          <div className="truncate">
                             <span className="font-bold text-xs" style={{ color: colors.textPrimary }}>{fill.asset}</span>
                             <span className="text-[10px] font-mono ml-1.5" style={{ color: colors.textTertiary }}>({fill.pct}%)</span>
                           </div>
                         </div>
-                        <div className="text-right font-mono">
-                          <span className="font-bold text-xs block" style={{ color: colors.textPrimary }}>
-                            ~{fill.asset === 'USDT' ? fill.units.toFixed(2) : fill.units.toFixed(6)} {fill.asset}
+                        <div className="text-right font-mono min-w-0 flex-1 pl-1">
+                          <span
+                            className="font-bold text-xs block truncate tabular-nums"
+                            style={{ color: colors.textPrimary }}
+                            title={`~${fill.asset === 'USDT' ? fill.units.toLocaleString('en-IN', { maximumFractionDigits: 2 }) : fill.units.toLocaleString('en-IN', { maximumFractionDigits: 6 })} ${fill.asset}`}
+                          >
+                            ~{fill.asset === 'USDT' ? fill.units.toLocaleString('en-IN', { maximumFractionDigits: 2 }) : fill.units.toLocaleString('en-IN', { maximumFractionDigits: 6 })} {fill.asset}
                           </span>
-                          <span className="text-[10px] block" style={{ color: colors.textSecondary }}>
-                            ₹{Math.round(fill.inrShare)}
+                          <span className="text-[10px] block tabular-nums truncate" style={{ color: colors.textSecondary }}>
+                            ₹{Math.round(fill.inrShare).toLocaleString('en-IN')}
                           </span>
                         </div>
                       </div>
@@ -356,14 +395,14 @@ export const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose }) =
               {/* Action Button */}
               <button
                 onClick={handleDeposit}
-                disabled={loading || !amount || numAmount < minAmount}
+                disabled={loading || !amount || numAmount < minAmount || numAmount > MAX_DEPOSIT}
                 className="w-full h-11 px-5 rounded-xl font-bold text-xs shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] flex items-center justify-center gap-2 transition-all hover:brightness-105 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none disabled:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                 style={{ backgroundColor: colors.primary, color: colors.primaryText }}
               >
                 {loading ? (
                   <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
                 ) : (
-                  <span>Pay ₹{numAmount > 0 ? numAmount.toLocaleString('en-IN') : '0'} Instantly</span>
+                  <span className="truncate">Pay ₹{numAmount > 0 ? numAmount.toLocaleString('en-IN') : '0'} Instantly</span>
                 )}
               </button>
             </div>
