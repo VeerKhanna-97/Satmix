@@ -72,7 +72,7 @@ export const Header: React.FC = () => {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-7 text-sm font-medium">
-          <button onClick={() => setViewMode('marketing')} className="hover:opacity-80 transition-opacity" style={{ color: colors.textPrimary }}>
+          <button type="button" onClick={() => setViewMode('marketing')} className="hover:opacity-80 transition-opacity" style={{ color: colors.textPrimary }}>
             Home
           </button>
 
@@ -83,6 +83,7 @@ export const Header: React.FC = () => {
             onMouseLeave={() => setActiveDropdown(null)}
           >
             <button
+              type="button"
               className="flex items-center gap-1.5 hover:opacity-80 transition-opacity py-2"
               style={{ color: activeDropdown === 'features' ? colors.textPrimary : colors.textSecondary }}
             >
@@ -225,6 +226,7 @@ export const Header: React.FC = () => {
             onMouseLeave={() => setActiveDropdown(null)}
           >
             <button
+              type="button"
               className="flex items-center gap-1.5 hover:opacity-80 transition-opacity py-2"
               style={{ color: activeDropdown === 'resources' ? colors.textPrimary : colors.textSecondary }}
             >
@@ -300,6 +302,7 @@ export const Header: React.FC = () => {
             onMouseLeave={() => setActiveDropdown(null)}
           >
             <button
+              type="button"
               className="flex items-center gap-1.5 hover:opacity-80 transition-opacity py-2"
               style={{ color: activeDropdown === 'about' ? colors.textPrimary : colors.textSecondary }}
             >
@@ -377,6 +380,7 @@ export const Header: React.FC = () => {
         <div className="flex items-center gap-3">
           {/* Theme Toggle */}
           <button
+            type="button"
             onClick={toggleTheme}
             className="w-9 h-9 rounded-lg border transition-[transform,background-color,border-color] duration-150 ease-out hover:bg-white/[0.05] active:scale-[0.98] flex items-center justify-center select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
             style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textPrimary }}
@@ -388,6 +392,7 @@ export const Header: React.FC = () => {
           {/* Auth Button */}
           {isAuthenticated ? (
             <button
+              type="button"
               onClick={handleLaunchApp}
               className="inline-flex items-center gap-2 h-9 px-3.5 rounded-lg font-semibold text-xs tracking-wide shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_1px_3px_rgba(0,0,0,0.3)] transition-[transform,background-color,box-shadow] duration-150 ease-out active:scale-[0.98] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
               style={{ backgroundColor: colors.primary, color: colors.primaryText }}
@@ -400,6 +405,7 @@ export const Header: React.FC = () => {
           ) : (
             <div className="flex items-center gap-2">
               <button
+                type="button"
                 onClick={handleLaunchApp}
                 className="hidden sm:inline-flex items-center justify-center h-9 px-3.5 rounded-lg font-semibold text-xs transition-[transform,background-color,border-color] duration-150 ease-out hover:bg-white/[0.05] hover:border-white/20 active:scale-[0.98] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                 style={{ backgroundColor: colors.surface, color: colors.textPrimary, border: `1px solid ${colors.cardBorder}` }}
@@ -407,6 +413,7 @@ export const Header: React.FC = () => {
                 Sign In
               </button>
               <button
+                type="button"
                 onClick={handleSignUpClick}
                 className="inline-flex items-center justify-center gap-1.5 h-9 px-3.5 rounded-lg font-semibold text-xs tracking-wide shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_1px_3px_rgba(0,0,0,0.3)] transition-[transform,background-color,box-shadow] duration-150 ease-out active:scale-[0.98] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                 style={{ backgroundColor: colors.primary, color: colors.primaryText }}
@@ -419,6 +426,7 @@ export const Header: React.FC = () => {
 
           {/* Mobile Menu Toggle */}
           <button
+            type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="md:hidden w-9 h-9 rounded-lg border flex items-center justify-center transition-[transform,background-color,border-color] duration-150 ease-out hover:bg-white/[0.05] active:scale-[0.98] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
             style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textPrimary }}
@@ -437,6 +445,7 @@ export const Header: React.FC = () => {
         >
           <div className="space-y-3">
             <button
+              type="button"
               onClick={() => {
                 setViewMode('marketing');
                 setMobileMenuOpen(false);
@@ -600,6 +609,7 @@ export const Header: React.FC = () => {
 
             <div className="flex flex-wrap items-center gap-2.5 px-3 pt-2 text-xs font-semibold" style={{ color: colors.textTertiary }}>
               <button
+                type="button"
                 onClick={() => { setViewMode('privacy'); setMobileMenuOpen(false); }}
                 className="hover:opacity-80"
               >
@@ -607,6 +617,7 @@ export const Header: React.FC = () => {
               </button>
               <span>•</span>
               <button
+                type="button"
                 onClick={() => { setViewMode('terms'); setMobileMenuOpen(false); }}
                 className="hover:opacity-80"
               >
@@ -614,6 +625,7 @@ export const Header: React.FC = () => {
               </button>
               <span>•</span>
               <button
+                type="button"
                 onClick={() => { setViewMode('refund'); setMobileMenuOpen(false); }}
                 className="hover:opacity-80"
               >
@@ -621,6 +633,7 @@ export const Header: React.FC = () => {
               </button>
               <span>•</span>
               <button
+                type="button"
                 onClick={() => { setViewMode('cookies'); setMobileMenuOpen(false); }}
                 className="hover:opacity-80"
               >
@@ -631,6 +644,7 @@ export const Header: React.FC = () => {
 
           <div className="pt-2 border-t flex flex-col gap-2" style={{ borderColor: colors.borderDim }}>
             <button
+              type="button"
               onClick={() => {
                 handleLaunchApp();
                 setMobileMenuOpen(false);

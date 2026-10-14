@@ -176,6 +176,7 @@ export const AuthModal: React.FC = () => {
         {/* Top Navigation Back */}
         <div className="flex items-center justify-between mb-3 sm:mb-4">
           <button
+            type="button"
             onClick={() => setViewMode('marketing')}
             className="text-xs font-semibold hover:opacity-80 transition-opacity flex items-center gap-1.5"
             style={{ color: colors.textSecondary }}
@@ -184,7 +185,7 @@ export const AuthModal: React.FC = () => {
           </button>
           <div className="flex items-center gap-1.5 text-[10px] font-mono px-2 py-0.5 rounded border" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim, color: colors.textTertiary }}>
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-            <span>DPDP & KYC Ready</span>
+            <span>DPDP 2023 Compliant • 256-Bit SSL</span>
           </div>
         </div>
 
@@ -206,6 +207,7 @@ export const AuthModal: React.FC = () => {
         {/* Tab Switcher */}
         <div className="flex p-1 rounded-xl mb-4 relative" style={{ backgroundColor: colors.surface }}>
           <button
+            type="button"
             onClick={() => {
               setAuthSubView('login');
               setErrorMsg('');
@@ -224,6 +226,7 @@ export const AuthModal: React.FC = () => {
             <span className="relative z-10">Sign In</span>
           </button>
           <button
+            type="button"
             onClick={() => {
               setAuthSubView('signup');
               setErrorMsg('');

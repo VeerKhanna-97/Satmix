@@ -1,5 +1,5 @@
 # Satmix Robots.txt
-# https://satmix.app
+# https://satmix.in
 
 User-agent: *
 Allow: /
@@ -7,10 +7,11 @@ Allow: /privacy
 Allow: /terms
 Allow: /refund
 Allow: /cookies
+Allow: /unsubscribe
 Allow: /about
 Allow: /faq
 
 Disallow: /api/
 Disallow: /app/private/
 
-Sitemap: https://satmix.app/sitemap.xml
+Sitemap: https://satmix.in/sitemap.xml

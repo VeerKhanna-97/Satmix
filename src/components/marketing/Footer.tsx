@@ -43,8 +43,10 @@ export const Footer: React.FC = () => {
               className="p-2.5 rounded-xl border hover:opacity-80 transition-opacity"
               style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textPrimary }}
               aria-label="Instagram"
+              title="Satmix on Instagram"
             >
               <InstagramIcon />
+              <span className="sr-only">Instagram</span>
             </a>
 
             <a
@@ -54,8 +56,10 @@ export const Footer: React.FC = () => {
               className="p-2.5 rounded-xl border hover:opacity-80 transition-opacity"
               style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textPrimary }}
               aria-label="LinkedIn"
+              title="Satmix on LinkedIn"
             >
               <LinkedinIcon />
+              <span className="sr-only">LinkedIn</span>
             </a>
 
             <a
@@ -65,8 +69,10 @@ export const Footer: React.FC = () => {
               className="p-2.5 rounded-xl border hover:opacity-80 transition-opacity"
               style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textPrimary }}
               aria-label="WhatsApp Community"
+              title="Satmix WhatsApp Community"
             >
               <MessageSquare className="w-4 h-4" />
+              <span className="sr-only">WhatsApp Community</span>
             </a>
           </div>
         </div>
@@ -85,6 +91,7 @@ export const Footer: React.FC = () => {
 
           <div className="flex flex-wrap items-center gap-3 text-xs font-semibold">
             <button
+              type="button"
               onClick={() => setViewMode('privacy')}
               className="hover:opacity-80 transition-opacity"
               style={{ color: colors.textSecondary }}
@@ -93,6 +100,7 @@ export const Footer: React.FC = () => {
             </button>
             <span className="opacity-40">•</span>
             <button
+              type="button"
               onClick={() => setViewMode('terms')}
               className="hover:opacity-80 transition-opacity"
               style={{ color: colors.textSecondary }}
@@ -101,6 +109,7 @@ export const Footer: React.FC = () => {
             </button>
             <span className="opacity-40">•</span>
             <button
+              type="button"
               onClick={() => setViewMode('refund')}
               className="hover:opacity-80 transition-opacity"
               style={{ color: colors.textSecondary }}
@@ -109,6 +118,7 @@ export const Footer: React.FC = () => {
             </button>
             <span className="opacity-40">•</span>
             <button
+              type="button"
               onClick={() => setViewMode('cookies')}
               className="hover:opacity-80 transition-opacity"
               style={{ color: colors.textSecondary }}
@@ -117,6 +127,7 @@ export const Footer: React.FC = () => {
             </button>
             <span className="opacity-40">•</span>
             <button
+              type="button"
               onClick={() => setViewMode('unsubscribe')}
               className="hover:opacity-80 transition-opacity"
               style={{ color: colors.textSecondary }}
@@ -129,6 +140,7 @@ export const Footer: React.FC = () => {
             </a>
             <span className="opacity-40">•</span>
             <button
+              type="button"
               onClick={() => { setAuthSubView('signup'); setViewMode('auth'); }}
               className="font-bold hover:underline"
               style={{ color: colors.accent }}

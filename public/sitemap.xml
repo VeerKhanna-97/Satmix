@@ -1,33 +1,39 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://satmix.app/</loc>
-    <lastmod>2026-09-15</lastmod>
+    <loc>https://satmix.in/</loc>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://satmix.app/privacy</loc>
-    <lastmod>2026-09-15</lastmod>
+    <loc>https://satmix.in/privacy</loc>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://satmix.app/terms</loc>
-    <lastmod>2026-09-15</lastmod>
+    <loc>https://satmix.in/terms</loc>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://satmix.app/refund</loc>
-    <lastmod>2026-09-15</lastmod>
+    <loc>https://satmix.in/refund</loc>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://satmix.app/cookies</loc>
-    <lastmod>2026-09-15</lastmod>
+    <loc>https://satmix.in/cookies</loc>
+    <lastmod>2026-10-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://satmix.in/unsubscribe</loc>
+    <lastmod>2026-10-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
   </url>
 </urlset>

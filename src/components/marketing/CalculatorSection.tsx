@@ -131,12 +131,19 @@ export const CalculatorSection: React.FC = () => {
                   {/* Smooth Range Track with Dynamic Gradient Fill */}
                   <div className="relative py-1.5">
                     <input
+                      id="daily-savings-slider"
+                      name="dailySavings"
                       type="range"
                       min={minSavings}
                       max={500}
                       step={5}
                       value={dailySavings}
                       onChange={(e) => setDailySavings(Math.max(minSavings, parseInt(e.target.value, 10)))}
+                      aria-label="Daily investment amount in Indian Rupees"
+                      aria-valuemin={minSavings}
+                      aria-valuemax={500}
+                      aria-valuenow={dailySavings}
+                      aria-valuetext={`₹${dailySavings} per day`}
                       className="w-full h-2 rounded-lg appearance-none cursor-pointer transition-all focus:outline-none shadow-inner"
                       style={{
                         background: `linear-gradient(to right, ${colors.accent} 0%, ${colors.accent} ${sliderPercentage}%, ${colors.surface} ${sliderPercentage}%, ${colors.surface} 100%)`,

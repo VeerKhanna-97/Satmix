@@ -288,12 +288,15 @@ export const Hero: React.FC = () => {
 
                           <form onSubmit={handleEarlyAccessSubmit} className="space-y-2.5">
                             <div>
-                              <label className="block text-[11px] font-bold uppercase tracking-wider mb-1" style={{ color: colors.textTertiary }}>
+                              <label htmlFor="waitlist-name" className="block text-[11px] font-bold uppercase tracking-wider mb-1" style={{ color: colors.textTertiary }}>
                                 Full Name <span className="text-rose-400">*</span>
                               </label>
                               <div className="relative">
                                 <User className="w-4 h-4 absolute left-3 top-3" style={{ color: colors.textTertiary }} />
                                 <input
+                                  id="waitlist-name"
+                                  name="name"
+                                  autoComplete="name"
                                   type="text"
                                   required
                                   value={name}
@@ -311,12 +314,15 @@ export const Hero: React.FC = () => {
                             </div>
 
                             <div>
-                              <label className="block text-[11px] font-bold uppercase tracking-wider mb-1" style={{ color: colors.textTertiary }}>
+                              <label htmlFor="waitlist-email" className="block text-[11px] font-bold uppercase tracking-wider mb-1" style={{ color: colors.textTertiary }}>
                                 Email Address <span className="text-rose-400">*</span>
                               </label>
                               <div className="relative">
                                 <Mail className="w-4 h-4 absolute left-3 top-3" style={{ color: colors.textTertiary }} />
                                 <input
+                                  id="waitlist-email"
+                                  name="email"
+                                  autoComplete="email"
                                   type="email"
                                   required
                                   value={email}
@@ -335,7 +341,7 @@ export const Hero: React.FC = () => {
 
                             <div>
                               <div className="flex items-center justify-between mb-1">
-                                <label className="block text-[11px] font-bold uppercase tracking-wider" style={{ color: colors.textTertiary }}>
+                                <label htmlFor="waitlist-phone" className="block text-[11px] font-bold uppercase tracking-wider" style={{ color: colors.textTertiary }}>
                                   Mobile Number
                                 </label>
                                 <span
@@ -356,6 +362,9 @@ export const Hero: React.FC = () => {
                                   <span>+91</span>
                                 </div>
                                 <input
+                                  id="waitlist-phone"
+                                  name="phone"
+                                  autoComplete="tel"
                                   type="tel"
                                   inputMode="numeric"
                                   pattern="[0-9]*"
@@ -384,6 +393,7 @@ export const Hero: React.FC = () => {
                             <div className="flex items-start gap-2 pt-0.5">
                               <input
                                 id="hero-consent"
+                                name="consent"
                                 type="checkbox"
                                 checked={consentAgreed}
                                 onChange={(e) => setConsentAgreed(e.target.checked)}
