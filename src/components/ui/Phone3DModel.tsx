@@ -1,7 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   TrendingUp,
-  TrendingDown,
   ArrowDownLeft,
   ArrowUpRight,
   RefreshCw,
@@ -11,7 +10,6 @@ import {
   ChevronLeft,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
-import { motion } from 'motion/react';
 
 interface Phone3DModelProps {
   className?: string;
@@ -19,7 +17,7 @@ interface Phone3DModelProps {
 }
 
 export const Phone3DModel: React.FC<Phone3DModelProps> = ({ className = '', onOpenApp }) => {
-  const { colors, themeMode, setViewMode } = useApp();
+  const { colors, setViewMode } = useApp();
   const phoneRef = useRef<HTMLDivElement>(null);
 
   // Interactive internal state for the phone preview
@@ -64,7 +62,32 @@ export const Phone3DModel: React.FC<Phone3DModelProps> = ({ className = '', onOp
     }
   };
 
-  // Trajectory points for the chart based on horizon
+  // Dynamic profitable datasets based on selected mix
+  const mixMetrics = {
+    all: {
+      total: '₹14,850.40',
+      pnl: '+₹2,450.40 (+19.76%)',
+      invested: '₹12,400',
+      profit: '+₹2,450',
+      habits: '3 Active',
+    },
+    stable: {
+      total: '₹8,620.00',
+      pnl: '+₹620.00 (+7.75%)',
+      invested: '₹8,000',
+      profit: '+₹620',
+      habits: '1 Active',
+    },
+    growth: {
+      total: '₹6,230.40',
+      pnl: '+₹1,830.40 (+41.60%)',
+      invested: '₹4,400',
+      profit: '+₹1,830',
+      habits: '2 Active',
+    },
+  }[activeMix];
+
+  // Upward trajectory points for the profitable compounding curve
   const chartPoints = useMemoChartPoints(horizon);
 
   return (
@@ -81,7 +104,7 @@ export const Phone3DModel: React.FC<Phone3DModelProps> = ({ className = '', onOp
       <div
         className="absolute w-[360px] h-[640px] rounded-full blur-[90px] opacity-25 pointer-events-none transition-all duration-700"
         style={{
-          background: `radial-gradient(circle, ${colors.accent} 0%, rgba(93, 23, 235, 0.4) 40%, transparent 70%)`,
+          background: `radial-gradient(circle, ${colors.accent} 0%, rgba(16, 185, 129, 0.3) 40%, transparent 70%)`,
           transform: `translate3d(${rotateY * -4}px, ${rotateX * 4}px, -40px)`,
         }}
       />
@@ -111,32 +134,24 @@ export const Phone3DModel: React.FC<Phone3DModelProps> = ({ className = '', onOp
 
         {/* Right Side: Power Button */}
         <div
-          className="absolute -right-[5px] top-[170px] w-[5px] h-[68px] rounded-r-sm bg-[#2A2C38] border-r border-y border-white/20 shadow-xs"
+          className="absolute -right-[5px] top-[170px] w-[5px] h-[65px] rounded-r-sm bg-[#2A2C38] border-r border-y border-white/20 shadow-xs"
           style={{ transform: 'translateZ(-2px)' }}
         />
 
-        {/* ── OUTER TITANIUM FRAME ─────────────────────────────── */}
+        {/* ── TITANIUM OUTER BEZEL ─────────────────────────────── */}
         <div
-          className="relative w-[340px] xs:w-[360px] sm:w-[380px] h-[720px] xs:h-[750px] sm:h-[780px] rounded-[52px] p-[10px] bg-gradient-to-b from-[#3A3D4D] via-[#1E202B] to-[#12131C] shadow-[0_30px_70px_-15px_rgba(0,0,0,0.9),0_0_0_1px_rgba(255,255,255,0.18),0_15px_35px_rgba(0,0,0,0.6)]"
+          className="relative w-[310px] sm:w-[335px] h-[640px] sm:h-[665px] rounded-[50px] p-[10px] bg-gradient-to-b from-[#2E313E] via-[#1A1C24] to-[#121319] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9),0_0_0_1px_rgba(255,255,255,0.12),inset_0_1px_1px_rgba(255,255,255,0.2)]"
           style={{
-            boxShadow:
-              themeMode === 'dark'
-                ? '0 30px 80px -15px rgba(0,0,0,0.95), 0 0 45px rgba(93, 23, 235, 0.25), inset 0 1px 1px rgba(255,255,255,0.3)'
-                : '0 30px 80px -15px rgba(15, 23, 42, 0.35), 0 0 35px rgba(93, 23, 235, 0.2), inset 0 1px 1px rgba(255,255,255,0.4)',
+            transformStyle: 'preserve-3d',
           }}
         >
-          {/* Inner Bezel Ring */}
-          <div className="w-full h-full rounded-[44px] bg-[#000000] p-[3px] overflow-hidden relative shadow-[inset_0_0_8px_rgba(0,0,0,0.9)]">
-            {/* ── SCREEN SURFACE ───────────────────────────────── */}
-            <div
-              className="w-full h-full rounded-[42px] overflow-hidden flex flex-col justify-between relative text-left"
-              style={{
-                backgroundColor: '#090A10',
-                color: '#FFFFFF',
-              }}
-            >
-              {/* Dynamic Island Notch */}
-              <div className="absolute top-2.5 left-1/2 -translate-x-1/2 z-40 flex items-center justify-center">
+          {/* Inner Display Ring */}
+          <div className="relative w-full h-full rounded-[42px] bg-black p-[3px] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)] overflow-hidden">
+            {/* The OLED Screen Surface */}
+            <div className="relative w-full h-full rounded-[39px] bg-[#0A0B10] flex flex-col justify-between overflow-hidden font-sans">
+              
+              {/* ── TOP DYNAMIC ISLAND NOTCH ───────────────────── */}
+              <div className="absolute top-2.5 left-0 right-0 z-30 flex justify-center pointer-events-none">
                 <div className="w-28 h-6 rounded-full bg-black flex items-center justify-between px-3.5 shadow-sm border border-white/5">
                   <div className="w-2.5 h-2.5 rounded-full bg-[#111] border border-white/10 flex items-center justify-center">
                     <div className="w-1 h-1 rounded-full bg-[#1b2559]" />
@@ -145,7 +160,7 @@ export const Phone3DModel: React.FC<Phone3DModelProps> = ({ className = '', onOp
                 </div>
               </div>
 
-              {/* ── PHONE SCREEN CONTENT (SCROLLABLE REPLICA OF IMAGE 1) ─ */}
+              {/* ── PHONE SCREEN CONTENT (SCROLLABLE REPLICA OF APP) ─ */}
               <div className="flex-1 overflow-y-auto px-4 pt-11 pb-6 space-y-3.5 custom-scrollbar text-xs">
                 {/* 1. App Top Bar */}
                 <div className="flex items-center justify-between pt-1">
@@ -198,7 +213,7 @@ export const Phone3DModel: React.FC<Phone3DModelProps> = ({ className = '', onOp
                         key={tab.id}
                         type="button"
                         onClick={() => setActiveTab(tab.id)}
-                        className={`flex-1 py-1.5 px-2 rounded-lg transition-all text-center whitespace-nowrap ${
+                        className={`flex-1 py-1.5 px-2 rounded-lg transition-all text-center whitespace-nowrap cursor-pointer ${
                           isTabActive ? 'bg-white text-black font-extrabold shadow-sm' : 'text-white/60 hover:text-white'
                         }`}
                       >
@@ -221,7 +236,7 @@ export const Phone3DModel: React.FC<Phone3DModelProps> = ({ className = '', onOp
                         key={mix.id}
                         type="button"
                         onClick={() => setActiveMix(mix.id)}
-                        className={`py-1 px-2.5 rounded-lg transition-all whitespace-nowrap ${
+                        className={`py-1 px-2.5 rounded-lg transition-all whitespace-nowrap cursor-pointer ${
                           isMixActive ? 'bg-white text-black font-extrabold shadow-xs' : 'text-white/60'
                         }`}
                       >
@@ -233,136 +248,220 @@ export const Phone3DModel: React.FC<Phone3DModelProps> = ({ className = '', onOp
 
                 {/* Live Rates ticker indicator */}
                 <div className="flex items-center gap-1.5 text-[10px] font-mono text-white/40 pt-0.5">
-                  <RefreshCw className="w-3 h-3 text-white/50" />
-                  <span>Live Rates</span>
+                  <RefreshCw className="w-3 h-3 text-emerald-400" />
+                  <span>Live Rates · Compounding Active</span>
                 </div>
 
-                {/* 5. HERO SAVINGS CARD (EXACT MATCH OF SCREENSHOT) */}
-                <div className="p-4 rounded-2xl bg-[#0F111A] border border-white/10 shadow-lg space-y-3.5">
-                  <div>
-                    <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-white/40 block">
-                      YOUR TOTAL SAVINGS
-                    </span>
-                    <div className="flex items-baseline gap-2 mt-1 flex-wrap">
-                      <span className="text-2xl sm:text-3xl font-extrabold font-mono text-white tracking-tight">
-                        ₹1,071.87
+                {/* ── TAB 1: OVERVIEW SCREEN (PROFITABLE SAVINGS DASHBOARD) ── */}
+                {activeTab === 'overview' && (
+                  <div className="p-4 rounded-2xl bg-[#0F111A] border border-white/10 shadow-lg space-y-3.5 animate-fade-in">
+                    <div>
+                      <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-white/40 block">
+                        YOUR TOTAL SAVINGS
                       </span>
-                      <div className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-md bg-[#EF4444]/15 border border-[#EF4444]/30 text-[#F87171] font-mono text-[10px] font-bold">
-                        <TrendingDown className="w-3 h-3 flex-shrink-0" />
-                        <span>₹-28.13 (-2.56%)</span>
+                      <div className="flex items-baseline gap-2 mt-1 flex-wrap">
+                        <span className="text-2xl sm:text-3xl font-extrabold font-mono text-white tracking-tight tabular-nums">
+                          {mixMetrics.total}
+                        </span>
+                        <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-[#10B981]/15 border border-[#10B981]/30 text-[#34D399] font-mono text-[10px] font-bold tabular-nums">
+                          <TrendingUp className="w-3 h-3 flex-shrink-0" />
+                          <span>{mixMetrics.pnl}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 2 Primary Action Buttons */}
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        type="button"
+                        onClick={handleClickAction}
+                        className="h-9 px-3 rounded-xl bg-white text-black font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm active:scale-[0.98] transition-transform cursor-pointer"
+                      >
+                        <ArrowDownLeft className="w-3.5 h-3.5" />
+                        <span>+ Add Money</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={handleClickAction}
+                        className="h-9 px-3 rounded-xl bg-white/[0.06] border border-white/15 text-white font-bold text-xs flex items-center justify-center gap-1.5 active:scale-[0.98] transition-transform cursor-pointer"
+                      >
+                        <ArrowUpRight className="w-3.5 h-3.5" />
+                        <span>Withdraw</span>
+                      </button>
+                    </div>
+
+                    {/* 3 Metric Mini Row */}
+                    <div className="grid grid-cols-3 gap-2 p-2.5 rounded-xl bg-white/[0.03] border border-white/5 text-center font-mono">
+                      <div>
+                        <span className="text-[9px] text-white/40 font-sans block">Total Invested</span>
+                        <span className="text-xs font-bold text-white mt-0.5 block tabular-nums">{mixMetrics.invested}</span>
+                      </div>
+                      <div>
+                        <span className="text-[9px] text-white/40 font-sans block">Total Profit / Loss</span>
+                        <span className="text-xs font-bold text-[#34D399] mt-0.5 block tabular-nums">{mixMetrics.profit}</span>
+                      </div>
+                      <div>
+                        <span className="text-[9px] text-white/40 font-sans block">Daily Habits</span>
+                        <span className="text-xs font-bold text-[#A78BFA] mt-0.5 block">{mixMetrics.habits}</span>
+                      </div>
+                    </div>
+
+                    {/* Live Valuation Trajectory Chart (Profitable Upward Curve) */}
+                    <div className="space-y-1.5 pt-1">
+                      <div className="flex items-center justify-between text-[10px] font-mono">
+                        <div className="flex items-center gap-1 text-[#34D399] font-bold">
+                          <TrendingUp className="w-3 h-3 text-[#34D399]" />
+                          <span>Live Valuation Trajectory</span>
+                        </div>
+                        <span className="text-white/40">Divisions: Weekly</span>
+                      </div>
+
+                      {/* SVG Curve showing profitable green compounding */}
+                      <div className="relative w-full h-20 pt-1">
+                        <svg className="w-full h-full overflow-visible" viewBox="0 0 280 70" preserveAspectRatio="none">
+                          <defs>
+                            <linearGradient id="phoneChartGrad" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="0%" stopColor="#10B981" stopOpacity="0.4" />
+                              <stop offset="100%" stopColor="#10B981" stopOpacity="0.0" />
+                            </linearGradient>
+                            <filter id="greenGlow" x="-20%" y="-20%" width="140%" height="140%">
+                              <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#10B981" floodOpacity="0.35" />
+                            </filter>
+                          </defs>
+
+                          {/* Grid guidelines */}
+                          <line x1="0" y1="20" x2="280" y2="20" stroke="rgba(255,255,255,0.06)" strokeDasharray="3 3" />
+                          <line x1="0" y1="45" x2="280" y2="45" stroke="rgba(255,255,255,0.06)" strokeDasharray="3 3" />
+
+                          {/* Area Fill */}
+                          <path
+                            d={`${chartPoints.path} L 280 70 L 0 70 Z`}
+                            fill="url(#phoneChartGrad)"
+                          />
+
+                          {/* Upward Stroke Line */}
+                          <path
+                            d={chartPoints.path}
+                            fill="none"
+                            stroke="#34D399"
+                            strokeWidth="2.4"
+                            strokeLinecap="round"
+                            filter="url(#greenGlow)"
+                          />
+
+                          {/* Active Compounding Point */}
+                          <circle
+                            cx="280"
+                            cy={chartPoints.endY}
+                            r="3.5"
+                            fill="#34D399"
+                            stroke="#0F111A"
+                            strokeWidth="1.5"
+                          />
+                        </svg>
+                      </div>
+
+                      {/* Dates Axis */}
+                      <div className="flex justify-between text-[9px] font-mono text-white/30 pt-0.5">
+                        <span>20 Sept</span>
+                        <span>05 Oct</span>
+                        <span>19 Oct</span>
+                      </div>
+                    </div>
+
+                    {/* Performance View Horizon Switcher */}
+                    <div className="pt-2 border-t border-white/5">
+                      <span className="text-[9px] font-mono text-white/40 block mb-1.5">Performance View</span>
+                      <div className="flex items-center justify-between gap-1 p-0.5 rounded-lg bg-white/[0.04] border border-white/5 text-[10px] font-mono">
+                        {(['1W', '1M', '3M', '1Y', 'ALL'] as const).map((h) => {
+                          const isHorizonActive = horizon === h;
+                          return (
+                            <button
+                              key={h}
+                              type="button"
+                              onClick={() => setHorizon(h)}
+                              className={`flex-1 py-1 rounded text-center transition-all cursor-pointer ${
+                                isHorizonActive
+                                  ? 'bg-white text-black font-extrabold shadow-xs'
+                                  : 'text-white/50 hover:text-white'
+                              }`}
+                            >
+                              {h}
+                            </button>
+                          );
+                        })}
                       </div>
                     </div>
                   </div>
+                )}
 
-                  {/* 2 Primary Action Buttons */}
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      type="button"
-                      onClick={handleClickAction}
-                      className="h-9 px-3 rounded-xl bg-white text-black font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm active:scale-[0.98] transition-transform"
-                    >
-                      <ArrowDownLeft className="w-3.5 h-3.5" />
-                      <span>+ Add Money</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={handleClickAction}
-                      className="h-9 px-3 rounded-xl bg-white/[0.06] border border-white/15 text-white font-bold text-xs flex items-center justify-center gap-1.5 active:scale-[0.98] transition-transform"
-                    >
-                      <ArrowUpRight className="w-3.5 h-3.5" />
-                      <span>Withdraw</span>
-                    </button>
-                  </div>
-
-                  {/* 3 Metric Mini Row */}
-                  <div className="grid grid-cols-3 gap-2 p-2.5 rounded-xl bg-white/[0.03] border border-white/5 text-center font-mono">
-                    <div>
-                      <span className="text-[9px] text-white/40 font-sans block">Total Invested</span>
-                      <span className="text-xs font-bold text-white mt-0.5 block">₹1,100</span>
-                    </div>
-                    <div>
-                      <span className="text-[9px] text-white/40 font-sans block">Total Profit / Loss</span>
-                      <span className="text-xs font-bold text-[#F87171] mt-0.5 block">-₹28</span>
-                    </div>
-                    <div>
-                      <span className="text-[9px] text-white/40 font-sans block">Daily Habits</span>
-                      <span className="text-xs font-bold text-[#A78BFA] mt-0.5 block">2 Running</span>
-                    </div>
-                  </div>
-
-                  {/* 6. Live Valuation Trajectory Chart */}
-                  <div className="space-y-1.5 pt-1">
-                    <div className="flex items-center justify-between text-[10px] font-mono">
-                      <div className="flex items-center gap-1 text-[#A78BFA] font-bold">
-                        <TrendingUp className="w-3 h-3" />
-                        <span>Live Valuation Trajectory</span>
-                      </div>
-                      <span className="text-white/40">Divisions: Weekly</span>
+                {/* ── TAB 2: HOLDINGS SCREEN (WHERE YOUR MONEY IS) ── */}
+                {activeTab === 'holdings' && (
+                  <div className="p-4 rounded-2xl bg-[#0F111A] border border-white/10 shadow-lg space-y-3 animate-fade-in">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-mono text-white/50 uppercase tracking-wider">Asset Breakdown</span>
+                      <span className="text-[10px] font-mono font-bold text-[#34D399]">+₹2,450.40 Gain</span>
                     </div>
 
-                    {/* SVG Curve matching the screenshot */}
-                    <div className="relative w-full h-20 pt-1">
-                      <svg className="w-full h-full overflow-visible" viewBox="0 0 280 70" preserveAspectRatio="none">
-                        <defs>
-                          <linearGradient id="phoneChartGrad" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="#EF4444" stopOpacity="0.35" />
-                            <stop offset="100%" stopColor="#EF4444" stopOpacity="0.0" />
-                          </linearGradient>
-                        </defs>
-                        {/* Grid guidelines */}
-                        <line x1="0" y1="20" x2="280" y2="20" stroke="rgba(255,255,255,0.06)" strokeDasharray="3 3" />
-                        <line x1="0" y1="45" x2="280" y2="45" stroke="rgba(255,255,255,0.06)" strokeDasharray="3 3" />
-
-                        {/* Area Fill */}
-                        <path
-                          d={`${chartPoints.path} L 280 70 L 0 70 Z`}
-                          fill="url(#phoneChartGrad)"
-                        />
-
-                        {/* Stroke Line */}
-                        <path
-                          d={chartPoints.path}
-                          fill="none"
-                          stroke="#F87171"
-                          strokeWidth="2.2"
-                          strokeLinecap="round"
-                        />
-                      </svg>
-                    </div>
-
-                    {/* Dates Axis */}
-                    <div className="flex justify-between text-[9px] font-mono text-white/30 pt-0.5">
-                      <span>20 Sept</span>
-                      <span>05 Oct</span>
-                      <span>19 Oct</span>
+                    <div className="space-y-2">
+                      {[
+                        { name: 'Bitcoin (BTC)', alloc: '52.8%', val: '₹7,840.00', pnl: '+24.8%', icon: '₿', color: '#F7931A' },
+                        { name: 'Tether USD (USDT)', alloc: '28.1%', val: '₹4,180.00', pnl: 'Pegged $1.00', icon: '₮', color: '#26A17B' },
+                        { name: 'Ethereum (ETH)', alloc: '12.4%', val: '₹1,840.40', pnl: '+18.2%', icon: 'Ξ', color: '#627EEA' },
+                        { name: 'Solana (SOL)', alloc: '6.7%', val: '₹990.00', pnl: '+39.4%', icon: '◎', color: '#9945FE' },
+                      ].map((asset) => (
+                        <div key={asset.name} className="p-2.5 rounded-xl bg-white/[0.03] border border-white/5 flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <div
+                              className="w-6 h-6 rounded-lg flex items-center justify-center font-bold text-xs"
+                              style={{ backgroundColor: `${asset.color}20`, color: asset.color }}
+                            >
+                              {asset.icon}
+                            </div>
+                            <div>
+                              <div className="font-bold text-xs text-white">{asset.name}</div>
+                              <div className="text-[10px] font-mono text-white/40">{asset.alloc} allocation</div>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <div className="font-mono font-bold text-xs text-white tabular-nums">{asset.val}</div>
+                            <div className="text-[10px] font-mono text-[#34D399] font-semibold">{asset.pnl}</div>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
+                )}
 
-                  {/* 7. Performance View Horizon Switcher */}
-                  <div className="pt-2 border-t border-white/5">
-                    <span className="text-[9px] font-mono text-white/40 block mb-1.5">Performance View</span>
-                    <div className="flex items-center justify-between gap-1 p-0.5 rounded-lg bg-white/[0.04] border border-white/5 text-[10px] font-mono">
-                      {(['1W', '1M', '3M', '1Y', 'ALL'] as const).map((h) => {
-                        const isHorizonActive = horizon === h;
-                        return (
-                          <button
-                            key={h}
-                            type="button"
-                            onClick={() => setHorizon(h)}
-                            className={`flex-1 py-1 rounded text-center transition-all ${
-                              isHorizonActive
-                                ? 'bg-white text-black font-extrabold shadow-xs'
-                                : 'text-white/50 hover:text-white'
-                            }`}
-                          >
-                            {h}
-                          </button>
-                        );
-                      })}
+                {/* ── TAB 3: HABITS SCREEN (DAILY HABITS & STREAKS) ── */}
+                {activeTab === 'habits' && (
+                  <div className="p-4 rounded-2xl bg-[#0F111A] border border-white/10 shadow-lg space-y-3 animate-fade-in">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-mono text-white/50 uppercase tracking-wider">Active Daily Habits</span>
+                      <span className="text-[10px] font-mono font-bold text-[#F59E0B]">🔥 34d Streak</span>
+                    </div>
+
+                    <div className="space-y-2">
+                      {[
+                        { name: 'Morning Wealth AutoPay', mix: 'Stable Mix (85/15)', time: '8:00 AM Daily', amount: '₹100/day', streak: '34d' },
+                        { name: 'Crypto Upside Habit', mix: 'Growth Mix (70/20/10)', time: '8:00 AM Daily', amount: '₹50/day', streak: '34d' },
+                        { name: 'Weekend Accelerator', mix: 'Growth Mix', time: 'Saturday 9:00 AM', amount: '₹50/wk', streak: '5w' },
+                      ].map((habit) => (
+                        <div key={habit.name} className="p-2.5 rounded-xl bg-white/[0.03] border border-white/5 flex items-center justify-between">
+                          <div>
+                            <div className="font-bold text-xs text-white">{habit.name}</div>
+                            <div className="text-[10px] font-mono text-white/40">{habit.mix} · {habit.time}</div>
+                          </div>
+                          <div className="text-right">
+                            <div className="font-mono font-bold text-xs text-white tabular-nums">{habit.amount}</div>
+                            <div className="text-[10px] font-mono text-[#F59E0B] font-bold">🔥 {habit.streak}</div>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                </div>
+                )}
 
                 {/* 8. Bottom Action Overlay: Feedback / Reviews */}
                 <div className="flex justify-end pt-1">
@@ -393,31 +492,35 @@ export const Phone3DModel: React.FC<Phone3DModelProps> = ({ className = '', onOp
   );
 };
 
-// Helper hook for smooth chart coordinates
+// Helper hook for smooth upward compounding chart coordinates
 function useMemoChartPoints(horizon: string) {
   return React.useMemo(() => {
     switch (horizon) {
       case '1W':
         return {
-          path: 'M 0 55 Q 60 48 120 40 T 200 32 T 280 18',
+          path: 'M 0 54 Q 60 46 120 38 T 200 28 T 280 16',
+          endY: 16,
         };
       case '3M':
         return {
-          path: 'M 0 62 Q 70 54 140 38 T 210 24 T 280 12',
+          path: 'M 0 60 Q 70 50 140 34 T 210 20 T 280 10',
+          endY: 10,
         };
       case '1Y':
         return {
-          path: 'M 0 65 Q 80 50 150 32 T 230 18 T 280 8',
+          path: 'M 0 64 Q 80 48 150 28 T 230 16 T 280 6',
+          endY: 6,
         };
       case 'ALL':
         return {
-          path: 'M 0 68 Q 90 45 170 26 T 240 14 T 280 6',
+          path: 'M 0 66 Q 90 42 170 20 T 240 10 T 280 4',
+          endY: 4,
         };
       case '1M':
       default:
-        // Matches the screenshot exact trajectory curve
         return {
-          path: 'M 0 60 Q 70 50 140 36 T 210 28 T 280 15',
+          path: 'M 0 58 Q 70 48 135 34 T 205 24 T 280 12',
+          endY: 12,
         };
     }
   }, [horizon]);
