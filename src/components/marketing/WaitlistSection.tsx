@@ -216,10 +216,6 @@ export const WaitlistSection: React.FC = () => {
 
                         <div className="hidden lg:flex items-center gap-4 text-xs font-mono border-l pl-6" style={{ borderColor: colors.borderDim }}>
                           <div>
-                            <span className="block text-[11px] font-sans" style={{ color: colors.textTertiary }}>Alpha Queued</span>
-                            <span className="font-bold text-base" style={{ color: colors.textPrimary }}>4,200+ Savers</span>
-                          </div>
-                          <div>
                             <span className="block text-[11px] font-sans" style={{ color: colors.textTertiary }}>Daily Start</span>
                             <span className="font-bold text-base text-emerald-400">From ₹10/day</span>
                           </div>
