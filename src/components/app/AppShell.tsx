@@ -85,7 +85,7 @@ export const AppShell: React.FC = () => {
                       layoutId="activeDesktopTabPill"
                       className="absolute inset-0 rounded-xl shadow-md z-0"
                       style={{ backgroundColor: colors.primary }}
-                      transition={{ type: 'spring', stiffness: 450, damping: 30 }}
+                      transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
                     />
                   )}
                   <span className="relative z-10 flex items-center gap-1.5">
@@ -185,7 +185,7 @@ export const AppShell: React.FC = () => {
                     layoutId="activeMobileDockPill"
                     className="absolute inset-0 rounded-full shadow-md z-0"
                     style={{ backgroundColor: colors.primary }}
-                    transition={{ type: 'spring', stiffness: 450, damping: 32 }}
+                    transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
                   />
                 )}
                 <span className="relative z-10 flex items-center gap-1.5">

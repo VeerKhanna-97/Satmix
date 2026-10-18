@@ -439,7 +439,7 @@ export const DashboardScreen: React.FC = () => {
                   layoutId="activeDashboardTabPill"
                   className="absolute inset-0 rounded-xl shadow-md z-0"
                   style={{ backgroundColor: colors.primary }}
-                  transition={{ type: 'spring', stiffness: 450, damping: 30 }}
+                  transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
                 />
               )}
               <span className="relative z-10">{tab.label}</span>

@@ -40,7 +40,7 @@ export const FloatingActionDock: React.FC = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 30 }}
-            transition={{ type: 'spring', stiffness: 350, damping: 25 }}
+            transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
             className="fixed bottom-0 left-0 right-0 z-40 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] sm:hidden border-t backdrop-blur-xl pointer-events-auto flex items-center gap-2.5"
             style={{
               backgroundColor: colors.cardHigh,
@@ -77,7 +77,7 @@ export const FloatingActionDock: React.FC = () => {
             initial={{ opacity: 0, scale: 0.95, y: 16 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 16 }}
-            transition={{ type: 'spring', stiffness: 350, damping: 25 }}
+            transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
             className="hidden sm:block fixed bottom-6 right-6 z-40 pointer-events-auto"
           >
             <button

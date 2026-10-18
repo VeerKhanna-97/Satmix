@@ -255,7 +255,7 @@ export const Hero: React.FC = () => {
                 <div className="flex items-center p-1 rounded-xl mb-5" style={{ backgroundColor: colors.surface }}>
                   <button
                     onClick={() => setActiveSlide(0)}
-                    className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 ${
+                    className={`flex-1 py-2 text-xs font-bold rounded-lg transition-[background-color,color,box-shadow,transform] duration-150 ease-out active:scale-[0.98] flex items-center justify-center gap-1.5 ${
                       activeSlide === 0 ? 'shadow-sm' : 'opacity-60 hover:opacity-100'
                     }`}
                     style={{
@@ -269,7 +269,7 @@ export const Hero: React.FC = () => {
 
                   <button
                     onClick={() => setActiveSlide(1)}
-                    className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 ${
+                    className={`flex-1 py-2 text-xs font-bold rounded-lg transition-[background-color,color,box-shadow,transform] duration-150 ease-out active:scale-[0.98] flex items-center justify-center gap-1.5 ${
                       activeSlide === 1 ? 'shadow-sm' : 'opacity-60 hover:opacity-100'
                     }`}
                     style={{
@@ -283,7 +283,7 @@ export const Hero: React.FC = () => {
 
                   <button
                     onClick={() => setActiveSlide(2)}
-                    className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 ${
+                    className={`flex-1 py-2 text-xs font-bold rounded-lg transition-[background-color,color,box-shadow,transform] duration-150 ease-out active:scale-[0.98] flex items-center justify-center gap-1.5 ${
                       activeSlide === 2 ? 'shadow-sm' : 'opacity-60 hover:opacity-100'
                     }`}
                     style={{

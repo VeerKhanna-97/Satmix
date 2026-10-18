@@ -44,7 +44,7 @@ export const Magnet: React.FC<MagnetProps> = ({
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       animate={{ x: position.x, y: position.y }}
-      transition={{ type: 'spring', stiffness: 250, damping: 20, mass: 0.5 }}
+      transition={{ type: 'spring', stiffness: 360, damping: 28, mass: 0.35 }}
       className={`${baseDisplay} ${className}`.trim()}
     >
       {children}

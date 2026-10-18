@@ -11,17 +11,18 @@ export interface FadeInProps {
   elastic?: boolean;
 }
 
-const ELASTIC_BEZIER: [number, number, number, number] = [0.34, 1.35, 0.64, 1];
-const STANDARD_BEZIER: [number, number, number, number] = [0.25, 1, 0.5, 1];
+// Apple / Linear standard deceleration curve: fast initial departure, silky settle
+const EASE_OUT_EXPO: [number, number, number, number] = [0.16, 1, 0.3, 1];
+const EASE_OUT_QUINT: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 export const FadeIn: React.FC<FadeInProps> = ({
   children,
   className = '',
   delay = 0,
-  duration = 0.65,
+  duration = 0.36,
   direction = 'up',
-  distance = 32,
-  elastic = true,
+  distance = 18,
+  elastic = false,
 }) => {
   const [reducedMotion, setReducedMotion] = useState(false);
 
@@ -38,125 +39,40 @@ export const FadeIn: React.FC<FadeInProps> = ({
   }
 
   const getInitial = () => {
-    if (!elastic) {
-      switch (direction) {
-        case 'up':
-          return { opacity: 0, y: distance, x: 0 };
-        case 'down':
-          return { opacity: 0, y: -distance, x: 0 };
-        case 'left':
-          return { opacity: 0, x: distance, y: 0 };
-        case 'right':
-          return { opacity: 0, x: -distance, y: 0 };
-        case 'none':
-        default:
-          return { opacity: 0, scale: 0.95 };
-      }
-    }
-
     switch (direction) {
       case 'up':
-        return { opacity: 0, y: distance, scaleY: 1.08, scaleX: 0.94 };
+        return { opacity: 0, y: distance, x: 0 };
       case 'down':
-        return { opacity: 0, y: -distance, scaleY: 1.08, scaleX: 0.94 };
+        return { opacity: 0, y: -distance, x: 0 };
       case 'left':
-        return { opacity: 0, x: distance, scaleX: 1.08, scaleY: 0.94 };
+        return { opacity: 0, x: distance, y: 0 };
       case 'right':
-        return { opacity: 0, x: -distance, scaleX: 1.08, scaleY: 0.94 };
+        return { opacity: 0, x: -distance, y: 0 };
       case 'none':
       default:
-        return { opacity: 0, scale: 0.92 };
+        return { opacity: 0, scale: 0.98 };
     }
   };
 
   const getWhileInView = (): TargetAndTransition => {
-    if (!elastic) {
-      return {
-        opacity: 1,
-        x: 0,
-        y: 0,
-        scale: 1,
-        transition: {
-          duration,
-          delay,
-          ease: STANDARD_BEZIER,
-        },
-      };
-    }
-
-    switch (direction) {
-      case 'up':
-        return {
-          opacity: [0, 1, 1],
-          y: [distance, -4, 0],
-          scaleY: [1.08, 0.96, 1],
-          scaleX: [0.94, 1.03, 1],
-          transition: {
-            duration,
-            delay,
-            times: [0, 0.65, 1],
-            ease: ELASTIC_BEZIER,
-          },
-        };
-      case 'down':
-        return {
-          opacity: [0, 1, 1],
-          y: [-distance, 4, 0],
-          scaleY: [1.08, 0.96, 1],
-          scaleX: [0.94, 1.03, 1],
-          transition: {
-            duration,
-            delay,
-            times: [0, 0.65, 1],
-            ease: ELASTIC_BEZIER,
-          },
-        };
-      case 'left':
-        return {
-          opacity: [0, 1, 1],
-          x: [distance, -4, 0],
-          scaleX: [1.08, 0.96, 1],
-          scaleY: [0.94, 1.03, 1],
-          transition: {
-            duration,
-            delay,
-            times: [0, 0.65, 1],
-            ease: ELASTIC_BEZIER,
-          },
-        };
-      case 'right':
-        return {
-          opacity: [0, 1, 1],
-          x: [-distance, 4, 0],
-          scaleX: [1.08, 0.96, 1],
-          scaleY: [0.94, 1.03, 1],
-          transition: {
-            duration,
-            delay,
-            times: [0, 0.65, 1],
-            ease: ELASTIC_BEZIER,
-          },
-        };
-      case 'none':
-      default:
-        return {
-          opacity: [0, 1, 1],
-          scale: [0.92, 1.03, 1],
-          transition: {
-            duration,
-            delay,
-            times: [0, 0.65, 1],
-            ease: ELASTIC_BEZIER,
-          },
-        };
-    }
+    return {
+      opacity: 1,
+      x: 0,
+      y: 0,
+      scale: 1,
+      transition: {
+        duration,
+        delay,
+        ease: elastic ? EASE_OUT_QUINT : EASE_OUT_EXPO,
+      },
+    };
   };
 
   return (
     <motion.div
       initial={getInitial()}
       whileInView={getWhileInView()}
-      viewport={{ once: true, margin: '-40px' }}
+      viewport={{ once: true, margin: '-24px' }}
       className={className}
     >
       {children}

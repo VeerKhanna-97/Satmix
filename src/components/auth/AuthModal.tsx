@@ -220,7 +220,7 @@ export const AuthModal: React.FC = () => {
                 layoutId="authTabIndicator"
                 className="absolute inset-0 rounded-lg shadow-md border"
                 style={{ backgroundColor: colors.cardHigh, borderColor: colors.borderDim }}
-                transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
               />
             )}
             <span className="relative z-10">Sign In</span>
@@ -239,7 +239,7 @@ export const AuthModal: React.FC = () => {
                 layoutId="authTabIndicator"
                 className="absolute inset-0 rounded-lg shadow-md border"
                 style={{ backgroundColor: colors.cardHigh, borderColor: colors.borderDim }}
-                transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
               />
             )}
             <span className="relative z-10">Sign Up</span>
