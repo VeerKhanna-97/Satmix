@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Shield, ArrowRight, CheckCircle2, Rocket, User, Mail, Phone, Layers, Info, BarChart2, Loader2, MessageSquare } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { initReferralCapture, getStoredReferralCode } from '../../utils/referral';
-import { SpotlightCard, BlurText, Magnet, FadeIn, CountUp, WordRotator, Tilt3DCard } from '../ui';
+import { SpotlightCard, BlurText, Magnet, FadeIn, CountUp, WordRotator } from '../ui';
 import { BasketCurrencyIcons } from '../common/BasketCurrencyIcons';
 import { getAssetBarColor } from '../../theme/colors';
 
@@ -241,17 +241,9 @@ export const Hero: React.FC = () => {
             </FadeIn>
           </div>
 
-          {/* Right Column: Interactive 3-Tab Slide Deck with 3D Tilt */}
+          {/* Right Column: Interactive 3-Tab Slide Deck */}
           <div className="lg:col-span-5 relative">
-            <Tilt3DCard
-              maxRotation={8}
-              perspective={1100}
-              scale={1.01}
-              glare={true}
-              glareOpacity={themeMode === 'dark' ? 0.12 : 0.08}
-              className="rounded-3xl"
-            >
-              <SpotlightCard
+            <SpotlightCard
                 className="rounded-3xl border shadow-2xl p-5 md:p-6 backdrop-blur-xl transition-all"
                 spotlightColor={colors.accentTint}
                 style={{
@@ -748,7 +740,6 @@ export const Hero: React.FC = () => {
                 ))}
               </div>
             </SpotlightCard>
-          </Tilt3DCard>
         </div>
       </div>
     </div>
