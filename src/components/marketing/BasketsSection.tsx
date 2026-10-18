@@ -4,7 +4,7 @@ import { useApp } from '../../context/AppContext';
 import { BASKETS } from '../../data/baskets';
 import { BasketId } from '../../types';
 import { getAssetBarColor } from '../../theme/colors';
-import { SpotlightCard, Magnet, FadeIn } from '../ui';
+import { SpotlightCard, Magnet, FadeIn, Tilt3DCard } from '../ui';
 import { BasketCurrencyIcons } from '../common/BasketCurrencyIcons';
 import { motion } from 'motion/react';
 
@@ -40,11 +40,19 @@ export const BasketsSection: React.FC = () => {
             const isLow = basket.id === 'stable';
             return (
               <FadeIn key={basket.id} delay={0.15 + bIdx * 0.1} direction={isLow ? 'left' : 'right'} className="h-full">
-                <SpotlightCard
-                  spotlightColor={colors.accentTint}
-                  className="rounded-2xl p-4.5 sm:p-7 md:p-8 lg:p-9 border shadow-xl flex flex-col justify-between h-full transition-all duration-300 hover:scale-[1.01]"
-                  style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
+                <Tilt3DCard
+                  maxRotation={6}
+                  perspective={1000}
+                  scale={1.01}
+                  glare={true}
+                  glareOpacity={themeMode === 'dark' ? 0.1 : 0.06}
+                  className="rounded-2xl h-full"
                 >
+                  <SpotlightCard
+                    spotlightColor={colors.accentTint}
+                    className="rounded-2xl p-4.5 sm:p-7 md:p-8 lg:p-9 border shadow-xl flex flex-col justify-between h-full transition-all duration-300"
+                    style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
+                  >
                   <div>
                     {/* Header */}
                     <div className="flex items-center justify-between mb-4">
@@ -133,7 +141,7 @@ export const BasketsSection: React.FC = () => {
                   <div className="pt-2">
                     <button
                       onClick={() => handleSelectBasket(basket.id)}
-                      className="w-full h-11 rounded-xl font-semibold text-xs tracking-wide shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] transition-[transform,background-color,box-shadow] duration-150 ease-out active:scale-[0.98] flex items-center justify-center gap-2 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                      className="w-full h-11 rounded-xl font-semibold text-xs tracking-wide shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] transition-[transform,background-color,box-shadow] duration-100 ease-out active:scale-[0.96] flex items-center justify-center gap-2 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                       style={{
                         backgroundColor: colors.primary,
                         color: colors.primaryText,
@@ -144,7 +152,8 @@ export const BasketsSection: React.FC = () => {
                     </button>
                   </div>
                 </SpotlightCard>
-              </FadeIn>
+              </Tilt3DCard>
+            </FadeIn>
             );
           })}
         </div>

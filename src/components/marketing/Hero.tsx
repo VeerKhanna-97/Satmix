@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Shield, ArrowRight, CheckCircle2, Rocket, User, Mail, Phone, Layers, Info, BarChart2, Loader2, MessageSquare } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { initReferralCapture, getStoredReferralCode } from '../../utils/referral';
-import { SpotlightCard, BlurText, Magnet, FadeIn, CountUp } from '../ui';
+import { SpotlightCard, BlurText, Magnet, FadeIn, CountUp, WordRotator, Tilt3DCard, Crypto3DToken } from '../ui';
 import { BasketCurrencyIcons } from '../common/BasketCurrencyIcons';
 import { getAssetBarColor } from '../../theme/colors';
 
@@ -162,15 +162,47 @@ export const Hero: React.FC = () => {
 
   return (
     <section className="relative overflow-hidden py-12 md:py-16 lg:py-0 lg:min-h-[calc(100vh-100px)] flex flex-col justify-center">
+      {/* 1. Geometric Blueprint Background Grid (Optimus Architecture) */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-[0.07] dark:opacity-[0.12]">
+        {[...Array(8)].map((_, r) => (
+          <div
+            key={`h-${r}`}
+            className="absolute h-px w-full"
+            style={{
+              top: `${12.5 * (r + 1)}%`,
+              backgroundColor: colors.borderDim,
+            }}
+          />
+        ))}
+        {[...Array(12)].map((_, r) => (
+          <div
+            key={`v-${r}`}
+            className="absolute w-px h-full"
+            style={{
+              left: `${8.33 * (r + 1)}%`,
+              backgroundColor: colors.borderDim,
+            }}
+          />
+        ))}
+      </div>
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full lg:py-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           {/* Left Column: Heading & Value Proposition */}
           <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
             <FadeIn delay={0.1}>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1]" style={{ color: colors.textPrimary }}>
-                Put Your Crypto on Autopilot for Just{' '}
-                <span className="block font-extrabold mt-1 sm:mt-2" style={{ color: colors.accent }}>
-                  ₹10 a Day
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold tracking-tight leading-[1.06]" style={{ color: colors.textPrimary }}>
+                <span className="block font-bold">The platform to</span>
+                <span className="block mt-1 sm:mt-2">
+                  <WordRotator
+                    words={['compound', 'automate', 'grow']}
+                    accentColor={colors.accent}
+                    intervalMs={2600}
+                    staggerMs={45}
+                  />
+                </span>
+                <span className="block mt-1 sm:mt-2 font-extrabold tabular-nums whitespace-nowrap" style={{ color: colors.textPrimary }}>
+                  from ₹10/day
                 </span>
               </h1>
             </FadeIn>
@@ -186,7 +218,7 @@ export const Hero: React.FC = () => {
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5 pt-1 lg:pt-2">
                 <button
                   onClick={handleStartSaving}
-                  className="w-full sm:w-auto h-12 px-7 rounded-xl font-semibold text-sm shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_4px_16px_rgba(93,23,235,0.25)] transition-[transform,background-color,box-shadow] duration-150 ease-out active:scale-[0.98] inline-flex items-center justify-center gap-2 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50"
+                  className="w-full sm:w-auto h-12 px-7 rounded-xl font-semibold text-sm shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_4px_16px_rgba(93,23,235,0.25)] transition-[transform,background-color,box-shadow] duration-100 ease-out active:scale-[0.96] inline-flex items-center justify-center gap-2 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50"
                   style={{ backgroundColor: colors.primary, color: colors.primaryText }}
                 >
                   <span>{isAuthenticated ? 'Open Web Dashboard' : 'Start with ₹10/Day'}</span>
@@ -195,7 +227,7 @@ export const Hero: React.FC = () => {
 
                 <a
                   href="#calc-section"
-                  className="w-full sm:w-auto h-12 px-6 rounded-xl font-semibold text-sm transition-[transform,background-color,border-color] duration-150 ease-out hover:bg-white/[0.04] hover:border-white/20 active:scale-[0.98] border inline-flex items-center justify-center gap-2 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                  className="w-full sm:w-auto h-12 px-6 rounded-xl font-semibold text-sm transition-[transform,background-color,border-color] duration-100 ease-out hover:bg-white/[0.04] hover:border-white/20 active:scale-[0.96] border inline-flex items-center justify-center gap-2 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                   style={{
                     backgroundColor: colors.surface,
                     borderColor: colors.cardBorder,
@@ -205,12 +237,42 @@ export const Hero: React.FC = () => {
                   <span>Calculate Your Growth</span>
                 </a>
               </div>
+
+              {/* Interactive 3D Crypto Asset Pill */}
+              <div className="flex items-center gap-3 pt-3 justify-center lg:justify-start">
+                <div
+                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border shadow-xs backdrop-blur-md transition-all hover:border-white/20"
+                  style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}
+                >
+                  <span className="text-[11px] font-mono font-medium uppercase tracking-wider opacity-60" style={{ color: colors.textSecondary }}>
+                    Auto-DCA Assets
+                  </span>
+                  <div className="flex items-center -space-x-1 hover:space-x-1 transition-all duration-200">
+                    <Crypto3DToken symbol="BTC" size={26} />
+                    <Crypto3DToken symbol="ETH" size={26} />
+                    <Crypto3DToken symbol="SOL" size={26} />
+                  </div>
+                </div>
+              </div>
             </FadeIn>
           </div>
 
-          {/* Right Column: Interactive 3-Tab Slide Deck */}
-          <div className="lg:col-span-5">
-            <SpotlightCard
+          {/* Right Column: Interactive 3-Tab Slide Deck with 3D Tilt */}
+          <div className="lg:col-span-5 relative">
+            {/* Ambient Floating 3D Coin Badge */}
+            <div className="absolute -top-5 -right-4 z-20 hidden md:block animate-float-3d pointer-events-auto">
+              <Crypto3DToken symbol="BTC" size={54} />
+            </div>
+
+            <Tilt3DCard
+              maxRotation={8}
+              perspective={1100}
+              scale={1.01}
+              glare={true}
+              glareOpacity={themeMode === 'dark' ? 0.12 : 0.08}
+              className="rounded-3xl"
+            >
+              <SpotlightCard
                 className="rounded-3xl border shadow-2xl p-5 md:p-6 backdrop-blur-xl transition-all"
                 spotlightColor={colors.accentTint}
                 style={{
@@ -707,7 +769,8 @@ export const Hero: React.FC = () => {
                 ))}
               </div>
             </SpotlightCard>
-          </div>
+          </Tilt3DCard>
+        </div>
       </div>
     </div>
   </section>

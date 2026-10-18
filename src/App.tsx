@@ -29,55 +29,58 @@ export function AppContent() {
 
   return (
     <div className="min-h-screen font-sans selection:bg-white selection:text-black transition-colors relative" style={{ backgroundColor: colors.bg, color: colors.textPrimary }}>
-      {/* 1. MARKETING VIEW */}
-      {viewMode === 'marketing' && (
-        <>
-          <Ticker />
-          <Header />
-          <main>
-            <Hero />
-            <TrustStrip />
-            <StepsSection />
-            <CalculatorSection />
-            <BasketsSection />
-            <AboutSection />
-            <FaqSection />
-          </main>
-          <Footer />
-          <FloatingActionDock />
-        </>
-      )}
+      {/* View Container with Smooth Page Transition */}
+      <div key={viewMode} className="animate-fade-in">
+        {/* 1. MARKETING VIEW */}
+        {viewMode === 'marketing' && (
+          <>
+            <Ticker />
+            <Header />
+            <main>
+              <Hero />
+              <TrustStrip />
+              <StepsSection />
+              <CalculatorSection />
+              <BasketsSection />
+              <AboutSection />
+              <FaqSection />
+            </main>
+            <Footer />
+            <FloatingActionDock />
+          </>
+        )}
 
-      {/* 2. AUTHENTICATION / QUIZ VIEW */}
-      {viewMode === 'auth' && (
-        <>
-          {authSubView === 'quiz' ? <RiskQuiz /> : <AuthModal />}
-        </>
-      )}
+        {/* 2. AUTHENTICATION / QUIZ VIEW */}
+        {viewMode === 'auth' && (
+          <>
+            {authSubView === 'quiz' ? <RiskQuiz /> : <AuthModal />}
+          </>
+        )}
 
-      {/* 3. AUTHENTICATED WEB APP VIEW (satmix mobile app clone) */}
-      {viewMode === 'app' && <AppShell />}
+        {/* 3. AUTHENTICATED WEB APP VIEW (satmix mobile app clone) */}
+        {viewMode === 'app' && <AppShell />}
 
-      {/* 4. PRIVACY POLICY PAGE (DPDP ACT 2023 COMPLIANT) */}
-      {viewMode === 'privacy' && <PrivacyPolicyPage />}
+        {/* 4. PRIVACY POLICY PAGE (DPDP ACT 2023 COMPLIANT) */}
+        {viewMode === 'privacy' && <PrivacyPolicyPage />}
 
-      {/* 5. TERMS & CONDITIONS PAGE (LEGAL IMMUNITY & JURISDICTION) */}
-      {viewMode === 'terms' && <TermsConditionsPage />}
+        {/* 5. TERMS & CONDITIONS PAGE (LEGAL IMMUNITY & JURISDICTION) */}
+        {viewMode === 'terms' && <TermsConditionsPage />}
 
-      {/* 6. REFUND & CANCELLATION POLICY PAGE */}
-      {viewMode === 'refund' && <RefundPolicyPage />}
+        {/* 6. REFUND & CANCELLATION POLICY PAGE */}
+        {viewMode === 'refund' && <RefundPolicyPage />}
 
-      {/* 7. COOKIE POLICY & PREFERENCES PAGE */}
-      {viewMode === 'cookies' && <CookiePolicyPage />}
+        {/* 7. COOKIE POLICY & PREFERENCES PAGE */}
+        {viewMode === 'cookies' && <CookiePolicyPage />}
 
-      {/* 8. EMAIL UNSUBSCRIBE & PREFERENCES (CAN-SPAM & DPDP ACT) */}
-      {viewMode === 'unsubscribe' && <UnsubscribePage />}
+        {/* 8. EMAIL UNSUBSCRIBE & PREFERENCES (CAN-SPAM & DPDP ACT) */}
+        {viewMode === 'unsubscribe' && <UnsubscribePage />}
 
-      {/* 9. THANK YOU / CONFIRMATION PAGE */}
-      {viewMode === 'thank-you' && <ThankYouPage />}
+        {/* 9. THANK YOU / CONFIRMATION PAGE */}
+        {viewMode === 'thank-you' && <ThankYouPage />}
 
-      {/* 10. CUSTOM 404 ERROR PAGE */}
-      {viewMode === '404' && <NotFoundPage />}
+        {/* 10. CUSTOM 404 ERROR PAGE */}
+        {viewMode === '404' && <NotFoundPage />}
+      </div>
 
       {/* Floating Feedback / Reviews (renders strictly inside Web App) */}
       <TesterBar />

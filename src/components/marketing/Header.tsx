@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   ChevronDown,
   Moon,
@@ -20,12 +20,36 @@ import {
   MapPin,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
-import { Magnet } from '../ui';
+import { Magnet, ScrollProgress } from '../ui';
 
 export const Header: React.FC = () => {
   const { themeMode, toggleTheme, colors, isAuthenticated, setViewMode, setAuthSubView, user } = useApp();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState('home');
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 15);
+
+      const sections = ['faq-section', 'about-section', 'baskets-section', 'calc-section'];
+      const scrollPos = window.scrollY + 160;
+
+      for (const sectionId of sections) {
+        const el = document.getElementById(sectionId);
+        if (el && el.offsetTop <= scrollPos) {
+          setActiveSection(sectionId);
+          return;
+        }
+      }
+      setActiveSection('home');
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleLaunchApp = () => {
     if (isAuthenticated) {
@@ -53,27 +77,36 @@ export const Header: React.FC = () => {
 
   return (
     <header
-      className="sticky top-0 z-40 w-full backdrop-blur-md border-b transition-colors"
+      className={`sticky top-0 z-40 w-full border-b transition-all duration-300 ${
+        isScrolled ? 'backdrop-blur-xl shadow-sm' : 'backdrop-blur-md'
+      }`}
       style={{
-        backgroundColor: themeMode === 'dark' ? 'rgba(9, 10, 16, 0.85)' : 'rgba(248, 250, 252, 0.85)',
-        borderColor: colors.borderDim,
+        backgroundColor: themeMode === 'dark'
+          ? (isScrolled ? 'rgba(9, 10, 16, 0.94)' : 'rgba(9, 10, 16, 0.80)')
+          : (isScrolled ? 'rgba(255, 255, 255, 0.96)' : 'rgba(248, 250, 252, 0.85)'),
+        borderColor: isScrolled ? colors.cardBorder : colors.borderDim,
       }}
     >
+      <ScrollProgress color={colors.accent} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Brand Logo */}
-        <div className="flex items-center gap-3 cursor-pointer group" onClick={() => setViewMode('marketing')}>
+        <div className="flex items-center gap-2.5 cursor-pointer group" onClick={() => setViewMode('marketing')}>
           <div className="w-9 h-9 rounded-xl overflow-hidden shadow-sm flex items-center justify-center border transition-transform duration-300 group-hover:scale-105" style={{ borderColor: colors.borderDim }}>
             <img src="/assets/images/satmix-logo.jpg" alt="Satmix Logo" className="w-full h-full object-cover" />
           </div>
           <span className="font-extrabold text-xl tracking-tight" style={{ color: colors.textPrimary }}>
             Satmix
           </span>
+          <span className="text-[10px] font-mono font-semibold tracking-wider px-1.5 py-0.5 rounded border opacity-70" style={{ borderColor: colors.borderDim, color: colors.textSecondary }}>
+            FIU
+          </span>
         </div>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-7 text-sm font-medium">
-          <button type="button" onClick={() => setViewMode('marketing')} className="hover:opacity-80 transition-opacity" style={{ color: colors.textPrimary }}>
-            Home
+          <button type="button" onClick={() => setViewMode('marketing')} className="hover:opacity-100 transition-colors relative py-1 group" style={{ color: activeSection === 'home' ? colors.textPrimary : colors.textSecondary }}>
+            <span>Home</span>
+            <span className={`absolute -bottom-0.5 left-0 h-px transition-all duration-300 ${activeSection === 'home' ? 'w-full' : 'w-0 group-hover:w-full'}`} style={{ backgroundColor: colors.accent }} />
           </button>
 
           {/* ── 1. FEATURES MEGA DROPDOWN (Website 3.0 exact content with Website 4.0 aesthetics) ── */}
@@ -84,11 +117,12 @@ export const Header: React.FC = () => {
           >
             <button
               type="button"
-              className="flex items-center gap-1.5 hover:opacity-80 transition-opacity py-2"
+              className="flex items-center gap-1.5 hover:opacity-100 transition-colors py-1 relative group"
               style={{ color: activeDropdown === 'features' ? colors.textPrimary : colors.textSecondary }}
             >
               <span>Features</span>
               <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${activeDropdown === 'features' ? 'rotate-180' : ''}`} style={{ color: activeDropdown === 'features' ? colors.accent : 'inherit' }} />
+              <span className={`absolute -bottom-0.5 left-0 h-px transition-all duration-300 ${activeDropdown === 'features' ? 'w-full' : 'w-0 group-hover:w-full'}`} style={{ backgroundColor: colors.accent }} />
             </button>
 
             {activeDropdown === 'features' && (
@@ -371,8 +405,19 @@ export const Header: React.FC = () => {
             )}
           </div>
 
-          <a href="#faq-section" onClick={() => setViewMode('marketing')} className="hover:opacity-80 transition-opacity" style={{ color: colors.textSecondary }}>
-            FAQ
+          <a
+            href="#faq-section"
+            onClick={() => setViewMode('marketing')}
+            className="hover:opacity-100 transition-colors relative py-1 group"
+            style={{ color: activeSection === 'faq-section' ? colors.textPrimary : colors.textSecondary }}
+          >
+            <span>FAQ</span>
+            <span
+              className={`absolute -bottom-0.5 left-0 h-px transition-all duration-300 ${
+                activeSection === 'faq-section' ? 'w-full' : 'w-0 group-hover:w-full'
+              }`}
+              style={{ backgroundColor: colors.accent }}
+            />
           </a>
         </nav>
 

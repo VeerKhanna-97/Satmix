@@ -106,12 +106,53 @@
   animation: ambientGlow 8s ease-in-out infinite;
 }
 
+/* Optimus Word Animation: Character Stagger Blur-in */
+.animate-char-in {
+  opacity: 0;
+  filter: blur(28px);
+  animation: 0.52s cubic-bezier(0.22, 1, 0.36, 1) forwards char-in;
+  transform: translateY(100%);
+  display: inline-block;
+  will-change: transform, opacity, filter;
+}
 
+@keyframes char-in {
+  0% {
+    opacity: 0;
+    filter: blur(28px);
+    transform: translateY(100%);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0px);
+    transform: translateY(0);
+  }
+}
 
+/* 3D Perspective & Preservation Utilities */
+.perspective-1000 {
+  perspective: 1000px;
+}
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+.backface-hidden {
+  backface-visibility: hidden;
+}
 
+/* Subtle continuous 3D idle floating animation */
+@keyframes float3D {
+  0%, 100% {
+    transform: translateY(0px) rotateX(4deg) rotateY(-6deg);
+  }
+  50% {
+    transform: translateY(-8px) rotateX(-4deg) rotateY(6deg);
+  }
+}
 
-
-
+.animate-float-3d {
+  animation: float3D 6s ease-in-out infinite;
+}
 /* Accessibility: High-Contrast Focus Visible Rings (Primary: #5D17EB, Legacy: #F7931A) */
 :focus-visible {
   outline: 2px solid #5D17EB !important;
