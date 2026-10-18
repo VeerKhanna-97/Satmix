@@ -56,10 +56,10 @@ export const RecommendScreen: React.FC<RecommendScreenProps> = ({
         {/* Top Header */}
         <div className="text-center mb-6">
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight" style={{ color: colors.textPrimary }}>
-            Your Recommended Strategy
+            Your Recommended Mix
           </h1>
           <p className="text-xs sm:text-sm mt-1.5 leading-relaxed" style={{ color: colors.textSecondary }}>
-            Based on your risk profile score ({quizScore}/6), we recommend starting with{' '}
+            Based on your savings style, we recommend starting with{' '}
             <strong style={{ color: colors.textPrimary }}>{getBasketById(suggestedBasketId).name}</strong>.
           </p>
         </div>
@@ -118,7 +118,7 @@ export const RecommendScreen: React.FC<RecommendScreenProps> = ({
           {/* Allocation Breakdown */}
           <div className="space-y-3">
             <span className="text-[11px] font-bold uppercase tracking-wider block" style={{ color: colors.textTertiary }}>
-              Target Portfolio Allocation
+              How Your Daily Savings Are Split
             </span>
             {activeBasket.allocation.map((item) => (
               <div key={item.ticker} className="space-y-1">

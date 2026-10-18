@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useMemo, useRef, useCallback } from 'react';
 import {
   Shield,
   TrendingUp,
@@ -12,7 +12,6 @@ import {
   Layers,
   ArrowRight,
   Sparkles,
-  ChevronRight,
   ChevronDown,
   X,
   Play,
@@ -21,12 +20,7 @@ import {
   CheckCircle2,
   RefreshCw,
   Coins,
-  PieChart,
   ShieldCheck,
-  Lock,
-  Info,
-  ExternalLink,
-  Activity,
   LayoutGrid,
   Table,
 } from 'lucide-react';
@@ -40,10 +34,12 @@ import { BasketCurrencyIcons } from '../common/BasketCurrencyIcons';
 import { StreakWeeklyTracker } from './StreakWeeklyTracker';
 import { generateChartSeries, generateAssetWeekSeries, ChartTimeframe } from '../../utils/chartSeries';
 import { CustomDateRangePicker } from '../common/CustomDateRangePicker';
-import { SpotlightCard, CountUp, Magnet, ShinyText, FadeIn } from '../ui';
+import { SpotlightCard, CountUp, FadeIn } from '../ui';
 import { motion, AnimatePresence } from 'motion/react';
 import { HoldingsMatrixTable } from './HoldingsMatrixTable';
 import { useSatmixPortfolio } from '../../hooks/useSatmixPortfolio';
+
+type DashboardViewMode = 'overview' | 'holdings' | 'habits';
 
 export const DashboardScreen: React.FC = () => {
   const {
@@ -54,7 +50,6 @@ export const DashboardScreen: React.FC = () => {
     tabMetrics,
     livePrices,
     isPricesLoading,
-    streakDays,
     streakState,
     transactions,
     liveCoins,
@@ -64,6 +59,9 @@ export const DashboardScreen: React.FC = () => {
     toggleHabitPause,
     triggerAccrual,
   } = useApp();
+
+  // Progressive Disclosure Section State (Overview vs Where Your Money Is vs Habits & Streak)
+  const [activeSection, setActiveSection] = useState<DashboardViewMode>('overview');
 
   // Timeframe filter state & Custom View Range
   const [timeframe, setTimeframe] = useState<ChartTimeframe>('1M');
@@ -93,13 +91,9 @@ export const DashboardScreen: React.FC = () => {
   const [depositOpen, setDepositOpen] = useState(false);
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [selectedAssetModal, setSelectedAssetModal] = useState<any | null>(null);
-  const [holdingsExpanded, setHoldingsExpanded] = useState(false);
   const [holdingsViewMode, setHoldingsViewMode] = useState<'cards' | 'matrix'>('cards');
 
   const { holdings: matrixHoldings } = useSatmixPortfolio();
-
-  const stableBasket = getBasketById('stable');
-  const growthBasket = getBasketById('growth');
 
   // Chart series derived from tab metrics
   const chartSeriesResult = useMemo(() => {
@@ -139,8 +133,8 @@ export const DashboardScreen: React.FC = () => {
         bg: 'rgba(247, 147, 27, 0.12)',
         border: 'rgba(247, 147, 27, 0.25)',
         icon: '/currencies/Bitcoin cursor.png',
-        desc: 'Market leader, digital gold reserve, and immutable monetary foundation.',
-        basketName: 'Growth Basket (70%) & Stable Basket (15%)',
+        desc: 'Bitcoin is the foundational digital currency with a strictly capped supply of 21 million units.',
+        basketName: 'Growth Mix (70%) & Stable Mix (15%)',
         basketId: 'growth' as const,
         network: 'Bitcoin Native Layer-1',
         tokenStandard: 'UTXO Native',
@@ -151,32 +145,32 @@ export const DashboardScreen: React.FC = () => {
         bg: themeMode === 'light' ? 'rgba(15, 23, 42, 0.08)' : 'rgba(255, 255, 255, 0.12)',
         border: themeMode === 'light' ? 'rgba(15, 23, 42, 0.20)' : 'rgba(255, 255, 255, 0.25)',
         icon: '/currencies/ethereum-eth-logo.png',
-        desc: 'Decentralized application ecosystem and global smart contract settlement protocol.',
-        basketName: 'Growth Basket (20%)',
+        desc: 'Ethereum powers decentralized apps and automated financial smart contracts globally.',
+        basketName: 'Growth Mix (20%)',
         basketId: 'growth' as const,
         network: 'Ethereum Mainnet',
         tokenStandard: 'ERC-20 Native',
       },
       SOL: {
-        tag: 'High Throughput',
+        tag: 'High Speed',
         color: '#9945fe',
         bg: 'rgba(153, 69, 254, 0.12)',
         border: 'rgba(153, 69, 254, 0.25)',
         icon: '/currencies/Solana.png',
-        desc: 'Ultra-fast sub-second settlement and low-latency payment infrastructure.',
-        basketName: 'Growth Basket (10%)',
+        desc: 'Solana is built for lightning-fast, low-cost micro-transactions and digital applications.',
+        basketName: 'Growth Mix (10%)',
         basketId: 'growth' as const,
         network: 'Solana Network',
         tokenStandard: 'SPL Token',
       },
       USDT: {
-        tag: 'USD Capital Guard',
+        tag: 'Digital Dollar',
         color: '#26a17b',
         bg: 'rgba(38, 161, 123, 0.12)',
         border: 'rgba(38, 161, 123, 0.25)',
         icon: '/currencies/USDT.png',
-        desc: '1:1 USD-pegged reserve asset providing capital protection and zero price volatility.',
-        basketName: 'Stable Basket (85%)',
+        desc: 'Tether USD is pegged 1:1 with the US Dollar to keep your savings stable and safe from market dips.',
+        basketName: 'Stable Mix (85%)',
         basketId: 'stable' as const,
         network: 'Multi-Chain USD Stable Reserve',
         tokenStandard: 'ERC-20 / TRC-20 Pegged',
@@ -207,7 +201,7 @@ export const DashboardScreen: React.FC = () => {
       },
       {
         coin: 'USDT' as const,
-        label: 'Tether USD',
+        label: 'Digital Dollars (USDT)',
         meta: assetMeta.USDT,
         ...tabMetrics.holdings.USDT,
         weekSeries: generateAssetWeekSeries('USDT', prototypeState.activity, tabMetrics.holdings.USDT),
@@ -276,37 +270,22 @@ export const DashboardScreen: React.FC = () => {
   ], [livePrices, btcUsd, ethUsd, solUsd]);
 
   return (
-    <div className="space-y-7 animate-fade-in max-w-5xl mx-auto pb-12">
-      {/* ── TOP GREETING ─────────────────────────── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-6 sm:space-y-8 animate-fade-in max-w-5xl mx-auto pb-16">
+      {/* ── TOP GREETING & STREAK BADGE ─────────────────────────── */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
         <div>
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight" style={{ color: colors.textPrimary }}>
             {greetingTime}, {user?.name?.split(' ')[0] || 'Investor'}
           </h1>
+          <p className="text-xs sm:text-sm mt-0.5" style={{ color: colors.textSecondary }}>
+            Here is your daily crypto savings summary.
+          </p>
         </div>
 
-        <div className="flex items-center gap-2.5 flex-wrap">
-          {/* Real-time MTM Engine Status Pill (Clean static institutional style) */}
+        <div className="flex items-center gap-2.5">
+          {/* Quick Streak Status Pill */}
           <div
-            className="px-3 py-1.5 rounded-xl border text-[11px] font-mono font-medium flex items-center gap-2 shadow-sm select-none"
-            style={{ backgroundColor: colors.surface, borderColor: colors.borderDim, color: colors.textSecondary }}
-          >
-            <span
-              className="px-1.5 py-0.5 rounded text-[9px] font-bold font-mono uppercase tracking-wider"
-              style={{
-                backgroundColor: colors.accentTint,
-                color: colors.accent,
-                border: `1px solid ${colors.borderAccent}`,
-              }}
-            >
-              LIVE
-            </span>
-            <span>Spot MTM · Auto-Execute</span>
-          </div>
-
-          {/* Streak Indicator */}
-          <div
-            className="px-3.5 py-1.5 rounded-xl border text-xs font-bold font-mono flex items-center gap-1.5 shadow-sm"
+            className="px-3 py-1.5 rounded-xl border text-xs font-bold font-mono flex items-center gap-1.5 shadow-sm"
             style={{
               backgroundColor:
                 streakState.status === 'ACTIVE'
@@ -335,7 +314,7 @@ export const DashboardScreen: React.FC = () => {
             }}
           >
             {streakState.status === 'ACTIVE' ? (
-              <Flame className="w-4 h-4 fill-amber-400 text-amber-400 animate-pulse" />
+              <Flame className="w-4 h-4 fill-amber-400 text-amber-400" />
             ) : streakState.status === 'AT_RISK' ? (
               <AlertCircle className="w-4 h-4 text-red-400" />
             ) : streakState.status === 'FROZEN' ? (
@@ -349,94 +328,39 @@ export const DashboardScreen: React.FC = () => {
                 : `${streakState.currentStreak}d Streak`}
             </span>
           </div>
-        </div>
-      </div>
 
-      {/* ── LIVE SPOT TICKER BAR (HORIZONTAL MARQUEE SCROLLER) ── */}
-      <div
-        className="p-2.5 rounded-2xl border flex items-center gap-3 overflow-hidden text-xs font-mono select-none"
-        style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}
-      >
-        <button
-          type="button"
-          onClick={() => triggerAccrual()}
-          className="flex items-center gap-1.5 pr-2.5 border-r flex-shrink-0 z-10 hover:opacity-80 transition-opacity focus:outline-none cursor-pointer"
-          style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}
-          title="Click to sync live spot prices from Coinbase"
-        >
-          <RefreshCw className={`w-3.5 h-3.5 text-amber-400 flex-shrink-0 ${isPricesLoading ? 'animate-spin' : ''}`} />
-          <span className="text-[10px] font-bold tracking-wider uppercase whitespace-nowrap" style={{ color: colors.textTertiary }}>
-            LIVE SPOT TICKER
-          </span>
-        </button>
-
-        <div className="flex-1 overflow-hidden relative">
-          {/* Subtle edge fade overlays */}
+          {/* FIU Compliance Badge */}
           <div
-            className="absolute left-0 top-0 bottom-0 w-3 z-10 pointer-events-none"
-            style={{ background: `linear-gradient(to right, ${colors.surface}, transparent)` }}
-          />
-          <div
-            className="absolute right-0 top-0 bottom-0 w-3 z-10 pointer-events-none"
-            style={{ background: `linear-gradient(to left, ${colors.surface}, transparent)` }}
-          />
-
-          <div className="flex animate-ticker whitespace-nowrap gap-6 items-center">
-            {[...tickerItems, ...tickerItems, ...tickerItems, ...tickerItems].map((item, idx) => {
-              const flash = priceFlashMap[item.symbol];
-              return (
-                <div
-                  key={`${item.symbol}-${idx}`}
-                  className={`inline-flex items-center gap-1.5 flex-shrink-0 px-2 py-0.5 rounded-md transition-colors duration-500 ${
-                    flash === 'up'
-                      ? 'bg-emerald-500/20 text-emerald-400'
-                      : flash === 'down'
-                      ? 'bg-rose-500/20 text-rose-400'
-                      : ''
-                  }`}
-                >
-                  <span className="font-bold" style={{ color: colors.textPrimary }}>{item.symbol}</span>
-                  <span
-                    className="transition-colors duration-300"
-                    style={{
-                      color:
-                        flash === 'up'
-                          ? '#34D399'
-                          : flash === 'down'
-                          ? '#F87171'
-                          : colors.textSecondary,
-                    }}
-                  >
-                    {item.inr}
-                  </span>
-                  <span className="text-[10px]" style={{ color: colors.textTertiary }}>({item.usd})</span>
-                </div>
-              );
-            })}
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-mono"
+            style={{ backgroundColor: colors.surface, borderColor: colors.borderDim, color: colors.textTertiary }}
+            title="Registered with Financial Intelligence Unit, Govt of India"
+          >
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+            <span>FIU-IND Verified</span>
           </div>
         </div>
       </div>
 
-      {/* ── SEGMENTED PORTFOLIO TABS (GROWW / SMALLCASE STYLE) ── */}
-      <div className="flex items-center gap-1.5 p-1 rounded-2xl border w-fit" style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder }}>
+      {/* ── PROGRESSIVE DISCLOSURE MODE SWITCHER (APPLE FINANCE STYLE) ── */}
+      <div className="flex items-center gap-1.5 p-1 rounded-2xl border w-full sm:w-fit overflow-x-auto shadow-xs" style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder }}>
         {[
-          { id: 'all', label: 'All Baskets' },
-          { id: 'stable', label: 'Stable Basket' },
-          { id: 'growth', label: 'Growth Basket' },
+          { id: 'overview' as const, label: 'Overview' },
+          { id: 'holdings' as const, label: 'Where Your Money Is' },
+          { id: 'habits' as const, label: 'Daily Habits & Streaks' },
         ].map((tab) => {
-          const isActive = activeTabFilter === tab.id;
+          const isActive = activeSection === tab.id;
           return (
             <button
               key={tab.id}
-              onClick={() => setActiveTabFilter(tab.id as 'all' | 'stable' | 'growth')}
-              className="relative px-4 py-2 rounded-xl text-xs font-bold transition-colors"
+              onClick={() => setActiveSection(tab.id)}
+              className="relative flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs font-bold transition-[color,transform] duration-150 ease-out active:scale-[0.98] select-none text-center whitespace-nowrap"
               style={{
                 color: isActive ? colors.primaryText : colors.textSecondary,
               }}
             >
               {isActive && (
                 <motion.div
-                  layoutId="activeDashboardTabPill"
+                  layoutId="activeDashboardSectionPill"
                   className="absolute inset-0 rounded-xl shadow-md z-0"
                   style={{ backgroundColor: colors.primary }}
                   transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
@@ -448,738 +372,600 @@ export const DashboardScreen: React.FC = () => {
         })}
       </div>
 
-      {/* ── PORTFOLIO VALUATION HERO CARD (MTM) ────────────────── */}
-      <FadeIn delay={0.08}>
-        <SpotlightCard
-          spotlightColor={colors.accentTint}
-          className="rounded-3xl p-7 sm:p-9 border shadow-xl relative overflow-hidden"
-          style={{
-            background: `linear-gradient(135deg, ${colors.card} 0%, ${colors.cardHigh || colors.card} 100%)`,
-            borderColor: colors.cardBorder,
-          }}
-        >
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <div>
-              <span className="text-[11px] font-bold uppercase tracking-wider block" style={{ color: colors.textTertiary }}>
-                {activeTabFilter === 'all'
-                  ? 'Total Live Portfolio Valuation (MTM)'
-                  : activeTabFilter === 'stable'
-                  ? 'Stable Basket Valuation (MTM)'
-                  : 'Growth Basket Valuation (MTM)'}
-              </span>
-              <div className="flex items-baseline gap-3 mt-1 flex-wrap">
-                <span className="text-3xl sm:text-4xl font-extrabold font-mono tracking-tight" style={{ color: colors.textPrimary }}>
-                  <CountUp to={tabMetrics.marketValue} prefix="₹" decimals={2} duration={1.1} />
-                </span>
-
-                {tabMetrics.totalInvested > 0 ? (
-                  <div
-                    className="inline-flex items-center gap-1 text-xs font-bold px-2.5 py-0.5 rounded-md border font-mono"
+      {/* ── MODE 1: OVERVIEW (CALM HERO, CLEAN TRENDLINE & ESSENTIAL ACTIONS) ── */}
+      {activeSection === 'overview' && (
+        <div className="space-y-6 sm:space-y-8 animate-fade-in">
+          {/* Basket Filter Sub-Tabs */}
+          <div className="flex items-center justify-between gap-3 flex-wrap">
+            <div className="flex items-center gap-1.5 p-1 rounded-2xl border w-fit" style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder }}>
+              {[
+                { id: 'all', label: 'All Mixes' },
+                { id: 'stable', label: 'Stable Mix (Safe)' },
+                { id: 'growth', label: 'Growth Mix (Upside)' },
+              ].map((tab) => {
+                const isActive = activeTabFilter === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTabFilter(tab.id as 'all' | 'stable' | 'growth')}
+                    className="relative px-3.5 py-1.5 rounded-xl text-xs font-bold transition-colors select-none"
                     style={{
-                      backgroundColor: isPositiveGain ? colors.mintTint : colors.redTint,
-                      borderColor: isPositiveGain ? colors.borderMint : 'rgba(239, 68, 68, 0.3)',
-                      color: isPositiveGain ? colors.semanticSuccess : colors.semanticDanger,
+                      color: isActive ? colors.primaryText : colors.textSecondary,
                     }}
                   >
-                    {isPositiveGain ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
-                    <span>
-                      {isPositiveGain ? '+' : ''}₹{tabMetrics.netDeltaRupees.toLocaleString('en-IN')} ({isPositiveGain ? '+' : ''}{tabMetrics.netDeltaPercentage}%)
-                    </span>
-                  </div>
-                ) : (
-                  <span className="text-xs font-semibold" style={{ color: colors.textTertiary }}>Daily AutoPay Active</span>
-                )}
-              </div>
+                    {isActive && (
+                      <motion.div
+                        layoutId="activeBasketSubPill"
+                        className="absolute inset-0 rounded-xl shadow-xs z-0"
+                        style={{ backgroundColor: colors.primary }}
+                        transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                      />
+                    )}
+                    <span className="relative z-10">{tab.label}</span>
+                  </button>
+                );
+              })}
             </div>
 
-            {/* Quick Actions (Deposit & Withdraw) */}
-            <div className="flex items-center gap-2 relative z-20">
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setDepositOpen(true);
-                }}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 h-9 px-3.5 rounded-lg font-semibold text-xs shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_1px_3px_rgba(0,0,0,0.3)] transition-[transform,background-color,box-shadow] duration-150 ease-out active:scale-[0.98] select-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
-                style={{ backgroundColor: colors.primary, color: colors.primaryText }}
-              >
-                <ArrowDownLeft className="w-4 h-4 flex-shrink-0" />
-                <span>+ Add Money</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setWithdrawOpen(true);
-                }}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 h-9 px-3.5 rounded-lg font-semibold text-xs border transition-[transform,background-color,border-color] duration-150 ease-out hover:bg-white/[0.05] hover:border-white/20 active:scale-[0.98] select-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
-                style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textPrimary }}
-              >
-                <ArrowUpRight className="w-4 h-4 flex-shrink-0" />
-                <span>Withdraw</span>
-              </button>
-            </div>
+            {/* Quick Live Price Sync Trigger */}
+            <button
+              type="button"
+              onClick={() => triggerAccrual()}
+              className="text-xs font-mono font-medium flex items-center gap-1.5 opacity-70 hover:opacity-100 transition-opacity"
+              style={{ color: colors.textSecondary }}
+              title="Sync live prices"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${isPricesLoading ? 'animate-spin text-amber-400' : ''}`} />
+              <span>Live Rates</span>
+            </button>
           </div>
 
-          {/* 3 Metric Mini-Row */}
-          <div className="grid grid-cols-3 gap-3 p-4 rounded-2xl border mb-6 text-center font-mono" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
-            <div>
-              <span className="text-[11px] font-sans block" style={{ color: colors.textTertiary }}>Total Invested</span>
-              <span className="text-sm sm:text-base font-bold" style={{ color: colors.textPrimary }}>
-                <CountUp to={tabMetrics.totalInvested} prefix="₹" duration={1} />
-              </span>
-            </div>
-            <div>
-              <span className="text-[11px] font-sans block" style={{ color: colors.textTertiary }}>Live Net Return</span>
-              <span className="text-sm sm:text-base font-bold" style={{ color: isPositiveGain ? colors.semanticSuccess : colors.semanticDanger }}>
-                <CountUp to={Math.abs(tabMetrics.netDeltaRupees)} prefix={isPositiveGain ? '+₹' : '-₹'} duration={1} />
-              </span>
-            </div>
-            <div>
-              <span className="text-[11px] font-sans block" style={{ color: colors.textTertiary }}>Active Baskets</span>
-              <span className="text-sm sm:text-base font-bold" style={{ color: colors.accent }}>
-                {activeTabFilter === 'all'
-                  ? `${(isStableActive ? 1 : 0) + (isGrowthActive ? 1 : 0)} Running`
-                  : activeTabFilter === 'stable'
-                  ? isStableActive ? '1 Running' : '0 Running'
-                  : isGrowthActive ? '1 Running' : '0 Running'}
-              </span>
-            </div>
-          </div>
-
-          {/* Line Chart with Scrubber Crosshair & Tooltips */}
-          <div className="mb-2">
-            <LineChart
-              series={chartSeriesResult}
-              height={140}
-              showLegend={true}
-              showAxisLabels={true}
-              interactive={true}
-            />
-          </div>
-
-          {/* Timeframe Filter Tabs & Custom Date Trigger */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t" style={{ borderColor: colors.borderDim }}>
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-[11px] font-semibold font-mono" style={{ color: colors.textTertiary }}>Performance Horizon</span>
-              {chartSeriesResult.isProjection && (
-                <span
-                  className="text-[10px] font-mono border px-2 py-0.5 rounded-md"
-                  style={{
-                    backgroundColor: colors.accentTint,
-                    borderColor: colors.borderAccent,
-                    color: colors.accent,
-                  }}
-                >
-                  DCA Projection Model
+          {/* ── PORTFOLIO VALUATION HERO CARD ────────────────── */}
+          <SpotlightCard
+            spotlightColor={colors.accentTint}
+            className="rounded-3xl p-6 sm:p-9 border shadow-xl relative overflow-hidden"
+            style={{
+              background: `linear-gradient(135deg, ${colors.card} 0%, ${colors.cardHigh || colors.card} 100%)`,
+              borderColor: colors.cardBorder,
+            }}
+          >
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 mb-6">
+              <div>
+                <span className="text-xs font-bold uppercase tracking-wider block" style={{ color: colors.textTertiary }}>
+                  {activeTabFilter === 'all'
+                    ? 'Your Total Savings'
+                    : activeTabFilter === 'stable'
+                    ? 'Stable Mix Savings'
+                    : 'Growth Mix Savings'}
                 </span>
-              )}
-              {timeframe === 'CUSTOM' && (
+                <div className="flex items-baseline gap-3 mt-1.5 flex-wrap">
+                  <span className="text-3xl sm:text-5xl font-extrabold font-mono tracking-tight" style={{ color: colors.textPrimary }}>
+                    <CountUp to={tabMetrics.marketValue} prefix="₹" decimals={2} duration={1} />
+                  </span>
+
+                  {tabMetrics.totalInvested > 0 ? (
+                    <div
+                      className="inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-lg border font-mono"
+                      style={{
+                        backgroundColor: isPositiveGain ? colors.mintTint : colors.redTint,
+                        borderColor: isPositiveGain ? colors.borderMint : 'rgba(239, 68, 68, 0.3)',
+                        color: isPositiveGain ? colors.semanticSuccess : colors.semanticDanger,
+                      }}
+                    >
+                      {isPositiveGain ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
+                      <span>
+                        {isPositiveGain ? '+' : ''}₹{tabMetrics.netDeltaRupees.toLocaleString('en-IN')} ({isPositiveGain ? '+' : ''}{tabMetrics.netDeltaPercentage}%)
+                      </span>
+                    </div>
+                  ) : (
+                    <span className="text-xs font-semibold text-emerald-400 flex items-center gap-1">
+                      <CheckCircle2 className="w-3.5 h-3.5" /> Daily Auto-Saving Active
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Quick Actions (Add Money & Withdraw) */}
+              <div className="flex items-center gap-3 relative z-20">
                 <button
                   type="button"
-                  onClick={() => setIsCustomPickerOpen((prev) => !prev)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-mono font-bold border transition-all hover:bg-white/5 active:scale-95 shadow-sm select-none"
-                  style={{
-                    backgroundColor: colors.surface,
-                    borderColor: isCustomPickerOpen ? colors.accent : colors.borderAccent,
-                    color: colors.accent,
-                  }}
+                  onClick={() => setDepositOpen(true)}
+                  className="h-11 px-5 rounded-xl font-semibold text-xs sm:text-sm shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] transition-[transform,background-color,box-shadow] duration-150 ease-out active:scale-[0.98] inline-flex items-center justify-center gap-2 select-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                  style={{ backgroundColor: colors.primary, color: colors.primaryText }}
                 >
-                  <Calendar className="w-3.5 h-3.5 text-amber-400" />
-                  <span>{formatRangeLabel(customStartDate, customEndDate)}</span>
-                  <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isCustomPickerOpen ? 'rotate-180 text-amber-400' : ''}`} />
+                  <ArrowDownLeft className="w-4 h-4 flex-shrink-0" />
+                  <span>+ Add Money</span>
                 </button>
-              )}
-            </div>
 
-            <div className="flex items-center gap-1 p-1 rounded-xl self-start sm:self-auto border overflow-x-auto max-w-full" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
-              {(['1W', '1M', '3M', '1Y', 'ALL', 'CUSTOM'] as const).map((t) => (
                 <button
-                  key={t}
-                  onClick={() => {
-                    setTimeframe(t);
-                    if (t === 'CUSTOM') {
-                      setIsCustomPickerOpen(true);
-                    } else {
-                      setIsCustomPickerOpen(false);
-                    }
-                  }}
-                  className="px-2.5 sm:px-3 py-1 rounded-lg text-xs font-bold font-mono transition-all flex-shrink-0"
-                  style={{
-                    backgroundColor: timeframe === t ? colors.primary : 'transparent',
-                    color: timeframe === t ? colors.primaryText : colors.textSecondary,
-                  }}
+                  type="button"
+                  onClick={() => setWithdrawOpen(true)}
+                  className="h-11 px-5 rounded-xl font-semibold text-xs sm:text-sm border transition-[transform,background-color,border-color] duration-150 ease-out hover:bg-white/[0.05] active:scale-[0.98] inline-flex items-center justify-center gap-2 select-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                  style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textPrimary }}
                 >
-                  {t}
+                  <ArrowUpRight className="w-4 h-4 flex-shrink-0" />
+                  <span>Withdraw</span>
                 </button>
-              ))}
+              </div>
             </div>
-          </div>
 
-          {/* Google Flights-style Custom Date Range Dropdown Popover */}
-          <AnimatePresence>
-            {timeframe === 'CUSTOM' && isCustomPickerOpen && (
-              <motion.div
-                initial={{ opacity: 0, y: -10, scale: 0.98 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -10, scale: 0.98 }}
-                transition={{ duration: 0.2, ease: 'easeOut' }}
-                className="mt-4"
-              >
-                <CustomDateRangePicker
-                  startDate={customStartDate}
-                  endDate={customEndDate}
-                  onChange={(start, end) => {
-                    setCustomStartDate(start);
-                    setCustomEndDate(end);
-                  }}
-                  onClose={() => setIsCustomPickerOpen(false)}
-                  colors={colors}
-                  granularity={chartSeriesResult.granularity}
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </SpotlightCard>
-      </FadeIn>
-
-      {/* ── CRYPTO ASSETS & WALLET HOLDINGS (EXPANDABLE ACCORDION) ─ */}
-      <FadeIn delay={0.1}>
-        <SpotlightCard
-          spotlightColor={colors.accentTint}
-          className="rounded-3xl p-5 sm:p-7 border shadow-lg transition-all duration-300"
-          style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
-        >
-        {/* Interactive Expandable Header */}
-        <div
-          onClick={() => setHoldingsExpanded((prev) => !prev)}
-          className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 cursor-pointer select-none group"
-          role="button"
-          tabIndex={0}
-          aria-expanded={holdingsExpanded}
-        >
-          <div className="flex items-center gap-3">
-            <div
-              className="w-10 h-10 rounded-2xl border flex items-center justify-center p-2 shadow-sm transition-transform duration-200 group-hover:scale-105"
-              style={{ backgroundColor: colors.accentTint, borderColor: colors.borderAccent }}
-            >
-              <img
-                src={themeMode === 'light' ? '/icons/wallet-light.png' : '/icons/wallet-dark.png'}
-                alt="Crypto Wallet"
-                className="w-5 h-5 object-contain select-none"
-              />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="font-bold text-base group-hover:opacity-90 transition-opacity" style={{ color: colors.textPrimary }}>
-                  Crypto Wallet & Asset Holdings
-                </h3>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-md border font-bold uppercase tracking-wider" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim, color: colors.accent }}>
-                  {activeTabFilter.toUpperCase()}
+            {/* 3 Metric Calm Summary Row */}
+            <div className="grid grid-cols-3 gap-3 p-4 rounded-2xl border mb-6 text-center font-mono" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+              <div>
+                <span className="text-[11px] font-sans block" style={{ color: colors.textTertiary }}>Total Invested</span>
+                <span className="text-sm sm:text-base font-bold" style={{ color: colors.textPrimary }}>
+                  <CountUp to={tabMetrics.totalInvested} prefix="₹" duration={1} />
                 </span>
               </div>
-              <p className="text-xs mt-0.5" style={{ color: colors.textSecondary }}>
-                Real fractional crypto units held in your secure custodial wallet with live MTM pricing.
-              </p>
+              <div>
+                <span className="text-[11px] font-sans block" style={{ color: colors.textTertiary }}>Total Profit / Loss</span>
+                <span className="text-sm sm:text-base font-bold" style={{ color: isPositiveGain ? colors.semanticSuccess : colors.semanticDanger }}>
+                  <CountUp to={Math.abs(tabMetrics.netDeltaRupees)} prefix={isPositiveGain ? '+₹' : '-₹'} duration={1} />
+                </span>
+              </div>
+              <div>
+                <span className="text-[11px] font-sans block" style={{ color: colors.textTertiary }}>Daily Habits</span>
+                <span className="text-sm sm:text-base font-bold" style={{ color: colors.accent }}>
+                  {activeTabFilter === 'all'
+                    ? `${(isStableActive ? 1 : 0) + (isGrowthActive ? 1 : 0)} Running`
+                    : activeTabFilter === 'stable'
+                    ? isStableActive ? '1 Running' : '0 Running'
+                    : isGrowthActive ? '1 Running' : '0 Running'}
+                </span>
+              </div>
+            </div>
+
+            {/* Single Clean Line Chart */}
+            <div className="mb-2">
+              <LineChart
+                series={chartSeriesResult}
+                height={150}
+                showLegend={false}
+                showAxisLabels={true}
+                interactive={true}
+              />
+            </div>
+
+            {/* Timeframe Filter Tabs */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t" style={{ borderColor: colors.borderDim }}>
+              <span className="text-[11px] font-semibold font-mono" style={{ color: colors.textTertiary }}>
+                Performance View
+              </span>
+
+              <div className="flex items-center gap-1 p-1 rounded-xl border overflow-x-auto" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+                {(['1W', '1M', '3M', '1Y', 'ALL'] as const).map((t) => (
+                  <button
+                    key={t}
+                    onClick={() => setTimeframe(t)}
+                    className="px-3 py-1 rounded-lg text-xs font-bold font-mono transition-all flex-shrink-0"
+                    style={{
+                      backgroundColor: timeframe === t ? colors.primary : 'transparent',
+                      color: timeframe === t ? colors.primaryText : colors.textSecondary,
+                    }}
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </SpotlightCard>
+
+          {/* ── ACTIVE HABIT SNAPSHOT CARD ──────────────────────── */}
+          <div className="p-5 sm:p-6 rounded-3xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4" style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}>
+            <div className="flex items-center gap-3.5">
+              <div className="w-11 h-11 rounded-2xl flex items-center justify-center border flex-shrink-0" style={{ backgroundColor: colors.accentTint, borderColor: colors.borderAccent, color: colors.accent }}>
+                <Calendar className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="font-bold text-sm sm:text-base" style={{ color: colors.textPrimary }}>
+                  Daily Auto-Saving Habit
+                </h4>
+                <p className="text-xs mt-0.5" style={{ color: colors.textSecondary }}>
+                  {isGrowthActive
+                    ? `Auto-saving ₹${growthDailyRate}/day into Growth Mix every morning at 9:00 AM.`
+                    : isStableActive
+                    ? `Auto-saving ₹${stableDailyRate}/day into Stable Mix every morning at 9:00 AM.`
+                    : 'Set up an automated daily habit from ₹10 to build wealth steadily.'}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 self-start sm:self-auto">
+              <button
+                type="button"
+                onClick={() => setActiveSection('habits')}
+                className="px-4 py-2 rounded-xl text-xs font-bold border transition-colors hover:bg-white/5 active:scale-[0.98]"
+                style={{ backgroundColor: colors.surface, borderColor: colors.borderDim, color: colors.textPrimary }}
+              >
+                Manage Habit →
+              </button>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 self-start sm:self-auto">
-            <div className="px-3 py-1.5 rounded-xl border text-xs font-mono font-bold flex items-center gap-1.5" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim, color: colors.textPrimary }}>
-              <Coins className="w-3.5 h-3.5" style={{ color: colors.accent }} />
-              <span>{holdingsList.filter((h) => h.units > 0).length || holdingsList.length} Active Assets</span>
-            </div>
-            <div
-              className="p-1.5 rounded-xl border flex items-center justify-center transition-all duration-300"
-              style={{
-                backgroundColor: holdingsExpanded ? colors.accentTint : colors.surface,
-                borderColor: holdingsExpanded ? colors.borderAccent : colors.borderDim,
-                color: holdingsExpanded ? colors.accent : colors.textSecondary,
-              }}
-            >
-              <ChevronDown
-                className={`w-4 h-4 transition-transform duration-300 ${holdingsExpanded ? 'rotate-180' : ''}`}
-              />
+          {/* ── PEACE OF MIND & FINANCIAL SAFETY BANNER ─────────── */}
+          <div className="p-4 sm:p-5 rounded-2xl border flex items-start gap-3.5" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+            <ShieldCheck className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+            <div className="text-xs leading-relaxed" style={{ color: colors.textSecondary }}>
+              <span className="font-bold block" style={{ color: colors.textPrimary }}>
+                Your money is safe and always accessible
+              </span>
+              Satmix is registered with the Financial Intelligence Unit (FIU-IND, Govt of India). Your coins belong strictly to you and can be withdrawn directly to your bank account via UPI anytime with zero lock-in period.
             </div>
           </div>
         </div>
+      )}
 
-        {/* ── EXPANDABLE CONTENT ── */}
-        <AnimatePresence initial={false}>
-          {holdingsExpanded && (
-            <motion.div
-              key="holdings-expanded-body"
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-              className="overflow-hidden space-y-6 pt-5 border-t mt-4"
-              style={{ borderColor: colors.borderDim }}
-            >
-              {/* ── ASSET ALLOCATION VISUALIZER BAR ── */}
-              {tabMetrics.marketValue > 0 && (
-                <div className="space-y-2.5 p-4 rounded-2xl border" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
-                  <div className="flex justify-between items-center text-xs">
-                    <span className="font-bold uppercase tracking-wider text-[10px]" style={{ color: colors.textTertiary }}>
-                      Asset Weighting & Portfolio Distribution
-                    </span>
-                    <span className="font-mono font-bold text-xs" style={{ color: colors.textPrimary }}>
-                      Total: ₹{tabMetrics.marketValue.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </span>
-                  </div>
-
-                  {/* Stacked Proportional Distribution Bar */}
-                  <div
-                    className="h-3 w-full rounded-full overflow-hidden flex gap-1 p-0.5"
-                    style={{
-                      backgroundColor: themeMode === 'light' ? '#E2E8F0' : colors.card,
-                      border: themeMode === 'light' ? '1px solid #CBD5E1' : 'none',
-                    }}
-                  >
-                    {holdingsList.map((item) => {
-                      const pct = tabMetrics.marketValue > 0 ? (item.inrValue / tabMetrics.marketValue) * 100 : 0;
-                      if (pct <= 0) return null;
-                      return (
-                        <div
-                          key={item.coin}
-                          className="h-full rounded-full transition-all hover:opacity-90"
-                          style={{
-                            width: `${pct}%`,
-                            backgroundColor: item.meta.color,
-                            boxShadow: item.coin === 'ETH' && themeMode === 'light' ? '0 0 0 1px rgba(15, 23, 42, 0.15)' : undefined,
-                          }}
-                          title={`${item.label} (${item.coin}): ${pct.toFixed(1)}%`}
-                        />
-                      );
-                    })}
-                  </div>
-
-                  {/* Distribution Badges with Mini Token Icons */}
-                  <div className="flex flex-wrap items-center gap-3 pt-1 text-[11px] font-mono">
-                    {holdingsList.map((item) => {
-                      const pct = tabMetrics.marketValue > 0 ? ((item.inrValue / tabMetrics.marketValue) * 100).toFixed(1) : '0.0';
-                      return (
-                        <div key={item.coin} className="flex items-center gap-1.5">
-                          <div className="w-3.5 h-3.5 rounded-full bg-white flex items-center justify-center overflow-hidden p-0.5 shadow-sm ring-1 ring-black/20 flex-shrink-0">
-                            <img src={item.meta.icon} alt={item.coin} className="w-full h-full object-contain" />
-                          </div>
-                          <span className="font-bold" style={{ color: colors.textPrimary }}>{item.coin}:</span>
-                          <span style={{ color: colors.textSecondary }}>{pct}%</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
-              {/* ── VIEW SWITCHER (CARDS VS MATRIX) ── */}
-              <div className="flex items-center justify-between gap-3 pt-1">
-                <span className="text-[11px] font-bold uppercase tracking-wider font-mono" style={{ color: colors.textTertiary }}>
-                  {holdingsViewMode === 'cards' ? 'Asset Cards & Trajectory' : 'Institutional Ledger Matrix'}
-                </span>
-                <div
-                  className="flex items-center p-0.5 rounded-xl border"
-                  style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}
-                >
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setHoldingsViewMode('cards');
-                    }}
-                    className="px-2.5 py-1 rounded-lg text-xs font-bold font-mono transition-all flex items-center gap-1.5 active:scale-95"
-                    style={{
-                      backgroundColor: holdingsViewMode === 'cards' ? colors.primary : 'transparent',
-                      color: holdingsViewMode === 'cards' ? colors.primaryText : colors.textSecondary,
-                    }}
-                    aria-label="Cards View"
-                  >
-                    <LayoutGrid className="w-3.5 h-3.5" />
-                    <span>Cards</span>
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setHoldingsViewMode('matrix');
-                    }}
-                    className="px-2.5 py-1 rounded-lg text-xs font-bold font-mono transition-all flex items-center gap-1.5 active:scale-95"
-                    style={{
-                      backgroundColor: holdingsViewMode === 'matrix' ? colors.primary : 'transparent',
-                      color: holdingsViewMode === 'matrix' ? colors.primaryText : colors.textSecondary,
-                    }}
-                    aria-label="Matrix Table View"
-                  >
-                    <Table className="w-3.5 h-3.5" />
-                    <span>Matrix</span>
-                  </button>
-                </div>
+      {/* ── MODE 2: WHERE YOUR MONEY IS (COIN BREAKDOWN & CARDS) ── */}
+      {activeSection === 'holdings' && (
+        <div className="space-y-6 animate-fade-in">
+          <SpotlightCard
+            spotlightColor={colors.accentTint}
+            className="rounded-3xl p-5 sm:p-7 border shadow-lg space-y-6"
+            style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
+          >
+            {/* Header with View Switcher */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h3 className="font-extrabold text-base sm:text-lg" style={{ color: colors.textPrimary }}>
+                  Where Your Money Is
+                </h3>
+                <p className="text-xs mt-0.5" style={{ color: colors.textSecondary }}>
+                  Real fractional crypto units held safely in your account at live spot market prices.
+                </p>
               </div>
 
-              {/* ── HOLDINGS DISPLAY: MATRIX TABLE OR CARDS LIST ── */}
-              {holdingsViewMode === 'matrix' ? (
-                <HoldingsMatrixTable
-                  holdings={matrixHoldings}
-                  onSelectAsset={(coin) => {
-                    const found = holdingsList.find((h) => h.coin === coin);
-                    if (found) setSelectedAssetModal(found);
+              {/* View Switcher: Cards vs Table */}
+              <div className="flex items-center p-0.5 rounded-xl border w-fit" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+                <button
+                  type="button"
+                  onClick={() => setHoldingsViewMode('cards')}
+                  className="px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 active:scale-95"
+                  style={{
+                    backgroundColor: holdingsViewMode === 'cards' ? colors.primary : 'transparent',
+                    color: holdingsViewMode === 'cards' ? colors.primaryText : colors.textSecondary,
                   }}
-                />
-              ) : holdingsList.length > 0 ? (
-                <div className="space-y-3">
-                  {holdingsList.map((item) => {
-                    const allocationPct = tabMetrics.marketValue > 0
-                      ? Number(((item.inrValue / tabMetrics.marketValue) * 100).toFixed(1))
-                      : 0;
-                    const isProfit = item.gainRupees >= 0;
+                >
+                  <LayoutGrid className="w-3.5 h-3.5" />
+                  <span>Cards</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setHoldingsViewMode('matrix')}
+                  className="px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 active:scale-95"
+                  style={{
+                    backgroundColor: holdingsViewMode === 'matrix' ? colors.primary : 'transparent',
+                    color: holdingsViewMode === 'matrix' ? colors.primaryText : colors.textSecondary,
+                  }}
+                >
+                  <Table className="w-3.5 h-3.5" />
+                  <span>Table</span>
+                </button>
+              </div>
+            </div>
 
+            {/* Asset Weighting Bar */}
+            {tabMetrics.marketValue > 0 && (
+              <div className="space-y-2.5 p-4 rounded-2xl border" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+                <div className="flex justify-between items-center text-xs">
+                  <span className="font-bold uppercase tracking-wider text-[10px]" style={{ color: colors.textTertiary }}>
+                    How Your Money is Split
+                  </span>
+                  <span className="font-mono font-bold text-xs" style={{ color: colors.textPrimary }}>
+                    Total: ₹{tabMetrics.marketValue.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </span>
+                </div>
+
+                {/* Stacked Proportional Bar */}
+                <div
+                  className="h-3 w-full rounded-full overflow-hidden flex gap-1 p-0.5"
+                  style={{
+                    backgroundColor: themeMode === 'light' ? '#E2E8F0' : colors.card,
+                    border: themeMode === 'light' ? '1px solid #CBD5E1' : 'none',
+                  }}
+                >
+                  {holdingsList.map((item) => {
+                    const pct = tabMetrics.marketValue > 0 ? (item.inrValue / tabMetrics.marketValue) * 100 : 0;
+                    if (pct <= 0) return null;
                     return (
                       <div
                         key={item.coin}
-                        onClick={() => setSelectedAssetModal(item)}
-                        className="p-4 sm:p-5 rounded-2xl border transition-all duration-200 cursor-pointer hover:scale-[1.008] hover:shadow-md grid grid-cols-1 md:grid-cols-[minmax(210px,260px)_1fr_minmax(210px,260px)] items-center gap-4"
+                        className="h-full rounded-full transition-all"
                         style={{
-                          backgroundColor: colors.surface,
-                          borderColor: colors.borderDim,
+                          width: `${pct}%`,
+                          backgroundColor: item.meta.color,
                         }}
-                      >
-                        {/* Left Column: Coin Logo & Unit Quantity */}
-                        <div className="flex items-center gap-4 min-w-0">
-                          <div className="w-10 h-10 flex-shrink-0 flex items-center justify-center">
-                            <img
-                              src={item.meta.icon}
-                              alt={item.label}
-                              className="w-full h-full object-contain drop-shadow-sm select-none"
-                              loading="lazy"
-                            />
-                          </div>
+                        title={`${item.label}: ${pct.toFixed(1)}%`}
+                      />
+                    );
+                  })}
+                </div>
 
-                          <div className="min-w-0">
-                            <div className="flex items-center gap-2 flex-wrap">
-                              <span className="font-extrabold text-sm sm:text-base truncate" style={{ color: colors.textPrimary }}>
-                                {item.label}
-                              </span>
-                              <span
-                                className="text-[10px] font-mono px-2 py-0.5 rounded-md border font-semibold flex-shrink-0"
-                                style={{
-                                  backgroundColor: colors.card,
-                                  borderColor: colors.borderDim,
-                                  color: colors.textSecondary,
-                                }}
-                              >
-                                {item.meta.tag}
-                              </span>
-                            </div>
-
-                            {/* Exact Fractional Crypto Units */}
-                            <div className="flex items-center gap-2 mt-1">
-                              <span className="text-xs font-mono font-bold" style={{ color: colors.accent }}>
-                                {item.units === 0
-                                  ? `0.00 ${item.coin}`
-                                  : item.coin === 'BTC'
-                                  ? `${(item.units || 0).toFixed(8)} BTC`
-                                  : item.coin === 'ETH'
-                                  ? `${(item.units || 0).toFixed(6)} ETH`
-                                  : item.coin === 'SOL'
-                                  ? `${(item.units || 0).toFixed(4)} SOL`
-                                  : `${(item.units || 0).toFixed(2)} USDT`}
-                              </span>
-                              {item.usdValue > 0 && (
-                                <span className="text-[11px] font-mono" style={{ color: colors.textTertiary }}>
-                                  (≈ ${(item.usdValue || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD)
-                                </span>
-                              )}
-                            </div>
-                          </div>
+                {/* Distribution Badges */}
+                <div className="flex flex-wrap items-center gap-3 pt-1 text-[11px] font-mono">
+                  {holdingsList.map((item) => {
+                    const pct = tabMetrics.marketValue > 0 ? ((item.inrValue / tabMetrics.marketValue) * 100).toFixed(1) : '0.0';
+                    return (
+                      <div key={item.coin} className="flex items-center gap-1.5">
+                        <div className="w-3.5 h-3.5 rounded-full bg-white flex items-center justify-center overflow-hidden p-0.5 shadow-xs flex-shrink-0">
+                          <img src={item.meta.icon} alt={item.coin} className="w-full h-full object-contain" />
                         </div>
-
-                        {/* Center Column: 1-Week Sub-Asset Performance Mini Graph (Strictly Vertically Aligned & Padded) */}
-                        <div className="hidden md:flex flex-col items-center justify-center px-4 lg:px-8 w-full max-w-[210px] mx-auto">
-                          <div className="w-full flex items-center justify-between text-[10px] font-mono mb-1 px-1" style={{ color: colors.textTertiary }}>
-                            <span>1W (Sun–Sat)</span>
-                            <span
-                              className="font-bold"
-                              style={{
-                                color:
-                                  item.investedInr <= 0
-                                    ? '#64748B'
-                                    : isProfit
-                                    ? colors.semanticSuccess
-                                    : colors.semanticDanger,
-                              }}
-                            >
-                              {item.investedInr <= 0 ? '₹0.00' : `${isProfit ? '+' : ''}₹${(item.gainRupees || 0).toFixed(2)}`}
-                            </span>
-                          </div>
-                          <div className="w-full flex justify-center">
-                            <MiniLineChart
-                              series={item.weekSeries}
-                              width={180}
-                              height={38}
-                              interactive={true}
-                            />
-                          </div>
-                        </div>
-
-                        {/* Mobile View: 1-Week Sub-Asset Mini Graph */}
-                        <div className="md:hidden w-full flex items-center justify-between py-2 px-1 border-t border-b" style={{ borderColor: colors.borderDim }}>
-                          <div className="flex flex-col text-[10px] font-mono" style={{ color: colors.textTertiary }}>
-                            <span>1W Trajectory</span>
-                            <span
-                              className="font-bold text-[11px]"
-                              style={{
-                                color:
-                                  item.investedInr <= 0
-                                    ? '#64748B'
-                                    : isProfit
-                                    ? colors.semanticSuccess
-                                    : colors.semanticDanger,
-                              }}
-                            >
-                              {item.investedInr <= 0 ? '0.00%' : `${isProfit ? '+' : ''}${item.gainPercentage}%`}
-                            </span>
-                          </div>
-                          <MiniLineChart
-                            series={item.weekSeries}
-                            width={150}
-                            height={34}
-                            interactive={true}
-                          />
-                        </div>
-
-                        {/* Right Column: Financial PnL & Valuation */}
-                        <div className="flex items-center justify-between md:justify-end gap-6 pt-2 md:pt-0 font-mono" style={{ borderColor: colors.borderDim }}>
-                          {/* Cost Basis & Performance */}
-                          <div className="text-left md:text-right text-xs">
-                            <div className="text-[11px]" style={{ color: colors.textTertiary }}>
-                              Invested Cost Basis
-                            </div>
-                            <div className="font-bold text-xs sm:text-sm mt-0.5" style={{ color: colors.textPrimary }}>
-                              ₹{(item.investedInr || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                            </div>
-                            {item.investedInr > 0 && (
-                              <div
-                                className="text-[10px] font-bold mt-0.5 inline-flex items-center gap-0.5"
-                                style={{ color: isProfit ? colors.semanticSuccess : colors.semanticDanger }}
-                              >
-                                <span>{isProfit ? '+' : ''}₹{(item.gainRupees || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                                <span>({isProfit ? '+' : ''}{item.gainPercentage}%)</span>
-                              </div>
-                            )}
-                          </div>
-
-                          {/* Current Market Value */}
-                          <div className="text-right">
-                            <div className="text-[11px]" style={{ color: colors.textTertiary }}>
-                              Current Valuation
-                            </div>
-                            <div className="font-extrabold text-sm sm:text-base" style={{ color: colors.textPrimary }}>
-                              ₹{(item.inrValue || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                            </div>
-                            <div className="text-[10px] font-semibold mt-0.5 flex items-center justify-end gap-1.5" style={{ color: colors.accent }}>
-                              <span>Spot: ₹{item.priceInr && item.priceInr >= 100000 ? `${(item.priceInr / 100000).toFixed(2)}L` : (item.priceInr || 0).toLocaleString('en-IN')}</span>
-                              <span>· {allocationPct}%</span>
-                            </div>
-                          </div>
-
-                          <ChevronRight className="w-4 h-4 hidden md:block text-slate-500 flex-shrink-0" />
-                        </div>
+                        <span className="font-bold" style={{ color: colors.textPrimary }}>{item.coin}:</span>
+                        <span style={{ color: colors.textSecondary }}>{pct}%</span>
                       </div>
                     );
                   })}
                 </div>
+              </div>
+            )}
+
+            {/* Holdings Content: Table or Cards */}
+            {holdingsViewMode === 'matrix' ? (
+              <HoldingsMatrixTable
+                holdings={matrixHoldings}
+                onSelectAsset={(coin) => {
+                  const found = holdingsList.find((h) => h.coin === coin);
+                  if (found) setSelectedAssetModal(found);
+                }}
+              />
+            ) : (
+              <div className="space-y-3">
+                {holdingsList.map((item) => {
+                  const isProfit = item.gainRupees >= 0;
+
+                  return (
+                    <div
+                      key={item.coin}
+                      onClick={() => setSelectedAssetModal(item)}
+                      className="p-4 sm:p-5 rounded-2xl border transition-all duration-150 ease-out cursor-pointer hover:border-white/20 active:scale-[0.99] flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                      style={{
+                        backgroundColor: colors.surface,
+                        borderColor: colors.borderDim,
+                      }}
+                    >
+                      {/* Left: Coin Icon, Label, Description */}
+                      <div className="flex items-center gap-4 min-w-0">
+                        <div className="w-10 h-10 flex-shrink-0 flex items-center justify-center">
+                          <img
+                            src={item.meta.icon}
+                            alt={item.label}
+                            className="w-full h-full object-contain select-none"
+                            loading="lazy"
+                          />
+                        </div>
+
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="font-extrabold text-sm sm:text-base truncate" style={{ color: colors.textPrimary }}>
+                              {item.label}
+                            </span>
+                            <span
+                              className="text-[10px] font-mono px-2 py-0.5 rounded-md border font-semibold flex-shrink-0"
+                              style={{
+                                backgroundColor: colors.card,
+                                borderColor: colors.borderDim,
+                                color: colors.textSecondary,
+                              }}
+                            >
+                              {item.meta.tag}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="text-xs font-mono font-bold" style={{ color: colors.accent }}>
+                              {item.units === 0
+                                ? `0.00 ${item.coin}`
+                                : item.coin === 'BTC'
+                                ? `${(item.units || 0).toFixed(8)} BTC`
+                                : item.coin === 'ETH'
+                                ? `${(item.units || 0).toFixed(6)} ETH`
+                                : item.coin === 'SOL'
+                                ? `${(item.units || 0).toFixed(4)} SOL`
+                                : `${(item.units || 0).toFixed(2)} USDT`}
+                            </span>
+                            <span className="text-[11px]" style={{ color: colors.textTertiary }}>
+                              • Tap to view
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Right: Rupee Valuation & Returns */}
+                      <div className="text-left sm:text-right font-mono border-t sm:border-t-0 pt-2 sm:pt-0" style={{ borderColor: colors.borderDim }}>
+                        <div className="text-base sm:text-lg font-bold" style={{ color: colors.textPrimary }}>
+                          ₹{item.inrValue.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </div>
+                        <div className="text-xs font-semibold flex sm:justify-end items-center gap-1" style={{ color: isProfit ? colors.semanticSuccess : colors.semanticDanger }}>
+                          <span>{isProfit ? '+' : ''}₹{Math.abs(item.gainRupees).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                          <span>({isProfit ? '+' : ''}{item.gainPercentage}%)</span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </SpotlightCard>
+        </div>
+      )}
+
+      {/* ── MODE 3: DAILY HABITS & STREAKS ─────────────────────── */}
+      {activeSection === 'habits' && (
+        <div className="space-y-6 sm:space-y-8 animate-fade-in">
+          {/* Streak Weekly Tracker */}
+          <StreakWeeklyTracker onQuickDeposit={() => setDepositOpen(true)} />
+
+          {/* Active Habit Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+            {/* Stable Habit Card */}
+            <SpotlightCard
+              spotlightColor={colors.accentTint}
+              className="rounded-3xl p-6 border shadow-lg space-y-4"
+              style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <BasketCurrencyIcons basketId="stable" size="sm" />
+                  <h3 className="font-bold text-sm" style={{ color: colors.textPrimary }}>Stable Mix Habit</h3>
+                </div>
+                <span
+                  className="px-2 py-0.5 rounded-md text-[10px] font-bold font-mono border tracking-wider"
+                  style={{
+                    backgroundColor: !isStableConfigured ? colors.surface : isStableActive ? colors.accentTint : 'rgba(245, 158, 11, 0.1)',
+                    color: !isStableConfigured ? colors.textTertiary : isStableActive ? colors.accent : colors.semanticWarning,
+                    borderColor: !isStableConfigured ? colors.borderDim : isStableActive ? colors.borderAccent : 'rgba(245, 158, 11, 0.3)',
+                  }}
+                >
+                  {!isStableConfigured ? 'NOT CONFIGURED' : isStableActive ? 'AUTOPAY ACTIVE' : 'PAUSED'}
+                </span>
+              </div>
+
+              <p className="text-xs leading-relaxed" style={{ color: colors.textSecondary }}>
+                85% Digital Dollars (USDT) / 15% Bitcoin (BTC). Built for capital safety with low price volatility.
+              </p>
+
+              {isStableConfigured ? (
+                <div className="p-4 rounded-2xl border flex items-center justify-between" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+                  <div>
+                    <span className="text-xs block" style={{ color: colors.textTertiary }}>Daily Auto-Deposit</span>
+                    <span className="text-2xl font-extrabold font-mono" style={{ color: colors.textPrimary }}>
+                      ₹{stableDailyRate}/day
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => toggleHabitPause('stable')}
+                      className="px-3 py-1.5 rounded-xl text-xs font-bold border transition-opacity hover:opacity-80"
+                      style={{
+                        backgroundColor: isStableActive ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)',
+                        borderColor: isStableActive ? 'rgba(239, 68, 68, 0.3)' : 'rgba(16, 185, 129, 0.3)',
+                        color: isStableActive ? colors.semanticDanger : colors.semanticSuccess,
+                      }}
+                    >
+                      {isStableActive ? 'Pause' : 'Resume'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('invest')}
+                      className="px-3 py-1.5 rounded-xl text-xs font-bold transition-opacity hover:opacity-80"
+                      style={{ backgroundColor: colors.accentTint, color: colors.accent }}
+                    >
+                      Change Amount →
+                    </button>
+                  </div>
+                </div>
               ) : (
-                <div className="p-8 text-center text-xs border rounded-2xl border-dashed" style={{ color: colors.textTertiary, borderColor: colors.borderDim }}>
-                  No crypto holdings in this tab yet. Set up a daily habit in <strong style={{ color: colors.textPrimary }}>Invest</strong> or deposit funds to start accumulating fractional crypto.
+                <div className="p-4 rounded-2xl border flex items-center justify-between" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+                  <div>
+                    <span className="text-xs block" style={{ color: colors.textTertiary }}>Minimum Start</span>
+                    <span className="text-lg font-bold font-mono" style={{ color: colors.textPrimary }}>From ₹10/day</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('invest')}
+                    className="px-3.5 py-2 rounded-xl text-xs font-bold transition-opacity hover:opacity-90 shadow-xs"
+                    style={{ backgroundColor: colors.primary, color: colors.primaryText }}
+                  >
+                    + Setup Habit →
+                  </button>
                 </div>
               )}
 
-              {/* Footer Custody Note */}
-              <div className="pt-2 flex items-center justify-between text-[11px] font-mono text-slate-400" style={{ color: colors.textTertiary }}>
-                <div className="flex items-center gap-1.5">
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>Institutional Custody · Direct Spot Execution Engine</span>
-                </div>
-                <span className="hidden sm:inline">Tap any asset to inspect on-chain balance & cost basis</span>
+              <div className="text-[11px] font-mono flex items-center justify-between" style={{ color: colors.textSecondary }}>
+                <span>Auto-deposit: <strong>9:00 AM Daily</strong></span>
+                <span>Minimum: <strong>₹10/day</strong></span>
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </SpotlightCard>
-    </FadeIn>
+            </SpotlightCard>
 
-      {/* ── DUAL HABITS / AUTOPAY STATUS ROW ─────────────────── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Stable Habit Card */}
-        {(activeTabFilter === 'all' || activeTabFilter === 'stable') && (
-          <SpotlightCard
-            spotlightColor={colors.accentTint}
-            className="rounded-3xl p-6 border shadow-lg space-y-4"
-            style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <BasketCurrencyIcons basketId="stable" size="sm" />
-                <h3 className="font-bold text-sm" style={{ color: colors.textPrimary }}>Stable Basket Habit</h3>
-              </div>
-              <span
-                className="px-2 py-0.5 rounded-md text-[10px] font-bold font-mono border tracking-wider"
-                style={{
-                  backgroundColor: !isStableConfigured ? colors.surface : isStableActive ? colors.mintTint : 'rgba(245, 158, 11, 0.1)',
-                  color: !isStableConfigured ? colors.textTertiary : isStableActive ? colors.semanticSuccess : colors.semanticWarning,
-                  borderColor: !isStableConfigured ? colors.borderDim : isStableActive ? colors.borderMint : 'rgba(245, 158, 11, 0.3)',
-                }}
-              >
-                {!isStableConfigured ? 'NOT CONFIGURED' : isStableActive ? 'AUTOPAY ACTIVE' : 'PAUSED'}
-              </span>
-            </div>
-
-            <p className="text-xs leading-relaxed" style={{ color: colors.textSecondary }}>
-              85% USDT / 15% BTC
-            </p>
-
-            {isStableConfigured ? (
-              <div className="p-4 rounded-2xl border flex items-center justify-between" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
-                <div>
-                  <span className="text-xs block" style={{ color: colors.textTertiary }}>Daily SIP Rate</span>
-                  <span className="text-2xl font-extrabold font-mono" style={{ color: colors.textPrimary }}>
-                    ₹{stableDailyRate}/day
-                  </span>
-                </div>
+            {/* Growth Habit Card */}
+            <SpotlightCard
+              spotlightColor={colors.accentTint}
+              className="rounded-3xl p-6 border shadow-lg space-y-4"
+              style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
+            >
+              <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => toggleHabitPause('stable')}
-                    className="px-3 py-1.5 rounded-xl text-xs font-bold border transition-opacity hover:opacity-80"
-                    style={{
-                      backgroundColor: isStableActive ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)',
-                      borderColor: isStableActive ? 'rgba(239, 68, 68, 0.3)' : 'rgba(16, 185, 129, 0.3)',
-                      color: isStableActive ? colors.semanticDanger : colors.semanticSuccess,
-                    }}
-                  >
-                    {isStableActive ? 'Pause' : 'Resume'}
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('invest')}
-                    className="px-3 py-1.5 rounded-xl text-xs font-bold transition-opacity hover:opacity-80"
-                    style={{ backgroundColor: colors.accentTint, color: colors.accent }}
-                  >
-                    Adjust →
-                  </button>
+                  <BasketCurrencyIcons basketId="growth" size="sm" />
+                  <h3 className="font-bold text-sm" style={{ color: colors.textPrimary }}>Growth Mix Habit</h3>
                 </div>
-              </div>
-            ) : (
-              <div className="p-4 rounded-2xl border flex items-center justify-between" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
-                <div>
-                  <span className="text-xs block" style={{ color: colors.textTertiary }}>Min Allocation</span>
-                  <span className="text-lg font-bold font-mono" style={{ color: colors.textPrimary }}>From ₹10/day</span>
-                </div>
-                <button
-                  onClick={() => setActiveTab('invest')}
-                  className="px-3.5 py-2 rounded-xl text-xs font-bold transition-opacity hover:opacity-90 shadow-sm"
-                  style={{ backgroundColor: colors.primary, color: colors.primaryText }}
+                <span
+                  className="px-2 py-0.5 rounded-md text-[10px] font-bold font-mono border tracking-wider"
+                  style={{
+                    backgroundColor: !isGrowthConfigured ? colors.surface : isGrowthActive ? colors.accentTint : 'rgba(245, 158, 11, 0.1)',
+                    color: !isGrowthConfigured ? colors.textTertiary : isGrowthActive ? colors.accent : colors.semanticWarning,
+                    borderColor: !isGrowthConfigured ? colors.borderDim : isGrowthActive ? colors.borderAccent : 'rgba(245, 158, 11, 0.3)',
+                  }}
                 >
-                  + Setup Habit →
-                </button>
+                  {!isGrowthConfigured ? 'NOT CONFIGURED' : isGrowthActive ? 'AUTOPAY ACTIVE' : 'PAUSED'}
+                </span>
               </div>
-            )}
 
-            <div className="text-[11px] font-mono flex items-center justify-between" style={{ color: colors.textSecondary }}>
-              <span>Batch Buy: <strong>09:00 AM Daily</strong></span>
-              <span>Min: <strong>₹10/day</strong></span>
-            </div>
-          </SpotlightCard>
-        )}
+              <p className="text-xs leading-relaxed" style={{ color: colors.textSecondary }}>
+                70% Bitcoin / 20% Ethereum / 10% Solana. Designed for compounding long-term growth.
+              </p>
 
-        {/* Growth Habit Card */}
-        {(activeTabFilter === 'all' || activeTabFilter === 'growth') && (
-          <SpotlightCard
-            spotlightColor={colors.accentTint}
-            className="rounded-3xl p-6 border shadow-lg space-y-4"
-            style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <BasketCurrencyIcons basketId="growth" size="sm" />
-                <h3 className="font-bold text-sm" style={{ color: colors.textPrimary }}>Growth Basket Habit</h3>
-              </div>
-              <span
-                className="px-2 py-0.5 rounded-md text-[10px] font-bold font-mono border tracking-wider"
-                style={{
-                  backgroundColor: !isGrowthConfigured ? colors.surface : isGrowthActive ? colors.accentTint : 'rgba(245, 158, 11, 0.1)',
-                  color: !isGrowthConfigured ? colors.textTertiary : isGrowthActive ? colors.accent : colors.semanticWarning,
-                  borderColor: !isGrowthConfigured ? colors.borderDim : isGrowthActive ? colors.borderAccent : 'rgba(245, 158, 11, 0.3)',
-                }}
-              >
-                {!isGrowthConfigured ? 'NOT CONFIGURED' : isGrowthActive ? 'AUTOPAY ACTIVE' : 'PAUSED'}
-              </span>
-            </div>
-
-            <p className="text-xs leading-relaxed" style={{ color: colors.textSecondary }}>
-              70% BTC / 20% ETH / 10% SOL
-            </p>
-
-            {isGrowthConfigured ? (
-              <div className="p-4 rounded-2xl border flex items-center justify-between" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
-                <div>
-                  <span className="text-xs block" style={{ color: colors.textTertiary }}>Daily SIP Rate</span>
-                  <span className="text-2xl font-extrabold font-mono" style={{ color: colors.textPrimary }}>
-                    ₹{growthDailyRate}/day
-                  </span>
+              {isGrowthConfigured ? (
+                <div className="p-4 rounded-2xl border flex items-center justify-between" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+                  <div>
+                    <span className="text-xs block" style={{ color: colors.textTertiary }}>Daily Auto-Deposit</span>
+                    <span className="text-2xl font-extrabold font-mono" style={{ color: colors.textPrimary }}>
+                      ₹{growthDailyRate}/day
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => toggleHabitPause('growth')}
+                      className="px-3 py-1.5 rounded-xl text-xs font-bold border transition-opacity hover:opacity-80"
+                      style={{
+                        backgroundColor: isGrowthActive ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)',
+                        borderColor: isGrowthActive ? 'rgba(239, 68, 68, 0.3)' : 'rgba(16, 185, 129, 0.3)',
+                        color: isGrowthActive ? colors.semanticDanger : colors.semanticSuccess,
+                      }}
+                    >
+                      {isGrowthActive ? 'Pause' : 'Resume'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('invest')}
+                      className="px-3 py-1.5 rounded-xl text-xs font-bold transition-opacity hover:opacity-80"
+                      style={{ backgroundColor: colors.accentTint, color: colors.accent }}
+                    >
+                      Change Amount →
+                    </button>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
+              ) : (
+                <div className="p-4 rounded-2xl border flex items-center justify-between" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+                  <div>
+                    <span className="text-xs block" style={{ color: colors.textTertiary }}>Minimum Start</span>
+                    <span className="text-lg font-bold font-mono" style={{ color: colors.textPrimary }}>From ₹30/day</span>
+                  </div>
                   <button
-                    onClick={() => toggleHabitPause('growth')}
-                    className="px-3 py-1.5 rounded-xl text-xs font-bold border transition-opacity hover:opacity-80"
-                    style={{
-                      backgroundColor: isGrowthActive ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)',
-                      borderColor: isGrowthActive ? 'rgba(239, 68, 68, 0.3)' : 'rgba(16, 185, 129, 0.3)',
-                      color: isGrowthActive ? colors.semanticDanger : colors.semanticSuccess,
-                    }}
-                  >
-                    {isGrowthActive ? 'Pause' : 'Resume'}
-                  </button>
-                  <button
+                    type="button"
                     onClick={() => setActiveTab('invest')}
-                    className="px-3 py-1.5 rounded-xl text-xs font-bold transition-opacity hover:opacity-80"
-                    style={{ backgroundColor: colors.accentTint, color: colors.accent }}
+                    className="px-3.5 py-2 rounded-xl text-xs font-bold transition-opacity hover:opacity-90 shadow-xs"
+                    style={{ backgroundColor: colors.primary, color: colors.primaryText }}
                   >
-                    Adjust →
+                    + Setup Habit →
                   </button>
                 </div>
+              )}
+
+              <div className="text-[11px] font-mono flex items-center justify-between" style={{ color: colors.textSecondary }}>
+                <span>Auto-deposit: <strong>9:00 AM Daily</strong></span>
+                <span>Minimum: <strong>₹30/day</strong></span>
               </div>
-            ) : (
-              <div className="p-4 rounded-2xl border flex items-center justify-between" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
-                <div>
-                  <span className="text-xs block" style={{ color: colors.textTertiary }}>Min Allocation</span>
-                  <span className="text-lg font-bold font-mono" style={{ color: colors.textPrimary }}>From ₹30/day</span>
-                </div>
-                <button
-                  onClick={() => setActiveTab('invest')}
-                  className="px-3.5 py-2 rounded-xl text-xs font-bold transition-opacity hover:opacity-90 shadow-sm"
-                  style={{ backgroundColor: colors.primary, color: colors.primaryText }}
-                >
-                  + Setup Habit →
-                </button>
-              </div>
-            )}
+            </SpotlightCard>
+          </div>
+        </div>
+      )}
 
-            <div className="text-[11px] font-mono flex items-center justify-between" style={{ color: colors.textSecondary }}>
-              <span>Batch Buy: <strong>09:00 AM Daily</strong></span>
-              <span>Min: <strong>₹30/day</strong></span>
-            </div>
-          </SpotlightCard>
-        )}
-      </div>
-
-      {/* ── STREAK & HABIT WEEKLY TRACKER ─────────────────────── */}
-      <FadeIn delay={0.12}>
-        <StreakWeeklyTracker onQuickDeposit={() => setDepositOpen(true)} />
-      </FadeIn>
-
-      {/* ── ASSET DETAIL INSPECTION MODAL ────────────────────── */}
+      {/* ── ASSET DETAIL INSPECTION MODAL (PLAIN LANGUAGE AUDITED) ── */}
       {selectedAssetModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
           <div
-            className="w-full max-w-lg rounded-3xl p-6 sm:p-7 border shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto scrollbar-none"
+            className="w-full max-w-lg rounded-3xl p-6 sm:p-7 border shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto"
             style={{ backgroundColor: colors.cardHigh, borderColor: colors.cardBorder }}
           >
             {/* Modal Header */}
@@ -1189,7 +975,7 @@ export const DashboardScreen: React.FC = () => {
                   <img
                     src={selectedAssetModal.meta.icon}
                     alt={selectedAssetModal.label}
-                    className="w-full h-full object-contain drop-shadow-sm select-none"
+                    className="w-full h-full object-contain select-none"
                     loading="lazy"
                   />
                 </div>
@@ -1206,19 +992,21 @@ export const DashboardScreen: React.FC = () => {
                         color: colors.textSecondary,
                       }}
                     >
-                      {selectedAssetModal.meta.tokenStandard}
+                      {selectedAssetModal.meta.tag}
                     </span>
                   </div>
-                  <p className="text-xs mt-0.5 font-mono" style={{ color: colors.textSecondary }}>
-                    {selectedAssetModal.meta.network}
+                  <p className="text-xs mt-0.5" style={{ color: colors.textSecondary }}>
+                    {selectedAssetModal.meta.basketName}
                   </p>
                 </div>
               </div>
 
               <button
+                type="button"
                 onClick={() => setSelectedAssetModal(null)}
                 className="p-1.5 rounded-xl hover:opacity-80 transition-opacity"
                 style={{ color: colors.textTertiary }}
+                aria-label="Close details"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1229,7 +1017,7 @@ export const DashboardScreen: React.FC = () => {
               {selectedAssetModal.meta.desc}
             </p>
 
-            {/* Large Token Balance Card */}
+            {/* Token Balance Card */}
             <div
               className="p-5 rounded-2xl border text-center space-y-1.5"
               style={{
@@ -1238,7 +1026,7 @@ export const DashboardScreen: React.FC = () => {
               }}
             >
               <span className="text-[10px] font-bold uppercase tracking-wider block" style={{ color: colors.textTertiary }}>
-                Total Wallet Balance
+                Your Balance in Units
               </span>
               <div className="text-2xl sm:text-3xl font-extrabold font-mono" style={{ color: colors.textPrimary }}>
                 {selectedAssetModal.units === 0
@@ -1251,62 +1039,15 @@ export const DashboardScreen: React.FC = () => {
                   ? `${(selectedAssetModal.units || 0).toFixed(4)} SOL`
                   : `${(selectedAssetModal.units || 0).toFixed(2)} USDT`}
               </div>
-              <div className="flex items-center justify-center gap-2 font-mono text-xs" style={{ color: colors.accent }}>
-                <span className="font-bold">
-                  ₹{selectedAssetModal.inrValue.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                </span>
-                {selectedAssetModal.usdValue > 0 && (
-                  <span style={{ color: colors.textTertiary }}>
-                    (≈ ${selectedAssetModal.usdValue.toLocaleString('en-US', { minimumFractionDigits: 2 })} USD)
-                  </span>
-                )}
+              <div className="text-sm font-bold font-mono" style={{ color: colors.accent }}>
+                ₹{selectedAssetModal.inrValue.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </div>
             </div>
 
-            {/* 1-Week Performance Trajectory Card */}
-            {selectedAssetModal.weekSeries && (
-              <div
-                className="p-4 rounded-2xl border space-y-2"
-                style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}
-              >
-                <div className="flex items-center justify-between text-xs font-mono">
-                  <span className="text-[11px] font-sans font-bold flex items-center gap-1.5" style={{ color: colors.textPrimary }}>
-                    <Activity className="w-3.5 h-3.5" style={{ color: colors.accent }} />
-                    1-Week Trajectory (Sun – Sat)
-                  </span>
-                  <span
-                    className="font-bold text-[11px]"
-                    style={{
-                      color:
-                        selectedAssetModal.investedInr <= 0
-                          ? '#64748B'
-                          : selectedAssetModal.gainRupees >= 0
-                          ? colors.semanticSuccess
-                          : colors.semanticDanger,
-                    }}
-                  >
-                    {selectedAssetModal.investedInr <= 0
-                      ? 'No Investment'
-                      : `${selectedAssetModal.gainRupees >= 0 ? '+' : ''}₹${selectedAssetModal.gainRupees.toLocaleString('en-IN', { minimumFractionDigits: 2 })} (${selectedAssetModal.gainRupees >= 0 ? '+' : ''}${selectedAssetModal.gainPercentage}%)`}
-                  </span>
-                </div>
-
-                <div className="pt-1 w-full flex justify-center overflow-hidden">
-                  <MiniLineChart
-                    series={selectedAssetModal.weekSeries}
-                    width={360}
-                    height={50}
-                    interactive={true}
-                    className="w-full max-w-full"
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* Financial Intelligence Grid */}
+            {/* Plain English Metrics Grid */}
             <div className="grid grid-cols-2 gap-3 font-mono text-xs">
               <div className="p-3.5 rounded-2xl border" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
-                <span className="text-[10px] font-sans block" style={{ color: colors.textTertiary }}>Current Spot Price</span>
+                <span className="text-[10px] font-sans block" style={{ color: colors.textTertiary }}>Current Market Price</span>
                 <strong className="text-sm block mt-0.5" style={{ color: colors.textPrimary }}>
                   ₹{Math.round(selectedAssetModal.priceInr).toLocaleString('en-IN')}
                 </strong>
@@ -1316,27 +1057,27 @@ export const DashboardScreen: React.FC = () => {
               </div>
 
               <div className="p-3.5 rounded-2xl border" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
-                <span className="text-[10px] font-sans block" style={{ color: colors.textTertiary }}>Total Invested Basis</span>
+                <span className="text-[10px] font-sans block" style={{ color: colors.textTertiary }}>Total You Invested</span>
                 <strong className="text-sm block mt-0.5" style={{ color: colors.textPrimary }}>
                   ₹{selectedAssetModal.investedInr.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </strong>
                 <span className="text-[10px]" style={{ color: colors.textTertiary }}>
-                  From UPI AutoPay
+                  From Daily Auto-Saving
                 </span>
               </div>
 
               <div className="p-3.5 rounded-2xl border" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
-                <span className="text-[10px] font-sans block" style={{ color: colors.textTertiary }}>Average Buy Price</span>
+                <span className="text-[10px] font-sans block" style={{ color: colors.textTertiary }}>Average Price Paid</span>
                 <strong className="text-sm block mt-0.5" style={{ color: colors.textPrimary }}>
                   ₹{Math.round(selectedAssetModal.avgBuyPriceInr).toLocaleString('en-IN')}
                 </strong>
                 <span className="text-[10px]" style={{ color: colors.textTertiary }}>
-                  DCA Rupee-Cost Avg
+                  Daily Averaging Price
                 </span>
               </div>
 
               <div className="p-3.5 rounded-2xl border" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
-                <span className="text-[10px] font-sans block" style={{ color: colors.textTertiary }}>Net Returns (P&L)</span>
+                <span className="text-[10px] font-sans block" style={{ color: colors.textTertiary }}>Total Profit / Loss</span>
                 <strong
                   className="text-sm block mt-0.5"
                   style={{ color: selectedAssetModal.gainRupees >= 0 ? colors.semanticSuccess : colors.semanticDanger }}
@@ -1352,57 +1093,42 @@ export const DashboardScreen: React.FC = () => {
               </div>
             </div>
 
-            {/* Custody, Settlement & Tax Compliance Card */}
-            <div className="p-4 rounded-2xl border text-xs space-y-2.5 font-mono" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
-              <div className="flex items-center gap-2 pb-2 border-b font-sans font-bold" style={{ borderColor: colors.borderDim, color: colors.textPrimary }}>
+            {/* Safety & Bank Withdrawal Info */}
+            <div className="p-4 rounded-2xl border text-xs space-y-2 font-sans" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+              <div className="flex items-center gap-2 font-bold" style={{ color: colors.textPrimary }}>
                 <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                <span>Custody & Settlement Protocol</span>
+                <span>Safety & Bank Access Guarantee</span>
               </div>
-
-              <div className="flex justify-between items-center text-[11px]">
-                <span style={{ color: colors.textSecondary }}>Basket Source:</span>
-                <span className="font-bold" style={{ color: colors.accent }}>{selectedAssetModal.meta.basketName}</span>
-              </div>
-
-              <div className="flex justify-between items-center text-[11px]">
-                <span style={{ color: colors.textSecondary }}>Custody Architecture:</span>
-                <span className="text-emerald-400 font-bold">Institutional Custody (FIU-IND Compliant)</span>
-              </div>
-
-              <div className="flex justify-between items-center text-[11px]">
-                <span style={{ color: colors.textSecondary }}>Execution Protocol:</span>
-                <span style={{ color: colors.textPrimary }}>Direct Spot Batch Engine (09:00 AM)</span>
-              </div>
-
-              <div className="flex justify-between items-center text-[11px]">
-                <span style={{ color: colors.textSecondary }}>Order Liquidity:</span>
-                <span style={{ color: colors.accent }}>Instant 24/7 Liquidity / Zero Lock-in</span>
-              </div>
+              <p className="text-[11px] leading-relaxed" style={{ color: colors.textSecondary }}>
+                Registered with FIU-IND (Govt. of India). Your coins are bought automatically at 9:00 AM daily and stored in your name. You can withdraw directly back to your bank account anytime.
+              </p>
             </div>
 
             {/* Action CTAs */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
               <button
+                type="button"
                 onClick={() => {
                   setSelectedAssetModal(null);
                   setActiveTab('invest');
                 }}
-                className="py-3.5 px-4 rounded-2xl font-bold text-xs shadow-md transition-opacity hover:opacity-90 flex items-center justify-center gap-1.5"
+                className="py-3 px-4 rounded-xl font-bold text-xs shadow-xs transition-opacity hover:opacity-90 flex items-center justify-center gap-1.5"
                 style={{ backgroundColor: colors.primary, color: colors.primaryText }}
               >
-                <span>Adjust Daily SIP in Invest</span>
+                <span>Change Daily Amount</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
 
               <button
+                type="button"
                 onClick={() => {
                   setSelectedAssetModal(null);
                   setWithdrawOpen(true);
                 }}
-                className="py-3.5 px-4 rounded-2xl font-bold text-xs border transition-opacity hover:opacity-90 flex items-center justify-center gap-1.5"
+                className="py-3 px-4 rounded-xl font-bold text-xs border transition-opacity hover:opacity-90 flex items-center justify-center gap-1.5"
                 style={{ backgroundColor: colors.surface, borderColor: colors.borderDim, color: colors.textPrimary }}
               >
-                <span>Instant Bank Payout</span>
+                <span>Withdraw to Bank</span>
                 <ArrowUpRight className="w-3.5 h-3.5" />
               </button>
             </div>

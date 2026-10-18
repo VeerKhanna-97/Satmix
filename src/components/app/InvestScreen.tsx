@@ -87,10 +87,10 @@ export const InvestScreen: React.FC = () => {
       {/* Header */}
       <div>
         <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight" style={{ color: colors.textPrimary }}>
-          Configure Daily AutoPay Habit
+          Set Your Daily Savings Habit
         </h1>
         <p className="text-xs sm:text-sm mt-1.5" style={{ color: colors.textSecondary }}>
-          Set your automated daily habit into <strong>{activeBasket.name}</strong>. Executed daily via secure UPI AutoPay.
+          Automate small daily savings into <strong>{activeBasket.name}</strong>. Deposited automatically every morning at 9:00 AM via UPI.
         </p>
       </div>
 
@@ -104,7 +104,7 @@ export const InvestScreen: React.FC = () => {
           {/* Strategy Switcher */}
           <div>
             <span className="text-xs font-bold uppercase tracking-wider block mb-2" style={{ color: colors.textTertiary }}>
-              1. Select Basket
+              1. Choose Your Mix
             </span>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {BASKETS.map((b) => {
@@ -143,7 +143,7 @@ export const InvestScreen: React.FC = () => {
           <div>
             <div className="flex items-center justify-between mb-3">
               <span className="text-xs font-bold uppercase tracking-wider block" style={{ color: colors.textTertiary }}>
-                2. Daily Investment Amount (Min: ₹{activeBasket.minDailyAmount})
+                2. How much do you want to save each day? (Min: ₹{activeBasket.minDailyAmount})
               </span>
               <span className="text-3xl font-extrabold font-mono" style={{ color: colors.textPrimary }}>
                 ₹{dailyAmount}<span className="text-xs font-normal" style={{ color: colors.textTertiary }}>/day</span>
@@ -191,7 +191,7 @@ export const InvestScreen: React.FC = () => {
           {/* Multi-Year Horizon Switcher */}
           <div>
             <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-bold uppercase tracking-wider block" style={{ color: colors.textTertiary }}>3. Investment Horizon</span>
+              <span className="text-xs font-bold uppercase tracking-wider block" style={{ color: colors.textTertiary }}>3. How long will you let it grow?</span>
               <span className="text-xs font-mono font-bold" style={{ color: colors.accent }}>{horizon.years * 365} Days of Compounding</span>
             </div>
 
@@ -219,7 +219,7 @@ export const InvestScreen: React.FC = () => {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <span className="text-[11px] font-bold uppercase tracking-wider block" style={{ color: colors.textTertiary }}>
-                  Projected Future Wealth ({horizon.label})
+                  What Your Savings Could Become ({horizon.label})
                 </span>
                 <div className="text-3xl sm:text-4xl font-extrabold font-mono mt-1" style={{ color: colors.textPrimary }}>
                   <CountUp to={projection.futureValue} prefix="₹" duration={1.2} />
@@ -228,14 +228,14 @@ export const InvestScreen: React.FC = () => {
 
               <div className="flex items-center gap-4 text-xs font-mono">
                 <div>
-                  <span className="block text-[11px]" style={{ color: colors.textTertiary }}>Total Outlay</span>
+                  <span className="block text-[11px]" style={{ color: colors.textTertiary }}>Total You Save</span>
                   <span className="font-bold" style={{ color: colors.textPrimary }}>
                     <CountUp to={projection.totalInvested} prefix="₹" duration={1.2} />
                   </span>
                 </div>
                 <div className="w-px h-8" style={{ backgroundColor: colors.borderDim }} />
                 <div>
-                  <span className="block text-[11px]" style={{ color: colors.semanticSuccess }}>Est. Wealth Gain</span>
+                  <span className="block text-[11px]" style={{ color: colors.semanticSuccess }}>Estimated Profit</span>
                   <span className="font-bold" style={{ color: colors.semanticSuccess }}>
                     <CountUp to={projection.totalGains} prefix="+₹" duration={1.2} />
                   </span>
@@ -272,8 +272,8 @@ export const InvestScreen: React.FC = () => {
                       <CheckCircle2 className="w-5 h-5" />
                     </div>
                     <div>
-                      <div className="font-bold" style={{ color: colors.textPrimary }}>Daily {activeBasket.name} Habit is ACTIVE</div>
-                      <div className="font-mono text-[11px]" style={{ color: colors.textSecondary }}>₹{currentHabit.dailyAmount}/day · Next fill: Tomorrow 09:00 AM</div>
+                      <div className="font-bold" style={{ color: colors.textPrimary }}>Daily {activeBasket.name} Habit is Active</div>
+                      <div className="font-mono text-[11px]" style={{ color: colors.textSecondary }}>₹{currentHabit.dailyAmount}/day · Next auto-deposit: Tomorrow at 9:00 AM</div>
                     </div>
                   </div>
 
@@ -295,7 +295,7 @@ export const InvestScreen: React.FC = () => {
                   className="w-full h-12 px-6 rounded-xl font-bold text-xs tracking-wide shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] flex items-center justify-center gap-2 transition-all hover:brightness-105 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                   style={{ backgroundColor: colors.primary, color: colors.primaryText }}
                 >
-                  <span>Update Habit Rate to ₹{dailyAmount}/day</span>
+                  <span>Save Changes (₹{dailyAmount}/day)</span>
                   <ArrowRight className="w-4 h-4 flex-shrink-0" />
                 </button>
               </div>
@@ -306,24 +306,24 @@ export const InvestScreen: React.FC = () => {
                 style={{ backgroundColor: colors.primary, color: colors.primaryText }}
               >
                 <Zap className="w-4 h-4 fill-current flex-shrink-0" />
-                <span>Activate Daily Habit (₹{dailyAmount}/day in {activeBasket.name})</span>
+                <span>Start Daily Auto-Saving (₹{dailyAmount}/day)</span>
               </button>
             )}
 
-            {/* Auto-Renewal Terms Notice (ROSCA & RBI Recurring Mandate compliant) */}
+            {/* Auto-Saving Peace of Mind Notice */}
             <div className="p-3.5 rounded-xl border text-[11px] space-y-1" style={{ backgroundColor: 'rgba(93, 23, 235, 0.04)', borderColor: colors.borderDim }}>
               <div className="flex items-center justify-between text-xs font-bold" style={{ color: colors.textPrimary }}>
-                <span>Auto-Renewal Terms</span>
+                <span>Peace of Mind Guarantee</span>
                 <span className="font-mono text-emerald-400">₹{dailyAmount}/day</span>
               </div>
               <p className="leading-relaxed" style={{ color: colors.textSecondary }}>
-                Auto-renews daily at 08:00 AM IST via NPCI UPI AutoPay. Continuous recurring micro-investment with zero lock-in commitment. You can pause, modify the daily rate, or cancel anytime with 1 tap in Profile settings or your bank UPI app with ₹0 cancellation fee.
+                Money is deposited daily via UPI AutoPay. Zero lock-in period. You can pause, adjust your daily amount, or withdraw back to your bank account anytime with zero penalty.
               </p>
             </div>
 
             <div className="flex items-center justify-center gap-1.5 text-[11px]" style={{ color: colors.textTertiary }}>
               <Shield className="w-3.5 h-3.5" style={{ color: colors.accent }} />
-              <span>UPI AutoPay at launch · Non-custodial spot execution · Cancel anytime.</span>
+              <span>Registered with FIU-IND (Govt. of India) · Cancel or pause anytime.</span>
             </div>
           </div>
         </SpotlightCard>

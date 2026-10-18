@@ -25,10 +25,10 @@ export const BasketsScreen: React.FC = () => {
       {/* Page Header */}
       <div>
         <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight" style={{ color: colors.textPrimary }}>
-          Curated Investment Baskets
+          Curated Coin Mixes
         </h1>
         <p className="text-xs sm:text-sm mt-1.5" style={{ color: colors.textSecondary }}>
-          Run one or both baskets concurrently with independent daily micro-AutoPay allocations. Executed daily at 9:00 AM with institutional-grade custody.
+          Choose a mix tailored to your style. Your daily savings are bought automatically at 9:00 AM every morning and held safely in your account.
         </p>
       </div>
 
@@ -130,7 +130,7 @@ export const BasketsScreen: React.FC = () => {
                   {/* Asset Distribution */}
                   <div className="space-y-3 mb-6">
                     <span className="text-[11px] font-bold uppercase tracking-wider block" style={{ color: colors.textTertiary }}>
-                      Target Asset Allocation
+                      How This Mix is Split
                     </span>
                     {basket.allocation.map((item) => (
                       <div key={item.ticker} className="space-y-1">
@@ -173,7 +173,7 @@ export const BasketsScreen: React.FC = () => {
                       border: `1px solid ${isSelected ? 'transparent' : colors.cardBorder}`,
                     }}
                   >
-                    <span>{isConfigured ? `Adjust ${basket.name} (₹${habitStatus.dailyAmount}/day)` : `Set Up Daily AutoPay (from ₹${basket.minDailyAmount})`}</span>
+                    <span>{isConfigured ? `Adjust ${basket.name} (₹${habitStatus.dailyAmount}/day)` : `Set Up Daily Habit (from ₹${basket.minDailyAmount}/day)`}</span>
                     <ArrowRight className="w-3.5 h-3.5 flex-shrink-0" />
                   </button>
                 </div>

@@ -21,67 +21,67 @@ interface QuizQuestion {
 
 const QUIZ_QUESTIONS: QuizQuestion[] = [
   {
-    stepText: 'Question 1 of 3 · Market Volatility',
+    stepText: 'Step 1 of 3 · Your Comfort',
     title: 'How do price ups and downs feel to you?',
     prompt: 'Price volatility comfort',
     options: [
       {
-        title: 'Prefer small moves',
-        subtitle: 'I prefer USD-pegged stability (USDT) with modest Bitcoin upside to beat inflation without market anxiety.',
+        title: 'Keep it steady & safe',
+        subtitle: 'I want peace of mind. Protect my savings from big drops, even if growth is slower.',
         points: 0,
       },
       {
-        title: 'Some movement fine',
-        subtitle: 'Moderate price swings are acceptable as long as my principal is well-balanced over time.',
+        title: 'A balanced mix',
+        subtitle: 'Normal market ups and downs are fine as long as my money grows over time.',
         points: 1,
       },
       {
-        title: 'Bigger swings okay',
-        subtitle: 'I welcome market dips as automated buying discounts for higher long-term compounding upside.',
+        title: 'Higher long-term growth',
+        subtitle: 'I welcome price dips as opportunities to get more coins for less money.',
         points: 2,
       },
     ],
   },
   {
-    stepText: 'Question 2 of 3 · Experience Level',
+    stepText: 'Step 2 of 3 · Your Experience',
     title: 'How much do you know about crypto?',
     prompt: 'Crypto domain knowledge',
     options: [
       {
-        title: "I'm new",
-        subtitle: 'First time entering digital assets. I want an automated, transparent, and ultra-simple entry point.',
+        title: "I'm completely new",
+        subtitle: 'First time saving in crypto. Keep it automated, simple, and transparent.',
         points: 0,
       },
       {
-        title: 'Basics',
-        subtitle: 'I know how Bitcoin and digital dollars work and want a systematic daily accumulation habit.',
+        title: 'I know the basics',
+        subtitle: 'I know what Bitcoin is and want a disciplined daily habit on autopilot.',
         points: 1,
       },
       {
-        title: 'Followed a while',
-        subtitle: 'I understand Bitcoin, Ethereum, and Solana mechanics and want multi-year halving cycle exposure.',
+        title: 'I follow the market',
+        subtitle: 'I understand Bitcoin and Ethereum and want long-term compounding upside.',
         points: 2,
       },
     ],
   },
   {
-    stepText: 'Question 3 of 3 · Goal Alignment',
-    title: 'What do you want from Satmix?',
+    stepText: 'Step 3 of 3 · Your Goal',
+    title: 'What is your main goal with Satmix?',
     prompt: 'Primary Satmix goal',
     options: [
       {
-        title: 'Stable way to start',
-        subtitle: 'A stress-free digital dollar reserve (85% USDT) with a modest Bitcoin kicker (15% BTC).',
+        title: 'Steady savings (Like a piggy bank)',
+        subtitle: 'Mostly steady Digital Dollars with a touch of Bitcoin for safety.',
         points: 0,
       },
       {
-        title: 'Simple daily habit',
-        subtitle: 'Set-and-forget daily UPI micro-savings starting at ₹10–₹30/day without manual intervention.',
+        title: 'Effortless daily habit',
+        subtitle: 'Set aside ₹10 to ₹50 every morning automatically without thinking about it.',
         points: 1,
       },
       {
-        title: 'More crypto over time',
-        subtitle: 'Maximized long-term accumulation across the top 3 high-conviction assets (BTC, ETH, SOL).',
+        title: 'Build long-term wealth',
+        subtitle: 'Accumulate the strongest coins (Bitcoin, Ethereum, Solana) for future growth.',
         points: 2,
       },
     ],
@@ -257,7 +257,7 @@ export const RiskQuiz: React.FC = () => {
           className="w-full h-12 px-6 rounded-xl font-bold text-sm shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] transition-all hover:brightness-105 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none disabled:active:scale-100 flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
           style={{ backgroundColor: colors.primary, color: colors.primaryText }}
         >
-          <span>{currentStep === QUIZ_QUESTIONS.length - 1 ? 'Calculate Basket Fit' : 'Next Question'}</span>
+          <span>{currentStep === QUIZ_QUESTIONS.length - 1 ? 'Find My Mix' : 'Next Step'}</span>
           <ArrowRight className="w-4 h-4 flex-shrink-0" />
         </button>
       </div>
