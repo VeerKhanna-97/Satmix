@@ -1,19 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Shield,
   ArrowRight,
   CheckCircle2,
   User,
   Mail,
   Phone,
-  ShieldCheck,
   MessageSquare,
-  Sparkles,
   Info,
   BarChart2,
   Lock,
   Clock,
-  Compass,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { initReferralCapture, getStoredReferralCode } from '../../utils/referral';
@@ -149,7 +145,7 @@ export const WaitlistSection: React.FC = () => {
             style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
           >
             {/* ── TOP SEGMENTED TAB SWITCHER ── */}
-            <div className="flex items-center justify-between flex-wrap gap-3 pb-5 mb-6 border-b" style={{ borderColor: colors.borderDim }}>
+            <div className="flex items-center pb-5 mb-6 border-b" style={{ borderColor: colors.borderDim }}>
               <div
                 className="inline-flex items-center p-1 rounded-2xl border"
                 style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}
@@ -198,24 +194,6 @@ export const WaitlistSection: React.FC = () => {
                   <BarChart2 className="w-4 h-4 flex-shrink-0" />
                   <span>Baskets</span>
                 </button>
-              </div>
-
-              {/* Status Indicator Badges on Desktop */}
-              <div className="hidden sm:flex items-center gap-2">
-                <span
-                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border text-[11px] font-mono font-bold tracking-wider uppercase shadow-xs"
-                  style={{ backgroundColor: colors.surface, borderColor: colors.borderDim, color: colors.accent }}
-                >
-                  <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Alpha V1</span>
-                </span>
-                <span
-                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full border text-[11px] font-mono font-semibold"
-                  style={{ backgroundColor: colors.surface, borderColor: colors.borderDim, color: colors.textSecondary }}
-                >
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>FIU-IND Registered</span>
-                </span>
               </div>
             </div>
 
