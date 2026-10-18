@@ -9,6 +9,7 @@ import { CalculatorSection } from './components/marketing/CalculatorSection';
 import { BasketsSection } from './components/marketing/BasketsSection';
 import { AboutSection } from './components/marketing/AboutSection';
 import { FaqSection } from './components/marketing/FaqSection';
+import { WaitlistSection } from './components/marketing/WaitlistSection';
 import { Footer } from './components/marketing/Footer';
 import { FloatingActionDock } from './components/marketing/FloatingActionDock';
 import { AuthModal } from './components/auth/AuthModal';
@@ -44,6 +45,7 @@ export function AppContent() {
               <BasketsSection />
               <AboutSection />
               <FaqSection />
+              <WaitlistSection />
             </main>
             <Footer />
             <FloatingActionDock />

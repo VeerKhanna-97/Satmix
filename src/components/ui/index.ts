@@ -14,3 +14,4 @@ export { Tilt3DCard } from './Tilt3DCard';
 export type { Tilt3DCardProps } from './Tilt3DCard';
 export { Crypto3DToken } from './Crypto3DToken';
 export type { Crypto3DTokenProps, CryptoSymbol } from './Crypto3DToken';
+export { Phone3DModel } from './Phone3DModel';
