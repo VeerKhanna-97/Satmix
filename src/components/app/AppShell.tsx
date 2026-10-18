@@ -124,10 +124,24 @@ export const AppShell: React.FC = () => {
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, y: 18, scaleX: 0.98, scaleY: 1.03 }}
+            animate={{
+              opacity: 1,
+              y: 0,
+              scaleX: 1,
+              scaleY: 1,
+              transition: {
+                duration: 0.38,
+                ease: [0.34, 1.35, 0.64, 1], // Non-linear elastic curve
+              },
+            }}
+            exit={{
+              opacity: 0,
+              y: -10,
+              scaleX: 0.98,
+              scaleY: 0.98,
+              transition: { duration: 0.16, ease: [0.32, 0, 0.67, 0] },
+            }}
           >
             {activeTab === 'dashboard' && <DashboardScreen />}
             {activeTab === 'baskets' && <BasketsScreen />}

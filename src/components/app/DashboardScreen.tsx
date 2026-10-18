@@ -645,11 +645,12 @@ export const DashboardScreen: React.FC = () => {
       </FadeIn>
 
       {/* ── CRYPTO ASSETS & WALLET HOLDINGS (EXPANDABLE ACCORDION) ─ */}
-      <SpotlightCard
-        spotlightColor={colors.accentTint}
-        className="rounded-3xl p-5 sm:p-7 border shadow-lg transition-all duration-300"
-        style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
-      >
+      <FadeIn delay={0.1}>
+        <SpotlightCard
+          spotlightColor={colors.accentTint}
+          className="rounded-3xl p-5 sm:p-7 border shadow-lg transition-all duration-300"
+          style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
+        >
         {/* Interactive Expandable Header */}
         <div
           onClick={() => setHoldingsExpanded((prev) => !prev)}
@@ -1004,6 +1005,7 @@ export const DashboardScreen: React.FC = () => {
           )}
         </AnimatePresence>
       </SpotlightCard>
+    </FadeIn>
 
       {/* ── DUAL HABITS / AUTOPAY STATUS ROW ─────────────────── */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
