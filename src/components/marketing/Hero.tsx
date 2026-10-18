@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Shield, ArrowRight, CheckCircle2, Rocket, User, Mail, Phone, Layers, Info, BarChart2, Loader2, MessageSquare } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { initReferralCapture, getStoredReferralCode } from '../../utils/referral';
-import { SpotlightCard, BlurText, Magnet, FadeIn, CountUp, WordRotator, Tilt3DCard, Crypto3DToken } from '../ui';
+import { SpotlightCard, BlurText, Magnet, FadeIn, CountUp, WordRotator, Tilt3DCard } from '../ui';
 import { BasketCurrencyIcons } from '../common/BasketCurrencyIcons';
 import { getAssetBarColor } from '../../theme/colors';
 
@@ -238,32 +238,11 @@ export const Hero: React.FC = () => {
                 </a>
               </div>
 
-              {/* Interactive 3D Crypto Asset Pill */}
-              <div className="flex items-center gap-3 pt-3 justify-center lg:justify-start">
-                <div
-                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border shadow-xs backdrop-blur-md transition-all hover:border-white/20"
-                  style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}
-                >
-                  <span className="text-[11px] font-mono font-medium uppercase tracking-wider opacity-60" style={{ color: colors.textSecondary }}>
-                    Auto-DCA Assets
-                  </span>
-                  <div className="flex items-center -space-x-1 hover:space-x-1 transition-all duration-200">
-                    <Crypto3DToken symbol="BTC" size={26} />
-                    <Crypto3DToken symbol="ETH" size={26} />
-                    <Crypto3DToken symbol="SOL" size={26} />
-                  </div>
-                </div>
-              </div>
             </FadeIn>
           </div>
 
           {/* Right Column: Interactive 3-Tab Slide Deck with 3D Tilt */}
           <div className="lg:col-span-5 relative">
-            {/* Ambient Floating 3D Coin Badge */}
-            <div className="absolute -top-5 -right-4 z-20 hidden md:block animate-float-3d pointer-events-auto">
-              <Crypto3DToken symbol="BTC" size={54} />
-            </div>
-
             <Tilt3DCard
               maxRotation={8}
               perspective={1100}

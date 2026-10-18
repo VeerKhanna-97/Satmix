@@ -85,7 +85,7 @@ export const Footer: React.FC = () => {
               Disclaimer: Digital assets and cryptocurrencies are volatile and subject to market risk. Satmix facilitates automated spot order execution with institutional custodial partners, and is not a SEBI-registered investment adviser or portfolio manager. Past performance does not guarantee future results.
             </p>
             <p className="text-[10px]" style={{ color: colors.textTertiary }}>
-              Registered Office: Satmix Technologies Pvt. Ltd., #44, Hosur Road, Koramangala / Dairy Circle, Bengaluru, Karnataka 560029, India.
+              Registered Office: Satmix, #44, Hosur Road, Koramangala / Dairy Circle, Bengaluru, Karnataka 560029, India.
             </p>
           </div>
 

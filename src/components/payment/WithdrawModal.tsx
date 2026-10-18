@@ -12,6 +12,9 @@ import {
   FileCheck,
   ChevronUp,
   ChevronDown,
+  Smartphone,
+  Copy,
+  Check,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { Transaction } from '../../types';
@@ -62,6 +65,19 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
   const [errorMsg, setErrorMsg] = useState<string>('');
   const [processingStatus, setProcessingStatus] = useState<string>('Initiating IMPS Rail...');
   const [completedTx, setCompletedTx] = useState<Transaction | null>(null);
+  const [copiedSms, setCopiedSms] = useState<boolean>(false);
+  const [showPushBanner, setShowPushBanner] = useState<boolean>(false);
+
+  // Trigger floating in-browser push notification popup when IMPS settlement succeeds
+  useEffect(() => {
+    if (step === 'SUCCESS') {
+      setShowPushBanner(true);
+      const timer = setTimeout(() => setShowPushBanner(false), 9000);
+      return () => clearTimeout(timer);
+    } else {
+      setShowPushBanner(false);
+    }
+  }, [step]);
 
   // Compute live valuations for each basket
   const stableVal = useMemo(() => {
@@ -436,6 +452,7 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
     setPin('');
     setErrorMsg('');
     setCompletedTx(null);
+    setShowPushBanner(false);
     onClose();
   };
 
@@ -948,6 +965,51 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
               </div>
             </div>
 
+            {/* ── SIMULATED INCOMING BANK SMS PUSH NOTIFICATION ── */}
+            <div
+              className="p-3.5 rounded-2xl border text-left space-y-2 relative overflow-hidden transition-all shadow-md font-sans"
+              style={{ backgroundColor: '#090b10', borderColor: 'rgba(255, 255, 255, 0.12)' }}
+            >
+              <div className="flex items-center justify-between border-b border-white/5 pb-1.5">
+                <div className="flex items-center gap-1.5 text-xs font-bold text-white">
+                  <Smartphone className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Incoming Bank SMS (Instant Credit)</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const utr = completedTx?.utrNumber || `50${Date.now().toString().slice(-8)}`;
+                    const dateStr = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+                    const sms = `Dear Customer, your A/c ${user?.bankAccountMasked || '•••• 4129'} has been CREDITED with Rs.${netPayout.toLocaleString('en-IN')}.00 on ${dateStr} via IMPS from SATMIX. Ref: SATMIX-IMPS-${utr}. Net Received: 100% (Zero Deductions). - ${user?.bankName || 'HDFC Bank'}`;
+                    navigator.clipboard.writeText(sms);
+                    setCopiedSms(true);
+                    setTimeout(() => setCopiedSms(false), 2000);
+                  }}
+                  className="text-[10px] font-mono hover:underline flex items-center gap-1"
+                  style={{ color: colors.accent }}
+                >
+                  {copiedSms ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                  <span>{copiedSms ? 'Copied' : 'Copy SMS'}</span>
+                </button>
+              </div>
+
+              <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/5 text-[11px] text-gray-200 leading-relaxed font-mono">
+                <p>
+                  Dear Customer, your A/c {user?.bankAccountMasked || '•••• 4129'} has been <strong className="text-emerald-400">CREDITED</strong> with <strong className="text-white">Rs.{netPayout.toLocaleString('en-IN')}.00</strong> on {new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })} via IMPS from <strong className="text-amber-300">SATMIX</strong>.
+                </p>
+                <p className="text-[10px] text-gray-400 mt-1">
+                  Ref No: SATMIX-IMPS-{completedTx?.utrNumber || `50${Date.now().toString().slice(-8)}`}. Net Received: 100% (Zero Deductions).
+                </p>
+              </div>
+
+              <div className="flex items-center justify-between text-[10px] text-emerald-400 font-mono">
+                <span className="flex items-center gap-1 font-bold">
+                  <ShieldCheck className="w-3 h-3" /> Payer: SATMIX
+                </span>
+                <span className="text-gray-400">Zero TDS · Zero Fees</span>
+              </div>
+            </div>
+
             {/* Navigation CTAs */}
             <div className="space-y-2 pt-1">
               <button
@@ -973,6 +1035,50 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose })
           </div>
         )}
       </div>
+
+      {/* ── FLOATING IN-BROWSER PUSH NOTIFICATION POP-UP (TOP OF SCREEN) ── */}
+      {showPushBanner && (
+        <div className="fixed top-4 sm:top-6 left-1/2 -translate-x-1/2 z-[10001] w-[94vw] max-w-md pointer-events-auto animate-bounce-in font-sans">
+          <div
+            className="p-3.5 sm:p-4 rounded-2xl border shadow-[0_16px_48px_rgba(0,0,0,0.7)] backdrop-blur-2xl flex items-start gap-3 text-left relative overflow-hidden"
+            style={{ backgroundColor: 'rgba(13, 16, 24, 0.96)', borderColor: 'rgba(255, 255, 255, 0.16)' }}
+          >
+            {/* Top accent indicator strip */}
+            <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-500 via-emerald-400 to-amber-400" />
+
+            <div className="w-8 h-8 rounded-xl bg-blue-500/15 border border-blue-500/30 flex items-center justify-center text-blue-400 shrink-0 mt-0.5">
+              <Building2 className="w-4 h-4" />
+            </div>
+
+            <div className="flex-1 min-w-0 pr-2">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-white tracking-wide flex items-center gap-1.5">
+                  <span>{user?.bankName || 'HDFC Bank'}</span>
+                  <span className="text-[10px] text-gray-400 font-normal font-mono">• SMS Alert</span>
+                </span>
+                <span className="text-[10px] text-gray-400 font-mono">Just now</span>
+              </div>
+              <p className="text-xs text-gray-200 mt-1 leading-snug font-mono">
+                Rs.{netPayout.toLocaleString('en-IN')}.00 credited to A/c {user?.bankAccountMasked || '•••• 4129'} on {new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })} via IMPS from <strong className="text-amber-300 font-bold">SATMIX</strong>.
+              </p>
+              <div className="flex items-center gap-2 mt-1.5 text-[10px] text-emerald-400 font-semibold font-mono">
+                <CheckCircle2 className="w-3 h-3" />
+                <span>Ref: SATMIX-IMPS-{completedTx?.utrNumber || `50${Date.now().toString().slice(-8)}`}</span>
+                <span className="text-gray-400">· Zero Deductions</span>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setShowPushBanner(false)}
+              className="p-1 rounded-lg hover:bg-white/10 text-gray-400 hover:text-white transition-colors"
+              aria-label="Dismiss Notification"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>,
     document.body
   );

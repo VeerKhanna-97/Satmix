@@ -243,7 +243,7 @@ export const UnsubscribePage: React.FC = () => {
           <span>CAN-SPAM Act (15 U.S.C. 7704) & DPDP Act 2023 Compliance</span>
         </div>
         <p className="max-w-xl mx-auto leading-relaxed text-[11px]">
-          <strong>Registered Office:</strong> Satmix Technologies Private Limited, #44, Hosur Road, Koramangala / Dairy Circle, Bengaluru, Karnataka 560029, India.
+          <strong>Registered Office:</strong> Satmix, #44, Hosur Road, Koramangala / Dairy Circle, Bengaluru, Karnataka 560029, India.
         </p>
         <p className="text-[10px]">
           For privacy inquiries or grievance redressal, contact our Data Protection Officer at <a href="mailto:privacy@satmix.in" className="underline hover:text-white">privacy@satmix.in</a>.
