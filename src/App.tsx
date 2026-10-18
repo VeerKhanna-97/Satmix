@@ -40,12 +40,12 @@ export function AppContent() {
             <main>
               <Hero />
               <TrustStrip />
+              <WaitlistSection />
               <StepsSection />
               <CalculatorSection />
               <BasketsSection />
               <AboutSection />
               <FaqSection />
-              <WaitlistSection />
             </main>
             <Footer />
             <FloatingActionDock />
