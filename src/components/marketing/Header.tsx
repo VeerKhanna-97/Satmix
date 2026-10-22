@@ -35,10 +35,12 @@ export const Header: React.FC = () => {
     const handleScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
-          setIsScrolled(window.scrollY > 20);
+          const y = window.scrollY;
+          // Smooth hysteresis prevents flapping near threshold
+          setIsScrolled(prev => y > (prev ? 15 : 25));
 
           const sections = ['faq-section', 'about-section', 'baskets-section', 'calc-section'];
-          const scrollPos = window.scrollY + 160;
+          const scrollPos = y + 160;
 
           for (const sectionId of sections) {
             const el = document.getElementById(sectionId);
@@ -88,16 +90,16 @@ export const Header: React.FC = () => {
     <>
       <ScrollProgress color={colors.accent} className="!fixed !top-0 !left-0 !right-0 !bottom-auto z-50" />
       <header
-        className={`sticky top-0 z-40 w-full transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] flex flex-col items-center pointer-events-none ${
-          isScrolled ? 'pt-2.5 sm:pt-3.5 px-3 sm:px-6' : 'pt-0 px-0'
+        className={`sticky top-0 z-40 w-full h-16 pointer-events-none flex flex-col items-center justify-center transition-[padding] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          isScrolled ? 'px-3 sm:px-6' : 'px-0'
         }`}
       >
-        {/* Transforming Navbar Capsule / Island */}
+        {/* Transforming Navbar Capsule / Island with Squared-Off Corners */}
         <div
-          className={`pointer-events-auto transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-[max-width,border-radius,box-shadow,height,background-color] flex items-center justify-between relative ${
+          className={`pointer-events-auto transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-[max-width,border-radius,box-shadow,height,background-color] flex items-center justify-between relative ${
             isScrolled
-              ? 'w-full max-w-5xl lg:max-w-6xl h-14 px-3.5 sm:px-5 rounded-2xl sm:rounded-full border backdrop-blur-xl'
-              : 'w-full max-w-full h-16 rounded-none border-b border-t-0 border-x-0 backdrop-blur-md'
+              ? 'w-full max-w-5xl lg:max-w-6xl h-13 sm:h-13.5 px-3.5 sm:px-5 rounded-xl border backdrop-blur-xl'
+              : 'w-full max-w-full h-16 px-4 sm:px-6 lg:px-8 rounded-none border-b border-t-0 border-x-0 backdrop-blur-md'
           }`}
           style={{
             backgroundColor: themeMode === 'dark'
@@ -108,30 +110,30 @@ export const Header: React.FC = () => {
               : colors.borderDim,
             boxShadow: isScrolled
               ? (themeMode === 'dark'
-                  ? '0 16px 36px -10px rgba(0, 0, 0, 0.65), inset 0 1px 0 0 rgba(255, 255, 255, 0.12)'
-                  : '0 12px 30px -10px rgba(0, 0, 0, 0.12), inset 0 1px 0 0 rgba(255, 255, 255, 0.9)')
+                  ? '0 12px 32px -8px rgba(0, 0, 0, 0.6), inset 0 1px 0 0 rgba(255, 255, 255, 0.12)'
+                  : '0 10px 28px -8px rgba(0, 0, 0, 0.12), inset 0 1px 0 0 rgba(255, 255, 255, 0.9)')
               : 'none',
             WebkitBackdropFilter: isScrolled ? 'blur(16px)' : 'blur(10px)',
           }}
         >
           {/* Inner Content Grid */}
           <div
-            className={`w-full h-full flex items-center justify-between transition-all duration-300 ${
-              isScrolled ? 'px-1 sm:px-2' : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'
+            className={`w-full h-full flex items-center justify-between transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+              isScrolled ? 'px-0' : 'max-w-7xl mx-auto'
             }`}
           >
             {/* Brand Logo */}
             <div className="flex items-center gap-2.5 cursor-pointer group" onClick={() => setViewMode('marketing')}>
               <div
-                className={`overflow-hidden shadow-sm flex items-center justify-center border transition-all duration-300 group-hover:scale-105 ${
-                  isScrolled ? 'w-8 h-8 rounded-lg' : 'w-9 h-9 rounded-xl'
+                className={`overflow-hidden shadow-sm flex items-center justify-center border transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105 ${
+                  isScrolled ? 'w-8 h-8 rounded-lg' : 'w-9 h-9 rounded-lg'
                 }`}
                 style={{ borderColor: colors.borderDim }}
               >
                 <img src="/assets/images/satmix-logo.jpg" alt="Satmix Logo" className="w-full h-full object-cover" />
               </div>
               <span
-                className={`font-extrabold tracking-tight transition-all duration-300 ${
+                className={`font-extrabold tracking-tight transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                   isScrolled ? 'text-lg' : 'text-xl'
                 }`}
                 style={{ color: colors.textPrimary }}
@@ -466,28 +468,28 @@ export const Header: React.FC = () => {
         </nav>
 
         {/* Right CTA Actions */}
-        <div className="flex items-center gap-2 sm:gap-3">
-          {/* Theme Toggle */}
+        <div className="flex items-center gap-2 sm:gap-2.5">
+          {/* Theme Toggle (Squared-Off) */}
           <button
             type="button"
             onClick={toggleTheme}
-            className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border transition-[transform,background-color,border-color] duration-150 ease-out hover:bg-white/[0.05] active:scale-[0.98] flex items-center justify-center select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+            className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg border transition-[transform,background-color,border-color] duration-150 ease-out hover:bg-white/[0.05] active:scale-[0.98] flex items-center justify-center select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
             style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textPrimary }}
             aria-label="Toggle Theme"
           >
             {themeMode === 'dark' ? <Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <Moon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
           </button>
 
-          {/* Auth Button */}
+          {/* Auth Button (Squared-Off) */}
           {isAuthenticated ? (
             <button
               type="button"
               onClick={handleLaunchApp}
-              className="inline-flex items-center gap-2 h-8 sm:h-9 px-3.5 rounded-full font-semibold text-xs tracking-wide shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_1px_3px_rgba(0,0,0,0.3)] transition-[transform,background-color,box-shadow] duration-150 ease-out active:scale-[0.98] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+              className="inline-flex items-center gap-2 h-8 sm:h-9 px-3.5 rounded-lg font-semibold text-xs tracking-wide shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_1px_3px_rgba(0,0,0,0.3)] transition-[transform,background-color,box-shadow] duration-150 ease-out active:scale-[0.98] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
               style={{ backgroundColor: colors.primary, color: colors.primaryText }}
             >
               <span>Go to App</span>
-              <span className="w-5 h-5 rounded-full bg-black/10 dark:bg-black/20 flex items-center justify-center text-[10px] font-mono">
+              <span className="w-4.5 h-4.5 rounded-md bg-black/10 dark:bg-black/20 flex items-center justify-center text-[10px] font-mono">
                 {user?.initials || 'VK'}
               </span>
             </button>
@@ -496,7 +498,7 @@ export const Header: React.FC = () => {
               <button
                 type="button"
                 onClick={handleLaunchApp}
-                className="hidden sm:inline-flex items-center justify-center h-8 sm:h-9 px-3.5 rounded-full font-semibold text-xs transition-[transform,background-color,border-color] duration-150 ease-out hover:bg-white/[0.05] hover:border-white/20 active:scale-[0.98] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                className="hidden sm:inline-flex items-center justify-center h-8 sm:h-9 px-3.5 rounded-lg font-semibold text-xs transition-[transform,background-color,border-color] duration-150 ease-out hover:bg-white/[0.05] hover:border-white/20 active:scale-[0.98] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                 style={{ backgroundColor: colors.surface, color: colors.textPrimary, border: `1px solid ${colors.cardBorder}` }}
               >
                 Sign In
@@ -504,7 +506,7 @@ export const Header: React.FC = () => {
               <button
                 type="button"
                 onClick={handleSignUpClick}
-                className="inline-flex items-center justify-center gap-1.5 h-8 sm:h-9 px-4 rounded-full font-semibold text-xs tracking-wide shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_1px_3px_rgba(0,0,0,0.3)] transition-[transform,background-color,box-shadow] duration-150 ease-out active:scale-[0.98] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                className="inline-flex items-center justify-center gap-1.5 h-8 sm:h-9 px-3.5 sm:px-4 rounded-lg font-semibold text-xs tracking-wide shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_1px_3px_rgba(0,0,0,0.3)] transition-[transform,background-color,box-shadow] duration-150 ease-out active:scale-[0.98] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                 style={{ backgroundColor: colors.primary, color: colors.primaryText }}
               >
                 <span>Launch App</span>
@@ -513,11 +515,11 @@ export const Header: React.FC = () => {
             </div>
           )}
 
-          {/* Mobile Menu Toggle */}
+          {/* Mobile Menu Toggle (Squared-Off) */}
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden w-8 h-8 sm:w-9 sm:h-9 rounded-full border flex items-center justify-center transition-[transform,background-color,border-color] duration-150 ease-out hover:bg-white/[0.05] active:scale-[0.98] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+            className="md:hidden w-8 h-8 sm:w-9 sm:h-9 rounded-lg border flex items-center justify-center transition-[transform,background-color,border-color] duration-150 ease-out hover:bg-white/[0.05] active:scale-[0.98] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
             style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textPrimary }}
             aria-label="Toggle navigation menu"
           >
@@ -527,12 +529,12 @@ export const Header: React.FC = () => {
       </div>
     </div>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Drawer (Squared-Off) */}
       {mobileMenuOpen && (
         <div
-          className={`md:hidden border px-4 pt-3 pb-6 space-y-4 max-h-[85vh] overflow-y-auto animate-fade-in pointer-events-auto transition-all duration-300 ${
+          className={`md:hidden border px-4 pt-3 pb-6 space-y-4 max-h-[85vh] overflow-y-auto animate-fade-in pointer-events-auto transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
             isScrolled
-              ? 'w-[calc(100%-1.5rem)] max-w-md mx-auto mt-2 rounded-2xl shadow-2xl backdrop-blur-2xl'
+              ? 'w-[calc(100%-1.5rem)] max-w-md mx-auto mt-2 rounded-xl shadow-2xl backdrop-blur-2xl'
               : 'w-full border-t-0 border-x-0 border-b backdrop-blur-xl'
           }`}
           style={{
