@@ -40,7 +40,7 @@ const ASSET_META: Record<
 > = {
   BTC: {
     label: 'Bitcoin',
-    icon: '/currencies/Bitcoin cursor.png',
+    icon: '/currencies/bitcoin.png',
     tag: 'Store of Value',
     color: '#f7931b',
   },

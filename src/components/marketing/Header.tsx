@@ -114,7 +114,9 @@ export const Header: React.FC = () => {
           >
             <button
               type="button"
-              className="flex items-center gap-1.5 hover:opacity-100 transition-colors py-1 relative group"
+              aria-expanded={activeDropdown === 'features'}
+              onClick={() => setActiveDropdown(prev => prev === 'features' ? null : 'features')}
+              className="flex items-center gap-1.5 hover:opacity-100 transition-colors py-1 relative group cursor-pointer"
               style={{ color: activeDropdown === 'features' ? colors.textPrimary : colors.textSecondary }}
             >
               <span>Features</span>
@@ -258,7 +260,9 @@ export const Header: React.FC = () => {
           >
             <button
               type="button"
-              className="flex items-center gap-1.5 hover:opacity-80 transition-opacity py-2"
+              aria-expanded={activeDropdown === 'resources'}
+              onClick={() => setActiveDropdown(prev => prev === 'resources' ? null : 'resources')}
+              className="flex items-center gap-1.5 hover:opacity-80 transition-opacity py-2 cursor-pointer"
               style={{ color: activeDropdown === 'resources' ? colors.textPrimary : colors.textSecondary }}
             >
               <span>Resources</span>
@@ -334,7 +338,9 @@ export const Header: React.FC = () => {
           >
             <button
               type="button"
-              className="flex items-center gap-1.5 hover:opacity-80 transition-opacity py-2"
+              aria-expanded={activeDropdown === 'about'}
+              onClick={() => setActiveDropdown(prev => prev === 'about' ? null : 'about')}
+              className="flex items-center gap-1.5 hover:opacity-80 transition-opacity py-2 cursor-pointer"
               style={{ color: activeDropdown === 'about' ? colors.textPrimary : colors.textSecondary }}
             >
               <span>About us</span>

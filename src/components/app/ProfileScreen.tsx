@@ -98,7 +98,7 @@ export const ProfileScreen: React.FC = () => {
     return ACHIEVEMENTS.map((a) => {
       let isUnlocked = a.unlocked;
       if (a.id === 'a1') isUnlocked = streakDays >= 7; // Streak Master
-      if (a.id === 'a3') isUnlocked = transactions.some((t) => (t.basketName.toLowerCase().includes('calm') || t.basketName.toLowerCase().includes('safe') || t.basketName.toLowerCase().includes('stable')) && t.status === 'SUCCESS');
+      if (a.id === 'a3') isUnlocked = transactions.some((t) => (t.basketName.toLowerCase().includes('safe') || t.basketName.toLowerCase().includes('stable')) && t.status === 'SUCCESS');
       if (a.id === 'a4') isUnlocked = transactions.some((t) => t.basketName.toLowerCase().includes('growth') && t.status === 'SUCCESS');
       if (a.id === 'a5') isUnlocked = portfolioSummary.totalInvested >= 10000;
       return { ...a, unlocked: isUnlocked };
@@ -345,7 +345,7 @@ export const ProfileScreen: React.FC = () => {
                     bg: 'rgba(247, 147, 27, 0.1)',
                     border: 'rgba(247, 147, 27, 0.25)',
                     formatted: tabMetrics.holdings.BTC.units === 0 ? '0.00 BTC' : `${tabMetrics.holdings.BTC.units.toFixed(8)} BTC`,
-                    icon: '/currencies/Bitcoin cursor.png',
+                    icon: '/currencies/bitcoin.png',
                   },
                   {
                     coin: 'ETH',

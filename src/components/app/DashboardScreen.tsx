@@ -132,7 +132,7 @@ export const DashboardScreen: React.FC = () => {
         color: '#f7931b',
         bg: 'rgba(247, 147, 27, 0.12)',
         border: 'rgba(247, 147, 27, 0.25)',
-        icon: '/currencies/Bitcoin cursor.png',
+        icon: '/currencies/bitcoin.png',
         desc: 'Bitcoin is the foundational digital currency with a strictly capped supply of 21 million units.',
         basketName: 'Growth Mix (70%) & Stable Mix (15%)',
         basketId: 'growth' as const,

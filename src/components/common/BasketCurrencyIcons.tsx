@@ -22,7 +22,7 @@ const CURRENCY_CONFIG = {
     {
       name: 'Bitcoin',
       symbol: 'BTC',
-      src: '/currencies/Bitcoin cursor.png',
+      src: '/currencies/bitcoin.png',
       padding: 'p-0.5',
       bgClass: 'bg-white',
     },
@@ -31,7 +31,7 @@ const CURRENCY_CONFIG = {
     {
       name: 'Bitcoin',
       symbol: 'BTC',
-      src: '/currencies/Bitcoin cursor.png',
+      src: '/currencies/bitcoin.png',
       padding: 'p-0.5',
       bgClass: 'bg-white',
     },

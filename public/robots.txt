@@ -7,11 +7,8 @@ Allow: /privacy
 Allow: /terms
 Allow: /refund
 Allow: /cookies
-Allow: /unsubscribe
-Allow: /about
-Allow: /faq
 
 Disallow: /api/
-Disallow: /app/private/
+Disallow: /unsubscribe
 
 Sitemap: https://satmix.in/sitemap.xml

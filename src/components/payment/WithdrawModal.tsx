@@ -28,7 +28,7 @@ interface WithdrawModalProps {
 type WithdrawStep = 'AMOUNT' | 'PIN_AUTH' | 'PROCESSING' | 'SUCCESS';
 
 const CRYPTO_LOGOS: Record<string, string> = {
-  BTC: '/currencies/Bitcoin cursor.png',
+  BTC: '/currencies/bitcoin.png',
   ETH: '/currencies/ethereum-eth-logo.png',
   SOL: '/currencies/Solana.png',
   USDT: '/currencies/USDT.png',

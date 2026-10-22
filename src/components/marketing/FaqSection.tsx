@@ -35,8 +35,7 @@ export const FaqSection: React.FC = () => {
               <FadeIn key={idx} delay={idx * 0.06} direction="up">
                 <SpotlightCard
                   spotlightColor={colors.purpleTint}
-                  onClick={() => toggle(idx)}
-                  className={`rounded-2xl border transition-all duration-300 cursor-pointer overflow-hidden backdrop-blur-md ${
+                  className={`rounded-2xl border transition-all duration-300 overflow-hidden backdrop-blur-md ${
                     isOpen
                       ? 'shadow-[0_8px_30px_rgba(197,160,89,0.12)]'
                       : 'hover:border-slate-700'
@@ -46,9 +45,13 @@ export const FaqSection: React.FC = () => {
                     borderColor: isOpen ? colors.accent : colors.cardBorder,
                   }}
                 >
-                  {/* Question Header */}
-                  <div
-                    className="w-full p-4 sm:p-6 text-left flex items-center justify-between gap-3 sm:gap-4 font-bold text-sm md:text-base select-none transition-colors"
+                  {/* Accessible Question Header Button */}
+                  <button
+                    type="button"
+                    aria-expanded={isOpen}
+                    aria-controls={`faq-answer-${idx}`}
+                    onClick={() => toggle(idx)}
+                    className="w-full p-4 sm:p-6 text-left flex items-center justify-between gap-3 sm:gap-4 font-bold text-sm md:text-base select-none transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50"
                     style={{ color: isOpen ? colors.textPrimary : colors.textSecondary }}
                   >
                     <span className="flex items-center gap-2.5 sm:gap-3">
@@ -61,7 +64,7 @@ export const FaqSection: React.FC = () => {
                       >
                         <HelpCircle className="w-4 h-4 flex-shrink-0" />
                       </div>
-                      <span className="transition-colors duration-300 text-xs sm:text-base" style={{ color: isOpen ? colors.textPrimary : colors.textSecondary }}>
+                      <span className="transition-colors duration-300 text-xs sm:text-base font-bold" style={{ color: isOpen ? colors.textPrimary : colors.textSecondary }}>
                         {item.question}
                       </span>
                     </span>
@@ -72,13 +75,16 @@ export const FaqSection: React.FC = () => {
                       }`}
                       style={{ color: isOpen ? colors.accent : colors.textTertiary }}
                     />
-                  </div>
+                  </button>
 
                   {/* Smooth Spring Accordion Drawer */}
                   <AnimatePresence initial={false}>
                     {isOpen && (
                       <motion.div
                         key="content"
+                        id={`faq-answer-${idx}`}
+                        role="region"
+                        aria-labelledby={`faq-question-${idx}`}
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: 'auto', opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}

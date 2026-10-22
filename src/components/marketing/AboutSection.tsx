@@ -150,7 +150,7 @@ export const AboutSection: React.FC = () => {
                 style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
               >
                 <div className="w-20 h-20 rounded-full mx-auto overflow-hidden border-2 shadow-md transition-transform duration-300 hover:scale-105" style={{ borderColor: colors.borderAccent }}>
-                  <img src="/assets/images/CEO.jpeg" alt="Sheiden Borges" className="w-full h-full object-cover object-center" />
+                  <img src="/assets/images/CEO.jpeg" alt="Sheiden Borges" width="80" height="80" loading="lazy" decoding="async" className="w-full h-full object-cover object-center" />
                 </div>
                 <div>
                   <h4 className="font-bold text-base" style={{ color: colors.textPrimary }}>Sheiden Borges</h4>
@@ -177,7 +177,7 @@ export const AboutSection: React.FC = () => {
                 style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
               >
                 <div className="w-20 h-20 rounded-full mx-auto overflow-hidden border-2 shadow-md transition-transform duration-300 hover:scale-105" style={{ borderColor: colors.borderAccent }}>
-                  <img src="/assets/images/CTO.jpeg" alt="Veer Khanna" className="w-full h-full object-cover object-center" />
+                  <img src="/assets/images/CTO.jpeg" alt="Veer Khanna" width="80" height="80" loading="lazy" decoding="async" className="w-full h-full object-cover object-center" />
                 </div>
                 <div>
                   <h4 className="font-bold text-base" style={{ color: colors.textPrimary }}>Veer Khanna</h4>
@@ -204,7 +204,7 @@ export const AboutSection: React.FC = () => {
                 style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
               >
                 <div className="w-20 h-20 rounded-full mx-auto overflow-hidden border-2 shadow-md transition-transform duration-300 hover:scale-105" style={{ borderColor: colors.borderAccent }}>
-                  <img src="/assets/images/CFO.jpeg" alt="Shashank Jajodia" className="w-full h-full object-cover object-center" />
+                  <img src="/assets/images/CFO.jpeg" alt="Shashank Jajodia" width="80" height="80" loading="lazy" decoding="async" className="w-full h-full object-cover object-center" />
                 </div>
                 <div>
                   <h4 className="font-bold text-base" style={{ color: colors.textPrimary }}>Shashank Jajodia</h4>

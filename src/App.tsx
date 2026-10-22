@@ -12,18 +12,20 @@ import { FaqSection } from './components/marketing/FaqSection';
 import { WaitlistSection } from './components/marketing/WaitlistSection';
 import { Footer } from './components/marketing/Footer';
 import { FloatingActionDock } from './components/marketing/FloatingActionDock';
-import { AuthModal } from './components/auth/AuthModal';
-import { RiskQuiz } from './components/auth/RiskQuiz';
-import { AppShell } from './components/app/AppShell';
-import { PrivacyPolicyPage } from './components/legal/PrivacyPolicyPage';
-import { TermsConditionsPage } from './components/legal/TermsConditionsPage';
-import { RefundPolicyPage } from './components/legal/RefundPolicyPage';
-import { CookiePolicyPage } from './components/legal/CookiePolicyPage';
-import { UnsubscribePage } from './components/legal/UnsubscribePage';
-import { ThankYouPage } from './components/legal/ThankYouPage';
-import { NotFoundPage } from './components/legal/NotFoundPage';
 import { CookieBanner } from './components/common/CookieBanner';
 import { TesterBar } from './components/tester/TesterBar';
+
+// Lazy-loaded dynamic code-split routes (reduces initial marketing bundle payload)
+const AuthModal = React.lazy(() => import('./components/auth/AuthModal').then(m => ({ default: m.AuthModal })));
+const RiskQuiz = React.lazy(() => import('./components/auth/RiskQuiz').then(m => ({ default: m.RiskQuiz })));
+const AppShell = React.lazy(() => import('./components/app/AppShell').then(m => ({ default: m.AppShell })));
+const PrivacyPolicyPage = React.lazy(() => import('./components/legal/PrivacyPolicyPage').then(m => ({ default: m.PrivacyPolicyPage })));
+const TermsConditionsPage = React.lazy(() => import('./components/legal/TermsConditionsPage').then(m => ({ default: m.TermsConditionsPage })));
+const RefundPolicyPage = React.lazy(() => import('./components/legal/RefundPolicyPage').then(m => ({ default: m.RefundPolicyPage })));
+const CookiePolicyPage = React.lazy(() => import('./components/legal/CookiePolicyPage').then(m => ({ default: m.CookiePolicyPage })));
+const UnsubscribePage = React.lazy(() => import('./components/legal/UnsubscribePage').then(m => ({ default: m.UnsubscribePage })));
+const ThankYouPage = React.lazy(() => import('./components/legal/ThankYouPage').then(m => ({ default: m.ThankYouPage })));
+const NotFoundPage = React.lazy(() => import('./components/legal/NotFoundPage').then(m => ({ default: m.NotFoundPage })));
 
 export function AppContent() {
   const { viewMode, authSubView, colors } = useApp();
@@ -52,36 +54,47 @@ export function AppContent() {
           </>
         )}
 
-        {/* 2. AUTHENTICATION / QUIZ VIEW */}
-        {viewMode === 'auth' && (
-          <>
-            {authSubView === 'quiz' ? <RiskQuiz /> : <AuthModal />}
-          </>
+        {/* 2. AUTHENTICATION / APP / LEGAL VIEWS (CODE-SPLIT DYNAMIC CHUNKS) */}
+        {viewMode !== 'marketing' && (
+          <React.Suspense
+            fallback={
+              <div className="min-h-screen flex items-center justify-center font-mono text-xs" style={{ color: colors.textSecondary }}>
+                Loading Satmix...
+              </div>
+            }
+          >
+            {/* 2. AUTHENTICATION / QUIZ VIEW */}
+            {viewMode === 'auth' && (
+              <>
+                {authSubView === 'quiz' ? <RiskQuiz /> : <AuthModal />}
+              </>
+            )}
+
+            {/* 3. AUTHENTICATED WEB APP VIEW (satmix mobile app clone) */}
+            {viewMode === 'app' && <AppShell />}
+
+            {/* 4. PRIVACY POLICY PAGE (DPDP ACT 2023) */}
+            {viewMode === 'privacy' && <PrivacyPolicyPage />}
+
+            {/* 5. TERMS & CONDITIONS PAGE */}
+            {viewMode === 'terms' && <TermsConditionsPage />}
+
+            {/* 6. REFUND & CANCELLATION POLICY PAGE */}
+            {viewMode === 'refund' && <RefundPolicyPage />}
+
+            {/* 7. COOKIE POLICY & PREFERENCES PAGE */}
+            {viewMode === 'cookies' && <CookiePolicyPage />}
+
+            {/* 8. EMAIL UNSUBSCRIBE & PREFERENCES (DPDP ACT 2023) */}
+            {viewMode === 'unsubscribe' && <UnsubscribePage />}
+
+            {/* 9. THANK YOU / CONFIRMATION PAGE */}
+            {viewMode === 'thank-you' && <ThankYouPage />}
+
+            {/* 10. CUSTOM 404 ERROR PAGE */}
+            {viewMode === '404' && <NotFoundPage />}
+          </React.Suspense>
         )}
-
-        {/* 3. AUTHENTICATED WEB APP VIEW (satmix mobile app clone) */}
-        {viewMode === 'app' && <AppShell />}
-
-        {/* 4. PRIVACY POLICY PAGE (DPDP ACT 2023 COMPLIANT) */}
-        {viewMode === 'privacy' && <PrivacyPolicyPage />}
-
-        {/* 5. TERMS & CONDITIONS PAGE (LEGAL IMMUNITY & JURISDICTION) */}
-        {viewMode === 'terms' && <TermsConditionsPage />}
-
-        {/* 6. REFUND & CANCELLATION POLICY PAGE */}
-        {viewMode === 'refund' && <RefundPolicyPage />}
-
-        {/* 7. COOKIE POLICY & PREFERENCES PAGE */}
-        {viewMode === 'cookies' && <CookiePolicyPage />}
-
-        {/* 8. EMAIL UNSUBSCRIBE & PREFERENCES (DPDP ACT 2023) */}
-        {viewMode === 'unsubscribe' && <UnsubscribePage />}
-
-        {/* 9. THANK YOU / CONFIRMATION PAGE */}
-        {viewMode === 'thank-you' && <ThankYouPage />}
-
-        {/* 10. CUSTOM 404 ERROR PAGE */}
-        {viewMode === '404' && <NotFoundPage />}
       </div>
 
       {/* Floating Feedback / Reviews (renders strictly inside Web App) */}

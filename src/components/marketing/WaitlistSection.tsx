@@ -512,9 +512,9 @@ export const WaitlistSection: React.FC = () => {
                           >
                             {item.step}
                           </div>
-                          <h4 className="font-bold text-sm mb-1.5" style={{ color: colors.textPrimary }}>
+                          <h3 className="font-bold text-sm mb-1.5" style={{ color: colors.textPrimary }}>
                             {item.title}
-                          </h4>
+                          </h3>
                           <p className="text-xs leading-relaxed" style={{ color: colors.textSecondary }}>
                             {item.desc}
                           </p>
@@ -596,9 +596,9 @@ export const WaitlistSection: React.FC = () => {
                           <div className="flex items-center gap-3">
                             <BasketCurrencyIcons basketId="stable" size="md" />
                             <div>
-                              <h4 className="font-bold text-sm sm:text-base" style={{ color: colors.textPrimary }}>
+                              <h3 className="font-bold text-sm sm:text-base" style={{ color: colors.textPrimary }}>
                                 Stable Basket
-                              </h4>
+                              </h3>
                               <p className="text-xs font-mono mt-0.5" style={{ color: colors.textSecondary }}>
                                 85% USDT · 15% BTC
                               </p>
@@ -661,9 +661,9 @@ export const WaitlistSection: React.FC = () => {
                           <div className="flex items-center gap-3">
                             <BasketCurrencyIcons basketId="growth" size="md" />
                             <div>
-                              <h4 className="font-bold text-sm sm:text-base" style={{ color: colors.textPrimary }}>
+                              <h3 className="font-bold text-sm sm:text-base" style={{ color: colors.textPrimary }}>
                                 Growth Basket
-                              </h4>
+                              </h3>
                               <p className="text-xs font-mono mt-0.5" style={{ color: colors.textSecondary }}>
                                 70% BTC · 20% ETH · 10% SOL
                               </p>
