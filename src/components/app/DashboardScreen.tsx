@@ -32,7 +32,7 @@ import { WithdrawModal } from '../payment/WithdrawModal';
 import { getBasketById } from '../../data/baskets';
 import { BasketCurrencyIcons } from '../common/BasketCurrencyIcons';
 import { StreakWeeklyTracker } from './StreakWeeklyTracker';
-import { generateChartSeries, generateAssetWeekSeries, ChartTimeframe } from '../../utils/chartSeries';
+import { generateChartSeries, generateAssetWeekSeries, generateBenchmarkSeries, ChartTimeframe, ChartDataPoint } from '../../utils/chartSeries';
 import { CustomDateRangePicker } from '../common/CustomDateRangePicker';
 import { SpotlightCard, CountUp, FadeIn } from '../ui';
 import { motion, AnimatePresence } from 'motion/react';
@@ -93,6 +93,10 @@ export const DashboardScreen: React.FC = () => {
   const [selectedAssetModal, setSelectedAssetModal] = useState<any | null>(null);
   const [holdingsViewMode, setHoldingsViewMode] = useState<'cards' | 'matrix'>('cards');
 
+  // Dynamic Scrubber & Benchmark Overlays
+  const [scrubbedPoint, setScrubbedPoint] = useState<ChartDataPoint | null>(null);
+  const [benchmarkMode, setBenchmarkMode] = useState<'none' | 'btc' | 'fd'>('none');
+
   const { holdings: matrixHoldings } = useSatmixPortfolio();
 
   // Chart series derived from tab metrics
@@ -115,6 +119,11 @@ export const DashboardScreen: React.FC = () => {
     );
   }, [timeframe, transactions, tabMetrics, activeTabFilter, liveCoins, customStartDate, customEndDate]);
 
+  const benchmarkSeries = useMemo(() => {
+    if (benchmarkMode === 'none' || !chartSeriesResult?.points) return null;
+    return generateBenchmarkSeries(chartSeriesResult.points, benchmarkMode);
+  }, [benchmarkMode, chartSeriesResult?.points]);
+
   const greetingTime = useMemo(() => {
     const hr = new Date().getHours();
     if (hr < 12) return 'Good morning';
@@ -123,6 +132,12 @@ export const DashboardScreen: React.FC = () => {
   }, []);
 
   const isPositiveGain = tabMetrics.netDeltaRupees >= 0;
+
+  // Dynamic Scrubber Overwrite Values (Groww / Apple Stocks Model)
+  const displayedMarketValue = scrubbedPoint ? scrubbedPoint.value : tabMetrics.marketValue;
+  const displayedDeltaRupees = scrubbedPoint ? scrubbedPoint.gain : tabMetrics.netDeltaRupees;
+  const displayedDeltaPercentage = scrubbedPoint ? scrubbedPoint.gainPercentage : tabMetrics.netDeltaPercentage;
+  const isDisplayPositive = displayedDeltaRupees >= 0;
 
   // Holdings list with asset intelligence & metadata
   const holdingsList = useMemo(() => {
@@ -429,23 +444,32 @@ export const DashboardScreen: React.FC = () => {
                     : 'Growth Mix Savings'}
                 </span>
                 <div className="flex items-baseline gap-3 mt-1.5 flex-wrap">
-                  <span className="text-3xl sm:text-5xl font-extrabold font-mono tracking-tight" style={{ color: colors.textPrimary }}>
-                    <CountUp to={tabMetrics.marketValue} prefix="₹" decimals={2} duration={1} />
+                  <span className="text-3xl sm:text-5xl font-extrabold font-mono tracking-tight tabular-nums" style={{ color: colors.textPrimary }}>
+                    {scrubbedPoint ? (
+                      `₹${scrubbedPoint.value.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                    ) : (
+                      <CountUp to={tabMetrics.marketValue} prefix="₹" decimals={2} duration={1} />
+                    )}
                   </span>
 
-                  {tabMetrics.totalInvested > 0 ? (
+                  {(tabMetrics.totalInvested > 0 || scrubbedPoint) ? (
                     <div
-                      className="inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-lg border font-mono"
+                      className="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-lg border font-mono transition-all"
                       style={{
-                        backgroundColor: isPositiveGain ? colors.mintTint : colors.redTint,
-                        borderColor: isPositiveGain ? colors.borderMint : 'rgba(239, 68, 68, 0.3)',
-                        color: isPositiveGain ? colors.semanticSuccess : colors.semanticDanger,
+                        backgroundColor: isDisplayPositive ? colors.mintTint : colors.redTint,
+                        borderColor: isDisplayPositive ? colors.borderMint : 'rgba(239, 68, 68, 0.3)',
+                        color: isDisplayPositive ? colors.semanticSuccess : colors.semanticDanger,
                       }}
                     >
-                      {isPositiveGain ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
+                      {isDisplayPositive ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
                       <span>
-                        {isPositiveGain ? '+' : '-'}₹{Math.abs(tabMetrics.netDeltaRupees).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ({tabMetrics.netDeltaPercentage >= 0 ? '+' : '-'}{Math.abs(tabMetrics.netDeltaPercentage).toFixed(2)}%)
+                        {isDisplayPositive ? '+' : '-'}₹{Math.abs(displayedDeltaRupees).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ({displayedDeltaPercentage >= 0 ? '+' : '-'}{Math.abs(displayedDeltaPercentage).toFixed(2)}%)
                       </span>
+                      {scrubbedPoint && (
+                        <span className="text-[10px] font-sans opacity-70 border-l pl-1.5" style={{ borderColor: isDisplayPositive ? colors.borderMint : 'rgba(239, 68, 68, 0.3)' }}>
+                          {scrubbedPoint.date}
+                        </span>
+                      )}
                     </div>
                   ) : (
                     <span className="text-xs font-semibold text-emerald-400 flex items-center gap-1">
@@ -509,18 +533,61 @@ export const DashboardScreen: React.FC = () => {
             <div className="mb-2">
               <LineChart
                 series={chartSeriesResult}
+                benchmarkSeries={benchmarkSeries}
                 height={150}
-                showLegend={false}
+                showLegend={benchmarkMode !== 'none'}
                 showAxisLabels={true}
                 interactive={true}
+                onHoverPoint={setScrubbedPoint}
               />
             </div>
 
-            {/* Timeframe Filter Tabs */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t" style={{ borderColor: colors.borderDim }}>
-              <span className="text-[11px] font-semibold font-mono" style={{ color: colors.textTertiary }}>
-                Performance View
-              </span>
+            {/* Timeframe Filter Tabs, Horizon Metric & Benchmark Controls */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pt-3 border-t" style={{ borderColor: colors.borderDim }}>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-[11px] font-semibold font-mono" style={{ color: colors.textTertiary }}>
+                  {timeframe} Horizon:
+                </span>
+                <span
+                  className="text-xs font-mono font-bold px-2 py-0.5 rounded-md border tabular-nums"
+                  style={{
+                    backgroundColor: (chartSeriesResult?.horizonGain ?? 0) >= 0 ? colors.mintTint : colors.redTint,
+                    borderColor: (chartSeriesResult?.horizonGain ?? 0) >= 0 ? colors.borderMint : 'rgba(239, 68, 68, 0.3)',
+                    color: (chartSeriesResult?.horizonGain ?? 0) >= 0 ? colors.semanticSuccess : colors.semanticDanger,
+                  }}
+                >
+                  {(chartSeriesResult?.horizonGain ?? 0) >= 0 ? '+' : '-'}₹{Math.abs(chartSeriesResult?.horizonGain ?? 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ({(chartSeriesResult?.horizonGainPercentage ?? 0) >= 0 ? '+' : '-'}{Math.abs(chartSeriesResult?.horizonGainPercentage ?? 0).toFixed(2)}%)
+                </span>
+
+                {/* Benchmark Comparison Toggle Pills */}
+                <div className="flex items-center gap-1 border-l pl-2 ml-1" style={{ borderColor: colors.borderDim }}>
+                  <span className="text-[10px] font-mono hidden sm:inline" style={{ color: colors.textTertiary }}>Compare:</span>
+                  <button
+                    type="button"
+                    onClick={() => setBenchmarkMode((prev) => (prev === 'btc' ? 'none' : 'btc'))}
+                    className="px-2 py-0.5 rounded text-[10px] font-mono font-bold border transition-all"
+                    style={{
+                      backgroundColor: benchmarkMode === 'btc' ? 'rgba(245, 158, 11, 0.2)' : colors.surface,
+                      borderColor: benchmarkMode === 'btc' ? '#F59E0B' : colors.borderDim,
+                      color: benchmarkMode === 'btc' ? '#F59E0B' : colors.textSecondary,
+                    }}
+                  >
+                    vs BTC
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setBenchmarkMode((prev) => (prev === 'fd' ? 'none' : 'fd'))}
+                    className="px-2 py-0.5 rounded text-[10px] font-mono font-bold border transition-all"
+                    style={{
+                      backgroundColor: benchmarkMode === 'fd' ? 'rgba(96, 165, 250, 0.2)' : colors.surface,
+                      borderColor: benchmarkMode === 'fd' ? '#60A5FA' : colors.borderDim,
+                      color: benchmarkMode === 'fd' ? '#60A5FA' : colors.textSecondary,
+                    }}
+                  >
+                    vs FD 7%
+                  </button>
+                </div>
+              </div>
 
               <div className="flex items-center gap-1 p-1 rounded-xl border overflow-x-auto" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
                 {(['1W', '1M', '3M', '1Y', 'ALL'] as const).map((t) => (

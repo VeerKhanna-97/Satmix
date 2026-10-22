@@ -50,6 +50,8 @@ export interface ChartSeriesResult {
   isProjection: boolean;
   totalGains: number;
   gainPercentage: number;
+  horizonGain?: number;
+  horizonGainPercentage?: number;
   customRange?: ChartCustomRange;
   granularity: 'day' | 'week' | 'month';
 }
@@ -401,10 +403,7 @@ export function generateChartSeries(
             const daysSinceTx = Math.max(0, getDaysDifference(sampleDateKey, txDateKey));
             const totalSpanDays = Math.max(1, getDaysDifference(todayKey, txDateKey));
             const progress = Math.min(1, daysSinceTx / totalSpanDays);
-
-            const marketWave = (Math.sin(daysSinceTx * 1.5) * 0.012 + Math.cos(daysSinceTx * 0.8) * 0.008) * (1 + marketAdjustment);
-            const convergence = 1 - progress;
-            const pointMultiplier = Math.max(0.01, 1 + (progress * overallReturnRatio) + (marketWave * convergence));
+            const pointMultiplier = Math.max(0.01, 1 + (progress * overallReturnRatio));
 
             runningValue += tx.amount * pointMultiplier;
           }
@@ -477,10 +476,7 @@ export function generateChartSeries(
             const daysSinceTx = Math.max(0, getDaysDifference(sampleDateKey, txDateKey));
             const totalSpanDays = Math.max(1, getDaysDifference(todayKey, txDateKey));
             const progress = Math.min(1, daysSinceTx / totalSpanDays);
-
-            const marketWave = (Math.sin((daysSinceTx * 1.2)) * 0.015 + Math.cos((daysSinceTx * 0.6)) * 0.01) * (1 + marketAdjustment);
-            const convergence = 1 - progress;
-            const pointMultiplier = Math.max(0.01, 1 + (progress * overallReturnRatio) + (marketWave * convergence));
+            const pointMultiplier = Math.max(0.01, 1 + (progress * overallReturnRatio));
 
             runningValue += tx.amount * pointMultiplier;
           }
@@ -590,10 +586,7 @@ export function generateChartSeries(
             const daysSinceTx = Math.max(0, getDaysDifference(sampleDateKey, txDateKey));
             const totalSpanDays = Math.max(1, getDaysDifference(todayKey, txDateKey));
             const progress = Math.min(1, daysSinceTx / totalSpanDays);
-
-            const marketWave = (Math.sin((daysSinceTx * 1.2)) * 0.015 + Math.cos((daysSinceTx * 0.6)) * 0.01) * (1 + marketAdjustment);
-            const convergence = 1 - progress;
-            const pointMultiplier = Math.max(0.01, 1 + (progress * overallReturnRatio) + (marketWave * convergence));
+            const pointMultiplier = Math.max(0.01, 1 + (progress * overallReturnRatio));
 
             runningValue += tx.amount * pointMultiplier;
           }
@@ -623,11 +616,38 @@ export function generateChartSeries(
     }
   }
 
-  const segments = buildChartSegments(points, granularity, targetChunkCount);
+  const firstPt = points[0];
+  const lastPt = points[points.length - 1];
+  const hasAnyInvested = points.some((p) => p.invested > 0 || p.value > 0);
+  let isProjection = false;
+
+  // New User Compounding Cone: If zero invested capital, show prospective systematic accumulation curve
+  if (!hasAnyInvested) {
+    isProjection = true;
+    const dailyBase = 50;
+    const annualRef = 0.12; // 12% diversified reference baseline
+    const dailyRate = Math.pow(1 + annualRef, 1 / 365) - 1;
+    points.forEach((p, idx) => {
+      const dayNum = idx + 1;
+      const inv = dayNum * dailyBase;
+      const val = Math.round(
+        dailyBase * ((Math.pow(1 + dailyRate, dayNum) - 1) / dailyRate) * (1 + dailyRate)
+      );
+      p.invested = inv;
+      p.value = val;
+      p.gain = Math.max(0, val - inv);
+      p.gainPercentage = inv > 0 ? Number(((p.gain / inv) * 100).toFixed(2)) : 0;
+    });
+  }
+
+  const finalPoint = points[points.length - 1];
+  const horizonGain = lastPt && firstPt ? Math.round((lastPt.value - firstPt.value) * 100) / 100 : (finalPoint?.gain || 0);
+  const horizonGainPercentage = firstPt && firstPt.value > 0 ? Number(((horizonGain / firstPt.value) * 100).toFixed(2)) : (finalPoint?.gainPercentage || 0);
+
+  const segments = buildChartSegments(points, granularity, targetChunkCount, isProjection);
   const allValues = points.flatMap((p) => [p.value, p.invested]);
   const minVal = Math.min(...allValues, 0);
   const maxVal = Math.max(...allValues, 100);
-  const finalPoint = points[points.length - 1];
 
   return {
     points,
@@ -635,11 +655,55 @@ export function generateChartSeries(
     minVal,
     maxVal,
     timeframe,
-    isProjection: false,
+    isProjection,
     totalGains: finalPoint?.gain || 0,
     gainPercentage: finalPoint?.gainPercentage || 0,
+    horizonGain,
+    horizonGainPercentage,
     customRange: timeframe === 'CUSTOM' ? { startDate: effectiveStartDateKey, endDate: effectiveEndDateKey } : undefined,
     granularity,
+  };
+}
+
+export interface BenchmarkSeries {
+  type: 'btc' | 'fd';
+  label: string;
+  color: string;
+  points: { date: string; value: number }[];
+}
+
+export function generateBenchmarkSeries(
+  chartPoints: ChartDataPoint[],
+  benchmarkType: 'btc' | 'fd'
+): BenchmarkSeries {
+  if (chartPoints.length === 0) {
+    return { type: benchmarkType, label: '', color: '', points: [] };
+  }
+
+  const n = chartPoints.length;
+  const isBtc = benchmarkType === 'btc';
+  const color = isBtc ? '#F59E0B' : '#60A5FA';
+  const annualRate = isBtc ? 0.28 : 0.07;
+
+  const points = chartPoints.map((pt, i) => {
+    const progress = n > 1 ? i / (n - 1) : 1;
+    const inv = pt.invested;
+    if (inv <= 0) return { date: pt.date, value: 0 };
+    const multiplier = 1 + progress * (annualRate * (n / 365));
+    const value = Math.round(inv * multiplier * 100) / 100;
+    return { date: pt.date, value };
+  });
+
+  const finalVal = points[points.length - 1]?.value || 0;
+  const finalInv = chartPoints[chartPoints.length - 1]?.invested || 0;
+  const gainPct = finalInv > 0 ? (((finalVal - finalInv) / finalInv) * 100).toFixed(1) : '0.0';
+  const label = isBtc ? `100% Bitcoin (+${gainPct}%)` : `Bank FD 7% (+${gainPct}%)`;
+
+  return {
+    type: benchmarkType,
+    label,
+    color,
+    points,
   };
 }
 

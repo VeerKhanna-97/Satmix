@@ -1,10 +1,18 @@
+// ============================================================
+// FILE: src/components/common/LineChart.tsx
+// PURPOSE: Unified Financial Portfolio Trajectory Line Chart
+//          Fritsch-Carlson Monotone Spline with Dynamic Scrubber,
+//          Period Color Semantics, Compounding Projection & Benchmark Overlays
+// ============================================================
+
 import React, { useState, useRef, useMemo, useCallback } from 'react';
 import { useApp } from '../../context/AppContext';
-import { ChartSeriesResult, ChartDataPoint, ChartSegment } from '../../utils/chartSeries';
-import { TrendingUp, Calendar, Layers } from 'lucide-react';
+import { ChartSeriesResult, ChartDataPoint, BenchmarkSeries } from '../../utils/chartSeries';
+import { TrendingUp, TrendingDown, Calendar, Sparkles } from 'lucide-react';
 
 interface LineChartProps {
   series?: ChartSeriesResult;
+  benchmarkSeries?: BenchmarkSeries | null;
   investedData?: number[];
   valueData?: number[];
   height?: number;
@@ -12,6 +20,7 @@ interface LineChartProps {
   showAxisLabels?: boolean;
   interactive?: boolean;
   className?: string;
+  onHoverPoint?: (pt: ChartDataPoint | null) => void;
 }
 
 /**
@@ -51,7 +60,6 @@ function pointsToSmoothPath(
   for (let i = 1; i < n - 1; i++) {
     const s0 = slopes[i - 1];
     const s1 = slopes[i];
-    // If slope changes sign or either slope is 0 (plateau / local extremum), tangent MUST be zero
     if (s0 * s1 <= 0 || Math.abs(s0) < 1e-7 || Math.abs(s1) < 1e-7) {
       m[i] = 0;
     } else {
@@ -78,7 +86,7 @@ function pointsToSmoothPath(
     }
   }
 
-  // 3. Convert tangents to Bézier control points with strict segment bounding box clamping
+  // 3. Convert tangents to Bézier control points with segment bounding box clamping
   let path = `M ${points[0].x.toFixed(2)},${points[0].y.toFixed(2)}`;
 
   const minY = options?.minY ?? -Infinity;
@@ -95,14 +103,12 @@ function pointsToSmoothPath(
     const cp2x = p2.x - deltaX / 3;
     let cp2y = p2.y - (m[i + 1] * deltaX) / 3;
 
-    // Segment bounding box (curve between p1 and p2 must stay bounded by p1 and p2)
     const segMinY = Math.min(p1.y, p2.y);
     const segMaxY = Math.max(p1.y, p2.y);
 
     cp1y = Math.max(segMinY, Math.min(segMaxY, cp1y));
     cp2y = Math.max(segMinY, Math.min(segMaxY, cp2y));
 
-    // Global bounds clamping (e.g. ground baseline maxY and top padding minY)
     cp1y = Math.max(minY, Math.min(maxY, cp1y));
     cp2y = Math.max(minY, Math.min(maxY, cp2y));
 
@@ -114,6 +120,7 @@ function pointsToSmoothPath(
 
 export const LineChart: React.FC<LineChartProps> = ({
   series,
+  benchmarkSeries,
   investedData,
   valueData,
   height = 140,
@@ -121,6 +128,7 @@ export const LineChart: React.FC<LineChartProps> = ({
   showAxisLabels = true,
   interactive = true,
   className = '',
+  onHoverPoint,
 }) => {
   const { colors } = useApp();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -160,6 +168,17 @@ export const LineChart: React.FC<LineChartProps> = ({
     return [];
   }, [series, valueData, investedData]);
 
+  // Determine period return and visual semantics
+  const firstPoint = dataPoints[0];
+  const lastPoint = dataPoints[dataPoints.length - 1];
+  const periodGain = series?.horizonGain ?? (lastPoint && firstPoint ? lastPoint.value - firstPoint.value : 0);
+  const isPeriodProfit = periodGain >= 0;
+  const isProjection = series?.isProjection ?? false;
+
+  const strokeColor = isProjection ? '#A78BFA' : isPeriodProfit ? '#10B981' : '#EF4444';
+  const gradientId = isProjection ? 'chartGradientPurple' : isPeriodProfit ? 'chartGradientGreen' : 'chartGradientRed';
+
+  // Coordinate projection and monotonic Bézier paths
   const { valCoords, invCoords, smoothValPath, smoothAreaPath, smoothInvPath, minVal, maxVal } = useMemo(() => {
     if (dataPoints.length === 0) {
       return {
@@ -174,6 +193,10 @@ export const LineChart: React.FC<LineChartProps> = ({
     }
 
     const allValues = dataPoints.flatMap((d) => [d.value, d.invested]);
+    if (benchmarkSeries?.points) {
+      allValues.push(...benchmarkSeries.points.map((p) => p.value));
+    }
+
     let min = Math.min(...allValues);
     let max = Math.max(...allValues);
 
@@ -214,71 +237,27 @@ export const LineChart: React.FC<LineChartProps> = ({
       minVal: min,
       maxVal: max,
     };
-  }, [dataPoints, usableHeight, usableWidth, paddingX, paddingTop, height, width]);
+  }, [dataPoints, benchmarkSeries, usableHeight, usableWidth, paddingX, paddingTop, height, width]);
 
-  // ── SEGMENT RECTANGLE INTERVAL COMPUTATION (FOR CLIPPED MULTI-COLOR RENDERING) ──
-  const { greenRects, redRects, neutralRects, divisionDividers } = useMemo(() => {
-    if (dataPoints.length === 0 || !valCoords || valCoords.length === 0) {
-      return { greenRects: [], redRects: [], neutralRects: [], divisionDividers: [] };
-    }
+  // Optional benchmark comparison curve
+  const benchmarkCoords = useMemo(() => {
+    if (!benchmarkSeries || !benchmarkSeries.points || benchmarkSeries.points.length === 0) return null;
+    const n = benchmarkSeries.points.length;
+    const range = maxVal - minVal || 1;
+    const stepX = n > 1 ? usableWidth / (n - 1) : usableWidth;
 
-    const segments = series?.segments || [];
-    if (segments.length === 0) {
-      const isOverallProfit = (dataPoints[dataPoints.length - 1]?.gain ?? 0) >= 0;
-      const allRect = { x: paddingX, width: usableWidth };
-      return {
-        greenRects: isOverallProfit ? [allRect] : [],
-        redRects: !isOverallProfit ? [allRect] : [],
-        neutralRects: [],
-        divisionDividers: [],
-      };
-    }
-
-    const green: { x: number; width: number }[] = [];
-    const red: { x: number; width: number }[] = [];
-    const neutral: { x: number; width: number }[] = [];
-    const dividers: { x: number; label: string; status: 'profit' | 'loss' | 'neutral' }[] = [];
-
-    segments.forEach((seg, sIdx) => {
-      let xStart = paddingX;
-      if (seg.startIndex > 0 && valCoords[seg.startIndex - 1] && valCoords[seg.startIndex]) {
-        xStart = (valCoords[seg.startIndex - 1].x + valCoords[seg.startIndex].x) / 2;
-      } else if (valCoords[seg.startIndex]) {
-        xStart = valCoords[seg.startIndex].x;
-      }
-
-      let xEnd = width - paddingX;
-      if (seg.endIndex < valCoords.length - 1 && valCoords[seg.endIndex] && valCoords[seg.endIndex + 1]) {
-        xEnd = (valCoords[seg.endIndex].x + valCoords[seg.endIndex + 1].x) / 2;
-      } else if (valCoords[seg.endIndex]) {
-        xEnd = valCoords[seg.endIndex].x;
-      }
-
-      const rectWidth = Math.max(0, xEnd - xStart);
-      const rect = { x: xStart, width: rectWidth };
-
-      if (seg.status === 'neutral') {
-        neutral.push(rect);
-      } else if (seg.status === 'profit' || seg.isProfit) {
-        green.push(rect);
-      } else {
-        red.push(rect);
-      }
-
-      // Add division boundary divider tick (skip the very first starting border)
-      if (sIdx > 0) {
-        dividers.push({
-          x: xStart,
-          label: seg.label,
-          status: seg.status,
-        });
-      }
+    const coords = benchmarkSeries.points.map((pt, i) => {
+      const x = paddingX + (n > 1 ? i * stepX : usableWidth / 2);
+      const y = paddingTop + usableHeight - ((pt.value - minVal) / range) * usableHeight;
+      return { x, y };
     });
 
-    return { greenRects: green, redRects: red, neutralRects: neutral, divisionDividers: dividers };
-  }, [series?.segments, dataPoints, valCoords, paddingX, usableWidth, width]);
+    const groundY = paddingTop + usableHeight;
+    const path = pointsToSmoothPath(coords, { minY: paddingTop, maxY: groundY });
+    return { coords, path };
+  }, [benchmarkSeries, maxVal, minVal, usableWidth, usableHeight, paddingX, paddingTop]);
 
-  // Interactive mouse/touch scrubber handling with precise padding offset alignment
+  // Interactive mouse/touch scrubber handling with mobile touch-pan-y safety
   const handlePointerMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
       if (!interactive || !containerRef.current || dataPoints.length === 0) return;
@@ -290,108 +269,103 @@ export const LineChart: React.FC<LineChartProps> = ({
       const normalizedRatio = usableWidth > 0 ? (clampedX - paddingX) / usableWidth : 0;
 
       const nearestIdx = Math.round(normalizedRatio * (dataPoints.length - 1));
-      setHoverIndex(Math.max(0, Math.min(dataPoints.length - 1, nearestIdx)));
+      const safeIdx = Math.max(0, Math.min(dataPoints.length - 1, nearestIdx));
+      setHoverIndex(safeIdx);
+      if (onHoverPoint) {
+        onHoverPoint(dataPoints[safeIdx]);
+      }
     },
-    [interactive, dataPoints, usableWidth, paddingX, width]
+    [interactive, dataPoints, usableWidth, paddingX, width, onHoverPoint]
   );
 
   const handlePointerLeave = useCallback(() => {
     setHoverIndex(null);
-  }, []);
+    if (onHoverPoint) {
+      onHoverPoint(null);
+    }
+  }, [onHoverPoint]);
 
   const activePoint = hoverIndex !== null ? dataPoints[hoverIndex] : null;
   const activeCoord = hoverIndex !== null ? valCoords[hoverIndex] : null;
+  const activeBenchmarkCoord = hoverIndex !== null && benchmarkCoords ? benchmarkCoords.coords[hoverIndex] : null;
+  const activeBenchmarkPoint = hoverIndex !== null && benchmarkSeries ? benchmarkSeries.points[hoverIndex] : null;
 
-  const activeSegment: ChartSegment | undefined = useMemo(() => {
-    if (!activePoint || !series?.segments) return undefined;
-    return (
-      series.segments.find((s) => s.id === activePoint.segmentId) ||
-      series.segments.find((s) => hoverIndex !== null && hoverIndex >= s.startIndex && hoverIndex <= s.endIndex)
-    );
-  }, [activePoint, hoverIndex, series?.segments]);
-
-  const hasAnyLossSegment = redRects.length > 0;
-  const hasAnyProfitSegment = greenRects.length > 0;
-  const hasAnyNeutralSegment = neutralRects.length > 0;
-
-  // X-Axis Date markers (Start, Mid, End)
+  // X-Axis Date markers
   const startDateLabel = dataPoints[0]?.date || '';
   const midDateLabel = dataPoints[Math.floor(dataPoints.length / 2)]?.date || '';
   const endDateLabel = dataPoints[dataPoints.length - 1]?.date || '';
 
   return (
     <div className={`w-full relative flex flex-col justify-between select-none ${className}`}>
-      {/* ── 1. ACTIVE HOVER / SCRUBBER BANNER TOOLTIP ── */}
+      {/* ── 1. ACTIVE HOVER SCRUBBER BANNER TOOLTIP ── */}
       {interactive && (
         <div className="h-7 mb-2 flex items-center justify-between text-xs px-1 font-mono transition-all">
           {activePoint ? (
-            <>
-              <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex items-center justify-between w-full flex-wrap gap-2">
+              <div className="flex items-center gap-2">
                 <span className="flex items-center gap-1 font-sans text-[11px]" style={{ color: colors.textSecondary }}>
                   <Calendar className="w-3 h-3" style={{ color: colors.accent }} />
                   {activePoint.fullDate}
                 </span>
 
-                {activeSegment && (
+                {isProjection ? (
+                  <span className="text-[9px] px-1.5 py-0.5 rounded font-mono font-bold uppercase tracking-wider bg-purple-500/15 border border-purple-500/30 text-purple-400">
+                    Systematic Target
+                  </span>
+                ) : (
                   <span
                     className="text-[9px] px-1.5 py-0.5 rounded font-mono font-bold uppercase tracking-wider border"
                     style={{
-                      backgroundColor:
-                        activeSegment.status === 'neutral'
-                          ? 'rgba(100, 116, 139, 0.12)'
-                          : activeSegment.status === 'profit'
-                          ? 'rgba(16, 185, 129, 0.12)'
-                          : 'rgba(239, 68, 68, 0.12)',
-                      borderColor:
-                        activeSegment.status === 'neutral'
-                          ? 'rgba(100, 116, 139, 0.3)'
-                          : activeSegment.status === 'profit'
-                          ? 'rgba(16, 185, 129, 0.3)'
-                          : 'rgba(239, 68, 68, 0.3)',
-                      color:
-                        activeSegment.status === 'neutral'
-                          ? '#94A3B8'
-                          : activeSegment.status === 'profit'
-                          ? '#10B981'
-                          : '#EF4444',
+                      backgroundColor: activePoint.gain >= 0 ? colors.mintTint : colors.redTint,
+                      borderColor: activePoint.gain >= 0 ? colors.borderMint : 'rgba(239, 68, 68, 0.3)',
+                      color: activePoint.gain >= 0 ? colors.semanticSuccess : colors.semanticDanger,
                     }}
                   >
-                    {activeSegment.label} ·{' '}
-                    {activeSegment.status === 'neutral'
-                      ? 'No Investment'
-                      : activeSegment.status === 'profit'
-                      ? 'Profit'
-                      : 'Loss'}
-                  </span>
-                )}
-              </div>
-              <div className="flex items-center gap-3 font-extrabold">
-                <span style={{ color: colors.textPrimary }}>
-                  Val: ₹{activePoint.value.toLocaleString('en-IN')}{Number.isInteger(activePoint.value) ? '.00' : ''}
-                </span>
-                {activeSegment?.status === 'neutral' || (activePoint.invested === 0 && activePoint.value === 0) ? (
-                  <span style={{ color: colors.textTertiary }}>₹0.00 (0.00%)</span>
-                ) : (
-                  <span style={{ color: activePoint.gain >= 0 ? colors.semanticSuccess : colors.semanticDanger }}>
                     {activePoint.gain >= 0 ? '+' : '-'}₹{Math.abs(activePoint.gain).toFixed(2)} ({activePoint.gainPercentage >= 0 ? '+' : '-'}{Math.abs(activePoint.gainPercentage).toFixed(2)}%)
                   </span>
                 )}
               </div>
-            </>
+
+              <div className="flex items-center gap-3 text-[11px]">
+                <span>
+                  <strong style={{ color: colors.textPrimary }}>₹{activePoint.value.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong>
+                  <span className="text-[10px] ml-1" style={{ color: colors.textTertiary }}>({isProjection ? 'Projected' : 'Valuation'})</span>
+                </span>
+                {benchmarkSeries && activeBenchmarkPoint && (
+                  <span className="hidden sm:inline" style={{ color: benchmarkSeries.color }}>
+                    vs {benchmarkSeries.type.toUpperCase()}: <strong>₹{activeBenchmarkPoint.value.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong>
+                  </span>
+                )}
+              </div>
+            </div>
           ) : (
             <div className="flex items-center justify-between w-full text-[11px]" style={{ color: colors.textSecondary }}>
               <span className="flex items-center gap-1.5 font-sans">
-                <TrendingUp className="w-3.5 h-3.5 flex-shrink-0" style={{ color: colors.accent }} />
-                {series?.isProjection ? 'Projected Growth Model' : 'Live Valuation Trajectory'}
+                {isProjection ? (
+                  <>
+                    <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+                    <span>₹50/Day Compounding Target Cone</span>
+                  </>
+                ) : (
+                  <>
+                    {isPeriodProfit ? (
+                      <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
+                    ) : (
+                      <TrendingDown className="w-3.5 h-3.5 text-rose-400" />
+                    )}
+                    <span>{series?.timeframe ? `${series.timeframe} Performance Trajectory` : 'Portfolio Trajectory'}</span>
+                  </>
+                )}
               </span>
+
               <div className="flex items-center gap-2">
-                {series?.granularity && (
-                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded border" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim, color: colors.textTertiary }}>
-                    Divisions: {series.granularity === 'day' ? 'Daily' : series.granularity === 'week' ? 'Weekly' : 'Monthly'}
+                {benchmarkSeries && (
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded border" style={{ backgroundColor: `${benchmarkSeries.color}15`, borderColor: `${benchmarkSeries.color}30`, color: benchmarkSeries.color }}>
+                    Comparing {benchmarkSeries.label}
                   </span>
                 )}
                 <span className="text-[10px] font-mono hidden sm:inline" style={{ color: colors.textTertiary }}>
-                  Hover/drag across divisions
+                  Scrub across timeline
                 </span>
               </div>
             </div>
@@ -399,11 +373,11 @@ export const LineChart: React.FC<LineChartProps> = ({
         </div>
       )}
 
-      {/* ── 2. SVG FINANCIAL CHART WITH MULTI-COLOR SECTIONS & UNDERSHADOWS ── */}
+      {/* ── 2. SVG FINANCIAL CHART WITH CONTINUOUS SMOOTH CURVE & GRADIENT FILL ── */}
       <div
         ref={containerRef}
-        className="w-full relative overflow-hidden touch-none cursor-crosshair"
-        style={{ height: `${height}px` }}
+        className="w-full relative overflow-hidden cursor-crosshair"
+        style={{ height: `${height}px`, touchAction: 'pan-y' }}
         onMouseMove={handlePointerMove}
         onMouseLeave={handlePointerLeave}
         onTouchMove={handlePointerMove}
@@ -417,49 +391,38 @@ export const LineChart: React.FC<LineChartProps> = ({
           <defs>
             {/* Green Profit Area Gradient */}
             <linearGradient id="chartGradientGreen" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#059669" stopOpacity="0.28" />
-              <stop offset="65%" stopColor="#10B981" stopOpacity="0.08" />
-              <stop offset="100%" stopColor="#059669" stopOpacity="0.0" />
+              <stop offset="0%" stopColor="#10B981" stopOpacity="0.25" />
+              <stop offset="70%" stopColor="#10B981" stopOpacity="0.04" />
+              <stop offset="100%" stopColor="#10B981" stopOpacity="0.0" />
             </linearGradient>
 
             {/* Red Loss Area Gradient */}
             <linearGradient id="chartGradientRed" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#DC2626" stopOpacity="0.28" />
-              <stop offset="65%" stopColor="#EF4444" stopOpacity="0.08" />
-              <stop offset="100%" stopColor="#DC2626" stopOpacity="0.0" />
+              <stop offset="0%" stopColor="#EF4444" stopOpacity="0.25" />
+              <stop offset="70%" stopColor="#EF4444" stopOpacity="0.04" />
+              <stop offset="100%" stopColor="#EF4444" stopOpacity="0.0" />
             </linearGradient>
 
-            {/* Green Profit Clipping Mask */}
-            <clipPath id="chartClipGreen">
-              {greenRects.map((r, i) => (
-                <rect key={`gr-${i}`} x={r.x} y={0} width={r.width} height={height} />
-              ))}
-            </clipPath>
-
-            {/* Red Loss Clipping Mask */}
-            <clipPath id="chartClipRed">
-              {redRects.map((r, i) => (
-                <rect key={`rr-${i}`} x={r.x} y={0} width={r.width} height={height} />
-              ))}
-            </clipPath>
-
-            {/* Neutral Pre-Investment Clipping Mask */}
-            <clipPath id="chartClipNeutral">
-              {neutralRects.map((r, i) => (
-                <rect key={`nr-${i}`} x={r.x} y={0} width={r.width} height={height} />
-              ))}
-            </clipPath>
+            {/* Purple Projection Cone Gradient */}
+            <linearGradient id="chartGradientPurple" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#8B5CF6" stopOpacity="0.22" />
+              <stop offset="70%" stopColor="#8B5CF6" stopOpacity="0.04" />
+              <stop offset="100%" stopColor="#8B5CF6" stopOpacity="0.0" />
+            </linearGradient>
 
             {/* Glow Filters */}
             <filter id="glowGreen" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#059669" floodOpacity="0.35" />
+              <feDropShadow dx="0" dy="2" stdDeviation="2.5" floodColor="#10B981" floodOpacity="0.35" />
             </filter>
             <filter id="glowRed" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#DC2626" floodOpacity="0.35" />
+              <feDropShadow dx="0" dy="2" stdDeviation="2.5" floodColor="#EF4444" floodOpacity="0.35" />
+            </filter>
+            <filter id="glowPurple" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="2" stdDeviation="2.5" floodColor="#8B5CF6" floodOpacity="0.35" />
             </filter>
           </defs>
 
-          {/* Grid lines (Theme-aware horizontal dividers) */}
+          {/* Grid lines */}
           <line
             x1={paddingX}
             y1={paddingTop}
@@ -487,36 +450,11 @@ export const LineChart: React.FC<LineChartProps> = ({
             strokeOpacity="0.8"
           />
 
-          {/* Vertical Division Divider Ticks */}
-          {divisionDividers.map((div, i) => (
-            <line
-              key={`div-${i}`}
-              x1={div.x}
-              y1={paddingTop}
-              x2={div.x}
-              y2={paddingTop + usableHeight}
-              stroke={colors.borderDim}
-              strokeDasharray="2 3"
-              strokeOpacity="0.5"
-            />
-          ))}
-
-          {/* Shaded Area: Green Portions */}
-          {smoothAreaPath && greenRects.length > 0 && (
+          {/* Continuous Area Gradient Fill */}
+          {smoothAreaPath && (
             <path
               d={smoothAreaPath}
-              fill="url(#chartGradientGreen)"
-              clipPath="url(#chartClipGreen)"
-              className="transition-all duration-300"
-            />
-          )}
-
-          {/* Shaded Area: Red Portions */}
-          {smoothAreaPath && redRects.length > 0 && (
-            <path
-              d={smoothAreaPath}
-              fill="url(#chartGradientRed)"
-              clipPath="url(#chartClipRed)"
+              fill={`url(#${gradientId})`}
               className="transition-all duration-300"
             />
           )}
@@ -533,145 +471,133 @@ export const LineChart: React.FC<LineChartProps> = ({
             />
           )}
 
-          {/* Valuation Trajectory Line: Green Segments */}
-          {smoothValPath && greenRects.length > 0 && (
+          {/* Optional Benchmark Comparison Curve */}
+          {benchmarkCoords && (
             <path
-              d={smoothValPath}
+              d={benchmarkCoords.path}
               fill="none"
-              stroke="#10B981"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              clipPath="url(#chartClipGreen)"
-              filter="url(#glowGreen)"
-            />
-          )}
-
-          {/* Valuation Trajectory Line: Red Segments */}
-          {smoothValPath && redRects.length > 0 && (
-            <path
-              d={smoothValPath}
-              fill="none"
-              stroke="#EF4444"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              clipPath="url(#chartClipRed)"
-              filter="url(#glowRed)"
-            />
-          )}
-
-          {/* Valuation Trajectory Line: Neutral Pre-Investment Segments */}
-          {smoothValPath && neutralRects.length > 0 && (
-            <path
-              d={smoothValPath}
-              fill="none"
-              stroke="#64748B"
-              strokeWidth="2"
-              strokeDasharray="4 3"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              clipPath="url(#chartClipNeutral)"
-              opacity="0.65"
-            />
-          )}
-
-          {/* Interactive Vertical Dashed Crosshair */}
-          {activeCoord && activePoint && (
-            <line
-              x1={activeCoord.x}
-              y1={paddingTop}
-              x2={activeCoord.x}
-              y2={paddingTop + usableHeight}
-              stroke={
-                activeSegment?.status === 'neutral' || (activePoint.invested === 0 && activePoint.value === 0)
-                  ? '#64748B'
-                  : activePoint.gain >= 0
-                  ? '#34D399'
-                  : '#F87171'
-              }
-              strokeWidth="1.2"
+              stroke={benchmarkSeries?.color || '#F59E0B'}
+              strokeWidth="1.8"
               strokeDasharray="3 3"
+              strokeLinecap="round"
               opacity="0.85"
             />
           )}
 
-          {/* X-Axis Date Reference Labels (SVG Text) */}
-          {showAxisLabels && dataPoints.length > 1 && (
-            <g className="text-[10px] font-mono select-none" fill={colors.textTertiary}>
-              <text x={paddingX} y={height - 4} textAnchor="start">
-                {startDateLabel}
-              </text>
-              <text x={width / 2} y={height - 4} textAnchor="middle">
-                {midDateLabel}
-              </text>
-              <text x={width - paddingX} y={height - 4} textAnchor="end">
-                {endDateLabel}
-              </text>
+          {/* Main Continuous Trajectory Curve */}
+          {smoothValPath && (
+            <path
+              d={smoothValPath}
+              fill="none"
+              stroke={strokeColor}
+              strokeWidth={isProjection ? 2 : 2.5}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeDasharray={isProjection ? '5 4' : undefined}
+              filter={isProjection ? 'url(#glowPurple)' : isPeriodProfit ? 'url(#glowGreen)' : 'url(#glowRed)'}
+            />
+          )}
+
+          {/* Scrubber Crosshair & Active Point Indicators */}
+          {activeCoord && activePoint && (
+            <g>
+              <line
+                x1={activeCoord.x}
+                y1={paddingTop}
+                x2={activeCoord.x}
+                y2={paddingTop + usableHeight}
+                stroke={colors.textSecondary}
+                strokeWidth="1.2"
+                strokeDasharray="2 2"
+                strokeOpacity="0.75"
+              />
+
+              {/* Invested Baseline Node */}
+              {invCoords[hoverIndex!] && (
+                <circle
+                  cx={invCoords[hoverIndex!].x}
+                  cy={invCoords[hoverIndex!].y}
+                  r="3"
+                  fill="#64748B"
+                  stroke={colors.card}
+                  strokeWidth="1.5"
+                />
+              )}
+
+              {/* Benchmark Node */}
+              {activeBenchmarkCoord && benchmarkSeries && (
+                <circle
+                  cx={activeBenchmarkCoord.x}
+                  cy={activeBenchmarkCoord.y}
+                  r="3.5"
+                  fill={benchmarkSeries.color}
+                  stroke={colors.card}
+                  strokeWidth="1.5"
+                />
+              )}
+
+              {/* Main Valuation Node with Pulsing Ring */}
+              <circle
+                cx={activeCoord.x}
+                cy={activeCoord.y}
+                r="6.5"
+                fill={strokeColor}
+                fillOpacity="0.25"
+                className="animate-ping"
+              />
+              <circle
+                cx={activeCoord.x}
+                cy={activeCoord.y}
+                r="4.5"
+                fill={strokeColor}
+                stroke={colors.card}
+                strokeWidth="2"
+              />
             </g>
           )}
         </svg>
 
-        {/* ── PERFECT CIRCULAR SCRUBBER DOT ── */}
-        {activeCoord && activePoint && (
-          <div
-            className="absolute pointer-events-none transition-transform duration-75"
-            style={{
-              left: `${(activeCoord.x / width) * 100}%`,
-              top: `${(activeCoord.y / height) * 100}%`,
-              transform: 'translate(-50%, -50%)',
-            }}
-          >
-            <div
-              className={`w-3.5 h-3.5 rounded-full border-2 bg-white shadow-sm ${
-                activeSegment?.status === 'neutral' || (activePoint.invested === 0 && activePoint.value === 0)
-                  ? 'border-slate-400'
-                  : activePoint.gain >= 0
-                  ? 'border-emerald-400'
-                  : 'border-rose-500'
-              }`}
-            />
+        {/* X-Axis Horizontal Date Labels */}
+        {showAxisLabels && dataPoints.length > 0 && (
+          <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between px-3 text-[10px] font-mono pointer-events-none" style={{ color: colors.textTertiary }}>
+            <span>{startDateLabel}</span>
+            <span>{midDateLabel}</span>
+            <span>{endDateLabel}</span>
           </div>
         )}
       </div>
 
-      {/* ── 3. DUAL-LINE & MULTI-SECTION LEGEND ── */}
+      {/* ── 3. DUAL-LINE & BENCHMARK LEGEND ── */}
       {showLegend && (
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px] font-semibold mt-2 px-1 border-t pt-2.5" style={{ borderColor: colors.borderDim, color: colors.textSecondary }}>
           <div className="flex items-center gap-3.5 flex-wrap">
-            {/* Profit Curve */}
-            {hasAnyProfitSegment && (
-              <div className="flex items-center gap-1.5">
-                <span className="w-3 h-0.5 rounded-full bg-emerald-400" />
-                <span className="text-xs font-bold" style={{ color: colors.textPrimary }}>Profit Division</span>
-              </div>
-            )}
-
-            {/* Loss Curve */}
-            {hasAnyLossSegment && (
-              <div className="flex items-center gap-1.5">
-                <span className="w-3 h-0.5 rounded-full bg-rose-500" />
-                <span className="text-xs font-bold" style={{ color: colors.semanticDanger }}>Loss Division</span>
-              </div>
-            )}
-
-            {/* Pre-Investment Neutral Curve */}
-            {hasAnyNeutralSegment && (
-              <div className="flex items-center gap-1.5">
-                <span className="w-3 h-0.5 rounded-full bg-slate-500 opacity-60" />
-                <span className="text-xs" style={{ color: colors.textTertiary }}>Pre-Start</span>
-              </div>
-            )}
+            {/* Main Valuation Line */}
+            <div className="flex items-center gap-1.5">
+              <span className="w-3 h-0.5 rounded-full" style={{ backgroundColor: strokeColor }} />
+              <span className="text-xs font-bold" style={{ color: colors.textPrimary }}>
+                {isProjection ? '₹50/Day Projection' : 'Portfolio Value'}
+              </span>
+            </div>
 
             {/* Invested Cost basis */}
             <div className="flex items-center gap-1.5">
               <span className="w-3 h-0.5 rounded-full border-t border-dashed" style={{ borderColor: colors.textTertiary }} />
               <span className="text-xs" style={{ color: colors.textSecondary }}>Invested Basis</span>
             </div>
+
+            {/* Benchmark Overlay */}
+            {benchmarkSeries && (
+              <div className="flex items-center gap-1.5">
+                <span className="w-3 h-0.5 rounded-full border-t border-dashed" style={{ borderColor: benchmarkSeries.color }} />
+                <span className="text-xs font-mono font-bold" style={{ color: benchmarkSeries.color }}>
+                  {benchmarkSeries.label}
+                </span>
+              </div>
+            )}
           </div>
 
           <div className="flex items-center gap-1 text-[10px] font-mono" style={{ color: colors.textTertiary }}>
-            <span>Range: ₹{Math.round(minVal)} - ₹{Math.round(maxVal)}</span>
+            <span>Range: ₹{Math.round(minVal).toLocaleString('en-IN')} - ₹{Math.round(maxVal).toLocaleString('en-IN')}</span>
           </div>
         </div>
       )}
@@ -680,4 +606,3 @@ export const LineChart: React.FC<LineChartProps> = ({
 };
 
 export default LineChart;
-
