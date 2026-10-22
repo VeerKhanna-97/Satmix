@@ -536,15 +536,27 @@ export const LineChart: React.FC<LineChartProps> = ({
                 />
               )}
 
-              {/* Main Valuation Node with Pulsing Ring */}
+              {/* Main Valuation Node with Anchored SVG Pulse (Centered at cx/cy) */}
               <circle
                 cx={activeCoord.x}
                 cy={activeCoord.y}
-                r="6.5"
+                r="6"
                 fill={strokeColor}
-                fillOpacity="0.25"
-                className="animate-ping"
-              />
+                fillOpacity="0.3"
+              >
+                <animate
+                  attributeName="r"
+                  values="5;8.5;5"
+                  dur="1.8s"
+                  repeatCount="indefinite"
+                />
+                <animate
+                  attributeName="fill-opacity"
+                  values="0.35;0.08;0.35"
+                  dur="1.8s"
+                  repeatCount="indefinite"
+                />
+              </circle>
               <circle
                 cx={activeCoord.x}
                 cy={activeCoord.y}
