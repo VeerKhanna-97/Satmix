@@ -308,9 +308,9 @@ export const InvestScreen: React.FC = () => {
             src="/icons/daily.png"
             alt=""
             aria-hidden="true"
-            className="absolute -right-2 -bottom-2 w-20 h-20 sm:w-24 sm:h-24 object-contain pointer-events-none select-none opacity-[0.07] invert dark:invert-0"
+            className="absolute -right-2 -top-2 w-20 h-20 sm:w-24 sm:h-24 object-contain pointer-events-none select-none opacity-[0.07] invert dark:invert-0"
           />
-          <div>
+          <div className="relative z-10">
             <span className="text-[11px] font-semibold uppercase tracking-wider block text-neutral-400">
               DAILY AUTO-SAVE
             </span>
@@ -318,7 +318,7 @@ export const InvestScreen: React.FC = () => {
               ₹{dailyAmount}<span className="text-xs font-normal text-neutral-400">/day</span>
             </div>
           </div>
-          <div className="text-[11px] flex items-center gap-1.5 font-sans" style={{ color: colors.textSecondary }}>
+          <div className="text-[11px] flex items-center gap-1.5 font-sans relative z-10" style={{ color: colors.textSecondary }}>
             <span>~₹{Math.round(dailyAmount * 30.4).toLocaleString('en-IN')}/mo</span>
             <span className="opacity-40">·</span>
             <span className="text-purple-400 font-mono font-semibold">UPI AutoPay</span>
@@ -334,9 +334,9 @@ export const InvestScreen: React.FC = () => {
             src="/icons/rupee.png"
             alt=""
             aria-hidden="true"
-            className="absolute -right-1 -bottom-1 w-20 h-20 sm:w-24 sm:h-24 object-contain pointer-events-none select-none opacity-[0.07] invert dark:invert-0"
+            className="absolute -right-1 -top-1 w-20 h-20 sm:w-24 sm:h-24 object-contain pointer-events-none select-none opacity-[0.07] invert dark:invert-0"
           />
-          <div>
+          <div className="relative z-10">
             <span className="text-[11px] font-semibold uppercase tracking-wider block text-neutral-400">
               RCA AVERAGING ALPHA
             </span>
@@ -344,7 +344,7 @@ export const InvestScreen: React.FC = () => {
               +{dcaAlpha.advantagePct}%
             </div>
           </div>
-          <div className="text-[11px] flex items-center gap-1.5 font-sans" style={{ color: colors.textSecondary }}>
+          <div className="text-[11px] flex items-center gap-1.5 font-sans relative z-10" style={{ color: colors.textSecondary }}>
             <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
             <span>Acquisition cost vs period peak</span>
           </div>
@@ -359,9 +359,9 @@ export const InvestScreen: React.FC = () => {
             src="/icons/projected-value.png"
             alt=""
             aria-hidden="true"
-            className="absolute -right-1 -bottom-1 w-20 h-20 sm:w-24 sm:h-24 object-contain pointer-events-none select-none opacity-[0.07] invert dark:invert-0"
+            className="absolute -right-1 -top-1 w-20 h-20 sm:w-24 sm:h-24 object-contain pointer-events-none select-none opacity-[0.07] invert dark:invert-0"
           />
-          <div>
+          <div className="relative z-10">
             <span className="text-[11px] font-semibold uppercase tracking-wider block text-neutral-400">
               {horizon.label} PROJECTED VALUE
             </span>
@@ -369,7 +369,7 @@ export const InvestScreen: React.FC = () => {
               <CountUp to={projection.futureValue} prefix="₹" duration={1} />
             </div>
           </div>
-          <div className="text-[11px] flex items-center gap-1.5 font-sans" style={{ color: colors.textSecondary }}>
+          <div className="text-[11px] flex items-center gap-1.5 font-sans relative z-10" style={{ color: colors.textSecondary }}>
             <span>Compounded at</span>
             <span className="text-emerald-400 font-mono font-semibold">~{Math.round(activeBasket.growthRate * 100)}% p.a.</span>
           </div>
@@ -384,9 +384,9 @@ export const InvestScreen: React.FC = () => {
             src="/icons/liquidity.png"
             alt=""
             aria-hidden="true"
-            className="absolute -right-2 -bottom-2 w-20 h-20 sm:w-24 sm:h-24 object-contain pointer-events-none select-none opacity-[0.07] invert dark:invert-0"
+            className="absolute -right-2 -top-2 w-20 h-20 sm:w-24 sm:h-24 object-contain pointer-events-none select-none opacity-[0.07] invert dark:invert-0"
           />
-          <div>
+          <div className="relative z-10">
             <span className="text-[11px] font-semibold uppercase tracking-wider block text-neutral-400">
               NET LIQUIDITY
             </span>
@@ -394,7 +394,7 @@ export const InvestScreen: React.FC = () => {
               {netLiquidity.netPercentage}%
             </div>
           </div>
-          <div className="text-[11px] flex items-center gap-1.5 font-sans" style={{ color: colors.textSecondary }}>
+          <div className="text-[11px] flex items-center gap-1.5 font-sans relative z-10" style={{ color: colors.textSecondary }}>
             <Shield className="w-3.5 h-3.5 text-purple-400" />
             <span>Less 1% TDS · Zero exit fee</span>
           </div>
