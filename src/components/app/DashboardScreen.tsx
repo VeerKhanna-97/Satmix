@@ -311,8 +311,8 @@ export const DashboardScreen: React.FC = () => {
 
   return (
     <div className="space-y-5 sm:space-y-6 animate-fade-in w-full pb-16">
-      {/* ── TOP 4 WATERMARK METRIC CARDS (REFERENCE IMAGE SPACING) ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 font-sans">
+      {/* ── TOP 3 WATERMARK METRIC CARDS ──────────────────────── */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 font-sans">
         {/* Card 1: Total Balance */}
         <div
           className="relative overflow-hidden p-5 sm:p-6 rounded-[18px] border transition-all duration-300 flex flex-col justify-between h-[132px]"
@@ -406,28 +406,6 @@ export const DashboardScreen: React.FC = () => {
           >
             <span>{tabMetrics.netDeltaPercentage >= 0 ? '↗ +' : '↘ -'}{Math.abs(tabMetrics.netDeltaPercentage).toFixed(1)}%</span>
             <span className="text-neutral-400 font-normal">vs last month</span>
-          </div>
-        </div>
-
-        {/* Card 4: Dividend Yield / Daily Auto-Save */}
-        <div
-          className="relative overflow-hidden p-5 sm:p-6 rounded-[18px] border transition-all duration-300 flex flex-col justify-between h-[132px]"
-          style={{
-            backgroundColor: themeMode === 'dark' ? '#0B0F15' : '#FFFFFF',
-            borderColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
-          }}
-        >
-          <Calendar className="absolute top-4 right-4 w-10 h-10 opacity-[0.05] pointer-events-none text-white" />
-          <div>
-            <span className="text-[11px] font-semibold uppercase tracking-wider block font-mono text-neutral-400">
-              Dividend Yield
-            </span>
-            <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums text-white">
-              2.34%
-            </div>
-          </div>
-          <div className="text-[11px] font-mono text-neutral-400">
-            Daily Auto-Save: <span className="text-purple-400 font-semibold">₹{(isStableActive ? stableDailyRate : 0) + (isGrowthActive ? growthDailyRate : 0)}/d</span>
           </div>
         </div>
       </div>
