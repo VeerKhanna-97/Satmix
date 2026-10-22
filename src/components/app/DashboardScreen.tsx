@@ -24,6 +24,7 @@ import {
   ShieldCheck,
   LayoutGrid,
   Table,
+  IndianRupee,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { LineChart } from '../common/LineChart';
@@ -321,8 +322,8 @@ export const DashboardScreen: React.FC = () => {
             borderColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
           }}
         >
-          <span className="absolute top-4 right-4 text-3xl font-mono opacity-[0.06] pointer-events-none select-none text-white font-bold">₹</span>
-          <div>
+          <IndianRupee className="absolute -top-1 -right-1 w-16 h-16 sm:w-20 sm:h-20 opacity-[0.08] pointer-events-none select-none text-neutral-400 dark:text-white" strokeWidth={1.5} />
+          <div className="relative z-10">
             <span className="text-[11px] font-semibold uppercase tracking-wider block font-mono text-neutral-400">
               Total Balance
             </span>
@@ -335,7 +336,7 @@ export const DashboardScreen: React.FC = () => {
             </div>
           </div>
           <div
-            className={`inline-flex items-center gap-1 w-fit text-[11px] font-bold font-mono ${
+            className={`inline-flex items-center gap-1 w-fit text-[11px] font-bold font-mono relative z-10 ${
               displayedDeltaPercentage >= 0 ? 'text-emerald-400' : 'text-rose-400'
             }`}
           >
@@ -353,11 +354,11 @@ export const DashboardScreen: React.FC = () => {
           }}
         >
           {isPositiveGain ? (
-            <TrendingUp className="absolute top-4 right-4 w-10 h-10 opacity-[0.05] pointer-events-none text-emerald-400" />
+            <TrendingUp className="absolute -top-1 -right-1 w-16 h-16 sm:w-20 sm:h-20 opacity-[0.08] pointer-events-none select-none text-emerald-400" strokeWidth={1.5} />
           ) : (
-            <TrendingDown className="absolute top-4 right-4 w-10 h-10 opacity-[0.05] pointer-events-none text-rose-400" />
+            <TrendingDown className="absolute -top-1 -right-1 w-16 h-16 sm:w-20 sm:h-20 opacity-[0.08] pointer-events-none select-none text-rose-400" strokeWidth={1.5} />
           )}
-          <div>
+          <div className="relative z-10">
             <span className="text-[11px] font-semibold uppercase tracking-wider block font-mono text-neutral-400">
               Today's P&L
             </span>
@@ -369,7 +370,7 @@ export const DashboardScreen: React.FC = () => {
             </div>
           </div>
           <div
-            className={`inline-flex items-center gap-1 w-fit text-[11px] font-bold font-mono ${
+            className={`inline-flex items-center gap-1 w-fit text-[11px] font-bold font-mono relative z-10 ${
               isPositiveGain ? 'text-emerald-400' : 'text-rose-400'
             }`}
           >
@@ -387,11 +388,11 @@ export const DashboardScreen: React.FC = () => {
           }}
         >
           {tabMetrics.netDeltaPercentage >= 0 ? (
-            <ArrowUpRight className="absolute top-4 right-4 w-10 h-10 opacity-[0.05] pointer-events-none text-emerald-400" />
+            <ArrowUpRight className="absolute -top-1 -right-1 w-16 h-16 sm:w-20 sm:h-20 opacity-[0.08] pointer-events-none select-none text-emerald-400" strokeWidth={1.5} />
           ) : (
-            <ArrowDownRight className="absolute top-4 right-4 w-10 h-10 opacity-[0.05] pointer-events-none text-rose-400" />
+            <ArrowDownRight className="absolute -top-1 -right-1 w-16 h-16 sm:w-20 sm:h-20 opacity-[0.08] pointer-events-none select-none text-rose-400" strokeWidth={1.5} />
           )}
-          <div>
+          <div className="relative z-10">
             <span className="text-[11px] font-semibold uppercase tracking-wider block font-mono text-neutral-400">
               Total Return
             </span>
@@ -400,7 +401,7 @@ export const DashboardScreen: React.FC = () => {
             </div>
           </div>
           <div
-            className={`inline-flex items-center gap-1 w-fit text-[11px] font-bold font-mono ${
+            className={`inline-flex items-center gap-1 w-fit text-[11px] font-bold font-mono relative z-10 ${
               tabMetrics.netDeltaPercentage >= 0 ? 'text-emerald-400' : 'text-rose-400'
             }`}
           >
