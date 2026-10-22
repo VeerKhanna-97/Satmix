@@ -159,56 +159,69 @@ export const InvestScreen: React.FC = () => {
     };
   }, [tabMetrics.marketValue]);
 
-  // Asset P&L Contribution Breakdown (Replacing Redundant Monthly Bars)
+  // Asset P&L Contribution Breakdown (Filtered dynamically to held assets, calculated with real P&L and ROI)
   const assetAttribution = useMemo(() => {
-    const btcVal = tabMetrics.holdings.BTC.inrValue;
-    const ethVal = tabMetrics.holdings.ETH.inrValue;
-    const solVal = tabMetrics.holdings.SOL.inrValue;
-    const usdtVal = tabMetrics.holdings.USDT.inrValue;
-    const total = btcVal + ethVal + solVal + usdtVal || 1;
-
-    return [
+    const rawList = [
       {
         ticker: 'BTC',
         name: 'Bitcoin',
-        inrValue: btcVal,
-        pnlRupees: Math.round(tabMetrics.holdings.BTC.gainRupees || btcVal * 0.142),
-        roiPct: 14.2,
-        weight: Math.round((btcVal / total) * 100),
+        detail: tabMetrics.holdings.BTC,
         color: '#f7931b',
         role: 'Store of Value Core',
       },
       {
         ticker: 'ETH',
         name: 'Ethereum',
-        inrValue: ethVal,
-        pnlRupees: Math.round(tabMetrics.holdings.ETH.gainRupees || ethVal * 0.086),
-        roiPct: 8.6,
-        weight: Math.round((ethVal / total) * 100),
+        detail: tabMetrics.holdings.ETH,
         color: '#627eea',
         role: 'Smart Contract Layer',
       },
       {
         ticker: 'SOL',
         name: 'Solana',
-        inrValue: solVal,
-        pnlRupees: Math.round(tabMetrics.holdings.SOL.gainRupees || solVal * 0.184),
-        roiPct: 18.4,
-        weight: Math.round((solVal / total) * 100),
+        detail: tabMetrics.holdings.SOL,
         color: '#9945fe',
         role: 'High-Throughput Payments',
       },
       {
         ticker: 'USDT',
         name: 'Tether USD',
-        inrValue: usdtVal,
-        pnlRupees: Math.round(tabMetrics.holdings.USDT.gainRupees || usdtVal * 0.021),
-        roiPct: 2.1,
-        weight: Math.round((usdtVal / total) * 100),
+        detail: tabMetrics.holdings.USDT,
         color: '#26a17b',
         role: 'Capital Guard Reserve',
       },
     ];
+
+    // Filter to only currencies that the user has in their habit/portfolio (units > 0)
+    // If portfolio is empty, fallback to showing all 4 at zero baseline
+    const hasAnyHoldings = rawList.some((item) => (item.detail?.units || 0) > 0.00000001);
+    const active = hasAnyHoldings
+      ? rawList.filter((item) => (item.detail?.units || 0) > 0.00000001)
+      : rawList;
+
+    const totalHeldVal = active.reduce((sum, item) => sum + (item.detail?.inrValue || 0), 0) || 1;
+
+    return active.map((item) => {
+      const inrValue = item.detail?.inrValue || 0;
+      const rawGain = item.detail?.gainRupees ?? 0;
+      const rawRoi = item.detail?.gainPercentage ?? 0;
+
+      // Clean zeros to avoid "-0" or "-0.0%" artifacts
+      const pnlRupees = Math.abs(rawGain) < 0.5 ? 0 : Math.round(rawGain);
+      const roiPct = Math.abs(rawRoi) < 0.05 ? 0 : Number(rawRoi.toFixed(1));
+      const weight = Math.round((inrValue / totalHeldVal) * 100);
+
+      return {
+        ticker: item.ticker,
+        name: item.name,
+        inrValue,
+        pnlRupees,
+        roiPct,
+        weight,
+        color: item.color,
+        role: item.role,
+      };
+    });
   }, [tabMetrics.holdings]);
 
   const handleSaveHabit = async () => {
@@ -699,25 +712,36 @@ export const InvestScreen: React.FC = () => {
             </div>
 
             <div className="divide-y divide-white/[0.06] text-xs font-mono">
-              {assetAttribution.map((asset) => (
-                <div key={asset.ticker} className="py-2.5 flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: asset.color }} />
-                    <div>
-                      <span className="font-bold text-white">{asset.name}</span>
-                      <span className="text-[10px] text-neutral-400 block font-sans">{asset.role}</span>
+              {assetAttribution.map((asset) => {
+                const isGain = asset.pnlRupees >= 0;
+                const isRoiGain = asset.roiPct >= 0;
+
+                const pnlSign = isGain ? '+' : '-';
+                const formattedPnl = `${pnlSign}₹${Math.abs(asset.pnlRupees).toLocaleString('en-IN')}`;
+
+                const roiSign = isRoiGain ? '+' : '-';
+                const formattedRoi = `${roiSign}${Math.abs(asset.roiPct).toFixed(1)}% ROI`;
+
+                return (
+                  <div key={asset.ticker} className="py-2.5 flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: asset.color }} />
+                      <div>
+                        <span className="font-bold text-white">{asset.name}</span>
+                        <span className="text-[10px] text-neutral-400 block font-sans">{asset.role}</span>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <span className={`font-bold tabular-nums block ${isGain ? 'text-emerald-400' : 'text-rose-400'}`}>
+                        {formattedPnl}
+                      </span>
+                      <span className={`text-[10px] block font-mono ${isRoiGain ? 'text-emerald-400/80' : 'text-rose-400/80'}`}>
+                        {formattedRoi}
+                      </span>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <span className="text-emerald-400 font-bold tabular-nums">
-                      +₹{asset.pnlRupees.toLocaleString('en-IN')}
-                    </span>
-                    <span className="text-[10px] text-neutral-400 block">
-                      +{asset.roiPct}% ROI
-                    </span>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </SpotlightCard>
 
