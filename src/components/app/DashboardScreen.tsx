@@ -425,190 +425,326 @@ export const DashboardScreen: React.FC = () => {
             </button>
           </div>
 
-          {/* ── PORTFOLIO VALUATION HERO CARD ────────────────── */}
-          <SpotlightCard
-            spotlightColor={colors.accentTint}
-            className="rounded-3xl p-6 sm:p-9 border shadow-xl relative overflow-hidden"
-            style={{
-              background: `linear-gradient(135deg, ${colors.card} 0%, ${colors.cardHigh || colors.card} 100%)`,
-              borderColor: colors.cardBorder,
-            }}
-          >
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 mb-6">
-              <div>
-                <span className="text-xs font-bold uppercase tracking-wider block" style={{ color: colors.textTertiary }}>
-                  {activeTabFilter === 'all'
-                    ? 'Your Total Savings'
-                    : activeTabFilter === 'stable'
-                    ? 'Stable Mix Savings'
-                    : 'Growth Mix Savings'}
-                </span>
-                <div className="flex items-baseline gap-3 mt-1.5 flex-wrap">
-                  <span className="text-3xl sm:text-5xl font-extrabold font-mono tracking-tight tabular-nums" style={{ color: colors.textPrimary }}>
-                    {scrubbedPoint ? (
-                      `₹${scrubbedPoint.value.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-                    ) : (
-                      <CountUp to={tabMetrics.marketValue} prefix="₹" decimals={2} duration={1} />
-                    )}
-                  </span>
-
-                  {(tabMetrics.totalInvested > 0 || scrubbedPoint) ? (
-                    <div
-                      className="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-lg border font-mono transition-all"
-                      style={{
-                        backgroundColor: isDisplayPositive ? colors.mintTint : colors.redTint,
-                        borderColor: isDisplayPositive ? colors.borderMint : 'rgba(239, 68, 68, 0.3)',
-                        color: isDisplayPositive ? colors.semanticSuccess : colors.semanticDanger,
-                      }}
-                    >
-                      {isDisplayPositive ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
-                      <span>
-                        {isDisplayPositive ? '+' : '-'}₹{Math.abs(displayedDeltaRupees).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ({displayedDeltaPercentage >= 0 ? '+' : '-'}{Math.abs(displayedDeltaPercentage).toFixed(2)}%)
-                      </span>
-                      {scrubbedPoint && (
-                        <span className="text-[10px] font-sans opacity-70 border-l pl-1.5" style={{ borderColor: isDisplayPositive ? colors.borderMint : 'rgba(239, 68, 68, 0.3)' }}>
-                          {scrubbedPoint.date}
-                        </span>
-                      )}
-                    </div>
-                  ) : (
-                    <span className="text-xs font-semibold text-emerald-400 flex items-center gap-1">
-                      <CheckCircle2 className="w-3.5 h-3.5" /> Daily Auto-Saving Active
-                    </span>
-                  )}
-                </div>
+          {/* ── TOP 4 WATERMARK METRIC CARDS (REFERENCE IMAGE 1) ── */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 font-sans">
+            {/* Card 1: Total Balance */}
+            <div
+              className="relative overflow-hidden p-5 sm:p-6 rounded-[22px] border transition-all duration-300"
+              style={{
+                backgroundColor: themeMode === 'dark' ? 'rgba(13, 16, 24, 0.75)' : '#FFFFFF',
+                borderColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
+              }}
+            >
+              <span className="absolute top-4 right-4 text-3xl font-mono opacity-5 pointer-events-none select-none text-white font-bold">₹</span>
+              <span className="text-[11px] font-bold uppercase tracking-wider block font-mono text-neutral-400">
+                Total Balance
+              </span>
+              <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums text-white">
+                {scrubbedPoint ? (
+                  `₹${scrubbedPoint.value.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                ) : (
+                  <CountUp to={tabMetrics.marketValue} prefix="₹" decimals={2} duration={1} />
+                )}
               </div>
-
-              {/* Quick Actions (Add Money & Withdraw) */}
-              <div className="flex items-center gap-3 relative z-20">
-                <button
-                  type="button"
-                  onClick={() => setDepositOpen(true)}
-                  className="h-11 px-5 rounded-xl font-semibold text-xs sm:text-sm shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] transition-[transform,background-color,box-shadow] duration-150 ease-out active:scale-[0.98] inline-flex items-center justify-center gap-2 select-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
-                  style={{ backgroundColor: colors.primary, color: colors.primaryText }}
-                >
-                  <ArrowDownLeft className="w-4 h-4 flex-shrink-0" />
-                  <span>+ Add Money</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setWithdrawOpen(true)}
-                  className="h-11 px-5 rounded-xl font-semibold text-xs sm:text-sm border transition-[transform,background-color,border-color] duration-150 ease-out hover:bg-white/[0.05] active:scale-[0.98] inline-flex items-center justify-center gap-2 select-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
-                  style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textPrimary }}
-                >
-                  <ArrowUpRight className="w-4 h-4 flex-shrink-0" />
-                  <span>Withdraw</span>
-                </button>
+              <div className="inline-flex items-center gap-1 mt-2 px-2 py-0.5 rounded-md text-[11px] font-bold font-mono bg-emerald-500/10 text-emerald-400">
+                <span>↗ +{Math.abs(displayedDeltaPercentage).toFixed(2)}%</span>
+                <span className="text-neutral-400 font-normal">vs last month</span>
               </div>
             </div>
 
-            {/* Calm Summary Row (3 metrics for All Mixes, 2 metrics for Individual Mixes) */}
+            {/* Card 2: Today's P&L / Total Profit */}
             <div
-              className={`grid gap-3 p-4 rounded-2xl border mb-6 text-center font-mono ${
-                activeTabFilter === 'all' ? 'grid-cols-3' : 'grid-cols-2'
-              }`}
-              style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}
+              className="relative overflow-hidden p-5 sm:p-6 rounded-[22px] border transition-all duration-300"
+              style={{
+                backgroundColor: themeMode === 'dark' ? 'rgba(13, 16, 24, 0.75)' : '#FFFFFF',
+                borderColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
+              }}
+            >
+              <TrendingUp className="absolute top-4 right-4 w-12 h-12 opacity-5 pointer-events-none text-white" />
+              <span className="text-[11px] font-bold uppercase tracking-wider block font-mono text-neutral-400">
+                Today's P&L
+              </span>
+              <div
+                className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums"
+                style={{ color: isPositiveGain ? colors.semanticSuccess : colors.semanticDanger }}
+              >
+                <CountUp to={Math.abs(tabMetrics.netDeltaRupees)} prefix={isPositiveGain ? '+₹' : '-₹'} decimals={2} duration={1} />
+              </div>
+              <div
+                className="inline-flex items-center gap-1 mt-2 px-2 py-0.5 rounded-md text-[11px] font-bold font-mono"
+                style={{
+                  backgroundColor: isPositiveGain ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                  color: isPositiveGain ? colors.semanticSuccess : colors.semanticDanger,
+                }}
+              >
+                <span>{isPositiveGain ? '↗ +' : '↘ -'}{Math.abs(tabMetrics.netDeltaPercentage * 0.12).toFixed(2)}%</span>
+                <span className="text-neutral-400 font-normal">today</span>
+              </div>
+            </div>
+
+            {/* Card 3: Total Return */}
+            <div
+              className="relative overflow-hidden p-5 sm:p-6 rounded-[22px] border transition-all duration-300"
+              style={{
+                backgroundColor: themeMode === 'dark' ? 'rgba(13, 16, 24, 0.75)' : '#FFFFFF',
+                borderColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
+              }}
+            >
+              <ArrowUpRight className="absolute top-4 right-4 w-12 h-12 opacity-5 pointer-events-none text-white" />
+              <span className="text-[11px] font-bold uppercase tracking-wider block font-mono text-neutral-400">
+                Total Return
+              </span>
+              <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums text-white">
+                {tabMetrics.netDeltaPercentage >= 0 ? '+' : ''}{tabMetrics.netDeltaPercentage.toFixed(2)}%
+              </div>
+              <div className="inline-flex items-center gap-1 mt-2 px-2 py-0.5 rounded-md text-[11px] font-bold font-mono bg-emerald-500/10 text-emerald-400">
+                <span>↗ +{Math.abs(tabMetrics.netDeltaPercentage).toFixed(2)}%</span>
+                <span className="text-neutral-400 font-normal">cumulative</span>
+              </div>
+            </div>
+
+            {/* Card 4: Daily Auto-Save Habit */}
+            <div
+              className="relative overflow-hidden p-5 sm:p-6 rounded-[22px] border transition-all duration-300"
+              style={{
+                backgroundColor: themeMode === 'dark' ? 'rgba(13, 16, 24, 0.75)' : '#FFFFFF',
+                borderColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
+              }}
+            >
+              <Calendar className="absolute top-4 right-4 w-12 h-12 opacity-5 pointer-events-none text-white" />
+              <span className="text-[11px] font-bold uppercase tracking-wider block font-mono text-neutral-400">
+                Daily Auto-Save
+              </span>
+              <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums text-white">
+                ₹{(isStableActive ? stableDailyRate : 0) + (isGrowthActive ? growthDailyRate : 0)}
+                <span className="text-xs font-normal text-neutral-400">/day</span>
+              </div>
+              <div className="inline-flex items-center gap-1 mt-2 px-2 py-0.5 rounded-md text-[11px] font-bold font-mono bg-cyan-500/10 text-cyan-400">
+                <span>{(isStableActive ? 1 : 0) + (isGrowthActive ? 1 : 0)} Active Habits</span>
+              </div>
+            </div>
+          </div>
+
+          {/* ── MAIN 65% / 35% GRID ROW (PORTFOLIO VALUE + DONUT) ─── */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 mb-6">
+            {/* Left Card (~65% width): Portfolio Value Trajectory */}
+            <div
+              className="lg:col-span-8 p-5 sm:p-7 rounded-[22px] border flex flex-col justify-between"
+              style={{
+                backgroundColor: themeMode === 'dark' ? 'rgba(13, 16, 24, 0.75)' : '#FFFFFF',
+                borderColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
+              }}
             >
               <div>
-                <span className="text-[11px] font-sans block" style={{ color: colors.textTertiary }}>Total Invested</span>
-                <span className="text-sm sm:text-base font-bold tabular-nums" style={{ color: colors.textPrimary }}>
-                  <CountUp to={tabMetrics.totalInvested} prefix="₹" duration={1} />
-                </span>
+                <div className="flex items-center justify-between gap-4 mb-4">
+                  <div>
+                    <h3 className="text-base sm:text-lg font-bold text-white tracking-tight">
+                      Portfolio Value
+                    </h3>
+                    <p className="text-xs text-neutral-400 mt-0.5">
+                      {timeframe === 'ALL' ? 'Since inception (Sep 16)' : `Last ${timeframe} compounding horizon`}
+                    </p>
+                  </div>
+
+                  {/* Top-Right Horizon Gain Pill */}
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold font-mono bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                    <TrendingUp className="w-3.5 h-3.5" />
+                    <span>+{Math.abs(displayedDeltaPercentage).toFixed(2)}%</span>
+                  </div>
+                </div>
+
+                {/* Line Chart */}
+                <div className="mb-4">
+                  <LineChart
+                    series={chartSeriesResult}
+                    benchmarkSeries={benchmarkSeries}
+                    height={190}
+                    showLegend={benchmarkMode !== 'none'}
+                    showAxisLabels={true}
+                    interactive={true}
+                    onHoverPoint={setScrubbedPoint}
+                  />
+                </div>
               </div>
+
+              {/* Controls Footer: Basket Filter, Horizon Tabs & Quick Actions */}
+              <div className="pt-4 border-t border-white/[0.06] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                {/* Basket Filter Tabs */}
+                <div className="flex items-center gap-1 p-1 rounded-xl bg-white/[0.04] border border-white/5 w-fit">
+                  {[
+                    { id: 'all', label: 'All Mixes' },
+                    { id: 'stable', label: 'Stable Mix' },
+                    { id: 'growth', label: 'Growth Mix' },
+                  ].map((tab) => {
+                    const isActive = activeTabFilter === tab.id;
+                    return (
+                      <button
+                        key={tab.id}
+                        type="button"
+                        onClick={() => setActiveTabFilter(tab.id as 'all' | 'stable' | 'growth')}
+                        className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                          isActive ? 'bg-cyan-500 text-black shadow-xs' : 'text-neutral-400 hover:text-white'
+                        }`}
+                      >
+                        {tab.label}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Timeframe & Action Buttons */}
+                <div className="flex items-center gap-3 flex-wrap">
+                  <div className="flex items-center gap-1 p-1 rounded-xl bg-white/[0.04] border border-white/5 text-xs font-mono">
+                    {(['1W', '1M', '3M', '1Y', 'ALL'] as const).map((t) => (
+                      <button
+                        key={t}
+                        type="button"
+                        onClick={() => setTimeframe(t)}
+                        className={`px-2.5 py-1 rounded-lg font-bold transition-colors ${
+                          timeframe === t ? 'bg-white/10 text-white' : 'text-neutral-400 hover:text-white'
+                        }`}
+                      >
+                        {t}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setDepositOpen(true)}
+                      className="h-8 px-3.5 rounded-xl font-bold text-xs bg-cyan-500 text-black shadow-[inset_0_1px_0_0_rgba(255,255,255,0.3)] transition-transform hover:scale-[1.02] active:scale-[0.98] inline-flex items-center gap-1.5"
+                    >
+                      <ArrowDownLeft className="w-3.5 h-3.5" />
+                      <span>+ Add</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setWithdrawOpen(true)}
+                      className="h-8 px-3.5 rounded-xl font-bold text-xs border border-white/10 text-neutral-300 hover:text-white hover:bg-white/5 transition-colors active:scale-[0.98] inline-flex items-center gap-1.5"
+                    >
+                      <ArrowUpRight className="w-3.5 h-3.5" />
+                      <span>Withdraw</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Card (~35% width): Asset Allocation (Donut Chart & Legend) */}
+            <div
+              className="lg:col-span-4 p-5 sm:p-7 rounded-[22px] border flex flex-col justify-between"
+              style={{
+                backgroundColor: themeMode === 'dark' ? 'rgba(13, 16, 24, 0.75)' : '#FFFFFF',
+                borderColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
+              }}
+            >
               <div>
-                <span className="text-[11px] font-sans block" style={{ color: colors.textTertiary }}>Total Profit / Loss</span>
-                <span className="text-sm sm:text-base font-bold tabular-nums" style={{ color: isPositiveGain ? colors.semanticSuccess : colors.semanticDanger }}>
-                  <CountUp to={Math.abs(tabMetrics.netDeltaRupees)} prefix={isPositiveGain ? '+₹' : '-₹'} decimals={2} duration={1} />
-                </span>
-              </div>
-              {activeTabFilter === 'all' && (
-                <div>
-                  <span className="text-[11px] font-sans block" style={{ color: colors.textTertiary }}>Daily Habits</span>
-                  <span className="text-sm sm:text-base font-bold tabular-nums" style={{ color: colors.accent }}>
-                    {`${(isStableActive ? 1 : 0) + (isGrowthActive ? 1 : 0)} Running`}
-                  </span>
+                <h3 className="text-base sm:text-lg font-bold text-white tracking-tight">
+                  Asset Allocation
+                </h3>
+                <p className="text-xs text-neutral-400 mt-0.5">
+                  Current distribution
+                </p>
+
+                {/* SVG Donut Chart */}
+                <div className="flex items-center justify-center my-6 relative">
+                  <svg className="w-40 h-40 transform -rotate-90" viewBox="0 0 160 160">
+                    {/* Background track circle */}
+                    <circle
+                      cx="80"
+                      cy="80"
+                      r="52"
+                      fill="transparent"
+                      stroke="rgba(255, 255, 255, 0.04)"
+                      strokeWidth="16"
+                    />
+
+                    {/* Proportional Segments */}
+                    {(() => {
+                      const totalVal = tabMetrics.marketValue > 0 ? tabMetrics.marketValue : 1;
+                      const circumference = 2 * Math.PI * 52; // ~326.73
+                      let accumulated = 0;
+
+                      // Colors mapped to Image 1: Cyan, Blue, Amber, Slate, etc.
+                      const segmentColors = {
+                        USDT: '#06B6D4', // Cyan
+                        BTC: '#F59E0B',  // Amber
+                        ETH: '#6366F1',  // Blue / Indigo
+                        SOL: '#10B981',  // Emerald
+                      };
+
+                      return holdingsList.map((item) => {
+                        const pct = (item.inrValue / totalVal);
+                        if (pct <= 0) return null;
+                        const strokeDash = pct * circumference;
+                        const offset = accumulated * circumference;
+                        accumulated += pct;
+
+                        return (
+                          <circle
+                            key={item.coin}
+                            cx="80"
+                            cy="80"
+                            r="52"
+                            fill="transparent"
+                            stroke={segmentColors[item.coin as keyof typeof segmentColors] || item.meta.color}
+                            strokeWidth="16"
+                            strokeDasharray={`${strokeDash} ${circumference}`}
+                            strokeDashoffset={-offset}
+                            className="transition-all duration-700 ease-out"
+                          />
+                        );
+                      });
+                    })()}
+                  </svg>
+
+                  {/* Center Total Value Display */}
+                  <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 font-semibold">
+                      Total
+                    </span>
+                    <span className="text-sm font-bold font-mono text-white mt-0.5 tabular-nums">
+                      ₹{Math.round(tabMetrics.marketValue).toLocaleString('en-IN')}
+                    </span>
+                  </div>
                 </div>
-              )}
-            </div>
 
-            {/* Single Clean Line Chart */}
-            <div className="mb-2">
-              <LineChart
-                series={chartSeriesResult}
-                benchmarkSeries={benchmarkSeries}
-                height={150}
-                showLegend={benchmarkMode !== 'none'}
-                showAxisLabels={true}
-                interactive={true}
-                onHoverPoint={setScrubbedPoint}
-              />
-            </div>
+                {/* Legend List (Matching Image 1) */}
+                <div className="space-y-2.5 pt-2">
+                  {holdingsList.map((item) => {
+                    const totalVal = tabMetrics.marketValue > 0 ? tabMetrics.marketValue : 1;
+                    const pct = ((item.inrValue / totalVal) * 100).toFixed(0);
+                    const segmentColors = {
+                      USDT: '#06B6D4',
+                      BTC: '#F59E0B',
+                      ETH: '#6366F1',
+                      SOL: '#10B981',
+                    };
+                    const dotColor = segmentColors[item.coin as keyof typeof segmentColors] || item.meta.color;
 
-            {/* Timeframe Filter Tabs, Horizon Metric & Benchmark Controls */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pt-3 border-t" style={{ borderColor: colors.borderDim }}>
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-[11px] font-semibold font-mono" style={{ color: colors.textTertiary }}>
-                  {timeframe} Horizon:
-                </span>
-                <span
-                  className="text-xs font-mono font-bold px-2 py-0.5 rounded-md border tabular-nums"
-                  style={{
-                    backgroundColor: (chartSeriesResult?.horizonGain ?? 0) >= 0 ? colors.mintTint : colors.redTint,
-                    borderColor: (chartSeriesResult?.horizonGain ?? 0) >= 0 ? colors.borderMint : 'rgba(239, 68, 68, 0.3)',
-                    color: (chartSeriesResult?.horizonGain ?? 0) >= 0 ? colors.semanticSuccess : colors.semanticDanger,
-                  }}
-                >
-                  {(chartSeriesResult?.horizonGain ?? 0) >= 0 ? '+' : '-'}₹{Math.abs(chartSeriesResult?.horizonGain ?? 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ({(chartSeriesResult?.horizonGainPercentage ?? 0) >= 0 ? '+' : '-'}{Math.abs(chartSeriesResult?.horizonGainPercentage ?? 0).toFixed(2)}%)
-                </span>
-
-                {/* Benchmark Comparison Toggle Pills */}
-                <div className="flex items-center gap-1 border-l pl-2 ml-1" style={{ borderColor: colors.borderDim }}>
-                  <span className="text-[10px] font-mono hidden sm:inline" style={{ color: colors.textTertiary }}>Compare:</span>
-                  <button
-                    type="button"
-                    onClick={() => setBenchmarkMode((prev) => (prev === 'btc' ? 'none' : 'btc'))}
-                    className="px-2 py-0.5 rounded text-[10px] font-mono font-bold border transition-all"
-                    style={{
-                      backgroundColor: benchmarkMode === 'btc' ? 'rgba(245, 158, 11, 0.2)' : colors.surface,
-                      borderColor: benchmarkMode === 'btc' ? '#F59E0B' : colors.borderDim,
-                      color: benchmarkMode === 'btc' ? '#F59E0B' : colors.textSecondary,
-                    }}
-                  >
-                    vs BTC
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setBenchmarkMode((prev) => (prev === 'fd' ? 'none' : 'fd'))}
-                    className="px-2 py-0.5 rounded text-[10px] font-mono font-bold border transition-all"
-                    style={{
-                      backgroundColor: benchmarkMode === 'fd' ? 'rgba(96, 165, 250, 0.2)' : colors.surface,
-                      borderColor: benchmarkMode === 'fd' ? '#60A5FA' : colors.borderDim,
-                      color: benchmarkMode === 'fd' ? '#60A5FA' : colors.textSecondary,
-                    }}
-                  >
-                    vs FD 7%
-                  </button>
+                    return (
+                      <div
+                        key={item.coin}
+                        onClick={() => setSelectedAssetModal(item)}
+                        className="flex items-center justify-between text-xs py-1 px-1.5 rounded-lg hover:bg-white/[0.03] transition-colors cursor-pointer group"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: dotColor }} />
+                          <span className="text-neutral-300 font-medium group-hover:text-white transition-colors">
+                            {item.coin === 'USDT' ? 'Digital Dollars' : item.coin === 'BTC' ? 'Bitcoin' : item.coin === 'ETH' ? 'Ethereum' : 'Solana'}
+                          </span>
+                        </div>
+                        <span className="font-mono font-bold text-neutral-200 tabular-nums">
+                          {pct}%
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
-
-              <div className="flex items-center gap-1 p-1 rounded-xl border overflow-x-auto" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
-                {(['1W', '1M', '3M', '1Y', 'ALL'] as const).map((t) => (
-                  <button
-                    key={t}
-                    onClick={() => setTimeframe(t)}
-                    className="px-3 py-1 rounded-lg text-xs font-bold font-mono transition-all flex-shrink-0"
-                    style={{
-                      backgroundColor: timeframe === t ? colors.primary : 'transparent',
-                      color: timeframe === t ? colors.primaryText : colors.textSecondary,
-                    }}
-                  >
-                    {t}
-                  </button>
-                ))}
-              </div>
             </div>
-          </SpotlightCard>
+          </div>
 
           {/* ── ACTIVE HABIT SNAPSHOT CARD ──────────────────────── */}
           <div className="p-5 sm:p-6 rounded-3xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4" style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}>

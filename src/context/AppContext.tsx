@@ -37,7 +37,7 @@ import { calculateStreakState, createEmptyStreakState } from '../utils/streakEng
 import { getBasketById } from '../data/baskets';
 
 export type ViewMode = 'marketing' | 'auth' | 'app' | 'privacy' | 'terms' | 'refund' | 'cookies' | 'thank-you' | '404' | 'unsubscribe';
-export type AppTab = 'dashboard' | 'baskets' | 'invest' | 'profile';
+export type AppTab = 'dashboard' | 'performance' | 'baskets' | 'transactions' | 'invest' | 'profile';
 export type DeviceFrame = 'full' | 'mobile';
 export type CookieConsentChoice = 'all' | 'essential' | null;
 

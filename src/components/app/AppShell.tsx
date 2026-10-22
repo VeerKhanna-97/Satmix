@@ -1,7 +1,18 @@
 import React from 'react';
-import { Home, Layers, TrendingUp, User, Moon, Sun, ArrowLeft } from 'lucide-react';
+import {
+  Wallet,
+  TrendingUp,
+  Layers,
+  ArrowLeftRight,
+  Settings,
+  Moon,
+  Sun,
+  ArrowLeft,
+} from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { DashboardScreen } from './DashboardScreen';
+import { PerformanceScreen } from './PerformanceScreen';
+import { TransactionsScreen } from './TransactionsScreen';
 import { BasketsScreen } from './BasketsScreen';
 import { InvestScreen } from './InvestScreen';
 import { ProfileScreen } from './ProfileScreen';
@@ -22,25 +33,26 @@ export const AppShell: React.FC = () => {
   } = useApp();
 
   const tabs = [
-    { id: 'dashboard', label: 'Home', icon: Home },
-    { id: 'baskets', label: 'Baskets', icon: Layers },
-    { id: 'invest', label: 'Invest', icon: TrendingUp },
-    { id: 'profile', label: 'Profile', icon: User },
-  ] as const;
+    { id: 'dashboard' as const, label: 'Portfolio', icon: Wallet },
+    { id: 'performance' as const, label: 'Performance', icon: TrendingUp },
+    { id: 'baskets' as const, label: 'Baskets', icon: Layers },
+    { id: 'transactions' as const, label: 'Transactions', icon: ArrowLeftRight },
+    { id: 'profile' as const, label: 'Settings', icon: Settings },
+  ];
 
   return (
     <div className="min-h-screen flex flex-col transition-colors pb-[calc(6.5rem+env(safe-area-inset-bottom,0px))] md:pb-12 relative overflow-hidden" style={{ backgroundColor: colors.bg }}>
-      {/* Background Accent Glow */}
+      {/* Background Ambient Glow */}
       <div
         className="absolute top-0 right-1/4 w-[600px] h-[600px] rounded-full blur-[180px] pointer-events-none opacity-5 animate-ambient-glow"
         style={{ background: `radial-gradient(circle, ${colors.accent} 0%, transparent 70%)` }}
       />
 
-      {/* ── TOP NAV BAR ───────────────────────────────────────── */}
+      {/* ── TOP NAV BAR (MERIDIAN FINTECH STYLE) ────────────────── */}
       <header
         className="sticky top-0 z-40 w-full backdrop-blur-md border-b transition-colors"
         style={{
-          backgroundColor: themeMode === 'dark' ? 'rgba(9, 10, 14, 0.88)' : 'rgba(248, 250, 252, 0.88)',
+          backgroundColor: themeMode === 'dark' ? 'rgba(9, 10, 14, 0.92)' : 'rgba(248, 250, 252, 0.92)',
           borderColor: colors.borderDim,
         }}
       >
@@ -66,8 +78,8 @@ export const AppShell: React.FC = () => {
             </div>
           </div>
 
-          {/* Desktop Tab Selector with Shared Animated Indicator */}
-          <div className="hidden md:flex items-center gap-1 p-1 rounded-2xl border" style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder }}>
+          {/* Desktop Tab Selector with Cyan Underline Glow (Images 1, 2, 4, 5) */}
+          <div className="hidden md:flex items-center gap-6 lg:gap-8 text-xs sm:text-sm font-medium">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -75,23 +87,19 @@ export const AppShell: React.FC = () => {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className="relative flex items-center gap-2 px-4 py-1.5 rounded-xl text-xs font-bold transition-colors"
-                  style={{
-                    color: isActive ? colors.primaryText : colors.textSecondary,
-                  }}
+                  className={`relative flex items-center gap-2 py-2 transition-colors duration-200 select-none ${
+                    isActive ? 'text-white font-bold' : 'text-neutral-400 hover:text-neutral-200 font-medium'
+                  }`}
                 >
+                  <Icon className={`w-4 h-4 ${isActive ? 'text-cyan-400' : 'text-neutral-400'}`} />
+                  <span>{tab.label}</span>
                   {isActive && (
                     <motion.div
-                      layoutId="activeDesktopTabPill"
-                      className="absolute inset-0 rounded-xl shadow-md z-0"
-                      style={{ backgroundColor: colors.primary }}
-                      transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                      layoutId="activeNavUnderline"
+                      className="absolute -bottom-3 left-0 right-0 h-[2px] rounded-full bg-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.9)]"
+                      transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
                     />
                   )}
-                  <span className="relative z-10 flex items-center gap-1.5">
-                    <Icon className="w-3.5 h-3.5" />
-                    <span>{tab.label}</span>
-                  </span>
                 </button>
               );
             })}
@@ -124,27 +132,27 @@ export const AppShell: React.FC = () => {
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
-            initial={{ opacity: 0, y: 18, scaleX: 0.98, scaleY: 1.03 }}
+            initial={{ opacity: 0, y: 14, scale: 0.99 }}
             animate={{
               opacity: 1,
               y: 0,
-              scaleX: 1,
-              scaleY: 1,
+              scale: 1,
               transition: {
-                duration: 0.38,
-                ease: [0.34, 1.35, 0.64, 1], // Non-linear elastic curve
+                duration: 0.3,
+                ease: [0.16, 1, 0.3, 1],
               },
             }}
             exit={{
               opacity: 0,
-              y: -10,
-              scaleX: 0.98,
-              scaleY: 0.98,
-              transition: { duration: 0.16, ease: [0.32, 0, 0.67, 0] },
+              y: -8,
+              scale: 0.99,
+              transition: { duration: 0.15, ease: [0.32, 0, 0.67, 0] },
             }}
           >
             {activeTab === 'dashboard' && <DashboardScreen />}
+            {activeTab === 'performance' && <PerformanceScreen />}
             {activeTab === 'baskets' && <BasketsScreen />}
+            {activeTab === 'transactions' && <TransactionsScreen />}
             {activeTab === 'invest' && <InvestScreen />}
             {activeTab === 'profile' && <ProfileScreen />}
           </motion.div>
@@ -174,23 +182,22 @@ export const AppShell: React.FC = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className="relative flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-full transition-all duration-200 select-none active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                className="relative flex items-center gap-1.5 px-3 py-2 rounded-full transition-all duration-200 select-none active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/50"
                 style={{
-                  color: isActive ? colors.primaryText : colors.textSecondary,
+                  color: isActive ? '#06B6D4' : colors.textSecondary,
                 }}
                 aria-current={isActive ? 'page' : undefined}
               >
                 {isActive && (
                   <motion.div
                     layoutId="activeMobileDockPill"
-                    className="absolute inset-0 rounded-full shadow-md z-0"
-                    style={{ backgroundColor: colors.primary }}
+                    className="absolute inset-0 rounded-full shadow-md z-0 bg-cyan-500/10 border border-cyan-500/20"
                     transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
                   />
                 )}
-                <span className="relative z-10 flex items-center gap-1.5">
+                <span className="relative z-10 flex items-center gap-1">
                   <Icon className="w-4 h-4 flex-shrink-0" strokeWidth={isActive ? 2.5 : 2} />
-                  <span className={`text-[12px] sm:text-[13px] tracking-tight ${isActive ? 'font-bold' : 'font-semibold'}`}>
+                  <span className={`text-[11px] sm:text-[12px] tracking-tight ${isActive ? 'font-bold text-cyan-400' : 'font-semibold'}`}>
                     {tab.label}
                   </span>
                 </span>
@@ -199,6 +206,7 @@ export const AppShell: React.FC = () => {
           })}
         </div>
       </nav>
+
       {/* ── 4-STEP FIRST-RUN TUTORIAL MODAL ────────────────── */}
       <TutorialModal isOpen={tutorialOpen} onFinish={completeTutorial} />
     </div>
