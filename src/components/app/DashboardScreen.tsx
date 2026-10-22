@@ -5,6 +5,7 @@ import {
   TrendingDown,
   ArrowDownLeft,
   ArrowUpRight,
+  ArrowDownRight,
   Zap,
   Flame,
   AlertCircle,
@@ -333,8 +334,12 @@ export const DashboardScreen: React.FC = () => {
               )}
             </div>
           </div>
-          <div className="inline-flex items-center gap-1 w-fit text-[11px] font-bold font-mono text-emerald-400">
-            <span>↗ +{Math.abs(displayedDeltaPercentage).toFixed(2)}%</span>
+          <div
+            className={`inline-flex items-center gap-1 w-fit text-[11px] font-bold font-mono ${
+              displayedDeltaPercentage >= 0 ? 'text-emerald-400' : 'text-rose-400'
+            }`}
+          >
+            <span>{displayedDeltaPercentage >= 0 ? '↗ +' : '↘ -'}{Math.abs(displayedDeltaPercentage).toFixed(2)}%</span>
             <span className="text-neutral-400 font-normal">vs last month</span>
           </div>
         </div>
@@ -347,7 +352,11 @@ export const DashboardScreen: React.FC = () => {
             borderColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
           }}
         >
-          <TrendingUp className="absolute top-4 right-4 w-10 h-10 opacity-[0.05] pointer-events-none text-white" />
+          {isPositiveGain ? (
+            <TrendingUp className="absolute top-4 right-4 w-10 h-10 opacity-[0.05] pointer-events-none text-emerald-400" />
+          ) : (
+            <TrendingDown className="absolute top-4 right-4 w-10 h-10 opacity-[0.05] pointer-events-none text-rose-400" />
+          )}
           <div>
             <span className="text-[11px] font-semibold uppercase tracking-wider block font-mono text-neutral-400">
               Today's P&L
@@ -360,8 +369,9 @@ export const DashboardScreen: React.FC = () => {
             </div>
           </div>
           <div
-            className="inline-flex items-center gap-1 w-fit text-[11px] font-bold font-mono"
-            style={{ color: isPositiveGain ? colors.semanticSuccess : colors.semanticDanger }}
+            className={`inline-flex items-center gap-1 w-fit text-[11px] font-bold font-mono ${
+              isPositiveGain ? 'text-emerald-400' : 'text-rose-400'
+            }`}
           >
             <span>{isPositiveGain ? '↗ +' : '↘ -'}{Math.abs(tabMetrics.netDeltaPercentage * 0.12).toFixed(2)}%</span>
             <span className="text-neutral-400 font-normal">vs last month</span>
@@ -376,17 +386,25 @@ export const DashboardScreen: React.FC = () => {
             borderColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
           }}
         >
-          <ArrowUpRight className="absolute top-4 right-4 w-10 h-10 opacity-[0.05] pointer-events-none text-white" />
+          {tabMetrics.netDeltaPercentage >= 0 ? (
+            <ArrowUpRight className="absolute top-4 right-4 w-10 h-10 opacity-[0.05] pointer-events-none text-emerald-400" />
+          ) : (
+            <ArrowDownRight className="absolute top-4 right-4 w-10 h-10 opacity-[0.05] pointer-events-none text-rose-400" />
+          )}
           <div>
             <span className="text-[11px] font-semibold uppercase tracking-wider block font-mono text-neutral-400">
               Total Return
             </span>
             <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums text-white">
-              {tabMetrics.netDeltaPercentage >= 0 ? '+' : ''}{tabMetrics.netDeltaPercentage.toFixed(1)}%
+              {tabMetrics.netDeltaPercentage >= 0 ? '+' : '-'}{Math.abs(tabMetrics.netDeltaPercentage).toFixed(1)}%
             </div>
           </div>
-          <div className="inline-flex items-center gap-1 w-fit text-[11px] font-bold font-mono text-emerald-400">
-            <span>↗ +{Math.abs(tabMetrics.netDeltaPercentage).toFixed(1)}%</span>
+          <div
+            className={`inline-flex items-center gap-1 w-fit text-[11px] font-bold font-mono ${
+              tabMetrics.netDeltaPercentage >= 0 ? 'text-emerald-400' : 'text-rose-400'
+            }`}
+          >
+            <span>{tabMetrics.netDeltaPercentage >= 0 ? '↗ +' : '↘ -'}{Math.abs(tabMetrics.netDeltaPercentage).toFixed(1)}%</span>
             <span className="text-neutral-400 font-normal">vs last month</span>
           </div>
         </div>
@@ -457,7 +475,7 @@ export const DashboardScreen: React.FC = () => {
                     }`}
                   >
                     {isPositive ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
-                    <span>{isPositive ? '+' : ''}{gainPct.toFixed(2)}%</span>
+                    <span>{isPositive ? '+' : '-'}{Math.abs(gainPct).toFixed(2)}%</span>
                   </div>
                 );
               })()}
