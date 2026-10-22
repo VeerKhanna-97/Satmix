@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   Wallet,
+  Zap,
   TrendingUp,
   Layers,
   ArrowLeftRight,
@@ -34,6 +35,7 @@ export const AppShell: React.FC = () => {
 
   const tabs = [
     { id: 'dashboard' as const, label: 'Portfolio', icon: Wallet },
+    { id: 'invest' as const, label: 'Invest', icon: Zap },
     { id: 'performance' as const, label: 'Performance', icon: TrendingUp },
     { id: 'baskets' as const, label: 'Baskets', icon: Layers },
     { id: 'transactions' as const, label: 'Transactions', icon: ArrowLeftRight },
@@ -161,14 +163,14 @@ export const AppShell: React.FC = () => {
 
       {/* ── MOBILE FLOATING NAVIGATION DOCK ─── */}
       <nav
-        className="md:hidden fixed bottom-[max(1rem,env(safe-area-inset-bottom,16px))] left-1/2 -translate-x-1/2 z-50 pointer-events-auto"
+        className="md:hidden fixed bottom-[max(0.75rem,env(safe-area-inset-bottom,12px))] left-1/2 -translate-x-1/2 z-50 pointer-events-auto max-w-[calc(100vw-16px)]"
         role="navigation"
         aria-label="Mobile Navigation"
       >
         <div
-          className="flex items-center gap-0.5 sm:gap-1 p-1.5 rounded-full border backdrop-blur-2xl transition-all duration-300 shadow-2xl"
+          className="flex items-center gap-0.5 p-1 sm:p-1.5 rounded-full border backdrop-blur-2xl transition-all duration-300 shadow-2xl"
           style={{
-            backgroundColor: themeMode === 'dark' ? 'rgba(14, 16, 23, 0.92)' : 'rgba(255, 255, 255, 0.92)',
+            backgroundColor: themeMode === 'dark' ? 'rgba(14, 16, 23, 0.94)' : 'rgba(255, 255, 255, 0.94)',
             borderColor: colors.cardBorder,
             boxShadow: themeMode === 'dark'
               ? '0 12px 36px -4px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.06)'
@@ -182,7 +184,7 @@ export const AppShell: React.FC = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className="relative flex items-center gap-1.5 px-3 py-2 rounded-full transition-all duration-200 select-none active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/50"
+                className="relative flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-full transition-all duration-200 select-none active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/50"
                 style={{
                   color: isActive ? '#06B6D4' : colors.textSecondary,
                 }}
@@ -197,7 +199,7 @@ export const AppShell: React.FC = () => {
                 )}
                 <span className="relative z-10 flex items-center gap-1">
                   <Icon className="w-4 h-4 flex-shrink-0" strokeWidth={isActive ? 2.5 : 2} />
-                  <span className={`text-[11px] sm:text-[12px] tracking-tight ${isActive ? 'font-bold text-cyan-400' : 'font-semibold'}`}>
+                  <span className={`text-[11px] sm:text-[12px] tracking-tight ${isActive ? 'font-bold text-cyan-400 inline' : 'font-semibold hidden sm:inline'}`}>
                     {tab.label}
                   </span>
                 </span>
