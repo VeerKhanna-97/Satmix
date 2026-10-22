@@ -130,7 +130,7 @@ export const AppShell: React.FC = () => {
       </header>
 
       {/* ── MAIN CONTENT AREA WITH SMOOTH FADE TRANSITIONS ────── */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 flex-1 w-full relative z-10">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-5 sm:pt-6 flex-1 w-full relative z-10">
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}

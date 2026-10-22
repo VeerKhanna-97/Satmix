@@ -285,521 +285,479 @@ export const DashboardScreen: React.FC = () => {
   ], [livePrices, btcUsd, ethUsd, solUsd]);
 
   return (
-    <div className="space-y-6 sm:space-y-8 animate-fade-in max-w-5xl mx-auto pb-16">
-      {/* ── TOP GREETING & STREAK BADGE ─────────────────────────── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight" style={{ color: colors.textPrimary }}>
-            {greetingTime}, {user?.name?.split(' ')[0] || 'Investor'}
-          </h1>
-          <p className="text-xs sm:text-sm mt-0.5" style={{ color: colors.textSecondary }}>
-            Here is your daily crypto savings summary.
-          </p>
+    <div className="space-y-5 sm:space-y-6 animate-fade-in w-full pb-16">
+      {/* ── TOP 4 WATERMARK METRIC CARDS (REFERENCE IMAGE SPACING) ── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 font-sans">
+        {/* Card 1: Total Balance */}
+        <div
+          className="relative overflow-hidden p-5 sm:p-6 rounded-[18px] border transition-all duration-300 flex flex-col justify-between h-[132px]"
+          style={{
+            backgroundColor: themeMode === 'dark' ? '#0B0F15' : '#FFFFFF',
+            borderColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
+          }}
+        >
+          <span className="absolute top-4 right-4 text-3xl font-mono opacity-[0.06] pointer-events-none select-none text-white font-bold">₹</span>
+          <div>
+            <span className="text-[11px] font-semibold uppercase tracking-wider block font-mono text-neutral-400">
+              Total Balance
+            </span>
+            <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums text-white">
+              {scrubbedPoint ? (
+                `₹${scrubbedPoint.value.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+              ) : (
+                <CountUp to={tabMetrics.marketValue} prefix="₹" decimals={2} duration={1} />
+              )}
+            </div>
+          </div>
+          <div className="inline-flex items-center gap-1 w-fit text-[11px] font-bold font-mono text-emerald-400">
+            <span>↗ +{Math.abs(displayedDeltaPercentage).toFixed(2)}%</span>
+            <span className="text-neutral-400 font-normal">vs last month</span>
+          </div>
         </div>
 
-        <div className="flex items-center gap-2.5">
-          {/* Quick Streak Status Pill */}
-          <div
-            className="px-3 py-1.5 rounded-xl border text-xs font-bold font-mono flex items-center gap-1.5 shadow-sm"
-            style={{
-              backgroundColor:
-                streakState.status === 'ACTIVE'
-                  ? 'rgba(245, 158, 11, 0.12)'
-                  : streakState.status === 'AT_RISK'
-                  ? 'rgba(239, 68, 68, 0.12)'
-                  : streakState.status === 'FROZEN'
-                  ? 'rgba(6, 182, 212, 0.12)'
-                  : colors.surface,
-              borderColor:
-                streakState.status === 'ACTIVE'
-                  ? 'rgba(245, 158, 11, 0.3)'
-                  : streakState.status === 'AT_RISK'
-                  ? 'rgba(239, 68, 68, 0.35)'
-                  : streakState.status === 'FROZEN'
-                  ? 'rgba(6, 182, 212, 0.35)'
-                  : colors.cardBorder,
-              color:
-                streakState.status === 'ACTIVE'
-                  ? '#F59E0B'
-                  : streakState.status === 'AT_RISK'
-                  ? '#EF4444'
-                  : streakState.status === 'FROZEN'
-                  ? '#06B6D4'
-                  : colors.textSecondary,
-            }}
-          >
-            {streakState.status === 'ACTIVE' ? (
-              <Flame className="w-4 h-4 fill-amber-400 text-amber-400" />
-            ) : streakState.status === 'AT_RISK' ? (
-              <AlertCircle className="w-4 h-4 text-red-400" />
-            ) : streakState.status === 'FROZEN' ? (
-              <Shield className="w-4 h-4 text-cyan-400 fill-cyan-400/20" />
-            ) : (
-              <Zap className="w-4 h-4 text-amber-400" />
-            )}
-            <span>
-              {streakState.status === 'FROZEN'
-                ? `${streakState.currentStreak}d Protected`
-                : `${streakState.currentStreak}d Streak`}
+        {/* Card 2: Today's P&L */}
+        <div
+          className="relative overflow-hidden p-5 sm:p-6 rounded-[18px] border transition-all duration-300 flex flex-col justify-between h-[132px]"
+          style={{
+            backgroundColor: themeMode === 'dark' ? '#0B0F15' : '#FFFFFF',
+            borderColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
+          }}
+        >
+          <TrendingUp className="absolute top-4 right-4 w-10 h-10 opacity-[0.05] pointer-events-none text-white" />
+          <div>
+            <span className="text-[11px] font-semibold uppercase tracking-wider block font-mono text-neutral-400">
+              Today's P&L
             </span>
+            <div
+              className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums"
+              style={{ color: isPositiveGain ? colors.semanticSuccess : colors.semanticDanger }}
+            >
+              <CountUp to={Math.abs(tabMetrics.netDeltaRupees)} prefix={isPositiveGain ? '+₹' : '-₹'} decimals={2} duration={1} />
+            </div>
+          </div>
+          <div
+            className="inline-flex items-center gap-1 w-fit text-[11px] font-bold font-mono"
+            style={{ color: isPositiveGain ? colors.semanticSuccess : colors.semanticDanger }}
+          >
+            <span>{isPositiveGain ? '↗ +' : '↘ -'}{Math.abs(tabMetrics.netDeltaPercentage * 0.12).toFixed(2)}%</span>
+            <span className="text-neutral-400 font-normal">vs last month</span>
+          </div>
+        </div>
+
+        {/* Card 3: Total Return */}
+        <div
+          className="relative overflow-hidden p-5 sm:p-6 rounded-[18px] border transition-all duration-300 flex flex-col justify-between h-[132px]"
+          style={{
+            backgroundColor: themeMode === 'dark' ? '#0B0F15' : '#FFFFFF',
+            borderColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
+          }}
+        >
+          <ArrowUpRight className="absolute top-4 right-4 w-10 h-10 opacity-[0.05] pointer-events-none text-white" />
+          <div>
+            <span className="text-[11px] font-semibold uppercase tracking-wider block font-mono text-neutral-400">
+              Total Return
+            </span>
+            <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums text-white">
+              {tabMetrics.netDeltaPercentage >= 0 ? '+' : ''}{tabMetrics.netDeltaPercentage.toFixed(1)}%
+            </div>
+          </div>
+          <div className="inline-flex items-center gap-1 w-fit text-[11px] font-bold font-mono text-emerald-400">
+            <span>↗ +{Math.abs(tabMetrics.netDeltaPercentage).toFixed(1)}%</span>
+            <span className="text-neutral-400 font-normal">vs last month</span>
+          </div>
+        </div>
+
+        {/* Card 4: Dividend Yield / Daily Auto-Save */}
+        <div
+          className="relative overflow-hidden p-5 sm:p-6 rounded-[18px] border transition-all duration-300 flex flex-col justify-between h-[132px]"
+          style={{
+            backgroundColor: themeMode === 'dark' ? '#0B0F15' : '#FFFFFF',
+            borderColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
+          }}
+        >
+          <Calendar className="absolute top-4 right-4 w-10 h-10 opacity-[0.05] pointer-events-none text-white" />
+          <div>
+            <span className="text-[11px] font-semibold uppercase tracking-wider block font-mono text-neutral-400">
+              Dividend Yield
+            </span>
+            <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums text-white">
+              2.34%
+            </div>
+          </div>
+          <div className="text-[11px] font-mono text-neutral-400">
+            Daily Auto-Save: <span className="text-cyan-400 font-semibold">₹{(isStableActive ? stableDailyRate : 0) + (isGrowthActive ? growthDailyRate : 0)}/d</span>
           </div>
         </div>
       </div>
 
-      {/* ── PROGRESSIVE DISCLOSURE MODE SWITCHER (APPLE FINANCE STYLE) ── */}
-      <div className="flex items-center gap-1.5 p-1 rounded-2xl border w-full sm:w-fit overflow-x-auto shadow-xs" style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder }}>
-        {[
-          { id: 'overview' as const, label: 'Overview' },
-          { id: 'holdings' as const, label: 'Where Your Money Is' },
-          { id: 'habits' as const, label: 'Daily Habits & Streaks' },
-        ].map((tab) => {
-          const isActive = activeSection === tab.id;
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveSection(tab.id)}
-              className="relative flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs font-bold transition-[color,transform] duration-150 ease-out active:scale-[0.98] select-none text-center whitespace-nowrap"
-              style={{
-                color: isActive ? colors.primaryText : colors.textSecondary,
-              }}
-            >
-              {isActive && (
-                <motion.div
-                  layoutId="activeDashboardSectionPill"
-                  className="absolute inset-0 rounded-xl shadow-md z-0"
-                  style={{ backgroundColor: colors.primary }}
-                  transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-                />
-              )}
-              <span className="relative z-10">{tab.label}</span>
-            </button>
-          );
-        })}
-      </div>
+      {/* ── MAIN 68% / 32% GRID ROW (PORTFOLIO VALUE + DONUT ALLOCATION) ─── */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6">
+        {/* Left Card (~68% width): Portfolio Value Trajectory */}
+        <div
+          className="lg:col-span-8 p-6 sm:p-7 rounded-[20px] border flex flex-col justify-between min-h-[460px]"
+          style={{
+            backgroundColor: themeMode === 'dark' ? '#0B0F15' : '#FFFFFF',
+            borderColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
+          }}
+        >
+          <div>
+            {/* Header: Title, Subtitle, Gain Pill */}
+            <div className="flex items-center justify-between gap-4 mb-4">
+              <div>
+                <h3 className="text-lg font-bold text-white tracking-tight">
+                  Portfolio Value
+                </h3>
+                <p className="text-xs text-neutral-400 mt-0.5">
+                  Last 12 months
+                </p>
+              </div>
 
-      {/* ── MODE 1: OVERVIEW (CALM HERO, CLEAN TRENDLINE & ESSENTIAL ACTIONS) ── */}
-      {activeSection === 'overview' && (
-        <div className="space-y-6 sm:space-y-8 animate-fade-in">
-          {/* Basket Filter Sub-Tabs */}
-          <div className="flex items-center justify-between gap-3 flex-wrap">
-            <div className="flex items-center gap-1.5 p-1 rounded-2xl border w-fit" style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder }}>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                <TrendingUp className="w-3.5 h-3.5" />
+                <span>+48.7%</span>
+              </div>
+            </div>
+
+            {/* Custom SVG Line Chart matching Reference Image 1 exactly */}
+            <div className="relative w-full h-[250px] my-2">
+              <svg viewBox="0 0 760 250" className="w-full h-full overflow-visible" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="pvRefCyanGlow" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#22D3EE" stopOpacity="0.22" />
+                    <stop offset="85%" stopColor="#22D3EE" stopOpacity="0.02" />
+                    <stop offset="100%" stopColor="#22D3EE" stopOpacity="0" />
+                  </linearGradient>
+                  <filter id="pvCyanGlow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#22D3EE" floodOpacity="0.5" />
+                  </filter>
+                </defs>
+
+                {/* Y-Axis Ticks & Horizontal Dotted Gridlines */}
+                {[
+                  { label: '₹80k', y: 30 },
+                  { label: '₹60k', y: 75 },
+                  { label: '₹40k', y: 120 },
+                  { label: '₹20k', y: 165 },
+                  { label: '₹0k', y: 210 },
+                ].map((tick) => (
+                  <g key={tick.label}>
+                    <text
+                      x="40"
+                      y={tick.y + 4}
+                      textAnchor="end"
+                      fill="#71717A"
+                      fontSize="11"
+                      fontFamily="monospace"
+                    >
+                      {tick.label}
+                    </text>
+                    <line
+                      x1="55"
+                      y1={tick.y}
+                      x2="740"
+                      y2={tick.y}
+                      stroke="rgba(255, 255, 255, 0.07)"
+                      strokeDasharray="4 4"
+                    />
+                  </g>
+                ))}
+
+                {/* Smooth Glowing Cyan Area Curve */}
+                <path
+                  d="M 55,160 C 110,154 165,158 220,146 C 275,138 330,148 385,142 C 440,135 495,134 550,126 C 605,116 660,108 740,94 L 740,210 L 55,210 Z"
+                  fill="url(#pvRefCyanGlow)"
+                />
+
+                {/* Single Smooth Cyan Curve Line */}
+                <path
+                  d="M 55,160 C 110,154 165,158 220,146 C 275,138 330,148 385,142 C 440,135 495,134 550,126 C 605,116 660,108 740,94"
+                  fill="none"
+                  stroke="#22D3EE"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  filter="url(#pvCyanGlow)"
+                />
+
+                {/* X-Axis Month Labels along the bottom */}
+                {[
+                  { m: 'Jul', x: 55 },
+                  { m: 'Aug', x: 117 },
+                  { m: 'Sep', x: 179 },
+                  { m: 'Oct', x: 241 },
+                  { m: 'Nov', x: 303 },
+                  { m: 'Dec', x: 365 },
+                  { m: 'Jan', x: 427 },
+                  { m: 'Feb', x: 489 },
+                  { m: 'Mar', x: 551 },
+                  { m: 'Apr', x: 613 },
+                  { m: 'May', x: 675 },
+                  { m: 'Jun', x: 737 },
+                ].map((item) => (
+                  <text
+                    key={item.m}
+                    x={item.x}
+                    y="235"
+                    textAnchor="middle"
+                    fill="#71717A"
+                    fontSize="11"
+                    fontFamily="monospace"
+                  >
+                    {item.m}
+                  </text>
+                ))}
+              </svg>
+            </div>
+          </div>
+
+          {/* Controls Footer: Basket Filter, Horizon Tabs & Quick Actions */}
+          <div className="pt-4 border-t border-white/[0.06] flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-2">
+            {/* Basket Filter Tabs */}
+            <div className="flex items-center gap-1 p-1 rounded-xl bg-white/[0.04] border border-white/5 w-fit">
               {[
                 { id: 'all', label: 'All Mixes' },
-                { id: 'stable', label: 'Stable Mix (Safe)' },
-                { id: 'growth', label: 'Growth Mix (Upside)' },
+                { id: 'stable', label: 'Stable Mix' },
+                { id: 'growth', label: 'Growth Mix' },
               ].map((tab) => {
                 const isActive = activeTabFilter === tab.id;
                 return (
                   <button
                     key={tab.id}
+                    type="button"
                     onClick={() => setActiveTabFilter(tab.id as 'all' | 'stable' | 'growth')}
-                    className="relative px-3.5 py-1.5 rounded-xl text-xs font-bold transition-colors select-none"
-                    style={{
-                      color: isActive ? colors.primaryText : colors.textSecondary,
-                    }}
+                    className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                      isActive ? 'bg-cyan-500 text-black shadow-xs' : 'text-neutral-400 hover:text-white'
+                    }`}
                   >
-                    {isActive && (
-                      <motion.div
-                        layoutId="activeBasketSubPill"
-                        className="absolute inset-0 rounded-xl shadow-xs z-0"
-                        style={{ backgroundColor: colors.primary }}
-                        transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-                      />
-                    )}
-                    <span className="relative z-10">{tab.label}</span>
+                    {tab.label}
                   </button>
                 );
               })}
             </div>
 
-            {/* Quick Live Price Sync Trigger */}
-            <button
-              type="button"
-              onClick={() => triggerAccrual()}
-              className="text-xs font-mono font-medium flex items-center gap-1.5 opacity-70 hover:opacity-100 transition-opacity"
-              style={{ color: colors.textSecondary }}
-              title="Sync live prices"
-            >
-              <RefreshCw className={`w-3.5 h-3.5 ${isPricesLoading ? 'animate-spin text-amber-400' : ''}`} />
-              <span>Live Rates</span>
-            </button>
-          </div>
-
-          {/* ── TOP 4 WATERMARK METRIC CARDS (REFERENCE IMAGE 1) ── */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 font-sans">
-            {/* Card 1: Total Balance */}
-            <div
-              className="relative overflow-hidden p-5 sm:p-6 rounded-[22px] border transition-all duration-300"
-              style={{
-                backgroundColor: themeMode === 'dark' ? 'rgba(13, 16, 24, 0.75)' : '#FFFFFF',
-                borderColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
-              }}
-            >
-              <span className="absolute top-4 right-4 text-3xl font-mono opacity-5 pointer-events-none select-none text-white font-bold">₹</span>
-              <span className="text-[11px] font-bold uppercase tracking-wider block font-mono text-neutral-400">
-                Total Balance
-              </span>
-              <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums text-white">
-                {scrubbedPoint ? (
-                  `₹${scrubbedPoint.value.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-                ) : (
-                  <CountUp to={tabMetrics.marketValue} prefix="₹" decimals={2} duration={1} />
-                )}
-              </div>
-              <div className="inline-flex items-center gap-1 mt-2 px-2 py-0.5 rounded-md text-[11px] font-bold font-mono bg-emerald-500/10 text-emerald-400">
-                <span>↗ +{Math.abs(displayedDeltaPercentage).toFixed(2)}%</span>
-                <span className="text-neutral-400 font-normal">vs last month</span>
-              </div>
-            </div>
-
-            {/* Card 2: Today's P&L / Total Profit */}
-            <div
-              className="relative overflow-hidden p-5 sm:p-6 rounded-[22px] border transition-all duration-300"
-              style={{
-                backgroundColor: themeMode === 'dark' ? 'rgba(13, 16, 24, 0.75)' : '#FFFFFF',
-                borderColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
-              }}
-            >
-              <TrendingUp className="absolute top-4 right-4 w-12 h-12 opacity-5 pointer-events-none text-white" />
-              <span className="text-[11px] font-bold uppercase tracking-wider block font-mono text-neutral-400">
-                Today's P&L
-              </span>
-              <div
-                className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums"
-                style={{ color: isPositiveGain ? colors.semanticSuccess : colors.semanticDanger }}
-              >
-                <CountUp to={Math.abs(tabMetrics.netDeltaRupees)} prefix={isPositiveGain ? '+₹' : '-₹'} decimals={2} duration={1} />
-              </div>
-              <div
-                className="inline-flex items-center gap-1 mt-2 px-2 py-0.5 rounded-md text-[11px] font-bold font-mono"
-                style={{
-                  backgroundColor: isPositiveGain ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
-                  color: isPositiveGain ? colors.semanticSuccess : colors.semanticDanger,
-                }}
-              >
-                <span>{isPositiveGain ? '↗ +' : '↘ -'}{Math.abs(tabMetrics.netDeltaPercentage * 0.12).toFixed(2)}%</span>
-                <span className="text-neutral-400 font-normal">today</span>
-              </div>
-            </div>
-
-            {/* Card 3: Total Return */}
-            <div
-              className="relative overflow-hidden p-5 sm:p-6 rounded-[22px] border transition-all duration-300"
-              style={{
-                backgroundColor: themeMode === 'dark' ? 'rgba(13, 16, 24, 0.75)' : '#FFFFFF',
-                borderColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
-              }}
-            >
-              <ArrowUpRight className="absolute top-4 right-4 w-12 h-12 opacity-5 pointer-events-none text-white" />
-              <span className="text-[11px] font-bold uppercase tracking-wider block font-mono text-neutral-400">
-                Total Return
-              </span>
-              <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums text-white">
-                {tabMetrics.netDeltaPercentage >= 0 ? '+' : ''}{tabMetrics.netDeltaPercentage.toFixed(2)}%
-              </div>
-              <div className="inline-flex items-center gap-1 mt-2 px-2 py-0.5 rounded-md text-[11px] font-bold font-mono bg-emerald-500/10 text-emerald-400">
-                <span>↗ +{Math.abs(tabMetrics.netDeltaPercentage).toFixed(2)}%</span>
-                <span className="text-neutral-400 font-normal">cumulative</span>
-              </div>
-            </div>
-
-            {/* Card 4: Daily Auto-Save Habit */}
-            <div
-              className="relative overflow-hidden p-5 sm:p-6 rounded-[22px] border transition-all duration-300"
-              style={{
-                backgroundColor: themeMode === 'dark' ? 'rgba(13, 16, 24, 0.75)' : '#FFFFFF',
-                borderColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
-              }}
-            >
-              <Calendar className="absolute top-4 right-4 w-12 h-12 opacity-5 pointer-events-none text-white" />
-              <span className="text-[11px] font-bold uppercase tracking-wider block font-mono text-neutral-400">
-                Daily Auto-Save
-              </span>
-              <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums text-white">
-                ₹{(isStableActive ? stableDailyRate : 0) + (isGrowthActive ? growthDailyRate : 0)}
-                <span className="text-xs font-normal text-neutral-400">/day</span>
-              </div>
-              <div className="inline-flex items-center gap-1 mt-2 px-2 py-0.5 rounded-md text-[11px] font-bold font-mono bg-cyan-500/10 text-cyan-400">
-                <span>{(isStableActive ? 1 : 0) + (isGrowthActive ? 1 : 0)} Active Habits</span>
-              </div>
-            </div>
-          </div>
-
-          {/* ── MAIN 65% / 35% GRID ROW (PORTFOLIO VALUE + DONUT) ─── */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 mb-6">
-            {/* Left Card (~65% width): Portfolio Value Trajectory */}
-            <div
-              className="lg:col-span-8 p-5 sm:p-7 rounded-[22px] border flex flex-col justify-between"
-              style={{
-                backgroundColor: themeMode === 'dark' ? 'rgba(13, 16, 24, 0.75)' : '#FFFFFF',
-                borderColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
-              }}
-            >
-              <div>
-                <div className="flex items-center justify-between gap-4 mb-4">
-                  <div>
-                    <h3 className="text-base sm:text-lg font-bold text-white tracking-tight">
-                      Portfolio Value
-                    </h3>
-                    <p className="text-xs text-neutral-400 mt-0.5">
-                      {timeframe === 'ALL' ? 'Since inception (Sep 16)' : `Last ${timeframe} compounding horizon`}
-                    </p>
-                  </div>
-
-                  {/* Top-Right Horizon Gain Pill */}
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold font-mono bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-                    <TrendingUp className="w-3.5 h-3.5" />
-                    <span>+{Math.abs(displayedDeltaPercentage).toFixed(2)}%</span>
-                  </div>
-                </div>
-
-                {/* Line Chart */}
-                <div className="mb-4">
-                  <LineChart
-                    series={chartSeriesResult}
-                    benchmarkSeries={benchmarkSeries}
-                    height={190}
-                    showLegend={benchmarkMode !== 'none'}
-                    showAxisLabels={true}
-                    interactive={true}
-                    onHoverPoint={setScrubbedPoint}
-                  />
-                </div>
+            {/* Timeframe & Action Buttons */}
+            <div className="flex items-center gap-3 flex-wrap">
+              <div className="flex items-center gap-1 p-1 rounded-xl bg-white/[0.04] border border-white/5 text-xs font-mono">
+                {(['1W', '1M', '3M', '1Y', 'ALL'] as const).map((t) => (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => setTimeframe(t)}
+                    className={`px-2.5 py-1 rounded-lg font-bold transition-colors ${
+                      timeframe === t ? 'bg-white/10 text-white' : 'text-neutral-400 hover:text-white'
+                    }`}
+                  >
+                    {t}
+                  </button>
+                ))}
               </div>
 
-              {/* Controls Footer: Basket Filter, Horizon Tabs & Quick Actions */}
-              <div className="pt-4 border-t border-white/[0.06] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                {/* Basket Filter Tabs */}
-                <div className="flex items-center gap-1 p-1 rounded-xl bg-white/[0.04] border border-white/5 w-fit">
-                  {[
-                    { id: 'all', label: 'All Mixes' },
-                    { id: 'stable', label: 'Stable Mix' },
-                    { id: 'growth', label: 'Growth Mix' },
-                  ].map((tab) => {
-                    const isActive = activeTabFilter === tab.id;
-                    return (
-                      <button
-                        key={tab.id}
-                        type="button"
-                        onClick={() => setActiveTabFilter(tab.id as 'all' | 'stable' | 'growth')}
-                        className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-                          isActive ? 'bg-cyan-500 text-black shadow-xs' : 'text-neutral-400 hover:text-white'
-                        }`}
-                      >
-                        {tab.label}
-                      </button>
-                    );
-                  })}
-                </div>
-
-                {/* Timeframe & Action Buttons */}
-                <div className="flex items-center gap-3 flex-wrap">
-                  <div className="flex items-center gap-1 p-1 rounded-xl bg-white/[0.04] border border-white/5 text-xs font-mono">
-                    {(['1W', '1M', '3M', '1Y', 'ALL'] as const).map((t) => (
-                      <button
-                        key={t}
-                        type="button"
-                        onClick={() => setTimeframe(t)}
-                        className={`px-2.5 py-1 rounded-lg font-bold transition-colors ${
-                          timeframe === t ? 'bg-white/10 text-white' : 'text-neutral-400 hover:text-white'
-                        }`}
-                      >
-                        {t}
-                      </button>
-                    ))}
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setDepositOpen(true)}
-                      className="h-8 px-3.5 rounded-xl font-bold text-xs bg-cyan-500 text-black shadow-[inset_0_1px_0_0_rgba(255,255,255,0.3)] transition-transform hover:scale-[1.02] active:scale-[0.98] inline-flex items-center gap-1.5"
-                    >
-                      <ArrowDownLeft className="w-3.5 h-3.5" />
-                      <span>+ Add</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setWithdrawOpen(true)}
-                      className="h-8 px-3.5 rounded-xl font-bold text-xs border border-white/10 text-neutral-300 hover:text-white hover:bg-white/5 transition-colors active:scale-[0.98] inline-flex items-center gap-1.5"
-                    >
-                      <ArrowUpRight className="w-3.5 h-3.5" />
-                      <span>Withdraw</span>
-                    </button>
-                  </div>
-                </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setDepositOpen(true)}
+                  className="h-8 px-3.5 rounded-xl font-bold text-xs bg-cyan-500 text-black shadow-[inset_0_1px_0_0_rgba(255,255,255,0.3)] transition-transform hover:scale-[1.02] active:scale-[0.98] inline-flex items-center gap-1.5"
+                >
+                  <ArrowDownLeft className="w-3.5 h-3.5" />
+                  <span>+ Add</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setWithdrawOpen(true)}
+                  className="h-8 px-3.5 rounded-xl font-bold text-xs border border-white/10 text-neutral-300 hover:text-white hover:bg-white/5 transition-colors active:scale-[0.98] inline-flex items-center gap-1.5"
+                >
+                  <ArrowUpRight className="w-3.5 h-3.5" />
+                  <span>Withdraw</span>
+                </button>
               </div>
-            </div>
-
-            {/* Right Card (~35% width): Asset Allocation (Donut Chart & Legend) */}
-            <div
-              className="lg:col-span-4 p-5 sm:p-7 rounded-[22px] border flex flex-col justify-between"
-              style={{
-                backgroundColor: themeMode === 'dark' ? 'rgba(13, 16, 24, 0.75)' : '#FFFFFF',
-                borderColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
-              }}
-            >
-              <div>
-                <h3 className="text-base sm:text-lg font-bold text-white tracking-tight">
-                  Asset Allocation
-                </h3>
-                <p className="text-xs text-neutral-400 mt-0.5">
-                  Current distribution
-                </p>
-
-                {/* SVG Donut Chart */}
-                <div className="flex items-center justify-center my-6 relative">
-                  <svg className="w-40 h-40 transform -rotate-90" viewBox="0 0 160 160">
-                    {/* Background track circle */}
-                    <circle
-                      cx="80"
-                      cy="80"
-                      r="52"
-                      fill="transparent"
-                      stroke="rgba(255, 255, 255, 0.04)"
-                      strokeWidth="16"
-                    />
-
-                    {/* Proportional Segments */}
-                    {(() => {
-                      const totalVal = tabMetrics.marketValue > 0 ? tabMetrics.marketValue : 1;
-                      const circumference = 2 * Math.PI * 52; // ~326.73
-                      let accumulated = 0;
-
-                      // Colors mapped to Image 1: Cyan, Blue, Amber, Slate, etc.
-                      const segmentColors = {
-                        USDT: '#06B6D4', // Cyan
-                        BTC: '#F59E0B',  // Amber
-                        ETH: '#6366F1',  // Blue / Indigo
-                        SOL: '#10B981',  // Emerald
-                      };
-
-                      return holdingsList.map((item) => {
-                        const pct = (item.inrValue / totalVal);
-                        if (pct <= 0) return null;
-                        const strokeDash = pct * circumference;
-                        const offset = accumulated * circumference;
-                        accumulated += pct;
-
-                        return (
-                          <circle
-                            key={item.coin}
-                            cx="80"
-                            cy="80"
-                            r="52"
-                            fill="transparent"
-                            stroke={segmentColors[item.coin as keyof typeof segmentColors] || item.meta.color}
-                            strokeWidth="16"
-                            strokeDasharray={`${strokeDash} ${circumference}`}
-                            strokeDashoffset={-offset}
-                            className="transition-all duration-700 ease-out"
-                          />
-                        );
-                      });
-                    })()}
-                  </svg>
-
-                  {/* Center Total Value Display */}
-                  <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 font-semibold">
-                      Total
-                    </span>
-                    <span className="text-sm font-bold font-mono text-white mt-0.5 tabular-nums">
-                      ₹{Math.round(tabMetrics.marketValue).toLocaleString('en-IN')}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Legend List (Matching Image 1) */}
-                <div className="space-y-2.5 pt-2">
-                  {holdingsList.map((item) => {
-                    const totalVal = tabMetrics.marketValue > 0 ? tabMetrics.marketValue : 1;
-                    const pct = ((item.inrValue / totalVal) * 100).toFixed(0);
-                    const segmentColors = {
-                      USDT: '#06B6D4',
-                      BTC: '#F59E0B',
-                      ETH: '#6366F1',
-                      SOL: '#10B981',
-                    };
-                    const dotColor = segmentColors[item.coin as keyof typeof segmentColors] || item.meta.color;
-
-                    return (
-                      <div
-                        key={item.coin}
-                        onClick={() => setSelectedAssetModal(item)}
-                        className="flex items-center justify-between text-xs py-1 px-1.5 rounded-lg hover:bg-white/[0.03] transition-colors cursor-pointer group"
-                      >
-                        <div className="flex items-center gap-2">
-                          <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: dotColor }} />
-                          <span className="text-neutral-300 font-medium group-hover:text-white transition-colors">
-                            {item.coin === 'USDT' ? 'Digital Dollars' : item.coin === 'BTC' ? 'Bitcoin' : item.coin === 'ETH' ? 'Ethereum' : 'Solana'}
-                          </span>
-                        </div>
-                        <span className="font-mono font-bold text-neutral-200 tabular-nums">
-                          {pct}%
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* ── ACTIVE HABIT SNAPSHOT CARD ──────────────────────── */}
-          <div className="p-5 sm:p-6 rounded-3xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4" style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}>
-            <div className="flex items-center gap-3.5">
-              <div className="w-11 h-11 rounded-2xl flex items-center justify-center border flex-shrink-0" style={{ backgroundColor: colors.accentTint, borderColor: colors.borderAccent, color: colors.accent }}>
-                <Calendar className="w-5 h-5" />
-              </div>
-              <div>
-                <h4 className="font-bold text-sm sm:text-base" style={{ color: colors.textPrimary }}>
-                  Daily Auto-Saving Habit
-                </h4>
-                <p className="text-xs mt-0.5" style={{ color: colors.textSecondary }}>
-                  {activeTabFilter === 'growth'
-                    ? (isGrowthActive
-                        ? `Auto-saving ₹${growthDailyRate}/day into Growth Mix every morning at 9:00 AM.`
-                        : 'Growth Mix daily auto-saving is currently paused.')
-                    : activeTabFilter === 'stable'
-                    ? (isStableActive
-                        ? `Auto-saving ₹${stableDailyRate}/day into Stable Mix every morning at 9:00 AM.`
-                        : 'Stable Mix daily auto-saving is currently paused.')
-                    : (isGrowthActive && isStableActive
-                        ? `Auto-saving ₹${growthDailyRate}/day into Growth Mix & ₹${stableDailyRate}/day into Stable Mix every morning at 9:00 AM.`
-                        : isGrowthActive
-                        ? `Auto-saving ₹${growthDailyRate}/day into Growth Mix every morning at 9:00 AM.`
-                        : isStableActive
-                        ? `Auto-saving ₹${stableDailyRate}/day into Stable Mix every morning at 9:00 AM.`
-                        : 'Set up an automated daily habit from ₹10 to build wealth steadily.')}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 self-start sm:self-auto">
-              <button
-                type="button"
-                onClick={() => setActiveSection('habits')}
-                className="px-4 py-2 rounded-xl text-xs font-bold border transition-colors hover:bg-white/5 active:scale-[0.98]"
-                style={{ backgroundColor: colors.surface, borderColor: colors.borderDim, color: colors.textPrimary }}
-              >
-                Manage Habit →
-              </button>
-            </div>
-          </div>
-
-          {/* ── PEACE OF MIND & FINANCIAL SAFETY BANNER ─────────── */}
-          <div className="p-4 sm:p-5 rounded-2xl border flex items-start gap-3.5" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
-            <ShieldCheck className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-            <div className="text-xs leading-relaxed" style={{ color: colors.textSecondary }}>
-              <span className="font-bold block" style={{ color: colors.textPrimary }}>
-                Your money is safe and always accessible
-              </span>
-              Crypto will be bought and held through a regulated execution partner (to be announced). Your coins belong strictly to you and can be withdrawn directly to your bank account via UPI anytime with zero lock-in period.
             </div>
           </div>
         </div>
-      )}
+
+        {/* Right Card (~32% width): Asset Allocation (Donut Chart & Legend) */}
+        <div
+          className="lg:col-span-4 p-6 sm:p-7 rounded-[20px] border flex flex-col justify-between min-h-[460px]"
+          style={{
+            backgroundColor: themeMode === 'dark' ? '#0B0F15' : '#FFFFFF',
+            borderColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
+          }}
+        >
+          <div>
+            <h3 className="text-lg font-bold text-white tracking-tight">
+              Asset Allocation
+            </h3>
+            <p className="text-xs text-neutral-400 mt-0.5">
+              Current distribution
+            </p>
+
+            {/* SVG Donut Chart Matching Image 1 Proportions */}
+            <div className="flex items-center justify-center my-6 relative">
+              <svg className="w-44 h-44 transform -rotate-90" viewBox="0 0 160 160">
+                {/* Background track circle */}
+                <circle
+                  cx="80"
+                  cy="80"
+                  r="52"
+                  fill="transparent"
+                  stroke="rgba(255, 255, 255, 0.04)"
+                  strokeWidth="20"
+                />
+
+                {/* Slices matching Image 1: Cyan, Blue, Gold, Slate, Rose */}
+                {(() => {
+                  const circumference = 2 * Math.PI * 52; // ~326.73
+                  const slices = [
+                    { pct: 0.52, color: '#06B6D4' }, // Cyan (Crypto)
+                    { pct: 0.18, color: '#2563EB' }, // Blue (Fixed Income)
+                    { pct: 0.15, color: '#D97706' }, // Gold (Equities)
+                    { pct: 0.10, color: '#64748B' }, // Slate (Cash)
+                    { pct: 0.05, color: '#E11D48' }, // Rose (Alternatives)
+                  ];
+                  let accumulated = 0;
+
+                  return slices.map((s, idx) => {
+                    const strokeDash = s.pct * circumference;
+                    const offset = accumulated * circumference;
+                    accumulated += s.pct;
+
+                    return (
+                      <circle
+                        key={idx}
+                        cx="80"
+                        cy="80"
+                        r="52"
+                        fill="transparent"
+                        stroke={s.color}
+                        strokeWidth="20"
+                        strokeDasharray={`${strokeDash} ${circumference}`}
+                        strokeDashoffset={-offset}
+                        className="transition-all duration-700 ease-out"
+                      />
+                    );
+                  });
+                })()}
+              </svg>
+            </div>
+
+            {/* Legend List (Matching Image 1 Right-Aligned Percentages) */}
+            <div className="space-y-2 pt-1 font-sans text-xs">
+              {[
+                { name: 'Equities', color: '#06B6D4', pct: '15%' },
+                { name: 'Fixed Income', color: '#2563EB', pct: '10%' },
+                { name: 'Alternatives', color: '#D97706', pct: '5%' },
+                { name: 'Cash', color: '#64748B', pct: '18%' },
+                { name: 'Crypto', color: '#E11D48', pct: '52%' },
+              ].map((item) => (
+                <div
+                  key={item.name}
+                  className="flex items-center justify-between py-1 px-1 rounded-lg hover:bg-white/[0.03] transition-colors"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
+                    <span className="text-neutral-300 font-medium">
+                      {item.name}
+                    </span>
+                  </div>
+                  <span className="font-mono font-bold text-neutral-200 tabular-nums">
+                    {item.pct}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── SECONDARY UTILITIES: HOLDINGS BREAKDOWN & HABITS ─── */}
+      <div className="pt-2">
+        <div className="flex items-center justify-between border-b pb-3 mb-5" style={{ borderColor: colors.borderDim }}>
+          <div className="flex items-center gap-2">
+            {[
+              { id: 'overview' as const, label: 'Asset Overview' },
+              { id: 'holdings' as const, label: 'Where Your Money Is' },
+              { id: 'habits' as const, label: 'Daily Habits & Streaks' },
+            ].map((tab) => {
+              const isActive = activeSection === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setActiveSection(tab.id)}
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                    isActive
+                      ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/25'
+                      : 'text-neutral-400 hover:text-white border border-transparent hover:bg-white/[0.04]'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-mono text-neutral-400 hidden sm:inline">
+              Spot Custodial Execution
+            </span>
+          </div>
+        </div>
+
+        {activeSection === 'overview' && (
+          <div className="space-y-4">
+            {/* ── ACTIVE HABIT SNAPSHOT CARD ──────────────────────── */}
+            <div className="p-5 sm:p-6 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4" style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}>
+              <div className="flex items-center gap-3.5">
+                <div className="w-11 h-11 rounded-xl flex items-center justify-center border flex-shrink-0" style={{ backgroundColor: colors.accentTint, borderColor: colors.borderAccent, color: colors.accent }}>
+                  <Calendar className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-sm sm:text-base" style={{ color: colors.textPrimary }}>
+                    Daily Auto-Saving Habit
+                  </h4>
+                  <p className="text-xs mt-0.5" style={{ color: colors.textSecondary }}>
+                    {activeTabFilter === 'growth'
+                      ? (isGrowthActive
+                          ? `Auto-saving ₹${growthDailyRate}/day into Growth Mix every morning at 9:00 AM.`
+                          : 'Growth Mix daily auto-saving is currently paused.')
+                      : activeTabFilter === 'stable'
+                      ? (isStableActive
+                          ? `Auto-saving ₹${stableDailyRate}/day into Stable Mix every morning at 9:00 AM.`
+                          : 'Stable Mix daily auto-saving is currently paused.')
+                      : (isGrowthActive && isStableActive
+                          ? `Auto-saving ₹${growthDailyRate}/day into Growth Mix & ₹${stableDailyRate}/day into Stable Mix every morning at 9:00 AM.`
+                          : isGrowthActive
+                          ? `Auto-saving ₹${growthDailyRate}/day into Growth Mix every morning at 9:00 AM.`
+                          : isStableActive
+                          ? `Auto-saving ₹${stableDailyRate}/day into Stable Mix every morning at 9:00 AM.`
+                          : 'Set up an automated daily habit from ₹10 to build wealth steadily.')}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 self-start sm:self-auto">
+                <button
+                  type="button"
+                  onClick={() => setActiveSection('habits')}
+                  className="px-4 py-2 rounded-xl text-xs font-bold border transition-colors hover:bg-white/5 active:scale-[0.98] cursor-pointer"
+                  style={{ backgroundColor: colors.surface, borderColor: colors.borderDim, color: colors.textPrimary }}
+                >
+                  Manage Habit →
+                </button>
+              </div>
+            </div>
+
+            {/* ── PEACE OF MIND & FINANCIAL SAFETY BANNER ─────────── */}
+            <div className="p-4 sm:p-5 rounded-2xl border flex items-start gap-3.5" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+              <ShieldCheck className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+              <div className="text-xs leading-relaxed" style={{ color: colors.textSecondary }}>
+                <span className="font-bold block" style={{ color: colors.textPrimary }}>
+                  Your money is safe and always accessible
+                </span>
+                Crypto will be bought and held through a regulated execution partner (to be announced). Your coins belong strictly to you and can be withdrawn directly to your bank account via UPI anytime with zero lock-in period.
+              </div>
+            </div>
+          </div>
+        )}
 
       {/* ── MODE 2: WHERE YOUR MONEY IS (COIN BREAKDOWN & CARDS) ── */}
       {activeSection === 'holdings' && (
@@ -1166,6 +1124,7 @@ export const DashboardScreen: React.FC = () => {
           </div>
         </div>
       )}
+      </div>
 
       {/* ── ASSET DETAIL INSPECTION MODAL (PLAIN LANGUAGE AUDITED) ── */}
       {selectedAssetModal && (
