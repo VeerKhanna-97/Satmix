@@ -257,7 +257,7 @@ export const Phone3DModel: React.FC<Phone3DModelProps> = ({ className = '', onOp
                     </div>
                     <div>
                       <span className="text-[8px] sm:text-[8.5px] text-white/40 font-sans block">Total Profit</span>
-                      <span className="text-[10px] sm:text-[11px] font-bold text-emerald-400 mt-0.5 block tabular-nums [font-feature-settings:'tnum']">+₹2,450</span>
+                      <span className="text-[10px] sm:text-[11px] font-bold text-emerald-400 mt-0.5 block tabular-nums [font-feature-settings:'tnum']">+₹2,450.00</span>
                     </div>
                     <div>
                       <span className="text-[8px] sm:text-[8.5px] text-white/40 font-sans block">Daily Habits</span>

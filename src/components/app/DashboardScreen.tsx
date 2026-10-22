@@ -503,30 +503,33 @@ export const DashboardScreen: React.FC = () => {
               </div>
             </div>
 
-            {/* 3 Metric Calm Summary Row */}
-            <div className="grid grid-cols-3 gap-3 p-4 rounded-2xl border mb-6 text-center font-mono" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+            {/* Calm Summary Row (3 metrics for All Mixes, 2 metrics for Individual Mixes) */}
+            <div
+              className={`grid gap-3 p-4 rounded-2xl border mb-6 text-center font-mono ${
+                activeTabFilter === 'all' ? 'grid-cols-3' : 'grid-cols-2'
+              }`}
+              style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}
+            >
               <div>
                 <span className="text-[11px] font-sans block" style={{ color: colors.textTertiary }}>Total Invested</span>
-                <span className="text-sm sm:text-base font-bold" style={{ color: colors.textPrimary }}>
+                <span className="text-sm sm:text-base font-bold tabular-nums" style={{ color: colors.textPrimary }}>
                   <CountUp to={tabMetrics.totalInvested} prefix="₹" duration={1} />
                 </span>
               </div>
               <div>
                 <span className="text-[11px] font-sans block" style={{ color: colors.textTertiary }}>Total Profit / Loss</span>
-                <span className="text-sm sm:text-base font-bold" style={{ color: isPositiveGain ? colors.semanticSuccess : colors.semanticDanger }}>
-                  <CountUp to={Math.abs(tabMetrics.netDeltaRupees)} prefix={isPositiveGain ? '+₹' : '-₹'} duration={1} />
+                <span className="text-sm sm:text-base font-bold tabular-nums" style={{ color: isPositiveGain ? colors.semanticSuccess : colors.semanticDanger }}>
+                  <CountUp to={Math.abs(tabMetrics.netDeltaRupees)} prefix={isPositiveGain ? '+₹' : '-₹'} decimals={2} duration={1} />
                 </span>
               </div>
-              <div>
-                <span className="text-[11px] font-sans block" style={{ color: colors.textTertiary }}>Daily Habits</span>
-                <span className="text-sm sm:text-base font-bold" style={{ color: colors.accent }}>
-                  {activeTabFilter === 'all'
-                    ? `${(isStableActive ? 1 : 0) + (isGrowthActive ? 1 : 0)} Running`
-                    : activeTabFilter === 'stable'
-                    ? isStableActive ? '1 Running' : '0 Running'
-                    : isGrowthActive ? '1 Running' : '0 Running'}
-                </span>
-              </div>
+              {activeTabFilter === 'all' && (
+                <div>
+                  <span className="text-[11px] font-sans block" style={{ color: colors.textTertiary }}>Daily Habits</span>
+                  <span className="text-sm sm:text-base font-bold tabular-nums" style={{ color: colors.accent }}>
+                    {`${(isStableActive ? 1 : 0) + (isGrowthActive ? 1 : 0)} Running`}
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Single Clean Line Chart */}
@@ -618,11 +621,21 @@ export const DashboardScreen: React.FC = () => {
                   Daily Auto-Saving Habit
                 </h4>
                 <p className="text-xs mt-0.5" style={{ color: colors.textSecondary }}>
-                  {isGrowthActive
-                    ? `Auto-saving ₹${growthDailyRate}/day into Growth Mix every morning at 9:00 AM.`
-                    : isStableActive
-                    ? `Auto-saving ₹${stableDailyRate}/day into Stable Mix every morning at 9:00 AM.`
-                    : 'Set up an automated daily habit from ₹10 to build wealth steadily.'}
+                  {activeTabFilter === 'growth'
+                    ? (isGrowthActive
+                        ? `Auto-saving ₹${growthDailyRate}/day into Growth Mix every morning at 9:00 AM.`
+                        : 'Growth Mix daily auto-saving is currently paused.')
+                    : activeTabFilter === 'stable'
+                    ? (isStableActive
+                        ? `Auto-saving ₹${stableDailyRate}/day into Stable Mix every morning at 9:00 AM.`
+                        : 'Stable Mix daily auto-saving is currently paused.')
+                    : (isGrowthActive && isStableActive
+                        ? `Auto-saving ₹${growthDailyRate}/day into Growth Mix & ₹${stableDailyRate}/day into Stable Mix every morning at 9:00 AM.`
+                        : isGrowthActive
+                        ? `Auto-saving ₹${growthDailyRate}/day into Growth Mix every morning at 9:00 AM.`
+                        : isStableActive
+                        ? `Auto-saving ₹${stableDailyRate}/day into Stable Mix every morning at 9:00 AM.`
+                        : 'Set up an automated daily habit from ₹10 to build wealth steadily.')}
                 </p>
               </div>
             </div>
