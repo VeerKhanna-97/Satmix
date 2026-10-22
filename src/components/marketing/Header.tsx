@@ -30,20 +30,29 @@ export const Header: React.FC = () => {
   const [activeSection, setActiveSection] = useState('home');
 
   useEffect(() => {
+    let ticking = false;
+
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 15);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setIsScrolled(window.scrollY > 20);
 
-      const sections = ['faq-section', 'about-section', 'baskets-section', 'calc-section'];
-      const scrollPos = window.scrollY + 160;
+          const sections = ['faq-section', 'about-section', 'baskets-section', 'calc-section'];
+          const scrollPos = window.scrollY + 160;
 
-      for (const sectionId of sections) {
-        const el = document.getElementById(sectionId);
-        if (el && el.offsetTop <= scrollPos) {
-          setActiveSection(sectionId);
-          return;
-        }
+          for (const sectionId of sections) {
+            const el = document.getElementById(sectionId);
+            if (el && el.offsetTop <= scrollPos) {
+              setActiveSection(sectionId);
+              ticking = false;
+              return;
+            }
+          }
+          setActiveSection('home');
+          ticking = false;
+        });
+        ticking = true;
       }
-      setActiveSection('home');
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -76,28 +85,60 @@ export const Header: React.FC = () => {
   };
 
   return (
-    <header
-      className={`sticky top-0 z-40 w-full border-b transition-all duration-300 ${
-        isScrolled ? 'backdrop-blur-xl shadow-sm' : 'backdrop-blur-md'
-      }`}
-      style={{
-        backgroundColor: themeMode === 'dark'
-          ? (isScrolled ? 'rgba(9, 10, 16, 0.94)' : 'rgba(9, 10, 16, 0.80)')
-          : (isScrolled ? 'rgba(255, 255, 255, 0.96)' : 'rgba(248, 250, 252, 0.85)'),
-        borderColor: isScrolled ? colors.cardBorder : colors.borderDim,
-      }}
-    >
-      <ScrollProgress color={colors.accent} />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        {/* Brand Logo */}
-        <div className="flex items-center gap-2.5 cursor-pointer group" onClick={() => setViewMode('marketing')}>
-          <div className="w-9 h-9 rounded-xl overflow-hidden shadow-sm flex items-center justify-center border transition-transform duration-300 group-hover:scale-105" style={{ borderColor: colors.borderDim }}>
-            <img src="/assets/images/satmix-logo.jpg" alt="Satmix Logo" className="w-full h-full object-cover" />
-          </div>
-          <span className="font-extrabold text-xl tracking-tight" style={{ color: colors.textPrimary }}>
-            Satmix
-          </span>
-        </div>
+    <>
+      <ScrollProgress color={colors.accent} className="!fixed !top-0 !left-0 !right-0 !bottom-auto z-50" />
+      <header
+        className={`sticky top-0 z-40 w-full transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] flex flex-col items-center pointer-events-none ${
+          isScrolled ? 'pt-2.5 sm:pt-3.5 px-3 sm:px-6' : 'pt-0 px-0'
+        }`}
+      >
+        {/* Transforming Navbar Capsule / Island */}
+        <div
+          className={`pointer-events-auto transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-[max-width,border-radius,box-shadow,height,background-color] flex items-center justify-between relative ${
+            isScrolled
+              ? 'w-full max-w-5xl lg:max-w-6xl h-14 px-3.5 sm:px-5 rounded-2xl sm:rounded-full border backdrop-blur-xl'
+              : 'w-full max-w-full h-16 rounded-none border-b border-t-0 border-x-0 backdrop-blur-md'
+          }`}
+          style={{
+            backgroundColor: themeMode === 'dark'
+              ? (isScrolled ? 'rgba(10, 12, 18, 0.85)' : 'rgba(9, 10, 16, 0.80)')
+              : (isScrolled ? 'rgba(255, 255, 255, 0.90)' : 'rgba(248, 250, 252, 0.85)'),
+            borderColor: isScrolled
+              ? (themeMode === 'dark' ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.08)')
+              : colors.borderDim,
+            boxShadow: isScrolled
+              ? (themeMode === 'dark'
+                  ? '0 16px 36px -10px rgba(0, 0, 0, 0.65), inset 0 1px 0 0 rgba(255, 255, 255, 0.12)'
+                  : '0 12px 30px -10px rgba(0, 0, 0, 0.12), inset 0 1px 0 0 rgba(255, 255, 255, 0.9)')
+              : 'none',
+            WebkitBackdropFilter: isScrolled ? 'blur(16px)' : 'blur(10px)',
+          }}
+        >
+          {/* Inner Content Grid */}
+          <div
+            className={`w-full h-full flex items-center justify-between transition-all duration-300 ${
+              isScrolled ? 'px-1 sm:px-2' : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'
+            }`}
+          >
+            {/* Brand Logo */}
+            <div className="flex items-center gap-2.5 cursor-pointer group" onClick={() => setViewMode('marketing')}>
+              <div
+                className={`overflow-hidden shadow-sm flex items-center justify-center border transition-all duration-300 group-hover:scale-105 ${
+                  isScrolled ? 'w-8 h-8 rounded-lg' : 'w-9 h-9 rounded-xl'
+                }`}
+                style={{ borderColor: colors.borderDim }}
+              >
+                <img src="/assets/images/satmix-logo.jpg" alt="Satmix Logo" className="w-full h-full object-cover" />
+              </div>
+              <span
+                className={`font-extrabold tracking-tight transition-all duration-300 ${
+                  isScrolled ? 'text-lg' : 'text-xl'
+                }`}
+                style={{ color: colors.textPrimary }}
+              >
+                Satmix
+              </span>
+            </div>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-7 text-sm font-medium">
@@ -126,7 +167,7 @@ export const Header: React.FC = () => {
 
             {activeDropdown === 'features' && (
               <div
-                className="absolute top-full -left-44 w-[780px] p-4 rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.6)] border backdrop-blur-2xl animate-fade-in z-50 before:absolute before:-top-3 before:left-0 before:right-0 before:h-3"
+                className="absolute top-full -left-44 mt-2 w-[780px] p-4 rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.6)] border backdrop-blur-2xl animate-fade-in z-50 before:absolute before:-top-4 before:left-0 before:right-0 before:h-4"
                 style={{
                   backgroundColor: themeMode === 'dark' ? 'rgba(18, 20, 28, 0.96)' : 'rgba(255, 255, 255, 0.98)',
                   borderColor: colors.cardBorder,
@@ -271,7 +312,7 @@ export const Header: React.FC = () => {
 
             {activeDropdown === 'resources' && (
               <div
-                className="absolute top-full -left-12 w-[420px] p-3 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.6)] border backdrop-blur-2xl animate-fade-in z-50 before:absolute before:-top-3 before:left-0 before:right-0 before:h-3"
+                className="absolute top-full -left-12 mt-2 w-[420px] p-3 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.6)] border backdrop-blur-2xl animate-fade-in z-50 before:absolute before:-top-4 before:left-0 before:right-0 before:h-4"
                 style={{
                   backgroundColor: themeMode === 'dark' ? 'rgba(18, 20, 28, 0.96)' : 'rgba(255, 255, 255, 0.98)',
                   borderColor: colors.cardBorder,
@@ -349,7 +390,7 @@ export const Header: React.FC = () => {
 
             {activeDropdown === 'about' && (
               <div
-                className="absolute top-full -left-12 w-[420px] p-3 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.6)] border backdrop-blur-2xl animate-fade-in z-50 before:absolute before:-top-3 before:left-0 before:right-0 before:h-3"
+                className="absolute top-full -left-12 mt-2 w-[420px] p-3 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.6)] border backdrop-blur-2xl animate-fade-in z-50 before:absolute before:-top-4 before:left-0 before:right-0 before:h-4"
                 style={{
                   backgroundColor: themeMode === 'dark' ? 'rgba(18, 20, 28, 0.96)' : 'rgba(255, 255, 255, 0.98)',
                   borderColor: colors.cardBorder,
@@ -425,16 +466,16 @@ export const Header: React.FC = () => {
         </nav>
 
         {/* Right CTA Actions */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           {/* Theme Toggle */}
           <button
             type="button"
             onClick={toggleTheme}
-            className="w-9 h-9 rounded-lg border transition-[transform,background-color,border-color] duration-150 ease-out hover:bg-white/[0.05] active:scale-[0.98] flex items-center justify-center select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+            className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border transition-[transform,background-color,border-color] duration-150 ease-out hover:bg-white/[0.05] active:scale-[0.98] flex items-center justify-center select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
             style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textPrimary }}
             aria-label="Toggle Theme"
           >
-            {themeMode === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            {themeMode === 'dark' ? <Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <Moon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
           </button>
 
           {/* Auth Button */}
@@ -442,7 +483,7 @@ export const Header: React.FC = () => {
             <button
               type="button"
               onClick={handleLaunchApp}
-              className="inline-flex items-center gap-2 h-9 px-3.5 rounded-lg font-semibold text-xs tracking-wide shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_1px_3px_rgba(0,0,0,0.3)] transition-[transform,background-color,box-shadow] duration-150 ease-out active:scale-[0.98] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+              className="inline-flex items-center gap-2 h-8 sm:h-9 px-3.5 rounded-full font-semibold text-xs tracking-wide shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_1px_3px_rgba(0,0,0,0.3)] transition-[transform,background-color,box-shadow] duration-150 ease-out active:scale-[0.98] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
               style={{ backgroundColor: colors.primary, color: colors.primaryText }}
             >
               <span>Go to App</span>
@@ -455,7 +496,7 @@ export const Header: React.FC = () => {
               <button
                 type="button"
                 onClick={handleLaunchApp}
-                className="hidden sm:inline-flex items-center justify-center h-9 px-3.5 rounded-lg font-semibold text-xs transition-[transform,background-color,border-color] duration-150 ease-out hover:bg-white/[0.05] hover:border-white/20 active:scale-[0.98] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                className="hidden sm:inline-flex items-center justify-center h-8 sm:h-9 px-3.5 rounded-full font-semibold text-xs transition-[transform,background-color,border-color] duration-150 ease-out hover:bg-white/[0.05] hover:border-white/20 active:scale-[0.98] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                 style={{ backgroundColor: colors.surface, color: colors.textPrimary, border: `1px solid ${colors.cardBorder}` }}
               >
                 Sign In
@@ -463,7 +504,7 @@ export const Header: React.FC = () => {
               <button
                 type="button"
                 onClick={handleSignUpClick}
-                className="inline-flex items-center justify-center gap-1.5 h-9 px-3.5 rounded-lg font-semibold text-xs tracking-wide shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_1px_3px_rgba(0,0,0,0.3)] transition-[transform,background-color,box-shadow] duration-150 ease-out active:scale-[0.98] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                className="inline-flex items-center justify-center gap-1.5 h-8 sm:h-9 px-4 rounded-full font-semibold text-xs tracking-wide shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_1px_3px_rgba(0,0,0,0.3)] transition-[transform,background-color,box-shadow] duration-150 ease-out active:scale-[0.98] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                 style={{ backgroundColor: colors.primary, color: colors.primaryText }}
               >
                 <span>Launch App</span>
@@ -476,20 +517,34 @@ export const Header: React.FC = () => {
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden w-9 h-9 rounded-lg border flex items-center justify-center transition-[transform,background-color,border-color] duration-150 ease-out hover:bg-white/[0.05] active:scale-[0.98] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+            className="md:hidden w-8 h-8 sm:w-9 sm:h-9 rounded-full border flex items-center justify-center transition-[transform,background-color,border-color] duration-150 ease-out hover:bg-white/[0.05] active:scale-[0.98] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
             style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textPrimary }}
             aria-label="Toggle navigation menu"
           >
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            {mobileMenuOpen ? <X className="w-4 h-4 sm:w-5 sm:h-5" /> : <Menu className="w-4 h-4 sm:w-5 sm:h-5" />}
           </button>
         </div>
       </div>
+    </div>
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
         <div
-          className="md:hidden border-b px-4 pt-3 pb-6 space-y-4 max-h-[85vh] overflow-y-auto animate-fade-in"
-          style={{ backgroundColor: colors.cardHigh, borderColor: colors.borderDim }}
+          className={`md:hidden border px-4 pt-3 pb-6 space-y-4 max-h-[85vh] overflow-y-auto animate-fade-in pointer-events-auto transition-all duration-300 ${
+            isScrolled
+              ? 'w-[calc(100%-1.5rem)] max-w-md mx-auto mt-2 rounded-2xl shadow-2xl backdrop-blur-2xl'
+              : 'w-full border-t-0 border-x-0 border-b backdrop-blur-xl'
+          }`}
+          style={{
+            backgroundColor: themeMode === 'dark' ? 'rgba(15, 17, 26, 0.98)' : 'rgba(255, 255, 255, 0.98)',
+            borderColor: isScrolled
+              ? (themeMode === 'dark' ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.08)')
+              : colors.borderDim,
+            boxShadow: isScrolled
+              ? '0 20px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.1)'
+              : 'none',
+            WebkitBackdropFilter: 'blur(20px)',
+          }}
         >
           <div className="space-y-3">
             <button
@@ -706,5 +761,6 @@ export const Header: React.FC = () => {
         </div>
       )}
     </header>
+  </>
   );
 };
