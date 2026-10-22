@@ -28,7 +28,7 @@ export const WaitlistSection: React.FC = () => {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [referralCode, setReferralCode] = useState('');
-  const [consentAgreed, setConsentAgreed] = useState(true);
+  const [consentAgreed, setConsentAgreed] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -64,7 +64,7 @@ export const WaitlistSection: React.FC = () => {
     }
 
     if (!consentAgreed) {
-      setSubmitError('Please agree to the Terms & Conditions and Privacy Policy to proceed.');
+      setSubmitError('Please check the box to agree to the Terms & Conditions and Privacy Policy to proceed.');
       return;
     }
 
@@ -73,13 +73,6 @@ export const WaitlistSection: React.FC = () => {
       sessionStorage.setItem('satmix_prefill_email', trimmedEmail);
       sessionStorage.setItem('satmix_prefill_phone', cleanPhone);
     } catch {}
-
-    const WHATSAPP_COMMUNITY_URL = 'https://chat.whatsapp.com/KWW9pIYhZOF3GlcsNvs7Jw';
-    try {
-      window.open(WHATSAPP_COMMUNITY_URL, '_blank', 'noopener,noreferrer');
-    } catch (popupErr) {
-      console.warn('Popup blocked:', popupErr);
-    }
 
     setIsSubmitting(true);
 
@@ -94,11 +87,17 @@ export const WaitlistSection: React.FC = () => {
         source: 'Landing Page Interactive Tabbed Card',
       };
 
-      await fetch('/api/waitlist', {
+      const res = await fetch('/api/waitlist', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
-      }).catch(() => ({}));
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok || data.success === false) {
+        throw new Error(data.error || `Registration server returned status ${res.status}. Please try again.`);
+      }
 
       try {
         const waitlistDB = JSON.parse(localStorage.getItem('satmix_waitlist') || '[]');
@@ -108,9 +107,26 @@ export const WaitlistSection: React.FC = () => {
 
       setIsSubmitted(true);
       triggerConfetti();
-    } catch (err) {
-      console.warn('Waitlist submission local fallback:', err);
-      setIsSubmitted(true);
+    } catch (err: any) {
+      console.error('Waitlist submission error:', err);
+      // If client is completely offline, store locally and inform gracefully
+      if (typeof navigator !== 'undefined' && !navigator.onLine) {
+        try {
+          const waitlistDB = JSON.parse(localStorage.getItem('satmix_waitlist') || '[]');
+          waitlistDB.push({
+            name: trimmedName,
+            email: trimmedEmail,
+            phone: cleanPhone,
+            offline: true,
+            timestamp: new Date().toISOString()
+          });
+          localStorage.setItem('satmix_waitlist', JSON.stringify(waitlistDB));
+          setIsSubmitted(true);
+          triggerConfetti();
+          return;
+        } catch {}
+      }
+      setSubmitError(err?.message || 'Unable to register right now. Please check your connection and try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -287,7 +303,7 @@ export const WaitlistSection: React.FC = () => {
                           <div>
                             <div className="flex items-center justify-between mb-1.5">
                               <label htmlFor="card-waitlist-phone" className="block text-[11px] font-bold uppercase tracking-wider" style={{ color: colors.textTertiary }}>
-                                Mobile Number
+                                Mobile Number <span className="text-rose-400">*</span>
                               </label>
                               <span className="text-[10px] font-mono tabular-nums" style={{ color: colors.textTertiary }}>
                                 {phone.replace(/\D/g, '').length}/10 digits

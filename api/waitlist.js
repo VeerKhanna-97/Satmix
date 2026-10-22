@@ -37,7 +37,7 @@ export default async function handler(req, res) {
     formData.append('email', email || '');
     formData.append('phone', phone || '');
     formData.append('referralCode', referralCode || ref || '');
-    formData.append('source', source || 'Website 4.0');
+    formData.append('source', source || 'Website 5.0');
     if (reason) formData.append('reason', reason);
     if (preferences) formData.append('preferences', typeof preferences === 'string' ? preferences : JSON.stringify(preferences));
 

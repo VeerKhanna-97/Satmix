@@ -185,7 +185,7 @@ export const AuthModal: React.FC = () => {
           </button>
           <div className="flex items-center gap-1.5 text-[10px] font-mono px-2 py-0.5 rounded border" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim, color: colors.textTertiary }}>
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-            <span>DPDP 2023 Compliant • 256-Bit SSL</span>
+            <span>256-Bit SSL • Privacy First</span>
           </div>
         </div>
 
@@ -299,7 +299,7 @@ export const AuthModal: React.FC = () => {
                 <div>
                   <div className="flex items-center justify-between mb-1">
                     <label className="block text-[11px] font-bold uppercase tracking-wider mb-1" style={{ color: colors.textTertiary }}>
-                      Mobile Number
+                      Mobile Number <span className="text-rose-400">*</span>
                     </label>
                     <span
                       className="text-[10px] font-mono font-semibold"
