@@ -12,7 +12,6 @@ import {
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { DashboardScreen } from './DashboardScreen';
-import { PerformanceScreen } from './PerformanceScreen';
 import { TransactionsScreen } from './TransactionsScreen';
 import { BasketsScreen } from './BasketsScreen';
 import { InvestScreen } from './InvestScreen';
@@ -35,8 +34,7 @@ export const AppShell: React.FC = () => {
 
   const tabs = [
     { id: 'dashboard' as const, label: 'Portfolio', icon: Wallet },
-    { id: 'invest' as const, label: 'Invest', icon: Zap },
-    { id: 'performance' as const, label: 'Performance', icon: TrendingUp },
+    { id: 'invest' as const, label: 'Strategy & Growth', icon: TrendingUp },
     { id: 'baskets' as const, label: 'Baskets', icon: Layers },
     { id: 'transactions' as const, label: 'Transactions', icon: ArrowLeftRight },
     { id: 'profile' as const, label: 'Settings', icon: Settings },
@@ -152,10 +150,9 @@ export const AppShell: React.FC = () => {
             }}
           >
             {activeTab === 'dashboard' && <DashboardScreen />}
-            {activeTab === 'performance' && <PerformanceScreen />}
+            {(activeTab === 'invest' || (activeTab as string) === 'performance') && <InvestScreen />}
             {activeTab === 'baskets' && <BasketsScreen />}
             {activeTab === 'transactions' && <TransactionsScreen />}
-            {activeTab === 'invest' && <InvestScreen />}
             {activeTab === 'profile' && <ProfileScreen />}
           </motion.div>
         </AnimatePresence>
