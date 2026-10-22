@@ -45,7 +45,7 @@ export const FAQ_ITEMS = [
   },
   {
     question: 'How are my crypto assets stored and safeguarded?',
-    answer: 'Your crypto assets are held in institutional-grade custodial storage with registered digital asset partners. Orders are executed directly into spot holdings via our compliant execution architecture, ensuring maximum security and transparency.',
+    answer: 'Crypto will be bought and held through a regulated execution partner (to be announced). Orders are executed directly into segregated spot holdings, ensuring maximum security, verifiable ownership, and transparency.',
   },
   {
     question: 'Can I pause investing or withdraw to my bank anytime?',

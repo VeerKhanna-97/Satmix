@@ -70,7 +70,7 @@ export const TermsConditionsPage: React.FC = () => {
               <h2 className="text-lg font-bold">2. High-Risk Digital Asset Volatility Warning</h2>
             </div>
             <p className="text-xs sm:text-sm leading-relaxed" style={{ color: colors.textSecondary }}>
-              Cryptocurrencies, tokens, and digital assets are highly speculative, unregulated in many jurisdictions, and subject to extreme market volatility. The value of your investment may fluctuate violently, and you may lose a significant portion or the entirety of your capital. Historical compound annual growth rates (CAGR) and simulation calculators are hypothetical estimates and do not guarantee future returns.
+              Cryptocurrencies, tokens, and digital assets are highly speculative, unregulated in many jurisdictions, and subject to extreme market volatility. The value of your investment may fluctuate violently, and you may lose a significant portion or the entirety of your capital. Historical compound annual growth rates (CAGR) and simulation calculators are hypothetical estimates and do not indicate or assure future returns.
             </p>
           </section>
 

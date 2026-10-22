@@ -313,7 +313,7 @@ export const InvestScreen: React.FC = () => {
             {/* Auto-Saving Peace of Mind Notice */}
             <div className="p-3.5 rounded-xl border text-[11px] space-y-1" style={{ backgroundColor: 'rgba(93, 23, 235, 0.04)', borderColor: colors.borderDim }}>
               <div className="flex items-center justify-between text-xs font-bold" style={{ color: colors.textPrimary }}>
-                <span>Peace of Mind Guarantee</span>
+                <span>Peace of Mind Commitment</span>
                 <span className="font-mono text-emerald-400">₹{dailyAmount}/day</span>
               </div>
               <p className="leading-relaxed" style={{ color: colors.textSecondary }}>
@@ -323,7 +323,7 @@ export const InvestScreen: React.FC = () => {
 
             <div className="flex items-center justify-center gap-1.5 text-[11px]" style={{ color: colors.textTertiary }}>
               <Shield className="w-3.5 h-3.5" style={{ color: colors.accent }} />
-              <span>Registered with FIU-IND (Govt. of India) · Cancel or pause anytime.</span>
+              <span>Zero lock-in period · Cancel or pause anytime.</span>
             </div>
           </div>
         </SpotlightCard>

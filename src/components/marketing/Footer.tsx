@@ -37,7 +37,7 @@ export const Footer: React.FC = () => {
           {/* Socials */}
           <div className="flex items-center gap-3">
             <a
-              href="https://www.instagram.com/satmix.app?igsh=MW03NzVmdXM5emJsZA=="
+              href="https://www.instagram.com/satmix.app/"
               target="_blank"
               rel="noopener noreferrer"
               className="p-2.5 rounded-xl border hover:opacity-80 transition-opacity"
@@ -82,10 +82,10 @@ export const Footer: React.FC = () => {
           <div className="space-y-1">
             <p>© {new Date().getFullYear()} Satmix. All rights reserved. Systematic Micro-Investing with Institutional Custody.</p>
             <p className="max-w-2xl text-[11px] leading-relaxed" style={{ color: colors.textTertiary }}>
-              Disclaimer: Digital assets and cryptocurrencies are volatile and subject to market risk. Satmix facilitates automated spot order execution with institutional custodial partners, and is not a SEBI-registered investment adviser or portfolio manager. Past performance does not guarantee future results.
+              Disclaimer: Digital assets and cryptocurrencies are volatile and subject to market risk. Satmix facilitates automated spot order execution with institutional custodial partners, and is not a SEBI-registered investment adviser or portfolio manager. Past performance is not indicative of future returns.
             </p>
             <p className="text-[10px]" style={{ color: colors.textTertiary }}>
-              Registered Office: Satmix, #44, Hosur Road, Koramangala / Dairy Circle, Bengaluru, Karnataka 560029, India.
+              Satmix, Bengaluru, Karnataka 560029, India.
             </p>
           </div>
 
@@ -135,7 +135,7 @@ export const Footer: React.FC = () => {
               Unsubscribe
             </button>
             <span className="opacity-40">•</span>
-            <a href="#faq-section" onClick={() => setViewMode('marketing')} className="hover:opacity-80 transition-opacity" style={{ color: colors.textSecondary }}>
+            <a href="/#faq-section" onClick={() => setViewMode('marketing')} className="hover:opacity-80 transition-opacity" style={{ color: colors.textSecondary }}>
               FAQ
             </a>
             <span className="opacity-40">•</span>

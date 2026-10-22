@@ -97,9 +97,6 @@ export const Header: React.FC = () => {
           <span className="font-extrabold text-xl tracking-tight" style={{ color: colors.textPrimary }}>
             Satmix
           </span>
-          <span className="text-[10px] font-mono font-semibold tracking-wider px-1.5 py-0.5 rounded border opacity-70" style={{ borderColor: colors.borderDim, color: colors.textSecondary }}>
-            FIU
-          </span>
         </div>
 
         {/* Desktop Navigation */}

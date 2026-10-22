@@ -43,26 +43,14 @@ export const CookieBanner: React.FC = () => {
               </button>.
             </p>
 
-            <div className="flex items-center gap-2 pt-1">
+            <div className="pt-1">
               <button
                 type="button"
                 onClick={() => setCookieConsent('essential')}
-                className="flex-1 h-8.5 px-3 rounded-lg text-xs font-semibold border transition-all hover:bg-white/5 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
-                style={{
-                  backgroundColor: colors.surface,
-                  borderColor: colors.cardBorder,
-                  color: colors.textPrimary,
-                }}
-              >
-                Essential Only
-              </button>
-              <button
-                type="button"
-                onClick={() => setCookieConsent('all')}
-                className="flex-1 h-8.5 px-3 rounded-lg text-xs font-bold shadow-[inset_0_1px_0_0_rgba(255,255,255,0.2),0_2px_6px_rgba(0,0,0,0.15)] transition-all hover:brightness-105 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                className="w-full h-8.5 px-4 rounded-lg text-xs font-bold shadow-[inset_0_1px_0_0_rgba(255,255,255,0.2),0_2px_6px_rgba(0,0,0,0.15)] transition-all hover:brightness-105 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                 style={{ backgroundColor: colors.primary, color: colors.primaryText }}
               >
-                Accept All
+                OK, Got It
               </button>
             </div>
           </div>

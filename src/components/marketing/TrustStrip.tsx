@@ -38,7 +38,7 @@ export const TrustStrip: React.FC = () => {
       iconDarkSrc: '/icons/custody.png',
       iconLightSrc: '/icons/custody-light.png',
       title: 'Institutional Custody',
-      desc: 'Regulated Vaults • Secure Asset Storage',
+      desc: 'Institutional Multi-Sig • Secure Storage',
       bgColor: colors.purpleTint,
       borderColor: colors.borderPurple,
       spotlight: colors.accentTint,

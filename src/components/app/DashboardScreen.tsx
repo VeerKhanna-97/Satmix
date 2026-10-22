@@ -329,14 +329,14 @@ export const DashboardScreen: React.FC = () => {
             </span>
           </div>
 
-          {/* FIU Compliance Badge */}
+          {/* Custody Architecture Badge */}
           <div
             className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-mono"
             style={{ backgroundColor: colors.surface, borderColor: colors.borderDim, color: colors.textTertiary }}
-            title="Registered with Financial Intelligence Unit, Govt of India"
+            title="Institutional Multi-Sig Custody Architecture"
           >
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-            <span>FIU-IND Verified</span>
+            <span>Institutional Custody</span>
           </div>
         </div>
       </div>
@@ -589,7 +589,7 @@ export const DashboardScreen: React.FC = () => {
               <span className="font-bold block" style={{ color: colors.textPrimary }}>
                 Your money is safe and always accessible
               </span>
-              Satmix is registered with the Financial Intelligence Unit (FIU-IND, Govt of India). Your coins belong strictly to you and can be withdrawn directly to your bank account via UPI anytime with zero lock-in period.
+              Crypto will be bought and held through a regulated execution partner (to be announced). Your coins belong strictly to you and can be withdrawn directly to your bank account via UPI anytime with zero lock-in period.
             </div>
           </div>
         </div>
@@ -1097,10 +1097,10 @@ export const DashboardScreen: React.FC = () => {
             <div className="p-4 rounded-2xl border text-xs space-y-2 font-sans" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
               <div className="flex items-center gap-2 font-bold" style={{ color: colors.textPrimary }}>
                 <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                <span>Safety & Bank Access Guarantee</span>
+                <span>Safety & Bank Access Commitment</span>
               </div>
               <p className="text-[11px] leading-relaxed" style={{ color: colors.textSecondary }}>
-                Registered with FIU-IND (Govt. of India). Your coins are bought automatically at 9:00 AM daily and stored in your name. You can withdraw directly back to your bank account anytime.
+                Crypto will be bought and held through a regulated execution partner (to be announced). Your coins are bought automatically at 9:00 AM daily and stored in your name. You can withdraw directly back to your bank account anytime.
               </p>
             </div>
 

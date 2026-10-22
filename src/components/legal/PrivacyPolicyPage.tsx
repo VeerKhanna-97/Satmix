@@ -81,7 +81,7 @@ export const PrivacyPolicyPage: React.FC = () => {
               </li>
             </ul>
             <div className="p-3.5 rounded-2xl border text-xs font-semibold" style={{ backgroundColor: colors.redTint, borderColor: colors.semanticDanger, color: colors.semanticDanger }}>
-              Zero Collection Guarantee: Satmix NEVER requests or stores credit/debit card numbers, CVVs, net-banking passwords, or UPI PINs.
+              Zero Sensitive Financial Data Retention: Satmix NEVER requests or stores credit/debit card numbers, CVVs, net-banking passwords, or UPI PINs.
             </div>
           </section>
 

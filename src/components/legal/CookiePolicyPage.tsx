@@ -131,17 +131,17 @@ export const CookiePolicyPage: React.FC = () => {
             </div>
           </section>
 
-          {/* Section 3: Zero Third-Party Advertising Guarantee */}
+          {/* Section 3: Zero Third-Party Advertising Policy */}
           <section className="p-6 rounded-2xl border space-y-3" style={{ backgroundColor: colors.purpleTint, borderColor: colors.borderPurple }}>
             <div className="flex items-center gap-2.5" style={{ color: colors.accent }}>
               <ShieldCheck className="w-5 h-5" />
               <h2 className="text-lg font-bold" style={{ color: colors.textPrimary }}>3. Zero Advertising Trackers & Session Replay Protection</h2>
             </div>
             <p className="text-xs sm:text-sm leading-relaxed" style={{ color: colors.textSecondary }}>
-              Satmix strictly guarantees that <strong>we do not use behavioral advertising trackers, data broker pixels (e.g. Meta Pixel, TikTok Pixel), or commercial ad networks</strong>. Your browsing and investing activity is never sold, leased, or transmitted to third-party marketing companies.
+              Satmix maintains a strict privacy standard: <strong>we do not use behavioral advertising trackers, data broker pixels (e.g. Meta Pixel, TikTok Pixel), or commercial ad networks</strong>. Your browsing and investing activity is never sold, leased, or transmitted to third-party marketing companies.
             </p>
             <p className="text-xs sm:text-sm leading-relaxed" style={{ color: colors.textSecondary }}>
-              <strong>Zero Keystroke / Session Replay Recording:</strong> Under the California Invasion of Privacy Act (CIPA), Federal Wiretap Act, and DPDP Act 2023, Satmix does not deploy passive session replay scripts (e.g., FullStory, Microsoft Clarity, Hotjar) without explicit affirmative consent. Furthermore, all authentication, PIN, UPI, and bank account inputs enforce client-side masking attributes (<code className="px-1 py-0.5 rounded text-[11px] bg-black/40 font-mono">data-clarity-mask="true"</code>) ensuring zero credential capture.
+              <strong>Zero Keystroke / Session Replay Recording:</strong> Under the Digital Personal Data Protection Act, 2023 (DPDP Act) and the Information Technology Act, 2000 (IT Act), Satmix does not deploy passive session replay scripts (e.g., FullStory, Microsoft Clarity, Hotjar) without explicit affirmative consent. Furthermore, all authentication, PIN, UPI, and bank account inputs enforce client-side masking attributes (<code className="px-1 py-0.5 rounded text-[11px] bg-black/40 font-mono">data-clarity-mask="true"</code>) ensuring zero credential capture.
             </p>
           </section>
 

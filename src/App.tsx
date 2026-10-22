@@ -74,7 +74,7 @@ export function AppContent() {
         {/* 7. COOKIE POLICY & PREFERENCES PAGE */}
         {viewMode === 'cookies' && <CookiePolicyPage />}
 
-        {/* 8. EMAIL UNSUBSCRIBE & PREFERENCES (CAN-SPAM & DPDP ACT) */}
+        {/* 8. EMAIL UNSUBSCRIBE & PREFERENCES (DPDP ACT 2023) */}
         {viewMode === 'unsubscribe' && <UnsubscribePage />}
 
         {/* 9. THANK YOU / CONFIRMATION PAGE */}

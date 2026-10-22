@@ -108,7 +108,7 @@ export const RefundPolicyPage: React.FC = () => {
             </p>
             <ul className="space-y-1.5 pl-4 list-disc" style={{ accentColor: colors.accent }}>
               <li>The transaction is automatically identified by our reconciliation ledger within 2 hours.</li>
-              <li>If units cannot be allocated at the exact market rate, the full debited amount is reversed to your source bank account within standard banking turnaround time (usually 24 to 72 business hours as per NPCI guidelines).</li>
+              <li>If units cannot be allocated at the exact market rate, the full debited amount is reversed to your source bank account within standard banking turnaround time (usually 1–3 business days as per NPCI guidelines).</li>
             </ul>
           </section>
 

@@ -75,7 +75,7 @@ export const UnsubscribePage: React.FC = () => {
         {/* Header */}
         <div className="space-y-2">
           <span className="text-[11px] font-mono uppercase font-bold tracking-wider" style={{ color: colors.accent }}>
-            CAN-SPAM & DPDP Act 2023 Compliance
+            DPDP Act 2023 & IT Act 2000 Compliance
           </span>
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight" style={{ color: colors.textPrimary }}>
             Email Communication Preferences
@@ -236,14 +236,14 @@ export const UnsubscribePage: React.FC = () => {
         </SpotlightCard>
       </div>
 
-      {/* Mandatory CAN-SPAM & DPDP Act Physical Postal Address Footer */}
+      {/* Mandatory DPDP Act 2023 Postal Address Footer */}
       <div className="mt-12 pt-6 border-t text-center text-xs space-y-2" style={{ borderColor: colors.borderDim, color: colors.textTertiary }}>
         <div className="flex items-center justify-center gap-1.5 font-bold" style={{ color: colors.textSecondary }}>
           <ShieldCheck className="w-4 h-4 text-emerald-400" />
-          <span>CAN-SPAM Act (15 U.S.C. 7704) & DPDP Act 2023 Compliance</span>
+          <span>DPDP Act 2023 & IT Act 2000 Compliance</span>
         </div>
         <p className="max-w-xl mx-auto leading-relaxed text-[11px]">
-          <strong>Registered Office:</strong> Satmix, #44, Hosur Road, Koramangala / Dairy Circle, Bengaluru, Karnataka 560029, India.
+          Satmix, #44, Hosur Road, Koramangala / Dairy Circle, Bengaluru, Karnataka 560029, India.
         </p>
         <p className="text-[10px]">
           For privacy inquiries or grievance redressal, contact our Data Protection Officer at <a href="mailto:privacy@satmix.in" className="underline hover:text-white">privacy@satmix.in</a>.
