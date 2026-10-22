@@ -171,7 +171,7 @@ export const ProfileScreen: React.FC = () => {
               </p>
               <div className="flex items-center gap-2 mt-2 text-[11px] font-mono" style={{ color: colors.textTertiary }}>
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Pan: {user?.panNumberMasked || 'ABCDE****F'} · Secure Custodial Vault</span>
+                <span>Pan: {user?.panNumberMasked || 'ABCDE****F'} · Verified Identity</span>
               </div>
             </div>
           </div>

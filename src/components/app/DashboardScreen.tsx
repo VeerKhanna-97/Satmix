@@ -328,16 +328,6 @@ export const DashboardScreen: React.FC = () => {
                 : `${streakState.currentStreak}d Streak`}
             </span>
           </div>
-
-          {/* Partner Execution Architecture Badge */}
-          <div
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-mono"
-            style={{ backgroundColor: colors.surface, borderColor: colors.borderDim, color: colors.textTertiary }}
-            title="Partner Execution Architecture"
-          >
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Regulated Partner (TBA)</span>
-          </div>
         </div>
       </div>
 
