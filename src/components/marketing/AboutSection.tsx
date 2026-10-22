@@ -137,7 +137,7 @@ export const AboutSection: React.FC = () => {
               The Minds Behind Satmix
             </h3>
             <p className="text-xs md:text-sm" style={{ color: colors.textSecondary }}>
-              Meet the founders building disciplined digital asset wealth systems.
+              Meet the founders building a simple daily crypto habit.
             </p>
           </FadeIn>
 

@@ -26,17 +26,30 @@ export const CalculatorSection: React.FC = () => {
 
   const annualRate = strategy === 'low' ? 0.08 : 0.28;
 
-  // Projected value calculation matching claimed 8% reference return and 28% historical CAGR
+  // Mathematically accurate daily DCA compounding calculation:
+  // With daily recurring deposits d deployed across N = 365 days,
+  // capital added on day k only compounds for the remaining days of the year.
+  // r_daily = (1 + annualRate)^(1/365) - 1
+  // FV = d * ((1 + r_daily)^366 - (1 + r_daily)) / r_daily
   const calculations = useMemo(() => {
     const totalInvested = dailySavings * 365;
-    const estimatedGains = Math.round(totalInvested * annualRate);
-    const accumulatedValue = totalInvested + estimatedGains;
+    const dailyRate = Math.pow(1 + annualRate, 1 / 365) - 1;
+    let accumulatedValue = totalInvested;
+
+    if (dailyRate > 0) {
+      accumulatedValue = Math.round(
+        dailySavings * ((Math.pow(1 + dailyRate, 365) - 1) / dailyRate) * (1 + dailyRate)
+      );
+    }
+
+    const estimatedGains = Math.max(0, accumulatedValue - totalInvested);
+    const effectiveGainPercent = ((estimatedGains / totalInvested) * 100).toFixed(1);
 
     return {
       totalInvested,
       accumulatedValue,
       estimatedGains,
-      gainPercent: (annualRate * 100).toFixed(0),
+      gainPercent: effectiveGainPercent,
     };
   }, [dailySavings, annualRate]);
 
@@ -88,7 +101,7 @@ export const CalculatorSection: React.FC = () => {
                         <span className="font-bold text-xs" style={{ color: colors.textPrimary }}>Stable Basket</span>
                       </div>
                       <div className="flex justify-between items-baseline mt-1">
-                        <span className="text-[11px] font-mono text-emerald-500 font-bold">~8% Ref. Return</span>
+                        <span className="text-[11px] font-mono text-emerald-500 font-bold">~8% Benchmark</span>
                         <span className="text-[9px]" style={{ color: colors.textTertiary }}>min ₹10/day</span>
                       </div>
                     </button>
@@ -107,7 +120,7 @@ export const CalculatorSection: React.FC = () => {
                         <span className="font-bold text-xs" style={{ color: colors.textPrimary }}>Growth Basket</span>
                       </div>
                       <div className="flex justify-between items-baseline mt-1">
-                        <span className="text-[11px] font-mono text-emerald-500 font-bold">~28% Hist. CAGR</span>
+                        <span className="text-[11px] font-mono text-emerald-500 font-bold">~28% Benchmark</span>
                         <span className="text-[9px]" style={{ color: colors.textTertiary }}>min ₹30/day</span>
                       </div>
                     </button>
@@ -207,10 +220,10 @@ export const CalculatorSection: React.FC = () => {
               <div className="space-y-5">
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] font-bold uppercase tracking-wider font-mono flex items-center gap-1.5" style={{ color: colors.accent }}>
-                    <span>1-YEAR PROJECTED PORTFOLIO VALUE</span>
+                    <span>1-YEAR ESTIMATED ACCUMULATION (DCA)</span>
                   </span>
-                  <span className="text-[10px] px-2 py-0.5 rounded-md font-bold border font-mono tracking-wider" style={{ backgroundColor: colors.mintTint, color: colors.semanticSuccess, borderColor: colors.borderMint }}>
-                    +{calculations.gainPercent}% GAIN
+                  <span className="text-[10px] px-2 py-0.5 rounded-md font-bold border font-mono tracking-wider tabular-nums" style={{ backgroundColor: colors.mintTint, color: colors.semanticSuccess, borderColor: colors.borderMint }}>
+                    +₹{calculations.estimatedGains.toLocaleString('en-IN')} (+{calculations.gainPercent}%)
                   </span>
                 </div>
 
@@ -225,9 +238,7 @@ export const CalculatorSection: React.FC = () => {
                     />
                   </div>
                   <div className="text-xs mt-1" style={{ color: colors.textSecondary }}>
-                    {strategy === 'low'
-                      ? 'Daily Rupee Cost Averaging projection based on 8% reference baseline'
-                      : 'Daily Rupee Cost Averaging projection based on 28% historical CAGR'}
+                    Hypothetical systematic daily dollar/rupee cost averaging estimate. Past performance is not indicative of future returns.
                   </div>
                 </div>
 

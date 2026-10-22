@@ -112,10 +112,10 @@ export const StepsSection: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Wealth Projection Card */}
+                {/* Savings Projection Card */}
                 <div className="p-2 rounded-xl border border-white/10 bg-white/5 flex items-center justify-between text-[10px] font-mono">
-                  <span className="text-gray-400 font-sans">1Y Wealth Est.:</span>
-                  <span className="font-bold text-emerald-400">₹21,438</span>
+                  <span className="text-gray-400 font-sans">1Y Estimated Total:</span>
+                  <span className="font-bold text-emerald-400 tabular-nums">₹20,864</span>
                 </div>
               </div>
             </div>

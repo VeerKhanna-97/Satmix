@@ -14,7 +14,7 @@ interface CountUpProps {
 
 export const CountUp: React.FC<CountUpProps> = ({
   to,
-  from = 0,
+  from,
   prefix = '',
   suffix = '',
   decimals = 0,
@@ -25,7 +25,8 @@ export const CountUp: React.FC<CountUpProps> = ({
   const spanRef = useRef<HTMLSpanElement>(null);
   const isInView = useInView(spanRef, { once: true, margin: '-20px' });
   
-  const motionVal = useMotionValue(from);
+  const initialValue = from !== undefined ? from : to;
+  const motionVal = useMotionValue(initialValue);
   const spring = useSpring(motionVal, {
     stiffness: 70,
     damping: 20,
@@ -70,7 +71,7 @@ export const CountUp: React.FC<CountUpProps> = ({
     return () => unsubscribe();
   }, [spring, decimals, prefix, suffix, separator]);
 
-  return <span ref={spanRef} className={className}>{formatNumber(from)}</span>;
+  return <span ref={spanRef} className={className}>{formatNumber(to)}</span>;
 };
 
 export default CountUp;

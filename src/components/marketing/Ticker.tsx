@@ -45,18 +45,18 @@ export const Ticker: React.FC = () => {
               <span className="font-bold tracking-wider" style={{ color: colors.textPrimary }}>
                 {coin.symbol}
               </span>
-              <span style={{ color: colors.textSecondary }}>
-                ₹{coin.priceInr >= 100000 ? `${(coin.priceInr / 100000).toFixed(2)}L` : coin.priceInr.toLocaleString('en-IN')}
+              <span className="font-mono tabular-nums" style={{ color: colors.textSecondary }}>
+                ₹{coin.priceInr.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
               <span
-                className="px-1.5 py-0.5 rounded text-[10px] font-bold font-mono"
+                className="px-1.5 py-0.5 rounded text-[10px] font-bold font-mono tabular-nums"
                 style={{
                   backgroundColor: isUp ? colors.mintTint : colors.redTint,
                   color: isUp ? colors.semanticSuccess : colors.semanticDanger,
                 }}
               >
                 {isUp ? '+' : ''}
-                {coin.changePercent24Hr}%
+                {Number(coin.changePercent24Hr).toFixed(2)}%
               </span>
             </div>
           );

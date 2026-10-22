@@ -67,8 +67,8 @@ export async function fetchLiveCryptoPrices(): Promise<CryptoCoin[]> {
         id: c.id,
         symbol: c.symbol,
         name: c.name || c.symbol,
-        priceUsd: Number(c.priceUsd) || 0,
-        priceInr: Number(c.priceInr) || 0,
+        priceUsd: Number((Number(c.priceUsd) || 0).toFixed(2)),
+        priceInr: Number((Number(c.priceInr) || 0).toFixed(2)),
         changePercent24Hr: Number((Number(c.changePercent24Hr) || 0).toFixed(2)),
       }));
     }
