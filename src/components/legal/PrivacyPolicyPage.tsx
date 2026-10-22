@@ -42,16 +42,16 @@ export const PrivacyPolicyPage: React.FC = () => {
 
         {/* Content Card */}
         <div className="space-y-8 text-sm leading-relaxed" style={{ color: colors.textSecondary }}>
-          {/* Section 1: Custody & Technology Architecture */}
+          {/* Section 1: Technology Architecture & Storage */}
           <section className="p-6 rounded-3xl border space-y-3" style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}>
             <div className="flex items-center gap-2.5">
               <div className="p-2 rounded-xl" style={{ backgroundColor: colors.purpleTint, color: colors.accent }}>
                 <Lock className="w-4 h-4" />
               </div>
-              <h2 className="text-lg font-bold" style={{ color: colors.textPrimary }}>1. Technology Architecture & Institutional Custody</h2>
+              <h2 className="text-lg font-bold" style={{ color: colors.textPrimary }}>1. Technology Architecture & Digital Asset Execution</h2>
             </div>
             <p>
-              Satmix provides automated technology workflows for daily Rupee Cost Averaging into digital asset baskets. Digital asset holdings are safeguarded with compliant, registered institutional custodial partners. Satmix does not directly store your fiat deposits, bank passwords, or UPI PINs. All recurring fiat debits are handled directly through authorized NPCI UPI AutoPay rails via your bank.
+              Satmix provides automated technology workflows for daily Rupee Cost Averaging into digital asset baskets. Crypto will be bought and held through a regulated execution partner (to be announced). Satmix does not directly store your fiat deposits, bank passwords, or UPI PINs. All recurring fiat debits are handled directly through authorized NPCI UPI AutoPay rails via your bank.
             </p>
           </section>
 

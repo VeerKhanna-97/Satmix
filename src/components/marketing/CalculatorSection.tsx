@@ -67,7 +67,7 @@ export const CalculatorSection: React.FC = () => {
             See Your Savings Grow in Real Time
           </h2>
           <p className="text-sm sm:text-base leading-relaxed max-w-xl mx-auto mt-1" style={{ color: colors.textSecondary }}>
-            Calculate your estimated wealth accumulation powered by systematic daily Rupee Cost Averaging.
+            Calculate your portfolio estimate powered by systematic daily Rupee Cost Averaging.
           </p>
         </FadeIn>
 
@@ -238,7 +238,7 @@ export const CalculatorSection: React.FC = () => {
                     />
                   </div>
                   <div className="text-xs mt-1" style={{ color: colors.textSecondary }}>
-                    Hypothetical systematic daily dollar/rupee cost averaging estimate. Past performance is not indicative of future returns.
+                    Calculated using systematic daily rupee-cost averaging.
                   </div>
                 </div>
 
@@ -254,7 +254,7 @@ export const CalculatorSection: React.FC = () => {
                   </div>
                   <div>
                     <span className="block text-[11px] font-medium text-emerald-500">
-                      Projected Growth
+                      Estimated Gain
                     </span>
                     <span className="text-lg font-bold font-mono text-emerald-500 mt-0.5 block">
                       <CountUp to={calculations.estimatedGains} prefix="+₹" duration={0.8} />
@@ -265,7 +265,7 @@ export const CalculatorSection: React.FC = () => {
 
               {/* Disclaimer */}
               <p className="text-[11px] leading-relaxed pt-5" style={{ color: colors.textTertiary }}>
-                *Projections simulate historical periodic compounding with systematic daily execution. Digital assets carry market risk.
+                *Calculated daily across 365 days based on reference basket rates. Digital assets carry market risk.
               </p>
             </SpotlightCard>
           </FadeIn>

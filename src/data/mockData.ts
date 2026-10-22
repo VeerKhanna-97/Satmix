@@ -14,11 +14,11 @@ export const EDUCATIONAL_GUIDES = [
   },
   {
     id: 'g2',
-    category: 'EXECUTION & CUSTODY',
-    title: 'Institutional Custody & Batch Execution',
+    category: 'EXECUTION & STORAGE',
+    title: 'Regulated Partner Execution & Secure Storage',
     readTime: '3 min read',
-    summary: 'Crypto assets are held securely in institutional custodial storage. Orders execute systematically via direct batch engines.',
-    content: 'After your morning 8:00–8:30 AM UPI AutoPay debit, our scheduled 9:00 AM batch engine executes spot market orders in your exact basket ratio. Portfolio ledgers update with fractional holdings once fills confirm on-chain.',
+    summary: 'Crypto will be bought and held through a regulated execution partner (to be announced). Orders execute systematically via direct batch engines.',
+    content: 'After your morning UPI AutoPay debit, scheduled batch engines execute spot market orders in your exact basket ratio. Portfolio ledgers update with fractional holdings once fills confirm on-chain.',
   },
   {
     id: 'g3',

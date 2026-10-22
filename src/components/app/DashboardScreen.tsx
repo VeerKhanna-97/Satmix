@@ -329,14 +329,14 @@ export const DashboardScreen: React.FC = () => {
             </span>
           </div>
 
-          {/* Custody Architecture Badge */}
+          {/* Partner Execution Architecture Badge */}
           <div
             className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-mono"
             style={{ backgroundColor: colors.surface, borderColor: colors.borderDim, color: colors.textTertiary }}
-            title="Institutional Multi-Sig Custody Architecture"
+            title="Partner Execution Architecture"
           >
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Institutional Custody</span>
+            <span>Regulated Partner (TBA)</span>
           </div>
         </div>
       </div>
@@ -872,7 +872,7 @@ export const DashboardScreen: React.FC = () => {
               )}
 
               <div className="text-[11px] font-mono flex items-center justify-between" style={{ color: colors.textSecondary }}>
-                <span>Auto-deposit: <strong>9:00 AM Daily</strong></span>
+                <span>Auto-deposit: <strong>Automated Daily</strong></span>
                 <span>Minimum: <strong>₹10/day</strong></span>
               </div>
             </SpotlightCard>
@@ -953,7 +953,7 @@ export const DashboardScreen: React.FC = () => {
               )}
 
               <div className="text-[11px] font-mono flex items-center justify-between" style={{ color: colors.textSecondary }}>
-                <span>Auto-deposit: <strong>9:00 AM Daily</strong></span>
+                <span>Auto-deposit: <strong>Automated Daily</strong></span>
                 <span>Minimum: <strong>₹30/day</strong></span>
               </div>
             </SpotlightCard>
@@ -1100,7 +1100,7 @@ export const DashboardScreen: React.FC = () => {
                 <span>Safety & Bank Access Commitment</span>
               </div>
               <p className="text-[11px] leading-relaxed" style={{ color: colors.textSecondary }}>
-                Crypto will be bought and held through a regulated execution partner (to be announced). Your coins are bought automatically at 9:00 AM daily and stored in your name. You can withdraw directly back to your bank account anytime.
+                Crypto will be bought and held through a regulated execution partner (to be announced). Your coins are bought automatically daily and stored in your name. You can withdraw directly back to your bank account anytime.
               </p>
             </div>
 

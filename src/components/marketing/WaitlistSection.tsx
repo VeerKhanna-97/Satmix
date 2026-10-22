@@ -459,17 +459,6 @@ export const WaitlistSection: React.FC = () => {
                         An automated daily savings routine designed to run quietly in the background without manual trading stress.
                       </p>
                     </div>
-
-                    <div className="hidden lg:flex items-center gap-4 text-xs font-mono border-l pl-6" style={{ borderColor: colors.borderDim }}>
-                      <div>
-                        <span className="block text-[11px] font-sans" style={{ color: colors.textTertiary }}>Execution</span>
-                        <span className="font-bold text-base" style={{ color: colors.textPrimary }}>9:00 AM Daily</span>
-                      </div>
-                      <div>
-                        <span className="block text-[11px] font-sans" style={{ color: colors.textTertiary }}>Commitment</span>
-                        <span className="font-bold text-base text-emerald-400">Cancel Anytime</span>
-                      </div>
-                    </div>
                   </div>
 
                   {/* 4 HORIZONTAL / RESPONSIVE STEP CARDS */}
@@ -570,17 +559,6 @@ export const WaitlistSection: React.FC = () => {
                         Two transparent, rule-based baskets tailored to your risk appetite. Zero hidden management charges.
                       </p>
                     </div>
-
-                    <div className="hidden lg:flex items-center gap-4 text-xs font-mono border-l pl-6" style={{ borderColor: colors.borderDim }}>
-                      <div>
-                        <span className="block text-[11px] font-sans" style={{ color: colors.textTertiary }}>Custody</span>
-                        <span className="font-bold text-base" style={{ color: colors.textPrimary }}>Institutional Multi-Sig</span>
-                      </div>
-                      <div>
-                        <span className="block text-[11px] font-sans" style={{ color: colors.textTertiary }}>Spot Debit</span>
-                        <span className="font-bold text-base text-emerald-400">9:00 AM Daily</span>
-                      </div>
-                    </div>
                   </div>
 
                   {/* 2 HORIZONTAL SIDE-BY-SIDE BASKET CARDS */}
@@ -616,7 +594,7 @@ export const WaitlistSection: React.FC = () => {
                         </div>
 
                         <p className="text-xs leading-relaxed mb-3.5" style={{ color: colors.textSecondary }}>
-                          Designed for capital preservation and steady wealth building. High exposure to dollar-backed stable assets with a disciplined touch of Bitcoin.
+                          Designed for capital preservation and steady accumulation. High exposure to dollar-backed stable assets with a disciplined touch of Bitcoin.
                         </p>
 
                         {/* Visual allocation bar */}
@@ -681,7 +659,7 @@ export const WaitlistSection: React.FC = () => {
                         </div>
 
                         <p className="text-xs leading-relaxed mb-3.5" style={{ color: colors.textSecondary }}>
-                          Balanced upside exposure capturing the long-term compounding growth of the most dominant blockchain networks.
+                          Balanced upside exposure capturing the long-term disciplined growth of the most dominant blockchain networks.
                         </p>
 
                         {/* Visual allocation bar */}
@@ -730,7 +708,7 @@ export const WaitlistSection: React.FC = () => {
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-3 border-t" style={{ borderColor: colors.borderDim }}>
                     <div className="flex items-center gap-2 text-xs" style={{ color: colors.textSecondary }}>
                       <Clock className="w-4 h-4 text-purple-400 flex-shrink-0" />
-                      <span>Execution Frequency: 9:00 AM Daily Spot Debit directly into segregated custody.</span>
+                      <span>Automated daily execution with 24/7 liquidity and instant withdrawal access.</span>
                     </div>
 
                     <div className="flex items-center gap-3">

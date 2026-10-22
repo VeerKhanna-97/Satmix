@@ -110,7 +110,7 @@ export const AboutSection: React.FC = () => {
                   Lump-sum investing forces retail users to guess market timing. Satmix applies <strong>Rupee Cost Averaging (RCA)</strong>: you automatically buy more units when market prices dip and fewer when they peak, smoothing out crypto volatility over months and years without checking charts.
                 </p>
                 <div className="pt-1.5 flex flex-wrap gap-4 text-xs font-semibold" style={{ color: colors.textPrimary }}>
-                  <span className="flex items-center gap-1.5"><ShieldCheck className="w-4 h-4" style={{ color: colors.textSecondary }} /> Institutional Custody</span>
+                  <span className="flex items-center gap-1.5"><ShieldCheck className="w-4 h-4" style={{ color: colors.textSecondary }} /> Regulated Execution (TBA)</span>
                   <span className="flex items-center gap-1.5"><RefreshCw className="w-4 h-4" style={{ color: colors.accent }} /> Daily UPI AutoPay</span>
                   <span className="flex items-center gap-1.5"><Coins className="w-4 h-4" style={{ color: colors.accent }} /> 24/7 Bank Liquidity</span>
                 </div>

@@ -37,8 +37,8 @@ export const TrustStrip: React.FC = () => {
     {
       iconDarkSrc: '/icons/custody.png',
       iconLightSrc: '/icons/custody-light.png',
-      title: 'Institutional Custody',
-      desc: 'Institutional Multi-Sig • Secure Storage',
+      title: 'Regulated Custody (TBA)',
+      desc: 'Held via Regulated Execution Partner',
       bgColor: colors.purpleTint,
       borderColor: colors.borderPurple,
       spotlight: colors.accentTint,
