@@ -83,13 +83,22 @@ export function createInitialPrototypeState(): PrototypeState {
   };
 }
 
+// In-memory fallback for Safari Private Browsing mode & Brave strict shields
+let memoryStateCache: PrototypeState | null = null;
+
 /**
- * Loads PrototypeState from localStorage (satmix-prototype-v6).
+ * Loads PrototypeState from localStorage (satmix-prototype-v6) with in-memory fallback.
  */
 export function loadPrototypeState(): PrototypeState {
   try {
-    const raw = localStorage.getItem(PROTOTYPE_STORAGE_KEY);
-    if (!raw) return createInitialPrototypeState();
+    const raw = typeof window !== 'undefined' && window.localStorage
+      ? localStorage.getItem(PROTOTYPE_STORAGE_KEY)
+      : null;
+
+    if (!raw) {
+      if (memoryStateCache) return memoryStateCache;
+      return createInitialPrototypeState();
+    }
     const parsed = JSON.parse(raw);
     const initial = createInitialPrototypeState();
 
@@ -117,6 +126,8 @@ export function loadPrototypeState(): PrototypeState {
       },
     };
 
+    memoryStateCache = migratedState;
+
     // Immediately persist migrated state so stale 50 in localStorage is permanently corrected
     try {
       localStorage.setItem(PROTOTYPE_STORAGE_KEY, JSON.stringify(migratedState));
@@ -125,18 +136,21 @@ export function loadPrototypeState(): PrototypeState {
     return migratedState;
   } catch (err) {
     console.error('Failed to parse prototype state:', err);
-    return createInitialPrototypeState();
+    return memoryStateCache || createInitialPrototypeState();
   }
 }
 
 /**
- * Persists PrototypeState to localStorage (satmix-prototype-v6).
+ * Persists PrototypeState to localStorage (satmix-prototype-v6) with in-memory fallback.
  */
 export function savePrototypeState(state: PrototypeState): void {
+  memoryStateCache = state;
   try {
-    localStorage.setItem(PROTOTYPE_STORAGE_KEY, JSON.stringify(state));
+    if (typeof window !== 'undefined' && window.localStorage) {
+      localStorage.setItem(PROTOTYPE_STORAGE_KEY, JSON.stringify(state));
+    }
   } catch (err) {
-    console.error('Failed to save prototype state:', err);
+    console.warn('LocalStorage save failed (private/blocked mode). Kept in memory cache:', err);
   }
 }
 
@@ -168,14 +182,18 @@ export async function fetchCoinbaseSpotPrices(): Promise<LiveCoinPrices> {
         const ethInr = parseFloat(coinMap.ETH?.priceInr);
         const solInr = parseFloat(coinMap.SOL?.priceInr);
         const usdtInr = parseFloat(coinMap.USDT?.priceInr);
-        const fxRate = usdtInr || (btcInr / parseFloat(coinMap.BTC?.priceUsd)) || 87.85;
+        const btcUsd = parseFloat(coinMap.BTC?.priceUsd);
+        const calculatedFx = Number.isFinite(btcInr) && Number.isFinite(btcUsd) && btcUsd > 0
+          ? btcInr / btcUsd
+          : 87.85 * RETAIL_MARKUP_MULTIPLIER;
+        const fxRate = Number.isFinite(usdtInr) && usdtInr > 0 ? usdtInr : calculatedFx;
 
-        if (btcInr && ethInr && solInr) {
+        if (Number.isFinite(btcInr) && Number.isFinite(ethInr) && Number.isFinite(solInr)) {
           return {
             BTC: btcInr,
             ETH: ethInr,
             SOL: solInr,
-            USDT: usdtInr || fxRate,
+            USDT: fxRate,
             USD_INR: fxRate,
           };
         }
@@ -221,10 +239,11 @@ export async function fetchCoinbaseSpotPrices(): Promise<LiveCoinPrices> {
 function getDaysArray(startDate: Date, endDate: Date): string[] {
   const days: string[] = [];
   const current = new Date(startDate);
-  current.setHours(0, 0, 0, 0);
+  // Noon-anchoring (12:00) prevents DST midnight skips and duplications in WebKit/Safari
+  current.setHours(12, 0, 0, 0);
 
   const end = new Date(endDate);
-  end.setHours(0, 0, 0, 0);
+  end.setHours(12, 0, 0, 0);
 
   while (current <= end) {
     days.push(formatDateKey(current));
@@ -259,8 +278,11 @@ export function accrueMissingDays(
     const habit = nextState.habits[basketId];
     if (!habit || !habit.setupAt || habit.paused) return;
 
-    const setupDate = new Date(habit.setupAt);
-    setupDate.setHours(0, 0, 0, 0);
+    const rawSetupAt = habit.setupAt;
+    const setupIso = typeof rawSetupAt === 'string' ? rawSetupAt.replace(' ', 'T') : rawSetupAt;
+    const setupDate = new Date(setupIso);
+    if (isNaN(setupDate.getTime())) return; // Guard against Safari WebKit Invalid Date
+    setupDate.setHours(12, 0, 0, 0);
 
     // Accrue all days since setupAt (with a safe 180-day guardrail to prevent infinite loops)
     const maxLookbackDate = new Date(today);

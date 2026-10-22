@@ -1052,57 +1052,61 @@ export const ProfileScreen: React.FC = () => {
 
       {/* Account Statement Modal */}
       {taxModalOpen && taxStatementData && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in">
-          <div className="w-full max-w-xl rounded-3xl p-6 sm:p-8 border shadow-2xl space-y-5" style={{ backgroundColor: colors.cardHigh, borderColor: colors.cardBorder }}>
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md animate-fade-in"
+          style={{ WebkitBackdropFilter: 'blur(16px)' }}
+        >
+          <div className="w-full max-w-xl rounded-3xl p-5 sm:p-8 border shadow-2xl space-y-5 [-webkit-tap-highlight-color:transparent]" style={{ backgroundColor: colors.cardHigh, borderColor: colors.cardBorder }}>
             <div className="flex justify-between items-start">
               <div>
                 <span className="text-[11px] font-bold uppercase font-mono" style={{ color: colors.accent }}>Verified Annual Statement</span>
                 <h3 className="text-xl font-extrabold mt-1" style={{ color: colors.textPrimary }}>{taxStatementData.statement.financialYear}</h3>
               </div>
-              <button onClick={() => setTaxModalOpen(false)} className="p-1 hover:opacity-80 transition-opacity" style={{ color: colors.textSecondary }}>
+              <button onClick={() => setTaxModalOpen(false)} className="p-1 hover:opacity-80 transition-opacity cursor-pointer" style={{ color: colors.textSecondary }}>
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Statement Details Grid */}
-            <div className="p-4 rounded-2xl border space-y-3 font-mono text-xs" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
-              <div className="flex justify-between">
+            <div className="p-3.5 sm:p-4 rounded-2xl border space-y-2.5 sm:space-y-3 font-mono text-xs" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+              <div className="flex flex-wrap sm:flex-nowrap justify-between gap-1">
                 <span className="font-sans" style={{ color: colors.textSecondary }}>Account Holder:</span>
                 <strong style={{ color: colors.textPrimary }}>{user?.name}</strong>
               </div>
-              <div className="flex justify-between">
+              <div className="flex flex-wrap sm:flex-nowrap justify-between gap-1">
                 <span className="font-sans" style={{ color: colors.textSecondary }}>Linked Bank Account:</span>
-                <strong className="font-mono" style={{ color: colors.accent }}>{user?.bankName || 'HDFC Bank'} ({user?.bankAccountMasked || '•••• 4129'})</strong>
+                <strong className="font-mono tabular-nums" style={{ color: colors.accent }}>{user?.bankName || 'HDFC Bank'} ({user?.bankAccountMasked || '•••• 4129'})</strong>
               </div>
-              <div className="flex justify-between">
+              <div className="flex flex-wrap sm:flex-nowrap justify-between gap-1">
                 <span className="font-sans" style={{ color: colors.textSecondary }}>Total Transaction Volume:</span>
-                <strong style={{ color: colors.textPrimary }}>₹{taxStatementData.statement.totalVolume.toLocaleString('en-IN')}</strong>
+                <strong className="tabular-nums" style={{ color: colors.textPrimary }}>₹{taxStatementData.statement.totalVolume.toLocaleString('en-IN')}</strong>
               </div>
-              <div className="flex justify-between">
+              <div className="flex flex-wrap sm:flex-nowrap justify-between gap-1">
                 <span className="font-sans" style={{ color: colors.textSecondary }}>Total Deposits & Purchases:</span>
-                <strong style={{ color: colors.semanticSuccess }}>₹{taxStatementData.statement.totalDeposits.toLocaleString('en-IN')}</strong>
+                <strong className="tabular-nums" style={{ color: colors.semanticSuccess }}>₹{taxStatementData.statement.totalDeposits.toLocaleString('en-IN')}</strong>
               </div>
-              <div className="flex justify-between">
+              <div className="flex flex-wrap sm:flex-nowrap justify-between gap-1">
                 <span className="font-sans" style={{ color: colors.textSecondary }}>Total Withdrawals:</span>
-                <strong style={{ color: colors.textPrimary }}>₹{taxStatementData.statement.totalWithdrawals.toLocaleString('en-IN')}</strong>
+                <strong className="tabular-nums" style={{ color: colors.textPrimary }}>₹{taxStatementData.statement.totalWithdrawals.toLocaleString('en-IN')}</strong>
               </div>
-              <div className="flex justify-between">
+              <div className="flex flex-wrap sm:flex-nowrap justify-between gap-1">
                 <span className="font-sans" style={{ color: colors.textSecondary }}>Net Portfolio Balance:</span>
-                <strong style={{ color: colors.accent }}>₹{taxStatementData.statement.netPortfolioValue.toLocaleString('en-IN')}</strong>
+                <strong className="tabular-nums" style={{ color: colors.accent }}>₹{taxStatementData.statement.netPortfolioValue.toLocaleString('en-IN')}</strong>
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3">
               <button
                 onClick={handleDownloadCsv}
-                className="flex-1 h-11 px-5 rounded-xl font-bold text-xs shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] flex items-center justify-center gap-2 transition-all hover:brightness-105 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                className="w-full sm:flex-1 h-11 px-4 sm:px-5 rounded-xl font-bold text-xs shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] flex items-center justify-center gap-2 transition-all hover:brightness-105 active:scale-[0.96] touch-manipulation cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                 style={{ backgroundColor: colors.primary, color: colors.primaryText }}
               >
-                <Download className="w-4 h-4" /> Download Official CSV Statement
+                <Download className="w-4 h-4 flex-shrink-0" />
+                <span className="truncate">Download Official CSV Statement</span>
               </button>
               <button
                 onClick={() => setTaxModalOpen(false)}
-                className="h-11 px-5 rounded-xl font-semibold text-xs border transition-all hover:bg-white/5 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                className="w-full sm:w-auto h-11 px-5 rounded-xl font-semibold text-xs border transition-all hover:bg-white/5 active:scale-[0.96] touch-manipulation cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                 style={{ borderColor: colors.cardBorder, color: colors.textSecondary }}
               >
                 Done
@@ -1114,8 +1118,11 @@ export const ProfileScreen: React.FC = () => {
 
       {/* Support Ticket Modal */}
       {supportOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
-          <div className="w-full max-w-md rounded-3xl p-6 border shadow-2xl space-y-4" style={{ backgroundColor: colors.cardHigh, borderColor: colors.cardBorder }}>
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-sm animate-fade-in"
+          style={{ WebkitBackdropFilter: 'blur(12px)' }}
+        >
+          <div className="w-full max-w-md rounded-3xl p-5 sm:p-6 border shadow-2xl space-y-4 [-webkit-tap-highlight-color:transparent]" style={{ backgroundColor: colors.cardHigh, borderColor: colors.cardBorder }}>
             <div className="flex justify-between items-start">
               <div>
                 <h3 className="text-lg font-bold" style={{ color: colors.textPrimary }}>Founder Concierge Chat</h3>
@@ -1146,7 +1153,7 @@ export const ProfileScreen: React.FC = () => {
                   value={supportMsg}
                   onChange={(e) => setSupportMsg(e.target.value)}
                   placeholder="Tell us what you need help with, any suggestions for new crypto baskets, or mandate feedback..."
-                  className="w-full p-3.5 rounded-2xl text-xs border focus:outline-none focus:ring-1"
+                  className="w-full p-3.5 rounded-2xl text-[16px] sm:text-xs border focus:outline-none focus:ring-1 transition-all touch-manipulation"
                   style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textPrimary }}
                 />
                 <button
@@ -1184,9 +1191,9 @@ export const ProfileScreen: React.FC = () => {
 
       {/* ── ADD EMAIL / MOBILE NUMBER MODAL ───────────────────── */}
       {addContactModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md [-webkit-backdrop-filter:blur(12px)] animate-fade-in">
           <div
-            className="w-full max-w-md rounded-3xl p-6 sm:p-7 border shadow-2xl space-y-4"
+            className="w-full max-w-md rounded-3xl p-6 sm:p-7 border shadow-2xl space-y-4 [-webkit-tap-highlight-color:transparent]"
             style={{ backgroundColor: colors.cardHigh, borderColor: colors.cardBorder }}
           >
             <div className="flex justify-between items-start">
@@ -1238,7 +1245,7 @@ export const ProfileScreen: React.FC = () => {
                       placeholder="e.g. name@example.com"
                       autoFocus
                       required
-                      className="w-full h-11 px-3.5 rounded-xl text-xs border font-sans focus:outline-none focus:ring-2 focus:ring-[#5D17EB]/40"
+                      className="w-full h-11 px-3.5 rounded-xl text-base sm:text-xs border font-sans focus:outline-none focus:ring-2 focus:ring-[#5D17EB]/40"
                       style={{
                         backgroundColor: colors.surface,
                         borderColor: contactInputError ? colors.semanticDanger : colors.cardBorder,
@@ -1268,7 +1275,7 @@ export const ProfileScreen: React.FC = () => {
                         placeholder="98765 43210"
                         autoFocus
                         required
-                        className="flex-1 h-11 px-3.5 rounded-xl text-xs border font-mono tracking-wider focus:outline-none focus:ring-2 focus:ring-[#5D17EB]/40"
+                        className="flex-1 h-11 px-3.5 rounded-xl text-base sm:text-xs border font-mono tracking-wider focus:outline-none focus:ring-2 focus:ring-[#5D17EB]/40"
                         style={{
                           backgroundColor: colors.surface,
                           borderColor: contactInputError ? colors.semanticDanger : colors.cardBorder,
