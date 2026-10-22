@@ -39,7 +39,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { HoldingsMatrixTable } from './HoldingsMatrixTable';
 import { useSatmixPortfolio } from '../../hooks/useSatmixPortfolio';
 
-type DashboardViewMode = 'overview' | 'holdings' | 'habits';
+type DashboardViewMode = 'holdings' | 'habits';
 
 export const DashboardScreen: React.FC = () => {
   const {
@@ -60,8 +60,8 @@ export const DashboardScreen: React.FC = () => {
     triggerAccrual,
   } = useApp();
 
-  // Progressive Disclosure Section State (Overview vs Where Your Money Is vs Habits & Streak)
-  const [activeSection, setActiveSection] = useState<DashboardViewMode>('overview');
+  // Progressive Disclosure Section State (Where Your Money Is vs Daily Habits & Streak)
+  const [activeSection, setActiveSection] = useState<DashboardViewMode>('holdings');
 
   // Timeframe filter state & Custom View Range
   const [timeframe, setTimeframe] = useState<ChartTimeframe>('1M');
@@ -658,7 +658,6 @@ export const DashboardScreen: React.FC = () => {
         <div className="flex items-center justify-between border-b pb-3 mb-5" style={{ borderColor: colors.borderDim }}>
           <div className="flex items-center gap-2">
             {[
-              { id: 'overview' as const, label: 'Asset Overview' },
               { id: 'holdings' as const, label: 'Where Your Money Is' },
               { id: 'habits' as const, label: 'Daily Habits & Streaks' },
             ].map((tab) => {
@@ -686,63 +685,6 @@ export const DashboardScreen: React.FC = () => {
             </span>
           </div>
         </div>
-
-        {activeSection === 'overview' && (
-          <div className="space-y-4">
-            {/* ── ACTIVE HABIT SNAPSHOT CARD ──────────────────────── */}
-            <div className="p-5 sm:p-6 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4" style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}>
-              <div className="flex items-center gap-3.5">
-                <div className="w-11 h-11 rounded-xl flex items-center justify-center border flex-shrink-0" style={{ backgroundColor: colors.accentTint, borderColor: colors.borderAccent, color: colors.accent }}>
-                  <Calendar className="w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-sm sm:text-base" style={{ color: colors.textPrimary }}>
-                    Daily Auto-Saving Habit
-                  </h4>
-                  <p className="text-xs mt-0.5" style={{ color: colors.textSecondary }}>
-                    {activeTabFilter === 'growth'
-                      ? (isGrowthActive
-                          ? `Auto-saving ₹${growthDailyRate}/day into Growth Mix every morning at 9:00 AM.`
-                          : 'Growth Mix daily auto-saving is currently paused.')
-                      : activeTabFilter === 'stable'
-                      ? (isStableActive
-                          ? `Auto-saving ₹${stableDailyRate}/day into Stable Mix every morning at 9:00 AM.`
-                          : 'Stable Mix daily auto-saving is currently paused.')
-                      : (isGrowthActive && isStableActive
-                          ? `Auto-saving ₹${growthDailyRate}/day into Growth Mix & ₹${stableDailyRate}/day into Stable Mix every morning at 9:00 AM.`
-                          : isGrowthActive
-                          ? `Auto-saving ₹${growthDailyRate}/day into Growth Mix every morning at 9:00 AM.`
-                          : isStableActive
-                          ? `Auto-saving ₹${stableDailyRate}/day into Stable Mix every morning at 9:00 AM.`
-                          : 'Set up an automated daily habit from ₹10 to build wealth steadily.')}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 self-start sm:self-auto">
-                <button
-                  type="button"
-                  onClick={() => setActiveSection('habits')}
-                  className="px-4 py-2 rounded-xl text-xs font-bold border transition-colors hover:bg-white/5 active:scale-[0.98] cursor-pointer"
-                  style={{ backgroundColor: colors.surface, borderColor: colors.borderDim, color: colors.textPrimary }}
-                >
-                  Manage Habit →
-                </button>
-              </div>
-            </div>
-
-            {/* ── PEACE OF MIND & FINANCIAL SAFETY BANNER ─────────── */}
-            <div className="p-4 sm:p-5 rounded-2xl border flex items-start gap-3.5" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
-              <ShieldCheck className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-              <div className="text-xs leading-relaxed" style={{ color: colors.textSecondary }}>
-                <span className="font-bold block" style={{ color: colors.textPrimary }}>
-                  Your money is safe and always accessible
-                </span>
-                Crypto will be bought and held through a regulated execution partner (to be announced). Your coins belong strictly to you and can be withdrawn directly to your bank account via UPI anytime with zero lock-in period.
-              </div>
-            </div>
-          </div>
-        )}
 
       {/* ── MODE 2: WHERE YOUR MONEY IS (COIN BREAKDOWN & CARDS) ── */}
       {activeSection === 'holdings' && (
