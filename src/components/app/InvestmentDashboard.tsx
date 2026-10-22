@@ -147,8 +147,8 @@ export const InvestmentDashboard: React.FC<InvestmentDashboardProps> = ({
               metrics.totalUnrealizedPnLINR >= 0 ? 'text-emerald-500' : 'text-rose-500'
             }`}
           >
-            {metrics.totalUnrealizedPnLINR >= 0 ? '+' : ''}
-            {formatINR(metrics.totalUnrealizedPnLINR)}
+            {metrics.totalUnrealizedPnLINR >= 0 ? '+' : '-'}
+            {formatINR(Math.abs(metrics.totalUnrealizedPnLINR))}
           </div>
           <span className="text-[10px] font-mono block mt-1" style={{ color: colors.textSecondary }}>
             MTM net dollar-weighted gain
@@ -171,8 +171,8 @@ export const InvestmentDashboard: React.FC<InvestmentDashboardProps> = ({
               metrics.totalROI >= 0 ? 'text-emerald-500' : 'text-rose-500'
             }`}
           >
-            {metrics.totalROI >= 0 ? '+' : ''}
-            {metrics.totalROI.toFixed(2)}%
+            {metrics.totalROI >= 0 ? '+' : '-'}
+            {Math.abs(metrics.totalROI).toFixed(2)}%
           </div>
           <span className="text-[10px] font-mono block mt-1" style={{ color: colors.textSecondary }}>
             All-time capital appreciation

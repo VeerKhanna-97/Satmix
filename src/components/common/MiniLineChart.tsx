@@ -384,7 +384,7 @@ export const MiniLineChart: React.FC<MiniLineChartProps> = ({
           <span className="font-bold text-white">₹{activePoint.value.toLocaleString('en-IN')}</span>
           {activePoint.invested > 0 && (
             <span className={activePoint.gain >= 0 ? 'text-emerald-400' : 'text-rose-400'}>
-              ({activePoint.gain >= 0 ? '+' : ''}{activePoint.gainPercentage}%)
+              ({activePoint.gainPercentage >= 0 ? '+' : '-'}{Math.abs(activePoint.gainPercentage).toFixed(2)}%)
             </span>
           )}
         </div>

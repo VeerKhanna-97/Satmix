@@ -90,7 +90,7 @@ export function initTicker() {
       const priceInr = coin.priceInr ? parseFloat(coin.priceInr) : (priceUsd * 88.00);
       const change = parseFloat(coin.changePercent24Hr);
       const isUp = change >= 0;
-      const changeSign = isUp ? '+' : '';
+      const changeSign = isUp ? '+' : '-';
       const changeClass = isUp ? 'price-up' : 'price-down';
       
       let priceText = '';
@@ -116,7 +116,7 @@ export function initTicker() {
         <div class="ticker-item" id="ticker-${coin.id}">
           <span>${coin.symbol}/INR</span>
           <span class="ticker-price ${flashClass}">${priceText}</span>
-          <span class="ticker-change ${changeClass}">${changeSign}${change.toFixed(2)}%</span>
+          <span class="ticker-change ${changeClass}">${changeSign}${Math.abs(change).toFixed(2)}%</span>
         </div>
       `;
     });

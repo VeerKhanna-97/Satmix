@@ -55,8 +55,8 @@ export const Ticker: React.FC = () => {
                   color: isUp ? colors.semanticSuccess : colors.semanticDanger,
                 }}
               >
-                {isUp ? '+' : ''}
-                {Number(coin.changePercent24Hr).toFixed(2)}%
+                {isUp ? '+' : '-'}
+                {Math.abs(Number(coin.changePercent24Hr)).toFixed(2)}%
               </span>
             </div>
           );

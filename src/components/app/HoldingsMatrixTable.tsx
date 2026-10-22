@@ -183,7 +183,7 @@ export const HoldingsMatrixTable: React.FC<HoldingsMatrixTableProps> = ({
                           : 'text-rose-500'
                       }`}
                     >
-                      {!hasInvestment ? '₹0.00' : `${isProfit ? '+' : ''}${formatINR(h.unrealizedPnLINR, 2)}`}
+                      {!hasInvestment ? '₹0.00' : `${isProfit ? '+' : '-'}${formatINR(Math.abs(h.unrealizedPnLINR), 2)}`}
                     </span>
                   </td>
 
@@ -198,7 +198,7 @@ export const HoldingsMatrixTable: React.FC<HoldingsMatrixTableProps> = ({
                           : 'bg-rose-500/10 text-rose-500'
                       }`}
                     >
-                      {!hasInvestment ? '0.00%' : `${isProfit ? '+' : ''}${h.unrealizedROI.toFixed(2)}%`}
+                      {!hasInvestment ? '0.00%' : `${isProfit ? '+' : '-'}${Math.abs(h.unrealizedROI).toFixed(2)}%`}
                     </span>
                   </td>
 

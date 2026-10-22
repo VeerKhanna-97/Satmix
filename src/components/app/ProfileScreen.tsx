@@ -3,6 +3,7 @@ import {
   Shield,
   CreditCard,
   TrendingUp,
+  TrendingDown,
   Zap,
   CheckCircle2,
   FileText,
@@ -205,15 +206,27 @@ export const ProfileScreen: React.FC = () => {
         </SpotlightCard>
 
         <SpotlightCard
-          spotlightColor={colors.mintTint}
+          spotlightColor={portfolioSummary.totalReturnsPercentage >= 0 ? colors.mintTint : (colors.redTint || 'rgba(239, 68, 68, 0.15)')}
           className="rounded-2xl p-4 border"
           style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
         >
-          <div className="flex items-center gap-1.5 text-xs font-sans mb-1" style={{ color: colors.semanticSuccess }}>
-            <TrendingUp className="w-3.5 h-3.5" /> Net Return
+          <div
+            className="flex items-center gap-1.5 text-xs font-sans mb-1"
+            style={{ color: portfolioSummary.totalReturnsPercentage >= 0 ? colors.semanticSuccess : colors.semanticDanger }}
+          >
+            {portfolioSummary.totalReturnsPercentage >= 0 ? (
+              <TrendingUp className="w-3.5 h-3.5" />
+            ) : (
+              <TrendingDown className="w-3.5 h-3.5" />
+            )}
+            <span>Net Return</span>
           </div>
-          <div className="text-lg font-bold" style={{ color: colors.semanticSuccess }}>
-            +{portfolioSummary.totalReturnsPercentage}%
+          <div
+            className="text-lg font-bold font-mono tabular-nums"
+            style={{ color: portfolioSummary.totalReturnsPercentage >= 0 ? colors.semanticSuccess : colors.semanticDanger }}
+          >
+            {portfolioSummary.totalReturnsPercentage >= 0 ? '+' : '-'}
+            {Math.abs(portfolioSummary.totalReturnsPercentage).toFixed(2)}%
           </div>
         </SpotlightCard>
 

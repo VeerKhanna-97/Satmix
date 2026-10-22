@@ -373,7 +373,7 @@ export const LineChart: React.FC<LineChartProps> = ({
                   <span style={{ color: colors.textTertiary }}>₹0.00 (0.00%)</span>
                 ) : (
                   <span style={{ color: activePoint.gain >= 0 ? colors.semanticSuccess : colors.semanticDanger }}>
-                    {activePoint.gain >= 0 ? '+' : '-'}₹{Math.abs(activePoint.gain).toFixed(2)} ({activePoint.gainPercentage >= 0 ? '+' : ''}{activePoint.gainPercentage}%)
+                    {activePoint.gain >= 0 ? '+' : '-'}₹{Math.abs(activePoint.gain).toFixed(2)} ({activePoint.gainPercentage >= 0 ? '+' : '-'}{Math.abs(activePoint.gainPercentage).toFixed(2)}%)
                   </span>
                 )}
               </div>

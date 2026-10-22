@@ -444,7 +444,7 @@ export const DashboardScreen: React.FC = () => {
                     >
                       {isPositiveGain ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
                       <span>
-                        {isPositiveGain ? '+' : ''}₹{tabMetrics.netDeltaRupees.toLocaleString('en-IN')} ({isPositiveGain ? '+' : ''}{tabMetrics.netDeltaPercentage}%)
+                        {isPositiveGain ? '+' : '-'}₹{Math.abs(tabMetrics.netDeltaRupees).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ({tabMetrics.netDeltaPercentage >= 0 ? '+' : '-'}{Math.abs(tabMetrics.netDeltaPercentage).toFixed(2)}%)
                       </span>
                     </div>
                   ) : (
@@ -765,8 +765,8 @@ export const DashboardScreen: React.FC = () => {
                           ₹{item.inrValue.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </div>
                         <div className="text-xs font-semibold flex sm:justify-end items-center gap-1" style={{ color: isProfit ? colors.semanticSuccess : colors.semanticDanger }}>
-                          <span>{isProfit ? '+' : ''}₹{Math.abs(item.gainRupees).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                          <span>({isProfit ? '+' : ''}{item.gainPercentage}%)</span>
+                          <span>{isProfit ? '+' : '-'}₹{Math.abs(item.gainRupees).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                          <span>({item.gainPercentage >= 0 ? '+' : '-'}{Math.abs(item.gainPercentage).toFixed(2)}%)</span>
                         </div>
                       </div>
                     </div>
@@ -1072,13 +1072,13 @@ export const DashboardScreen: React.FC = () => {
                   className="text-sm block mt-0.5"
                   style={{ color: selectedAssetModal.gainRupees >= 0 ? colors.semanticSuccess : colors.semanticDanger }}
                 >
-                  {selectedAssetModal.gainRupees >= 0 ? '+' : ''}₹{selectedAssetModal.gainRupees.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  {selectedAssetModal.gainRupees >= 0 ? '+' : '-'}₹{Math.abs(selectedAssetModal.gainRupees).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </strong>
                 <span
                   className="text-[10px] font-bold"
                   style={{ color: selectedAssetModal.gainRupees >= 0 ? colors.semanticSuccess : colors.semanticDanger }}
                 >
-                  ({selectedAssetModal.gainPercentage >= 0 ? '+' : ''}{selectedAssetModal.gainPercentage}%)
+                  ({selectedAssetModal.gainPercentage >= 0 ? '+' : '-'}{Math.abs(selectedAssetModal.gainPercentage).toFixed(2)}%)
                 </span>
               </div>
             </div>
