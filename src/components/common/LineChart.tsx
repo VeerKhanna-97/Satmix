@@ -21,6 +21,7 @@ interface LineChartProps {
   interactive?: boolean;
   className?: string;
   onHoverPoint?: (pt: ChartDataPoint | null) => void;
+  accentColor?: string;
 }
 
 /**
@@ -129,6 +130,7 @@ export const LineChart: React.FC<LineChartProps> = ({
   interactive = true,
   className = '',
   onHoverPoint,
+  accentColor,
 }) => {
   const { colors } = useApp();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -175,8 +177,10 @@ export const LineChart: React.FC<LineChartProps> = ({
   const isPeriodProfit = periodGain >= 0;
   const isProjection = series?.isProjection ?? false;
 
-  const strokeColor = isProjection ? '#A78BFA' : isPeriodProfit ? '#10B981' : '#EF4444';
-  const gradientId = isProjection ? 'chartGradientPurple' : isPeriodProfit ? 'chartGradientGreen' : 'chartGradientRed';
+  const defaultStroke = isProjection ? '#A78BFA' : isPeriodProfit ? '#10B981' : '#EF4444';
+  const strokeColor = accentColor || defaultStroke;
+  const gradientId = accentColor ? 'chartGradientPurple' : isProjection ? 'chartGradientPurple' : isPeriodProfit ? 'chartGradientGreen' : 'chartGradientRed';
+  const glowFilter = accentColor ? 'url(#glowPurple)' : isProjection ? 'url(#glowPurple)' : isPeriodProfit ? 'url(#glowGreen)' : 'url(#glowRed)';
 
   // Coordinate projection and monotonic Bézier paths
   const { valCoords, invCoords, smoothValPath, smoothAreaPath, smoothInvPath, minVal, maxVal } = useMemo(() => {
@@ -494,7 +498,7 @@ export const LineChart: React.FC<LineChartProps> = ({
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeDasharray={isProjection ? '5 4' : undefined}
-              filter={isProjection ? 'url(#glowPurple)' : isPeriodProfit ? 'url(#glowGreen)' : 'url(#glowRed)'}
+              filter={glowFilter}
             />
           )}
 

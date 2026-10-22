@@ -36,7 +36,6 @@ export const AppShell: React.FC = () => {
     { id: 'dashboard' as const, label: 'Portfolio', icon: Wallet },
     { id: 'invest' as const, label: 'Strategy & Growth', icon: TrendingUp },
     { id: 'baskets' as const, label: 'Baskets', icon: Layers },
-    { id: 'transactions' as const, label: 'Transactions', icon: ArrowLeftRight },
     { id: 'profile' as const, label: 'Settings', icon: Settings },
   ];
 
@@ -78,7 +77,7 @@ export const AppShell: React.FC = () => {
             </div>
           </div>
 
-          {/* Desktop Tab Selector with Cyan Underline Glow (Images 1, 2, 4, 5) */}
+          {/* Desktop Tab Selector with Satmix Purple Underline Glow */}
           <div className="hidden md:flex items-center gap-6 lg:gap-8 text-xs sm:text-sm font-medium">
             {tabs.map((tab) => {
               const Icon = tab.icon;
@@ -87,16 +86,16 @@ export const AppShell: React.FC = () => {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`relative flex items-center gap-2 py-2 transition-colors duration-200 select-none ${
+                  className={`relative flex items-center gap-2 py-2 transition-colors duration-200 select-none cursor-pointer ${
                     isActive ? 'text-white font-bold' : 'text-neutral-400 hover:text-neutral-200 font-medium'
                   }`}
                 >
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-cyan-400' : 'text-neutral-400'}`} />
+                  <Icon className={`w-4 h-4 ${isActive ? 'text-purple-400' : 'text-neutral-400'}`} />
                   <span>{tab.label}</span>
                   {isActive && (
                     <motion.div
                       layoutId="activeNavUnderline"
-                      className="absolute -bottom-3 left-0 right-0 h-[2px] rounded-full bg-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.9)]"
+                      className="absolute -bottom-3 left-0 right-0 h-[2px] rounded-full bg-[#8B5CF6] shadow-[0_0_12px_rgba(139,92,246,0.9)]"
                       transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
                     />
                   )}
@@ -152,7 +151,7 @@ export const AppShell: React.FC = () => {
             {activeTab === 'dashboard' && <DashboardScreen />}
             {(activeTab === 'invest' || (activeTab as string) === 'performance') && <InvestScreen />}
             {activeTab === 'baskets' && <BasketsScreen />}
-            {activeTab === 'transactions' && <TransactionsScreen />}
+            {activeTab === 'transactions' && <ProfileScreen defaultSection="transactions" />}
             {activeTab === 'profile' && <ProfileScreen />}
           </motion.div>
         </AnimatePresence>
@@ -181,22 +180,22 @@ export const AppShell: React.FC = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className="relative flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-full transition-all duration-200 select-none active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/50"
+                className="relative flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-full transition-all duration-200 select-none active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50 cursor-pointer"
                 style={{
-                  color: isActive ? '#06B6D4' : colors.textSecondary,
+                  color: isActive ? '#8B5CF6' : colors.textSecondary,
                 }}
                 aria-current={isActive ? 'page' : undefined}
               >
                 {isActive && (
                   <motion.div
                     layoutId="activeMobileDockPill"
-                    className="absolute inset-0 rounded-full shadow-md z-0 bg-cyan-500/10 border border-cyan-500/20"
+                    className="absolute inset-0 rounded-full shadow-md z-0 bg-purple-500/15 border border-purple-500/30"
                     transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
                   />
                 )}
                 <span className="relative z-10 flex items-center gap-1">
                   <Icon className="w-4 h-4 flex-shrink-0" strokeWidth={isActive ? 2.5 : 2} />
-                  <span className={`text-[11px] sm:text-[12px] tracking-tight ${isActive ? 'font-bold text-cyan-400 inline' : 'font-semibold hidden sm:inline'}`}>
+                  <span className={`text-[11px] sm:text-[12px] tracking-tight ${isActive ? 'font-bold text-purple-400 inline' : 'font-semibold hidden sm:inline'}`}>
                     {tab.label}
                   </span>
                 </span>

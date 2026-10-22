@@ -53,7 +53,7 @@ export const TransactionsScreen: React.FC = () => {
           <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums text-white">
             ₹{totalVolume.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </div>
-          <div className="inline-flex items-center gap-1 mt-2 px-2 py-0.5 rounded-md text-[11px] font-bold font-mono bg-cyan-500/10 text-cyan-400">
+          <div className="inline-flex items-center gap-1 mt-2 px-2 py-0.5 rounded-md text-[11px] font-bold font-mono bg-purple-500/10 text-purple-400 border border-purple-500/20">
             <span>Cumulative Inflows</span>
           </div>
         </div>
@@ -113,7 +113,7 @@ export const TransactionsScreen: React.FC = () => {
           <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums text-white">
             {buyCount}:{sellCount}
           </div>
-          <div className="inline-flex items-center gap-1 mt-2 px-2 py-0.5 rounded-md text-[11px] font-bold font-mono bg-cyan-500/10 text-cyan-400">
+          <div className="inline-flex items-center gap-1 mt-2 px-2 py-0.5 rounded-md text-[11px] font-bold font-mono bg-purple-500/10 text-purple-400 border border-purple-500/20">
             <span>Disciplined Stacking</span>
           </div>
         </div>
@@ -143,9 +143,9 @@ export const TransactionsScreen: React.FC = () => {
               <button
                 key={t}
                 onClick={() => setFilterType(t)}
-                className={`px-3 py-1 rounded-lg transition-colors capitalize ${
+                className={`px-3 py-1 rounded-lg transition-colors capitalize cursor-pointer ${
                   filterType === t
-                    ? 'bg-cyan-500 text-black font-bold shadow-xs'
+                    ? 'bg-[#5D17EB] text-white font-bold shadow-xs'
                     : 'text-neutral-400 hover:text-white'
                 }`}
               >

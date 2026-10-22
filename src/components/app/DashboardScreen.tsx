@@ -225,6 +225,30 @@ export const DashboardScreen: React.FC = () => {
     return entries.filter((e) => e.units > 0 || tabMetrics.marketValue === 0);
   }, [tabMetrics.holdings, tabMetrics.marketValue, prototypeState.activity, themeMode]);
 
+  // Dynamic Asset Allocation: strictly currencies that the user has in their habit/portfolio
+  // If they have at any time bought it, it stays as long as they have not sold all of it (units > 0 && inrValue > 0)
+  const allocationHoldings = useMemo(() => {
+    const active = holdingsList.filter((item) => (item.units || 0) > 0.00000001 && (item.inrValue || 0) > 0);
+    const totalVal = active.reduce((sum, item) => sum + (item.inrValue || 0), 0);
+
+    return active.map((item) => {
+      const pct = totalVal > 0 ? (item.inrValue / totalVal) * 100 : 0;
+      return {
+        coin: item.coin,
+        label: item.label,
+        color: item.meta.color,
+        icon: item.meta.icon,
+        units: item.units,
+        inrValue: item.inrValue,
+        percentage: pct,
+      };
+    }).sort((a, b) => b.inrValue - a.inrValue);
+  }, [holdingsList]);
+
+  const totalAllocationValue = useMemo(() => {
+    return allocationHoldings.reduce((sum, item) => sum + item.inrValue, 0);
+  }, [allocationHoldings]);
+
   const isStableConfigured = prototypeState.habits.stable?.setupAt !== null;
   const isStableActive = isStableConfigured && !prototypeState.habits.stable.paused;
   const stableDailyRate =
@@ -385,7 +409,7 @@ export const DashboardScreen: React.FC = () => {
             </div>
           </div>
           <div className="text-[11px] font-mono text-neutral-400">
-            Daily Auto-Save: <span className="text-cyan-400 font-semibold">₹{(isStableActive ? stableDailyRate : 0) + (isGrowthActive ? growthDailyRate : 0)}/d</span>
+            Daily Auto-Save: <span className="text-purple-400 font-semibold">₹{(isStableActive ? stableDailyRate : 0) + (isGrowthActive ? growthDailyRate : 0)}/d</span>
           </div>
         </div>
       </div>
@@ -402,111 +426,54 @@ export const DashboardScreen: React.FC = () => {
         >
           <div>
             {/* Header: Title, Subtitle, Gain Pill */}
-            <div className="flex items-center justify-between gap-4 mb-4">
+            <div className="flex items-center justify-between gap-4 mb-2">
               <div>
                 <h3 className="text-lg font-bold text-white tracking-tight">
                   Portfolio Value
                 </h3>
-                <p className="text-xs text-neutral-400 mt-0.5">
-                  Last 12 months
+                <p className="text-xs text-neutral-400 mt-0.5 font-medium">
+                  {timeframe === 'ALL'
+                    ? 'All time trajectory'
+                    : timeframe === '1Y'
+                    ? 'Last 12 months'
+                    : timeframe === '3M'
+                    ? 'Last 3 months'
+                    : timeframe === '1M'
+                    ? 'Last 30 days'
+                    : 'Last 7 days'}
                 </p>
               </div>
 
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                <TrendingUp className="w-3.5 h-3.5" />
-                <span>+48.7%</span>
-              </div>
+              {(() => {
+                const gainPct = chartSeriesResult?.horizonGainPercentage ?? tabMetrics.netDeltaPercentage;
+                const gainInr = chartSeriesResult?.horizonGain ?? tabMetrics.netDeltaRupees;
+                const isPositive = gainInr >= 0;
+                return (
+                  <div
+                    className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold font-mono border ${
+                      isPositive
+                        ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                        : 'bg-rose-500/10 text-rose-400 border-rose-500/20'
+                    }`}
+                  >
+                    {isPositive ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
+                    <span>{isPositive ? '+' : ''}{gainPct.toFixed(2)}%</span>
+                  </div>
+                );
+              })()}
             </div>
 
-            {/* Custom SVG Line Chart matching Reference Image 1 exactly */}
-            <div className="relative w-full h-[250px] my-2">
-              <svg viewBox="0 0 760 250" className="w-full h-full overflow-visible" preserveAspectRatio="none">
-                <defs>
-                  <linearGradient id="pvRefCyanGlow" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#22D3EE" stopOpacity="0.22" />
-                    <stop offset="85%" stopColor="#22D3EE" stopOpacity="0.02" />
-                    <stop offset="100%" stopColor="#22D3EE" stopOpacity="0" />
-                  </linearGradient>
-                  <filter id="pvCyanGlow" x="-20%" y="-20%" width="140%" height="140%">
-                    <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#22D3EE" floodOpacity="0.5" />
-                  </filter>
-                </defs>
-
-                {/* Y-Axis Ticks & Horizontal Dotted Gridlines */}
-                {[
-                  { label: '₹80k', y: 30 },
-                  { label: '₹60k', y: 75 },
-                  { label: '₹40k', y: 120 },
-                  { label: '₹20k', y: 165 },
-                  { label: '₹0k', y: 210 },
-                ].map((tick) => (
-                  <g key={tick.label}>
-                    <text
-                      x="40"
-                      y={tick.y + 4}
-                      textAnchor="end"
-                      fill="#71717A"
-                      fontSize="11"
-                      fontFamily="monospace"
-                    >
-                      {tick.label}
-                    </text>
-                    <line
-                      x1="55"
-                      y1={tick.y}
-                      x2="740"
-                      y2={tick.y}
-                      stroke="rgba(255, 255, 255, 0.07)"
-                      strokeDasharray="4 4"
-                    />
-                  </g>
-                ))}
-
-                {/* Smooth Glowing Cyan Area Curve */}
-                <path
-                  d="M 55,160 C 110,154 165,158 220,146 C 275,138 330,148 385,142 C 440,135 495,134 550,126 C 605,116 660,108 740,94 L 740,210 L 55,210 Z"
-                  fill="url(#pvRefCyanGlow)"
-                />
-
-                {/* Single Smooth Cyan Curve Line */}
-                <path
-                  d="M 55,160 C 110,154 165,158 220,146 C 275,138 330,148 385,142 C 440,135 495,134 550,126 C 605,116 660,108 740,94"
-                  fill="none"
-                  stroke="#22D3EE"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  filter="url(#pvCyanGlow)"
-                />
-
-                {/* X-Axis Month Labels along the bottom */}
-                {[
-                  { m: 'Jul', x: 55 },
-                  { m: 'Aug', x: 117 },
-                  { m: 'Sep', x: 179 },
-                  { m: 'Oct', x: 241 },
-                  { m: 'Nov', x: 303 },
-                  { m: 'Dec', x: 365 },
-                  { m: 'Jan', x: 427 },
-                  { m: 'Feb', x: 489 },
-                  { m: 'Mar', x: 551 },
-                  { m: 'Apr', x: 613 },
-                  { m: 'May', x: 675 },
-                  { m: 'Jun', x: 737 },
-                ].map((item) => (
-                  <text
-                    key={item.m}
-                    x={item.x}
-                    y="235"
-                    textAnchor="middle"
-                    fill="#71717A"
-                    fontSize="11"
-                    fontFamily="monospace"
-                  >
-                    {item.m}
-                  </text>
-                ))}
-              </svg>
+            {/* Financial Monotone Spline Line Chart with Scrubber and Satmix Purple Glow */}
+            <div className="relative w-full my-2">
+              <LineChart
+                series={chartSeriesResult}
+                benchmarkSeries={benchmarkSeries}
+                height={250}
+                accentColor="#8B5CF6"
+                interactive={true}
+                showLegend={benchmarkMode !== 'none'}
+                showAxisLabels={true}
+              />
             </div>
           </div>
 
@@ -525,8 +492,8 @@ export const DashboardScreen: React.FC = () => {
                     key={tab.id}
                     type="button"
                     onClick={() => setActiveTabFilter(tab.id as 'all' | 'stable' | 'growth')}
-                    className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-                      isActive ? 'bg-cyan-500 text-black shadow-xs' : 'text-neutral-400 hover:text-white'
+                    className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                      isActive ? 'bg-[#5D17EB] text-white shadow-xs' : 'text-neutral-400 hover:text-white'
                     }`}
                   >
                     {tab.label}
@@ -543,8 +510,8 @@ export const DashboardScreen: React.FC = () => {
                     key={t}
                     type="button"
                     onClick={() => setTimeframe(t)}
-                    className={`px-2.5 py-1 rounded-lg font-bold transition-colors ${
-                      timeframe === t ? 'bg-white/10 text-white' : 'text-neutral-400 hover:text-white'
+                    className={`px-2.5 py-1 rounded-lg font-bold transition-colors cursor-pointer ${
+                      timeframe === t ? 'bg-[#5D17EB]/25 text-[#A78BFA] border border-[#8B5CF6]/40' : 'text-neutral-400 hover:text-white'
                     }`}
                   >
                     {t}
@@ -556,7 +523,7 @@ export const DashboardScreen: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setDepositOpen(true)}
-                  className="h-8 px-3.5 rounded-xl font-bold text-xs bg-cyan-500 text-black shadow-[inset_0_1px_0_0_rgba(255,255,255,0.3)] transition-transform hover:scale-[1.02] active:scale-[0.98] inline-flex items-center gap-1.5"
+                  className="h-8 px-3.5 rounded-xl font-bold text-xs bg-[#5D17EB] hover:bg-[#6D28D9] text-white shadow-[0_0_14px_rgba(93,23,235,0.4)] transition-transform hover:scale-[1.02] active:scale-[0.98] inline-flex items-center gap-1.5 cursor-pointer"
                 >
                   <ArrowDownLeft className="w-3.5 h-3.5" />
                   <span>+ Add</span>
@@ -564,7 +531,7 @@ export const DashboardScreen: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setWithdrawOpen(true)}
-                  className="h-8 px-3.5 rounded-xl font-bold text-xs border border-white/10 text-neutral-300 hover:text-white hover:bg-white/5 transition-colors active:scale-[0.98] inline-flex items-center gap-1.5"
+                  className="h-8 px-3.5 rounded-xl font-bold text-xs border border-white/10 text-neutral-300 hover:text-white hover:bg-white/5 transition-colors active:scale-[0.98] inline-flex items-center gap-1.5 cursor-pointer"
                 >
                   <ArrowUpRight className="w-3.5 h-3.5" />
                   <span>Withdraw</span>
@@ -583,14 +550,21 @@ export const DashboardScreen: React.FC = () => {
           }}
         >
           <div>
-            <h3 className="text-lg font-bold text-white tracking-tight">
-              Asset Allocation
-            </h3>
-            <p className="text-xs text-neutral-400 mt-0.5">
-              Current distribution
-            </p>
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-bold text-white tracking-tight">
+                  Asset Allocation
+                </h3>
+                <p className="text-xs text-neutral-400 mt-0.5">
+                  Current distribution
+                </p>
+              </div>
+              <span className="text-[11px] font-mono text-neutral-400">
+                {allocationHoldings.length} {allocationHoldings.length === 1 ? 'Asset' : 'Assets'}
+              </span>
+            </div>
 
-            {/* SVG Donut Chart Matching Image 1 Proportions */}
+            {/* SVG Donut Chart */}
             <div className="flex items-center justify-center my-6 relative">
               <svg className="w-44 h-44 transform -rotate-90" viewBox="0 0 160 160">
                 {/* Background track circle */}
@@ -599,30 +573,24 @@ export const DashboardScreen: React.FC = () => {
                   cy="80"
                   r="52"
                   fill="transparent"
-                  stroke="rgba(255, 255, 255, 0.04)"
+                  stroke="rgba(255, 255, 255, 0.05)"
                   strokeWidth="20"
                 />
 
-                {/* Slices matching Image 1: Cyan, Blue, Gold, Slate, Rose */}
+                {/* Slices dynamically derived from allocationHoldings */}
                 {(() => {
                   const circumference = 2 * Math.PI * 52; // ~326.73
-                  const slices = [
-                    { pct: 0.52, color: '#06B6D4' }, // Cyan (Crypto)
-                    { pct: 0.18, color: '#2563EB' }, // Blue (Fixed Income)
-                    { pct: 0.15, color: '#D97706' }, // Gold (Equities)
-                    { pct: 0.10, color: '#64748B' }, // Slate (Cash)
-                    { pct: 0.05, color: '#E11D48' }, // Rose (Alternatives)
-                  ];
                   let accumulated = 0;
 
-                  return slices.map((s, idx) => {
-                    const strokeDash = s.pct * circumference;
+                  return allocationHoldings.map((s) => {
+                    const ratio = s.percentage / 100;
+                    const strokeDash = ratio * circumference;
                     const offset = accumulated * circumference;
-                    accumulated += s.pct;
+                    accumulated += ratio;
 
                     return (
                       <circle
-                        key={idx}
+                        key={s.coin}
                         cx="80"
                         cy="80"
                         r="52"
@@ -637,33 +605,50 @@ export const DashboardScreen: React.FC = () => {
                   });
                 })()}
               </svg>
+
+              {/* Center Metric Display */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center">
+                <span className="text-[10px] uppercase font-mono font-bold tracking-wider text-neutral-400">
+                  {allocationHoldings.length === 0 ? 'Empty' : 'Holdings'}
+                </span>
+                <span className="text-base font-extrabold font-mono text-white tabular-nums">
+                  ₹{Math.round(totalAllocationValue).toLocaleString('en-IN')}
+                </span>
+              </div>
             </div>
 
-            {/* Legend List (Matching Image 1 Right-Aligned Percentages) */}
-            <div className="space-y-2 pt-1 font-sans text-xs">
-              {[
-                { name: 'Equities', color: '#06B6D4', pct: '15%' },
-                { name: 'Fixed Income', color: '#2563EB', pct: '10%' },
-                { name: 'Alternatives', color: '#D97706', pct: '5%' },
-                { name: 'Cash', color: '#64748B', pct: '18%' },
-                { name: 'Crypto', color: '#E11D48', pct: '52%' },
-              ].map((item) => (
-                <div
-                  key={item.name}
-                  className="flex items-center justify-between py-1 px-1 rounded-lg hover:bg-white/[0.03] transition-colors"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
-                    <span className="text-neutral-300 font-medium">
-                      {item.name}
-                    </span>
+            {/* Legend List: Strictly user-held currencies */}
+            {allocationHoldings.length > 0 ? (
+              <div className="space-y-2 pt-1 font-sans text-xs">
+                {allocationHoldings.map((item) => (
+                  <div
+                    key={item.coin}
+                    className="flex items-center justify-between py-1.5 px-2 rounded-lg hover:bg-white/[0.04] transition-colors"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-neutral-200 font-semibold">{item.label}</span>
+                        <span className="text-[10px] font-mono font-bold text-neutral-400">({item.coin})</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="font-mono text-neutral-400 text-[11px] tabular-nums hidden sm:inline">
+                        ₹{item.inrValue.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </span>
+                      <span className="font-mono font-bold text-neutral-200 tabular-nums min-w-[44px] text-right">
+                        {item.percentage.toFixed(1)}%
+                      </span>
+                    </div>
                   </div>
-                  <span className="font-mono font-bold text-neutral-200 tabular-nums">
-                    {item.pct}
-                  </span>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <div className="py-6 text-center text-xs text-neutral-400 font-sans border border-dashed border-white/10 rounded-xl my-2">
+                <p className="font-medium text-neutral-300">No active assets in this portfolio.</p>
+                <p className="text-[11px] text-neutral-500 mt-1">Start a habit or deposit to allocate funds.</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -685,7 +670,7 @@ export const DashboardScreen: React.FC = () => {
                   onClick={() => setActiveSection(tab.id)}
                   className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                     isActive
-                      ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/25'
+                      ? 'bg-purple-500/10 text-purple-400 border border-purple-500/25 shadow-xs'
                       : 'text-neutral-400 hover:text-white border border-transparent hover:bg-white/[0.04]'
                   }`}
                 >

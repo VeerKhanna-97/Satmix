@@ -24,6 +24,7 @@ import {
   Clock,
   ArrowUpRight,
   ArrowDownLeft,
+  ArrowLeftRight,
   Mail,
   Phone,
   Eye,
@@ -35,10 +36,11 @@ import { ACHIEVEMENTS } from '../../data/mockData';
 import { SpotlightCard, CountUp } from '../ui';
 import { motion, AnimatePresence } from 'motion/react';
 import { BasketCurrencyIcons } from '../common/BasketCurrencyIcons';
+import { TransactionsScreen } from './TransactionsScreen';
 
-type SettingsSection = 'profile' | 'notifications' | 'security' | 'display' | 'tax' | 'concierge';
+type SettingsSection = 'profile' | 'transactions' | 'notifications' | 'security' | 'display' | 'tax' | 'concierge';
 
-export const ProfileScreen: React.FC = () => {
+export const ProfileScreen: React.FC<{ defaultSection?: SettingsSection }> = ({ defaultSection = 'profile' }) => {
   const {
     user,
     prototypeState,
@@ -61,7 +63,7 @@ export const ProfileScreen: React.FC = () => {
     triggerConfetti,
   } = useApp();
 
-  const [activeSection, setActiveSection] = useState<SettingsSection>('profile');
+  const [activeSection, setActiveSection] = useState<SettingsSection>(defaultSection);
   const [reminderToggle, setReminderToggle] = useState(true);
   const [biometricToggle, setBiometricToggle] = useState(true);
   const [smsAlertsToggle, setSmsAlertsToggle] = useState(true);
@@ -211,6 +213,7 @@ export const ProfileScreen: React.FC = () => {
 
   const navItems = [
     { id: 'profile' as const, label: 'Profile', icon: User },
+    { id: 'transactions' as const, label: 'Transactions', icon: ArrowLeftRight },
     { id: 'notifications' as const, label: 'Notifications', icon: Bell },
     { id: 'security' as const, label: 'Security', icon: Shield },
     { id: 'display' as const, label: 'Display', icon: Moon },
@@ -227,7 +230,7 @@ export const ProfileScreen: React.FC = () => {
             Account Settings
           </h1>
           <p className="text-xs sm:text-sm mt-0.5" style={{ color: colors.textSecondary }}>
-            Manage your personal profile, notifications, security credentials, and annual reports
+            Manage your personal profile, transactions, notifications, security credentials, and annual reports
           </p>
         </div>
 
@@ -265,14 +268,14 @@ export const ProfileScreen: React.FC = () => {
                   onClick={() => setActiveSection(item.id)}
                   className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 ease-out active:scale-[0.98] text-left cursor-pointer whitespace-nowrap ${
                     isActive
-                      ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/25 shadow-sm'
+                      ? 'bg-purple-500/10 text-purple-400 border border-purple-500/25 shadow-sm'
                       : 'text-neutral-400 hover:text-neutral-200 hover:bg-white/[0.04]'
                   }`}
                 >
-                  <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-cyan-400' : 'text-neutral-400'}`} />
+                  <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-purple-400' : 'text-neutral-400'}`} />
                   <span className="flex-1">{item.label}</span>
                   {isActive && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(6,182,212,0.8)] hidden md:block" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-purple-400 shadow-[0_0_8px_rgba(139,92,246,0.8)] hidden md:block" />
                   )}
                 </button>
               );
@@ -303,11 +306,11 @@ export const ProfileScreen: React.FC = () => {
             </div>
             <div className="flex items-center justify-between text-xs">
               <span className="font-semibold" style={{ color: colors.textSecondary }}>Investor Tier</span>
-              <span className="font-mono font-bold text-cyan-400">Level {userLevel}</span>
+              <span className="font-mono font-bold text-purple-400">Level {userLevel}</span>
             </div>
             <div className="h-1.5 w-full rounded-full overflow-hidden" style={{ backgroundColor: colors.surface }}>
               <div
-                className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-indigo-500"
+                className="h-full rounded-full bg-gradient-to-r from-[#5D17EB] to-[#8B5CF6]"
                 style={{ width: `${levelProgressPct}%` }}
               />
             </div>
@@ -316,12 +319,19 @@ export const ProfileScreen: React.FC = () => {
 
         {/* Right Main Content Area */}
         <div className="md:col-span-8 lg:col-span-9 space-y-6">
+          {/* TRANSACTIONS SUB-SECTION */}
+          {activeSection === 'transactions' && (
+            <div className="space-y-6">
+              <TransactionsScreen />
+            </div>
+          )}
+
           {/* PROFILE TAB */}
           {activeSection === 'profile' && (
             <div className="space-y-6">
               {/* Personal Information Card */}
               <SpotlightCard
-                spotlightColor="rgba(6, 182, 212, 0.08)"
+                spotlightColor="rgba(93, 23, 235, 0.08)"
                 className="rounded-[22px] p-6 sm:p-7 border shadow-xl relative overflow-hidden"
                 style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
               >
@@ -453,13 +463,13 @@ export const ProfileScreen: React.FC = () => {
 
               {/* Active Daily Habits Summary */}
               <SpotlightCard
-                spotlightColor="rgba(6, 182, 212, 0.08)"
+                spotlightColor="rgba(93, 23, 235, 0.08)"
                 className="rounded-[22px] p-6 border shadow-xl space-y-4"
                 style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
-                    <Zap className="w-4 h-4 text-cyan-400" />
+                    <Zap className="w-4 h-4 text-purple-400" />
                     <div>
                       <h3 className="font-bold text-sm" style={{ color: colors.textPrimary }}>
                         Active Investment Habits
@@ -555,9 +565,9 @@ export const ProfileScreen: React.FC = () => {
                         <span
                           className="text-[10px] px-2 py-0.5 rounded font-bold uppercase font-mono"
                           style={{
-                            backgroundColor: !isGrowthConfigured ? colors.card : isGrowthActive ? 'rgba(6, 182, 212, 0.12)' : 'rgba(245, 158, 11, 0.12)',
-                            color: !isGrowthConfigured ? colors.textTertiary : isGrowthActive ? '#22D3EE' : '#F59E0B',
-                            border: `1px solid ${!isGrowthConfigured ? colors.borderDim : isGrowthActive ? 'rgba(6, 182, 212, 0.3)' : 'rgba(245, 158, 11, 0.3)'}`,
+                            backgroundColor: !isGrowthConfigured ? colors.card : isGrowthActive ? 'rgba(93, 23, 235, 0.12)' : 'rgba(245, 158, 11, 0.12)',
+                            color: !isGrowthConfigured ? colors.textTertiary : isGrowthActive ? '#8B5CF6' : '#F59E0B',
+                            border: `1px solid ${!isGrowthConfigured ? colors.borderDim : isGrowthActive ? 'rgba(93, 23, 235, 0.3)' : 'rgba(245, 158, 11, 0.3)'}`,
                           }}
                         >
                           {!isGrowthConfigured ? 'NOT CONFIGURED' : isGrowthActive ? 'ACTIVE' : 'PAUSED'}
@@ -612,7 +622,7 @@ export const ProfileScreen: React.FC = () => {
 
               {/* Asset Inventory */}
               <SpotlightCard
-                spotlightColor="rgba(6, 182, 212, 0.08)"
+                spotlightColor="rgba(93, 23, 235, 0.08)"
                 className="rounded-[22px] p-6 border shadow-xl space-y-4"
                 style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
               >
@@ -623,7 +633,7 @@ export const ProfileScreen: React.FC = () => {
                   tabIndex={0}
                 >
                   <div className="flex items-center gap-2.5">
-                    <CreditCard className="w-4 h-4 text-cyan-400" />
+                    <CreditCard className="w-4 h-4 text-purple-400" />
                     <div>
                       <h3 className="font-bold text-sm" style={{ color: colors.textPrimary }}>
                         Custodial Asset Balances
@@ -668,7 +678,7 @@ export const ProfileScreen: React.FC = () => {
           {/* NOTIFICATIONS TAB */}
           {activeSection === 'notifications' && (
             <SpotlightCard
-              spotlightColor="rgba(6, 182, 212, 0.08)"
+              spotlightColor="rgba(93, 23, 235, 0.08)"
               className="rounded-[22px] p-6 border shadow-xl space-y-5"
               style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
             >
@@ -690,7 +700,7 @@ export const ProfileScreen: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setReminderToggle(!reminderToggle)}
-                    className={`w-11 h-6 rounded-full transition-colors relative ${reminderToggle ? 'bg-cyan-500' : 'bg-gray-700'}`}
+                    className={`w-11 h-6 rounded-full transition-colors relative cursor-pointer ${reminderToggle ? 'bg-[#5D17EB]' : 'bg-gray-700'}`}
                   >
                     <div className={`w-4 h-4 rounded-full bg-white transition-transform absolute top-1 ${reminderToggle ? 'left-6' : 'left-1'}`} />
                   </button>
@@ -704,7 +714,7 @@ export const ProfileScreen: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setSmsAlertsToggle(!smsAlertsToggle)}
-                    className={`w-11 h-6 rounded-full transition-colors relative ${smsAlertsToggle ? 'bg-cyan-500' : 'bg-gray-700'}`}
+                    className={`w-11 h-6 rounded-full transition-colors relative cursor-pointer ${smsAlertsToggle ? 'bg-[#5D17EB]' : 'bg-gray-700'}`}
                   >
                     <div className={`w-4 h-4 rounded-full bg-white transition-transform absolute top-1 ${smsAlertsToggle ? 'left-6' : 'left-1'}`} />
                   </button>
@@ -716,7 +726,7 @@ export const ProfileScreen: React.FC = () => {
           {/* SECURITY TAB */}
           {activeSection === 'security' && (
             <SpotlightCard
-              spotlightColor="rgba(6, 182, 212, 0.08)"
+              spotlightColor="rgba(93, 23, 235, 0.08)"
               className="rounded-[22px] p-6 border shadow-xl space-y-5"
               style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
             >
@@ -738,7 +748,7 @@ export const ProfileScreen: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setBiometricToggle(!biometricToggle)}
-                    className={`w-11 h-6 rounded-full transition-colors relative ${biometricToggle ? 'bg-cyan-500' : 'bg-gray-700'}`}
+                    className={`w-11 h-6 rounded-full transition-colors relative cursor-pointer ${biometricToggle ? 'bg-[#5D17EB]' : 'bg-gray-700'}`}
                   >
                     <div className={`w-4 h-4 rounded-full bg-white transition-transform absolute top-1 ${biometricToggle ? 'left-6' : 'left-1'}`} />
                   </button>
@@ -765,7 +775,7 @@ export const ProfileScreen: React.FC = () => {
           {/* DISPLAY TAB */}
           {activeSection === 'display' && (
             <SpotlightCard
-              spotlightColor="rgba(6, 182, 212, 0.08)"
+              spotlightColor="rgba(93, 23, 235, 0.08)"
               className="rounded-[22px] p-6 border shadow-xl space-y-5"
               style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
             >
@@ -812,7 +822,7 @@ export const ProfileScreen: React.FC = () => {
           {/* TAX & REPORTS TAB */}
           {activeSection === 'tax' && (
             <SpotlightCard
-              spotlightColor="rgba(6, 182, 212, 0.08)"
+              spotlightColor="rgba(93, 23, 235, 0.08)"
               className="rounded-[22px] p-6 border shadow-xl space-y-5"
               style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
             >
@@ -841,7 +851,7 @@ export const ProfileScreen: React.FC = () => {
                   <div>
                     <div className="flex items-center justify-between mb-1">
                       <span className="font-bold text-xs" style={{ color: colors.textPrimary }}>FY 2025-26 Statement</span>
-                      <span className="text-[10px] px-2 py-0.5 rounded font-mono font-bold text-cyan-400 bg-cyan-500/10 border border-cyan-500/20">CURRENT</span>
+                      <span className="text-[10px] px-2 py-0.5 rounded font-mono font-bold text-purple-400 bg-purple-500/10 border border-purple-500/20">CURRENT</span>
                     </div>
                     <p className="text-[11px] leading-relaxed" style={{ color: colors.textSecondary }}>
                       Reconciled capital gains, TDS (1% Sec 194S), and transaction history.
@@ -883,7 +893,7 @@ export const ProfileScreen: React.FC = () => {
           {/* CONCIERGE TAB */}
           {activeSection === 'concierge' && (
             <SpotlightCard
-              spotlightColor="rgba(6, 182, 212, 0.08)"
+              spotlightColor="rgba(93, 23, 235, 0.08)"
               className="rounded-[22px] p-6 border shadow-xl space-y-5"
               style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
             >

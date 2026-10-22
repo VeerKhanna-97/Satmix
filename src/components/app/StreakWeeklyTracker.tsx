@@ -43,11 +43,11 @@ export const StreakWeeklyTracker: React.FC<StreakWeeklyTrackerProps> = ({ onQuic
       case 'FROZEN':
         return {
           label: 'Shield Protected',
-          bg: 'rgba(6, 182, 212, 0.12)',
-          border: 'rgba(6, 182, 212, 0.35)',
-          text: '#22D3EE',
+          bg: 'rgba(93, 23, 235, 0.12)',
+          border: 'rgba(93, 23, 235, 0.35)',
+          text: '#8B5CF6',
           icon: Shield,
-          iconColor: '#06B6D4',
+          iconColor: '#8B5CF6',
         };
       case 'INACTIVE':
       default:
@@ -127,9 +127,9 @@ export const StreakWeeklyTracker: React.FC<StreakWeeklyTrackerProps> = ({ onQuic
           <div
             className="px-2.5 py-1.5 rounded-xl border text-[11px] font-semibold flex items-center gap-1.5"
             style={{
-              backgroundColor: freezeShieldsAvailable > 0 ? 'rgba(6, 182, 212, 0.1)' : 'rgba(148, 163, 184, 0.08)',
-              borderColor: freezeShieldsAvailable > 0 ? 'rgba(6, 182, 212, 0.25)' : colors.borderDim,
-              color: freezeShieldsAvailable > 0 ? '#22D3EE' : '#94A3B8',
+              backgroundColor: freezeShieldsAvailable > 0 ? 'rgba(93, 23, 235, 0.1)' : 'rgba(148, 163, 184, 0.08)',
+              borderColor: freezeShieldsAvailable > 0 ? 'rgba(93, 23, 235, 0.25)' : colors.borderDim,
+              color: freezeShieldsAvailable > 0 ? '#8B5CF6' : '#94A3B8',
             }}
             title={
               freezeShieldsAvailable > 0
@@ -196,7 +196,7 @@ export const StreakWeeklyTracker: React.FC<StreakWeeklyTrackerProps> = ({ onQuic
                     isCompleted
                       ? 'scale-105 shadow-sm'
                       : isFrozen
-                      ? 'shadow-md shadow-cyan-500/10'
+                      ? 'shadow-md shadow-purple-500/10'
                       : isToday
                       ? 'ring-2 animate-pulse'
                       : isFuture
@@ -207,7 +207,7 @@ export const StreakWeeklyTracker: React.FC<StreakWeeklyTrackerProps> = ({ onQuic
                     backgroundColor: isCompleted
                       ? colors.accentTint
                       : isFrozen
-                      ? 'rgba(6, 182, 212, 0.18)'
+                      ? 'rgba(93, 23, 235, 0.18)'
                       : isToday
                       ? colors.surface
                       : isFuture
@@ -216,14 +216,14 @@ export const StreakWeeklyTracker: React.FC<StreakWeeklyTrackerProps> = ({ onQuic
                     borderColor: isCompleted
                       ? colors.borderAccent
                       : isFrozen
-                      ? 'rgba(6, 182, 212, 0.4)'
+                      ? 'rgba(93, 23, 235, 0.4)'
                       : isToday
                       ? colors.accent
                       : colors.borderDim,
                     color: isCompleted
                       ? colors.accent
                       : isFrozen
-                      ? '#22D3EE'
+                      ? '#8B5CF6'
                       : isToday
                       ? colors.textPrimary
                       : colors.textTertiary,
@@ -232,7 +232,7 @@ export const StreakWeeklyTracker: React.FC<StreakWeeklyTrackerProps> = ({ onQuic
                   {isCompleted ? (
                     <Check className="w-4 h-4 stroke-[3]" />
                   ) : isFrozen ? (
-                    <Shield className="w-4 h-4 text-cyan-400" />
+                    <Shield className="w-4 h-4 text-purple-400" />
                   ) : (
                     <span className="text-xs font-mono">{day.dayNumber}</span>
                   )}
