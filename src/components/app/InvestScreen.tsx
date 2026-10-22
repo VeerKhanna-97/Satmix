@@ -278,7 +278,7 @@ export const InvestScreen: React.FC = () => {
             Strategy & Growth Engine
           </h1>
           <p className="text-xs sm:text-sm mt-0.5" style={{ color: colors.textSecondary }}>
-            Model long-term wealth compounding, verify dollar-cost averaging alpha, and automate daily AutoPay execution
+            Model long-term wealth compounding, verify rupee-cost averaging (RCA) alpha, and automate daily AutoPay execution
           </p>
         </div>
 
@@ -299,14 +299,17 @@ export const InvestScreen: React.FC = () => {
 
       {/* ── 4 WATERMARK METRIC CARDS ──────────────────────────── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 font-mono">
-        {/* Card 1: Daily Auto-Save */}
+        {/* Card 1: Daily Auto-Save (Watermark: daily.jpg) */}
         <div
           className="rounded-[18px] p-5 sm:p-6 border relative overflow-hidden backdrop-blur-md flex flex-col justify-between h-[132px]"
           style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
         >
-          <div className="absolute right-3 bottom-1 text-neutral-500/[0.06] font-extrabold text-4xl select-none pointer-events-none">
-            DAILY
-          </div>
+          <img
+            src="/icons/daily.png"
+            alt=""
+            aria-hidden="true"
+            className="absolute -right-2 -bottom-2 w-20 h-20 sm:w-24 sm:h-24 object-contain pointer-events-none select-none opacity-[0.07] invert dark:invert-0"
+          />
           <div>
             <span className="text-[11px] font-semibold uppercase tracking-wider block text-neutral-400">
               DAILY AUTO-SAVE
@@ -322,17 +325,20 @@ export const InvestScreen: React.FC = () => {
           </div>
         </div>
 
-        {/* Card 2: DCA Averaging Alpha */}
+        {/* Card 2: RCA Averaging Alpha (Watermark: Indian-Rupee-symbol.png) */}
         <div
           className="rounded-[18px] p-5 sm:p-6 border relative overflow-hidden backdrop-blur-md flex flex-col justify-between h-[132px]"
           style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
         >
-          <div className="absolute right-3 bottom-1 text-neutral-500/[0.06] font-extrabold text-4xl select-none pointer-events-none">
-            ALPHA
-          </div>
+          <img
+            src="/icons/rupee.png"
+            alt=""
+            aria-hidden="true"
+            className="absolute -right-1 -bottom-1 w-20 h-20 sm:w-24 sm:h-24 object-contain pointer-events-none select-none opacity-[0.07] invert dark:invert-0"
+          />
           <div>
             <span className="text-[11px] font-semibold uppercase tracking-wider block text-neutral-400">
-              DCA AVERAGING ALPHA
+              RCA AVERAGING ALPHA
             </span>
             <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums text-emerald-400">
               +{dcaAlpha.advantagePct}%
@@ -344,14 +350,17 @@ export const InvestScreen: React.FC = () => {
           </div>
         </div>
 
-        {/* Card 3: 1Y Projected Valuation */}
+        {/* Card 3: 1Y Projected Valuation (Watermark: projected value.jpg) */}
         <div
           className="rounded-[18px] p-5 sm:p-6 border relative overflow-hidden backdrop-blur-md flex flex-col justify-between h-[132px]"
           style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
         >
-          <div className="absolute right-3 bottom-1 text-neutral-500/[0.06] font-extrabold text-4xl select-none pointer-events-none">
-            VALUATION
-          </div>
+          <img
+            src="/icons/projected-value.png"
+            alt=""
+            aria-hidden="true"
+            className="absolute -right-1 -bottom-1 w-20 h-20 sm:w-24 sm:h-24 object-contain pointer-events-none select-none opacity-[0.07] invert dark:invert-0"
+          />
           <div>
             <span className="text-[11px] font-semibold uppercase tracking-wider block text-neutral-400">
               {horizon.label} PROJECTED VALUE
@@ -366,14 +375,17 @@ export const InvestScreen: React.FC = () => {
           </div>
         </div>
 
-        {/* Card 4: Net Realized Liquidity */}
+        {/* Card 4: Net Realized Liquidity (Watermark: liquidity.jpg with Rupee coin) */}
         <div
           className="rounded-[18px] p-5 sm:p-6 border relative overflow-hidden backdrop-blur-md flex flex-col justify-between h-[132px]"
           style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
         >
-          <div className="absolute right-3 bottom-1 text-neutral-500/[0.06] font-extrabold text-4xl select-none pointer-events-none">
-            LIQUID
-          </div>
+          <img
+            src="/icons/liquidity.png"
+            alt=""
+            aria-hidden="true"
+            className="absolute -right-2 -bottom-2 w-20 h-20 sm:w-24 sm:h-24 object-contain pointer-events-none select-none opacity-[0.07] invert dark:invert-0"
+          />
           <div>
             <span className="text-[11px] font-semibold uppercase tracking-wider block text-neutral-400">
               NET LIQUIDITY
@@ -659,7 +671,7 @@ export const InvestScreen: React.FC = () => {
                   Behavioral Alpha
                 </span>
                 <h3 className="text-base font-bold text-white">
-                  The Dollar-Cost Averaging (DCA) Advantage
+                  The Rupee-Cost Averaging (RCA) Advantage
                 </h3>
               </div>
               <span className="px-2.5 py-1 rounded-md text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
