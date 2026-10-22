@@ -111,6 +111,12 @@ export default async function handler(req, res) {
       formData.append('action', 'auth_sync');
       formData.append('userId', payload?.userId || user?.id || '');
       formData.append('identifier', cleanId);
+      if (payload?.email || user?.email) {
+        formData.append('email', (payload?.email || user?.email || '').trim().toLowerCase());
+      }
+      if (payload?.phone || user?.phone) {
+        formData.append('phone', (payload?.phone || user?.phone || '').trim());
+      }
       if (userState) {
         formData.append('userState', typeof userState === 'string' ? userState : JSON.stringify(userState));
       }

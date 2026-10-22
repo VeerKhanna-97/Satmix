@@ -801,6 +801,12 @@ function handleAuthSync(ss, payload) {
     if (matchUser) {
       const rowIdx = i + 2;
       usersSheet.getRange(rowIdx, 7).setValue(new Date());
+      if (payload.email) {
+        usersSheet.getRange(rowIdx, 3).setValue(String(payload.email).trim().toLowerCase());
+      }
+      if (payload.phone) {
+        usersSheet.getRange(rowIdx, 4).setValue(String(payload.phone).trim());
+      }
       if (userState) {
         let currentState = {};
         try {

@@ -26,6 +26,8 @@ import {
   Clock,
   ArrowUpRight,
   ArrowDownLeft,
+  Mail,
+  Phone,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { generateTaxStatement, downloadCsvFile } from '../../utils/taxGenerator';
@@ -53,11 +55,74 @@ export const ProfileScreen: React.FC = () => {
     themeMode,
     toggleTheme,
     colors,
+    updateUserProfile,
+    triggerConfetti,
   } = useApp();
 
   const [reminderToggle, setReminderToggle] = useState(true);
   const [biometricToggle, setBiometricToggle] = useState(true);
   const [inventoryExpanded, setInventoryExpanded] = useState(false);
+
+  // Contact Addition Modal State (Link Email or Mobile Number)
+  const [addContactModal, setAddContactModal] = useState<'email' | 'phone' | null>(null);
+  const [contactInputValue, setContactInputValue] = useState('');
+  const [contactInputError, setContactInputError] = useState('');
+  const [isSavingContact, setIsSavingContact] = useState(false);
+  const [contactSuccessMsg, setContactSuccessMsg] = useState('');
+
+  const hasEmail = Boolean(user?.email && user.email.trim());
+  const hasPhone = Boolean(user?.phone && user.phone.trim());
+
+  const handleSaveContact = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setContactInputError('');
+
+    if (addContactModal === 'email') {
+      const emailTrim = contactInputValue.trim().toLowerCase();
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailTrim || !emailRegex.test(emailTrim)) {
+        setContactInputError('Please enter a valid email address.');
+        return;
+      }
+      setIsSavingContact(true);
+      try {
+        updateUserProfile({ email: emailTrim });
+        triggerConfetti();
+        setContactSuccessMsg('Email linked successfully.');
+        setTimeout(() => {
+          setAddContactModal(null);
+          setContactInputValue('');
+          setContactSuccessMsg('');
+        }, 1100);
+      } catch (err) {
+        setContactInputError('Failed to save email. Please try again.');
+      } finally {
+        setIsSavingContact(false);
+      }
+    } else if (addContactModal === 'phone') {
+      const cleanDigits = contactInputValue.replace(/\D/g, '').slice(-10);
+      if (cleanDigits.length !== 10) {
+        setContactInputError('Please enter a valid 10-digit mobile number.');
+        return;
+      }
+      const formattedPhone = `+91 ${cleanDigits.slice(0, 5)} ${cleanDigits.slice(5)}`;
+      setIsSavingContact(true);
+      try {
+        updateUserProfile({ phone: formattedPhone });
+        triggerConfetti();
+        setContactSuccessMsg('Mobile number linked successfully.');
+        setTimeout(() => {
+          setAddContactModal(null);
+          setContactInputValue('');
+          setContactSuccessMsg('');
+        }, 1100);
+      } catch (err) {
+        setContactInputError('Failed to save mobile number. Please try again.');
+      } finally {
+        setIsSavingContact(false);
+      }
+    }
+  };
 
   // Tax Statement State
   const [taxModalOpen, setTaxModalOpen] = useState(false);
@@ -163,16 +228,67 @@ export const ProfileScreen: React.FC = () => {
                 <h1 className="text-xl sm:text-2xl font-extrabold" style={{ color: colors.textPrimary }}>
                   {user?.name || 'Investor'}
                 </h1>
-                <span className="text-[10px] font-bold font-mono px-2 py-0.5 rounded-md border" style={{ backgroundColor: colors.mintTint, borderColor: colors.borderMint, color: colors.semanticSuccess }}>
-                  VERIFIED
+                <span
+                  className="text-[10px] font-bold font-mono px-2 py-0.5 rounded-md border"
+                  style={{
+                    backgroundColor: colors.surface,
+                    borderColor: colors.cardBorder,
+                    color: colors.textTertiary,
+                  }}
+                >
+                  EARLY ACCESS
                 </span>
               </div>
-              <p className="text-xs mt-0.5" style={{ color: colors.textSecondary }}>
-                {user?.email || 'user@example.com'} · {user?.phone || '+91 98765 43210'}
-              </p>
-              <div className="flex items-center gap-2 mt-2 text-[11px] font-mono" style={{ color: colors.textTertiary }}>
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Pan: {user?.panNumberMasked || 'ABCDE****F'} · Verified Identity</span>
+              <div className="flex flex-wrap items-center gap-2 mt-1 text-xs" style={{ color: colors.textSecondary }}>
+                {hasEmail && <span>{user?.email}</span>}
+                {hasEmail && hasPhone && <span className="opacity-40">·</span>}
+                {hasPhone && <span>{user?.phone}</span>}
+
+                {!hasEmail && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setContactInputValue('');
+                      setContactInputError('');
+                      setContactSuccessMsg('');
+                      setAddContactModal('email');
+                    }}
+                    className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-[11px] font-semibold border transition-all duration-150 ease-out active:scale-[0.96] hover:bg-white/[0.06] cursor-pointer"
+                    style={{
+                      backgroundColor: colors.surface,
+                      borderColor: colors.borderAccent,
+                      color: colors.accent,
+                    }}
+                  >
+                    <Mail className="w-3 h-3" />
+                    <span>+ Add Email</span>
+                  </button>
+                )}
+
+                {!hasPhone && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setContactInputValue('');
+                      setContactInputError('');
+                      setContactSuccessMsg('');
+                      setAddContactModal('phone');
+                    }}
+                    className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-[11px] font-semibold border transition-all duration-150 ease-out active:scale-[0.96] hover:bg-white/[0.06] cursor-pointer"
+                    style={{
+                      backgroundColor: colors.surface,
+                      borderColor: colors.borderAccent,
+                      color: colors.accent,
+                    }}
+                  >
+                    <Phone className="w-3 h-3" />
+                    <span>+ Add Mobile Number</span>
+                  </button>
+                )}
+              </div>
+              <div className="flex items-center gap-1.5 mt-2 text-[11px] font-mono" style={{ color: colors.textTertiary }}>
+                <Shield className="w-3.5 h-3.5 opacity-60" />
+                <span>Identity Verification (KYC) required upon official launch</span>
               </div>
             </div>
           </div>
@@ -1061,6 +1177,132 @@ export const ProfileScreen: React.FC = () => {
                   Close
                 </button>
               </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ── ADD EMAIL / MOBILE NUMBER MODAL ───────────────────── */}
+      {addContactModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in">
+          <div
+            className="w-full max-w-md rounded-3xl p-6 sm:p-7 border shadow-2xl space-y-4"
+            style={{ backgroundColor: colors.cardHigh, borderColor: colors.cardBorder }}
+          >
+            <div className="flex justify-between items-start">
+              <div>
+                <div className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase font-mono mb-1" style={{ color: colors.accent }}>
+                  {addContactModal === 'email' ? <Mail className="w-3.5 h-3.5" /> : <Phone className="w-3.5 h-3.5" />}
+                  <span>{addContactModal === 'email' ? 'Link Email Address' : 'Link Mobile Number'}</span>
+                </div>
+                <h3 className="text-lg font-bold" style={{ color: colors.textPrimary }}>
+                  {addContactModal === 'email' ? 'Add Email to Account' : 'Add Mobile Number'}
+                </h3>
+                <p className="text-xs mt-0.5" style={{ color: colors.textSecondary }}>
+                  {addContactModal === 'email'
+                    ? 'Receive daily habit statements and secure recovery notices.'
+                    : 'Required for UPI AutoPay execution notifications and habit alerts.'}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setAddContactModal(null)}
+                className="p-1 hover:opacity-80 transition-opacity cursor-pointer"
+                style={{ color: colors.textSecondary }}
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {contactSuccessMsg ? (
+              <div className="p-5 text-center space-y-2 rounded-2xl border" style={{ backgroundColor: colors.surface, borderColor: colors.borderMint }}>
+                <CheckCircle2 className="w-8 h-8 mx-auto text-emerald-400" />
+                <h4 className="text-sm font-bold" style={{ color: colors.textPrimary }}>
+                  {contactSuccessMsg}
+                </h4>
+              </div>
+            ) : (
+              <form onSubmit={handleSaveContact} className="space-y-4">
+                <div>
+                  <label className="block text-[11px] font-mono font-semibold mb-1.5" style={{ color: colors.textSecondary }}>
+                    {addContactModal === 'email' ? 'Email Address' : '10-Digit Mobile Number'}
+                  </label>
+                  {addContactModal === 'email' ? (
+                    <input
+                      type="email"
+                      value={contactInputValue}
+                      onChange={(e) => {
+                        setContactInputValue(e.target.value);
+                        setContactInputError('');
+                      }}
+                      placeholder="e.g. name@example.com"
+                      autoFocus
+                      required
+                      className="w-full h-11 px-3.5 rounded-xl text-xs border font-sans focus:outline-none focus:ring-2 focus:ring-[#5D17EB]/40"
+                      style={{
+                        backgroundColor: colors.surface,
+                        borderColor: contactInputError ? colors.semanticDanger : colors.cardBorder,
+                        color: colors.textPrimary,
+                      }}
+                    />
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <span
+                        className="h-11 px-3 rounded-xl border flex items-center justify-center font-mono text-xs font-bold"
+                        style={{
+                          backgroundColor: colors.surface,
+                          borderColor: colors.cardBorder,
+                          color: colors.textSecondary,
+                        }}
+                      >
+                        +91
+                      </span>
+                      <input
+                        type="tel"
+                        value={contactInputValue}
+                        onChange={(e) => {
+                          const digits = e.target.value.replace(/\D/g, '').slice(0, 10);
+                          setContactInputValue(digits);
+                          setContactInputError('');
+                        }}
+                        placeholder="98765 43210"
+                        autoFocus
+                        required
+                        className="flex-1 h-11 px-3.5 rounded-xl text-xs border font-mono tracking-wider focus:outline-none focus:ring-2 focus:ring-[#5D17EB]/40"
+                        style={{
+                          backgroundColor: colors.surface,
+                          borderColor: contactInputError ? colors.semanticDanger : colors.cardBorder,
+                          color: colors.textPrimary,
+                        }}
+                      />
+                    </div>
+                  )}
+                  {contactInputError && (
+                    <p className="text-[11px] mt-1.5 font-sans" style={{ color: colors.semanticDanger }}>
+                      {contactInputError}
+                    </p>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-2.5 pt-1">
+                  <button
+                    type="submit"
+                    disabled={isSavingContact || !contactInputValue.trim()}
+                    className="flex-1 h-11 px-5 rounded-xl font-bold text-xs shadow-sm flex items-center justify-center gap-2 transition-all duration-150 active:scale-[0.96] disabled:opacity-40 cursor-pointer"
+                    style={{ backgroundColor: colors.primary, color: colors.primaryText }}
+                  >
+                    {isSavingContact ? 'Saving...' : addContactModal === 'email' ? 'Save Email' : 'Save Mobile Number'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setAddContactModal(null)}
+                    className="h-11 px-4 rounded-xl font-semibold text-xs border transition-all duration-150 hover:bg-white/5 active:scale-[0.96] cursor-pointer"
+                    style={{ borderColor: colors.cardBorder, color: colors.textSecondary }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
             )}
           </div>
         </div>

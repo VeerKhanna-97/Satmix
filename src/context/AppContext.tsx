@@ -237,12 +237,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const userProfile: UserProfile = {
       id: found.id,
       name: found.name,
-      email: found.email,
-      phone: found.phone || '+91 98765 43210',
+      email: found.email || '',
+      phone: found.phone || '',
       initials,
       memberSince: new Date(found.createdAt).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }),
-      kycStatus: 'VERIFIED_TIER_1',
-      panNumberMasked: 'ABCDE****F',
+      kycStatus: 'UNVERIFIED',
+      panNumberMasked: '',
       bankName: 'HDFC Bank',
       bankAccountMasked: '•••• 4129',
       vpa: `${found.name.toLowerCase().replace(/[^a-z0-9]/g, '')}@okhdfcbank`,
@@ -932,14 +932,41 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     [livePrices, updateStateAndPersist, activeUser]
   );
 
-  // Update Profile
+  // Update Profile & Sync to Central Google Sheets
   const updateUserProfile = useCallback(
     (updated: Partial<UserProfile>) => {
       if (!activeUser) return;
       updateStateAndPersist((prev) => ({
         ...prev,
-        users: prev.users.map((u) => (u.id === activeUser.id ? { ...u, name: updated.name || u.name, email: updated.email || u.email } : u)),
+        users: prev.users.map((u) =>
+          u.id === activeUser.id
+            ? {
+                ...u,
+                name: updated.name !== undefined ? updated.name : u.name,
+                email: updated.email !== undefined ? updated.email : u.email,
+                phone: updated.phone !== undefined ? updated.phone : u.phone,
+              }
+            : u
+        ),
       }));
+
+      // Background sync to central cloud database / Google Sheets
+      if (updated.email !== undefined || updated.phone !== undefined) {
+        try {
+          fetch('/api/auth', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'sync',
+              userId: activeUser.id,
+              email: updated.email,
+              phone: updated.phone,
+            }),
+          }).catch(() => {});
+        } catch {
+          // Non-blocking sync
+        }
+      }
     },
     [activeUser, updateStateAndPersist]
   );

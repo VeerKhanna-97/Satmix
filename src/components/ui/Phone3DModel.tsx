@@ -22,9 +22,9 @@ export const Phone3DModel: React.FC<Phone3DModelProps> = ({ className = '', onOp
   // Horizon filter state
   const [horizon, setHorizon] = useState<'1W' | '1M' | '3M' | '1Y' | 'ALL'>('1M');
 
-  // Interactive 3D tilt state
-  const [rotateX, setRotateX] = useState<number>(0);
-  const [rotateY, setRotateY] = useState<number>(0);
+  // Interactive 3D tilt state with natural homepage angle
+  const [rotateX, setRotateX] = useState<number>(4);
+  const [rotateY, setRotateY] = useState<number>(-8);
   const [glarePos, setGlarePos] = useState<{ x: number; y: number }>({ x: 50, y: 50 });
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -49,8 +49,8 @@ export const Phone3DModel: React.FC<Phone3DModelProps> = ({ className = '', onOp
   };
 
   const handleMouseLeave = () => {
-    setRotateX(0);
-    setRotateY(0);
+    setRotateX(4);
+    setRotateY(-8);
     setGlarePos({ x: 50, y: 50 });
   };
 
@@ -223,7 +223,7 @@ export const Phone3DModel: React.FC<Phone3DModelProps> = ({ className = '', onOp
                     </div>
                     <div>
                       <span className="text-[8.5px] text-white/40 font-sans block">Daily Habits</span>
-                      <span className="text-[11px] font-bold text-[#A78BFA] mt-0.5 block">3 Active</span>
+                      <span className="text-[11px] font-bold text-[#A78BFA] mt-0.5 block">2 Active</span>
                     </div>
                   </div>
 
@@ -269,7 +269,7 @@ export const Phone3DModel: React.FC<Phone3DModelProps> = ({ className = '', onOp
 
                     {/* Dates Axis */}
                     <div className="flex justify-between text-[8.5px] font-mono text-white/30 pt-0.5">
-                      <span>20 Sept</span>
+                      <span>16 Sept</span>
                       <span>05 Oct</span>
                       <span>19 Oct</span>
                     </div>

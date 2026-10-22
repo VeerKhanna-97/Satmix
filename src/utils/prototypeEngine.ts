@@ -262,11 +262,11 @@ export function accrueMissingDays(
     const setupDate = new Date(habit.setupAt);
     setupDate.setHours(0, 0, 0, 0);
 
-    // Limit window to max(setupDay, today - 29 days)
-    const thirtyDaysAgo = new Date(today);
-    thirtyDaysAgo.setDate(today.getDate() - 29);
+    // Accrue all days since setupAt (with a safe 180-day guardrail to prevent infinite loops)
+    const maxLookbackDate = new Date(today);
+    maxLookbackDate.setDate(today.getDate() - 180);
 
-    const windowStart = setupDate > thirtyDaysAgo ? setupDate : thirtyDaysAgo;
+    const windowStart = setupDate > maxLookbackDate ? setupDate : maxLookbackDate;
     const daysWindow = getDaysArray(windowStart, today);
 
     const basketDef = getBasketById(basketId);
@@ -442,7 +442,12 @@ export function executeWithdrawal(
   const getBasketInvested = (bId: BasketId) => {
     return nextState.activity
       .filter((a) => a.basketId === bId)
-      .reduce((sum, a) => sum + a.amount, 0);
+      .reduce((sum, a) => {
+        if (a.type === 'withdrawal' || a.amount < 0) {
+          return sum - (a.costBasisReduction !== undefined ? a.costBasisReduction : Math.abs(a.amount));
+        }
+        return sum + a.amount;
+      }, 0);
   };
 
   const stableVal = getBasketValuation('stable');
@@ -712,7 +717,7 @@ export function calculateTabMetrics(
 
   const marketValue = Math.round((btcVal + ethVal + solVal + usdtVal) * 100) / 100;
   const cleanMarketValue = marketValue < 0.01 ? 0 : marketValue;
-  const cleanTotalInvested = cleanMarketValue <= 0 ? 0 : Math.max(0, Math.round(totalInvested * 100) / 100);
+  const cleanTotalInvested = Math.max(0, Math.round(totalInvested * 100) / 100);
   const netDeltaRupees = cleanTotalInvested > 0 ? Math.round((cleanMarketValue - cleanTotalInvested) * 100) / 100 : 0;
   const netDeltaPercentage =
     cleanTotalInvested > 0 ? Number(((netDeltaRupees / cleanTotalInvested) * 100).toFixed(2)) : 0;
