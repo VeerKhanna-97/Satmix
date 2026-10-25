@@ -25,6 +25,7 @@ import {
   LayoutGrid,
   Table,
   IndianRupee,
+  Plus,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { LineChart } from '../common/LineChart';
@@ -582,15 +583,16 @@ export const DashboardScreen: React.FC = () => {
               })}
             </div>
 
-            {/* Timeframe & Action Buttons */}
-            <div className="flex items-center gap-3 flex-wrap">
-              <div className="flex items-center gap-1 p-1 rounded-xl bg-white/[0.04] border border-white/5 text-xs font-mono">
+            {/* Timeframe & Action Buttons (Single Unified Row on Mobile) */}
+            <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-3 w-full sm:w-auto flex-nowrap">
+              {/* Horizon / Timeframe Tabs */}
+              <div className="flex items-center gap-0.5 sm:gap-1 p-0.5 sm:p-1 rounded-xl bg-white/[0.04] border border-white/5 text-[11px] sm:text-xs font-mono">
                 {(['1W', '1M', '3M', '1Y', 'ALL'] as const).map((t) => (
                   <button
                     key={t}
                     type="button"
                     onClick={() => setTimeframe(t)}
-                    className={`px-2.5 py-1 rounded-lg font-bold transition-colors cursor-pointer ${
+                    className={`px-1.5 sm:px-2.5 py-1 rounded-lg font-bold transition-colors cursor-pointer ${
                       timeframe === t ? 'bg-[#5D17EB]/25 text-[#A78BFA] border border-[#8B5CF6]/40' : 'text-neutral-400 hover:text-white'
                     }`}
                   >
@@ -599,21 +601,24 @@ export const DashboardScreen: React.FC = () => {
                 ))}
               </div>
 
-              <div className="flex items-center gap-2">
+              {/* Action Buttons: Add & Withdraw */}
+              <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
                 <button
                   type="button"
                   onClick={() => setDepositOpen(true)}
-                  className="h-8 px-3.5 rounded-xl font-bold text-xs bg-[#5D17EB] hover:bg-[#6D28D9] text-white shadow-[0_0_14px_rgba(93,23,235,0.4)] transition-transform hover:scale-[1.02] active:scale-[0.98] inline-flex items-center gap-1.5 cursor-pointer"
+                  className="h-7 sm:h-8 px-2.5 sm:px-3.5 rounded-lg sm:rounded-xl font-bold text-[11px] sm:text-xs bg-[#5D17EB] hover:bg-[#6D28D9] text-white shadow-[0_0_12px_rgba(93,23,235,0.35)] transition-all hover:scale-[1.02] active:scale-[0.96] inline-flex items-center gap-1 cursor-pointer"
+                  title="Add Funds / Invest"
                 >
-                  <ArrowDownLeft className="w-3.5 h-3.5" />
-                  <span>+ Add</span>
+                  <Plus className="w-3.5 h-3.5" strokeWidth={2.5} />
+                  <span>Add</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setWithdrawOpen(true)}
-                  className="h-8 px-3.5 rounded-xl font-bold text-xs border border-white/10 text-neutral-300 hover:text-white hover:bg-white/5 transition-colors active:scale-[0.98] inline-flex items-center gap-1.5 cursor-pointer"
+                  className="h-7 sm:h-8 px-2.5 sm:px-3.5 rounded-lg sm:rounded-xl font-bold text-[11px] sm:text-xs border border-white/10 text-neutral-300 hover:text-white hover:bg-white/5 transition-all active:scale-[0.96] inline-flex items-center gap-1 cursor-pointer"
+                  title="Withdraw Funds"
                 >
-                  <ArrowUpRight className="w-3.5 h-3.5" />
+                  <ArrowUpRight className="w-3.5 h-3.5" strokeWidth={2} />
                   <span>Withdraw</span>
                 </button>
               </div>
