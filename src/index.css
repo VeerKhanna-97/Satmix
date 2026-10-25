@@ -72,21 +72,19 @@
   --ease-spring-press: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-/* Fast, Butter-Smooth Fade In: Instantaneous early velocity, silky deceleration, no rubbery bounce */
+/* Fast, Butter-Smooth Fade In: Pure opacity prevents CSS transform containing-block traps on fixed/portal elements */
 @keyframes fadeIn {
   0% {
     opacity: 0;
-    transform: translateY(8px);
   }
   100% {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.26s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  will-change: transform, opacity;
+  animation: fadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: opacity;
 }
 
 /* Snappy Slide Up with High-Velocity Ease-Out for Sections & Cards */

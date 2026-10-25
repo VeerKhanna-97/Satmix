@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import {
   Wallet,
   Zap,
@@ -34,6 +35,11 @@ export const AppShell: React.FC = () => {
     setFeedbackOpen,
   } = useApp();
 
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const tabs = [
     { id: 'dashboard' as const, label: 'Portfolio', icon: Wallet },
     { id: 'invest' as const, label: 'Strategy & Growth', icon: TrendingUp },
@@ -42,7 +48,7 @@ export const AppShell: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col transition-colors pb-[calc(6.5rem+env(safe-area-inset-bottom,0px))] md:pb-12 relative overflow-hidden" style={{ backgroundColor: colors.bg }}>
+    <div className="min-h-screen flex flex-col transition-colors pb-[calc(6.5rem+env(safe-area-inset-bottom,0px))] md:pb-12 relative overflow-x-clip" style={{ backgroundColor: colors.bg }}>
       {/* Background Ambient Glow */}
       <div
         className="absolute top-0 right-1/4 w-[600px] h-[600px] rounded-full blur-[180px] pointer-events-none opacity-5 animate-ambient-glow"
@@ -159,69 +165,73 @@ export const AppShell: React.FC = () => {
         </AnimatePresence>
       </main>
 
-      {/* ── FUSED MOBILE FLOATING NAVIGATION DOCK ─── */}
-      <nav
-        className="md:hidden fixed bottom-[max(0.75rem,env(safe-area-inset-bottom,12px))] left-1/2 -translate-x-1/2 z-50 pointer-events-auto max-w-[calc(100vw-16px)]"
-        role="navigation"
-        aria-label="Mobile Navigation"
-      >
-        <div
-          className="flex items-center gap-0.5 p-1 sm:p-1.5 rounded-full border backdrop-blur-2xl transition-all duration-300 shadow-2xl"
-          style={{
-            backgroundColor: themeMode === 'dark' ? 'rgba(14, 16, 23, 0.94)' : 'rgba(255, 255, 255, 0.94)',
-            borderColor: colors.cardBorder,
-            boxShadow: themeMode === 'dark'
-              ? '0 12px 36px -4px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.06)'
-              : '0 12px 36px -4px rgba(15, 23, 42, 0.14), 0 0 0 1px rgba(15, 23, 42, 0.05)',
-          }}
-        >
-          {tabs.map((tab) => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.id;
-            return (
+      {/* ── FUSED MOBILE FLOATING NAVIGATION DOCK (PORTALED DIRECTLY TO BODY TO PREVENT ANY PARENT SCROLL/TRANSFORM TRAPPING) ─── */}
+      {isMounted &&
+        createPortal(
+          <nav
+            className="md:hidden fixed bottom-[max(0.75rem,env(safe-area-inset-bottom,12px))] left-1/2 -translate-x-1/2 z-[999] pointer-events-auto max-w-[calc(100vw-16px)]"
+            role="navigation"
+            aria-label="Mobile Navigation"
+          >
+            <div
+              className="flex items-center gap-0.5 p-1 sm:p-1.5 rounded-full border backdrop-blur-2xl transition-all duration-300 shadow-2xl"
+              style={{
+                backgroundColor: themeMode === 'dark' ? 'rgba(14, 16, 23, 0.94)' : 'rgba(255, 255, 255, 0.94)',
+                borderColor: colors.cardBorder,
+                boxShadow: themeMode === 'dark'
+                  ? '0 12px 36px -4px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.06)'
+                  : '0 12px 36px -4px rgba(15, 23, 42, 0.14), 0 0 0 1px rgba(15, 23, 42, 0.05)',
+              }}
+            >
+              {tabs.map((tab) => {
+                const Icon = tab.icon;
+                const isActive = activeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className="relative flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-full transition-all duration-200 select-none active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50 cursor-pointer"
+                    style={{
+                      color: isActive ? '#8B5CF6' : colors.textSecondary,
+                    }}
+                    aria-current={isActive ? 'page' : undefined}
+                  >
+                    {isActive && (
+                      <motion.div
+                        layoutId="activeMobileDockPill"
+                        className="absolute inset-0 rounded-full shadow-md z-0 bg-purple-500/15 border border-purple-500/30"
+                        transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                      />
+                    )}
+                    <span className="relative z-10 flex items-center gap-1">
+                      <Icon className="w-4 h-4 flex-shrink-0" strokeWidth={isActive ? 2.5 : 2} />
+                      <span className={`text-[11px] sm:text-[12px] tracking-tight ${isActive ? 'font-bold text-purple-400 inline' : 'font-semibold hidden sm:inline'}`}>
+                        {tab.label === 'Strategy & Growth' ? 'Growth' : tab.label}
+                      </span>
+                    </span>
+                  </button>
+                );
+              })}
+
+              {/* Fused Divider Between Tabs and Feedback */}
+              <div className="w-px h-5 mx-0.5" style={{ backgroundColor: colors.borderDim }} />
+
+              {/* Fused Feedback / Reviews Trigger */}
               <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className="relative flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-full transition-all duration-200 select-none active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50 cursor-pointer"
-                style={{
-                  color: isActive ? '#8B5CF6' : colors.textSecondary,
-                }}
-                aria-current={isActive ? 'page' : undefined}
+                type="button"
+                onClick={() => setFeedbackOpen(true)}
+                className="relative flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-full text-purple-400 hover:text-purple-300 hover:bg-purple-500/10 active:scale-[0.97] transition-all select-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50"
+                aria-label="Feedback and Reviews"
               >
-                {isActive && (
-                  <motion.div
-                    layoutId="activeMobileDockPill"
-                    className="absolute inset-0 rounded-full shadow-md z-0 bg-purple-500/15 border border-purple-500/30"
-                    transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-                  />
-                )}
-                <span className="relative z-10 flex items-center gap-1">
-                  <Icon className="w-4 h-4 flex-shrink-0" strokeWidth={isActive ? 2.5 : 2} />
-                  <span className={`text-[11px] sm:text-[12px] tracking-tight ${isActive ? 'font-bold text-purple-400 inline' : 'font-semibold hidden sm:inline'}`}>
-                    {tab.label === 'Strategy & Growth' ? 'Growth' : tab.label}
-                  </span>
+                <MessageSquare className="w-4 h-4 flex-shrink-0 text-purple-400" />
+                <span className="text-[11px] sm:text-[12px] font-semibold text-purple-400 hidden min-[390px]:inline">
+                  Feedback
                 </span>
               </button>
-            );
-          })}
-
-          {/* Fused Divider Between Tabs and Feedback */}
-          <div className="w-px h-5 mx-0.5" style={{ backgroundColor: colors.borderDim }} />
-
-          {/* Fused Feedback / Reviews Trigger */}
-          <button
-            type="button"
-            onClick={() => setFeedbackOpen(true)}
-            className="relative flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-full text-purple-400 hover:text-purple-300 hover:bg-purple-500/10 active:scale-[0.97] transition-all select-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50"
-            aria-label="Feedback and Reviews"
-          >
-            <MessageSquare className="w-4 h-4 flex-shrink-0 text-purple-400" />
-            <span className="text-[11px] sm:text-[12px] font-semibold text-purple-400 hidden min-[390px]:inline">
-              Feedback
-            </span>
-          </button>
-        </div>
-      </nav>
+            </div>
+          </nav>,
+          document.body
+        )}
 
       {/* ── 4-STEP FIRST-RUN TUTORIAL MODAL ────────────────── */}
       <TutorialModal isOpen={tutorialOpen} onFinish={completeTutorial} />
