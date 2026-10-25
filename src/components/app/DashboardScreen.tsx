@@ -312,8 +312,91 @@ export const DashboardScreen: React.FC = () => {
 
   return (
     <div className="space-y-5 sm:space-y-6 animate-fade-in w-full pb-16">
-      {/* ── TOP 3 WATERMARK METRIC CARDS ──────────────────────── */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 font-sans">
+      {/* ── TOP METRICS: MOBILE UNIFIED MASTER CARD (< sm) ─────────── */}
+      <div
+        className="sm:hidden relative overflow-hidden rounded-[20px] border transition-all duration-300 font-sans shadow-lg"
+        style={{
+          backgroundColor: themeMode === 'dark' ? '#0B0F15' : '#FFFFFF',
+          borderColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
+        }}
+      >
+        {/* Primary Hero Section: Total Balance */}
+        <div className="relative p-5 pb-4">
+          <IndianRupee className="absolute top-2 right-2 w-16 h-16 opacity-[0.08] pointer-events-none select-none text-neutral-400 dark:text-white" strokeWidth={1.5} />
+          <div className="relative z-10">
+            <span className="text-[10px] font-bold uppercase tracking-wider block font-mono text-neutral-400">
+              Total Balance
+            </span>
+            <div className="text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums text-white">
+              {scrubbedPoint ? (
+                `₹${scrubbedPoint.value.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+              ) : (
+                <CountUp to={tabMetrics.marketValue} prefix="₹" decimals={2} duration={1} />
+              )}
+            </div>
+            <div
+              className={`inline-flex items-center gap-1 text-[11px] font-bold font-mono mt-1.5 ${
+                displayedDeltaPercentage >= 0 ? 'text-emerald-400' : 'text-rose-400'
+              }`}
+            >
+              <span>{displayedDeltaPercentage >= 0 ? '↗ +' : '↘ -'}{Math.abs(displayedDeltaPercentage).toFixed(2)}%</span>
+              <span className="text-neutral-400 font-normal">vs last month</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Hairline Divider */}
+        <div className="w-full h-px" style={{ backgroundColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.06)' }} />
+
+        {/* Secondary Sub-Metrics: 2-Column Split */}
+        <div
+          className="grid grid-cols-2 divide-x p-3.5 sm:p-4"
+          style={{
+            backgroundColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.015)' : 'rgba(0, 0, 0, 0.015)',
+            borderColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.06)',
+          }}
+        >
+          {/* Sub-Metric 1: Today's P&L */}
+          <div className="pr-3 flex flex-col justify-between">
+            <span className="text-[10px] font-semibold uppercase tracking-wider font-mono text-neutral-400">
+              Today's P&L
+            </span>
+            <div
+              className="text-lg font-extrabold font-mono tracking-tight mt-1 tabular-nums"
+              style={{ color: isPositiveGain ? colors.semanticSuccess : colors.semanticDanger }}
+            >
+              <CountUp to={Math.abs(tabMetrics.netDeltaRupees)} prefix={isPositiveGain ? '+₹' : '-₹'} decimals={2} duration={1} />
+            </div>
+            <div
+              className={`inline-flex items-center gap-0.5 text-[10px] font-bold font-mono mt-0.5 ${
+                isPositiveGain ? 'text-emerald-400' : 'text-rose-400'
+              }`}
+            >
+              <span>{isPositiveGain ? '↗ +' : '↘ -'}{Math.abs(tabMetrics.netDeltaPercentage * 0.12).toFixed(2)}%</span>
+            </div>
+          </div>
+
+          {/* Sub-Metric 2: Total Return */}
+          <div className="pl-3.5 flex flex-col justify-between">
+            <span className="text-[10px] font-semibold uppercase tracking-wider font-mono text-neutral-400">
+              Total Return
+            </span>
+            <div className="text-lg font-extrabold font-mono tracking-tight mt-1 tabular-nums text-white">
+              {tabMetrics.netDeltaPercentage >= 0 ? '+' : '-'}{Math.abs(tabMetrics.netDeltaPercentage).toFixed(1)}%
+            </div>
+            <div
+              className={`inline-flex items-center gap-0.5 text-[10px] font-bold font-mono mt-0.5 ${
+                tabMetrics.netDeltaPercentage >= 0 ? 'text-emerald-400' : 'text-rose-400'
+              }`}
+            >
+              <span>{tabMetrics.netDeltaPercentage >= 0 ? '↗ +' : '↘ -'}{Math.abs(tabMetrics.netDeltaPercentage).toFixed(1)}%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── TOP 3 WATERMARK METRIC CARDS: DESKTOP GRID (>= sm) ── */}
+      <div className="hidden sm:grid sm:grid-cols-3 gap-4 sm:gap-5 font-sans">
         {/* Card 1: Total Balance */}
         <div
           className="relative overflow-hidden p-5 sm:p-6 rounded-[18px] border transition-all duration-300 flex flex-col justify-between h-[132px]"
