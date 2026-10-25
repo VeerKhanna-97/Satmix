@@ -559,9 +559,9 @@ export const DashboardScreen: React.FC = () => {
           </div>
 
           {/* Controls Footer: Basket Filter, Horizon Tabs & Quick Actions */}
-          <div className="pt-4 border-t border-white/[0.06] flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-2">
-            {/* Basket Filter Tabs */}
-            <div className="flex items-center gap-1 p-1 rounded-xl bg-white/[0.04] border border-white/5 w-fit">
+          <div className="pt-4 border-t border-white/[0.06] flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-2">
+            {/* Basket Filter Tabs: Full width 3-column split on mobile, compact on desktop */}
+            <div className="w-full sm:w-fit grid grid-cols-3 sm:flex items-center gap-1 p-1 rounded-xl bg-white/[0.04] border border-white/5">
               {[
                 { id: 'all', label: 'All Mixes' },
                 { id: 'stable', label: 'Stable Mix' },
@@ -573,7 +573,7 @@ export const DashboardScreen: React.FC = () => {
                     key={tab.id}
                     type="button"
                     onClick={() => setActiveTabFilter(tab.id as 'all' | 'stable' | 'growth')}
-                    className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    className={`px-3 py-1.5 sm:py-1 rounded-lg text-xs font-bold transition-all text-center cursor-pointer select-none active:scale-[0.96] ${
                       isActive ? 'bg-[#5D17EB] text-white shadow-xs' : 'text-neutral-400 hover:text-white'
                     }`}
                   >
@@ -586,13 +586,13 @@ export const DashboardScreen: React.FC = () => {
             {/* Timeframe & Action Buttons (Single Unified Row on Mobile) */}
             <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-3 w-full sm:w-auto flex-nowrap">
               {/* Horizon / Timeframe Tabs */}
-              <div className="flex items-center gap-0.5 sm:gap-1 p-0.5 sm:p-1 rounded-xl bg-white/[0.04] border border-white/5 text-[11px] sm:text-xs font-mono">
+              <div className="h-8 flex items-center gap-0.5 sm:gap-1 p-1 rounded-xl bg-white/[0.04] border border-white/5 text-[11px] sm:text-xs font-mono">
                 {(['1W', '1M', '3M', '1Y', 'ALL'] as const).map((t) => (
                   <button
                     key={t}
                     type="button"
                     onClick={() => setTimeframe(t)}
-                    className={`px-1.5 sm:px-2.5 py-1 rounded-lg font-bold transition-colors cursor-pointer ${
+                    className={`h-full px-2 sm:px-2.5 rounded-lg font-bold flex items-center justify-center transition-colors cursor-pointer select-none active:scale-[0.96] ${
                       timeframe === t ? 'bg-[#5D17EB]/25 text-[#A78BFA] border border-[#8B5CF6]/40' : 'text-neutral-400 hover:text-white'
                     }`}
                   >
@@ -602,11 +602,11 @@ export const DashboardScreen: React.FC = () => {
               </div>
 
               {/* Action Buttons: Add & Withdraw */}
-              <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+              <div className="flex items-center gap-2 flex-shrink-0">
                 <button
                   type="button"
                   onClick={() => setDepositOpen(true)}
-                  className="h-7 sm:h-8 px-2.5 sm:px-3.5 rounded-lg sm:rounded-xl font-bold text-[11px] sm:text-xs bg-[#5D17EB] hover:bg-[#6D28D9] text-white shadow-[0_0_12px_rgba(93,23,235,0.35)] transition-all hover:scale-[1.02] active:scale-[0.96] inline-flex items-center gap-1 cursor-pointer"
+                  className="h-8 px-3 rounded-xl font-bold text-xs bg-[#5D17EB] hover:bg-[#6D28D9] text-white shadow-[0_0_12px_rgba(93,23,235,0.35)] transition-all hover:scale-[1.02] active:scale-[0.96] inline-flex items-center gap-1.5 cursor-pointer select-none"
                   title="Add Funds / Invest"
                 >
                   <Plus className="w-3.5 h-3.5" strokeWidth={2.5} />
@@ -615,7 +615,7 @@ export const DashboardScreen: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setWithdrawOpen(true)}
-                  className="h-7 sm:h-8 px-2.5 sm:px-3.5 rounded-lg sm:rounded-xl font-bold text-[11px] sm:text-xs border border-white/10 text-neutral-300 hover:text-white hover:bg-white/5 transition-all active:scale-[0.96] inline-flex items-center gap-1 cursor-pointer"
+                  className="h-8 px-3 rounded-xl font-bold text-xs border border-white/10 text-neutral-300 hover:text-white hover:bg-white/5 transition-all active:scale-[0.96] inline-flex items-center gap-1.5 cursor-pointer select-none"
                   title="Withdraw Funds"
                 >
                   <ArrowUpRight className="w-3.5 h-3.5" strokeWidth={2} />
