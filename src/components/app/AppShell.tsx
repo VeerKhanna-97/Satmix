@@ -9,6 +9,7 @@ import {
   Moon,
   Sun,
   ArrowLeft,
+  MessageSquare,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { DashboardScreen } from './DashboardScreen';
@@ -30,6 +31,7 @@ export const AppShell: React.FC = () => {
     user,
     tutorialOpen,
     completeTutorial,
+    setFeedbackOpen,
   } = useApp();
 
   const tabs = [
@@ -157,7 +159,7 @@ export const AppShell: React.FC = () => {
         </AnimatePresence>
       </main>
 
-      {/* ── MOBILE FLOATING NAVIGATION DOCK ─── */}
+      {/* ── FUSED MOBILE FLOATING NAVIGATION DOCK ─── */}
       <nav
         className="md:hidden fixed bottom-[max(0.75rem,env(safe-area-inset-bottom,12px))] left-1/2 -translate-x-1/2 z-50 pointer-events-auto max-w-[calc(100vw-16px)]"
         role="navigation"
@@ -196,12 +198,28 @@ export const AppShell: React.FC = () => {
                 <span className="relative z-10 flex items-center gap-1">
                   <Icon className="w-4 h-4 flex-shrink-0" strokeWidth={isActive ? 2.5 : 2} />
                   <span className={`text-[11px] sm:text-[12px] tracking-tight ${isActive ? 'font-bold text-purple-400 inline' : 'font-semibold hidden sm:inline'}`}>
-                    {tab.label}
+                    {tab.label === 'Strategy & Growth' ? 'Growth' : tab.label}
                   </span>
                 </span>
               </button>
             );
           })}
+
+          {/* Fused Divider Between Tabs and Feedback */}
+          <div className="w-px h-5 mx-0.5" style={{ backgroundColor: colors.borderDim }} />
+
+          {/* Fused Feedback / Reviews Trigger */}
+          <button
+            type="button"
+            onClick={() => setFeedbackOpen(true)}
+            className="relative flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-full text-purple-400 hover:text-purple-300 hover:bg-purple-500/10 active:scale-[0.97] transition-all select-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50"
+            aria-label="Feedback and Reviews"
+          >
+            <MessageSquare className="w-4 h-4 flex-shrink-0 text-purple-400" />
+            <span className="text-[11px] sm:text-[12px] font-semibold text-purple-400 hidden min-[390px]:inline">
+              Feedback
+            </span>
+          </button>
         </div>
       </nav>
 

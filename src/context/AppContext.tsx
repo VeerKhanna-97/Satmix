@@ -114,6 +114,8 @@ interface AppContextType {
   triggerConfetti: () => void;
   feedbackList: FeedbackItem[];
   submitFeedback: (rating: number, category: FeedbackItem['category'], comment: string) => void;
+  feedbackOpen: boolean;
+  setFeedbackOpen: (open: boolean) => void;
   triggerAccrual: () => void;
 }
 
@@ -171,7 +173,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [liveCoins, setLiveCoins] = useState<CryptoCoin[]>(FALLBACK_COINS);
   const [isPricesLoading, setIsPricesLoading] = useState<boolean>(false);
 
-  // Feedback Store
+  // Feedback Store & Drawer State
+  const [feedbackOpen, setFeedbackOpen] = useState<boolean>(false);
   const [feedbackList, setFeedbackList] = useState<FeedbackItem[]>(() => {
     try {
       const saved = localStorage.getItem(FEEDBACK_DB_KEY);
@@ -1046,6 +1049,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         triggerConfetti,
         feedbackList,
         submitFeedback,
+        feedbackOpen,
+        setFeedbackOpen,
         triggerAccrual: refreshPricesAndAccrue,
       }}
     >
