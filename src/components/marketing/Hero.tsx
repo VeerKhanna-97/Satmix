@@ -15,6 +15,15 @@ export const Hero: React.FC = () => {
     }
   };
 
+  const handlePhoneClick = () => {
+    if (isAuthenticated) {
+      setViewMode('app');
+    } else {
+      setAuthSubView('login');
+      setViewMode('auth');
+    }
+  };
+
   return (
     <section className="relative pt-6 sm:pt-10 md:pt-14 pb-14 sm:pb-20 md:pb-24 overflow-hidden">
       {/* Dynamic Ambient Background Glows */}
@@ -94,7 +103,7 @@ export const Hero: React.FC = () => {
           {/* Right Column: 3D Phone Model with Mobile Dashboard View */}
           <div className="lg:col-span-5 relative flex items-center justify-center">
             <FadeIn delay={0.2} direction="up" className="w-full flex items-center justify-center">
-              <Phone3DModel onOpenApp={handleStartSaving} />
+              <Phone3DModel onOpenApp={handlePhoneClick} />
             </FadeIn>
           </div>
         </div>

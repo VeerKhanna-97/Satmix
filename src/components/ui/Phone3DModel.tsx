@@ -16,7 +16,7 @@ interface Phone3DModelProps {
 }
 
 export const Phone3DModel: React.FC<Phone3DModelProps> = ({ className = '', onOpenApp }) => {
-  const { colors, themeMode, setViewMode } = useApp();
+  const { colors, themeMode, setViewMode, setAuthSubView, isAuthenticated } = useApp();
   const phoneRef = useRef<HTMLDivElement>(null);
 
   // Horizon filter state
@@ -85,8 +85,11 @@ export const Phone3DModel: React.FC<Phone3DModelProps> = ({ className = '', onOp
   const handleClickAction = () => {
     if (onOpenApp) {
       onOpenApp();
-    } else {
+    } else if (isAuthenticated) {
       setViewMode('app');
+    } else {
+      setAuthSubView('login');
+      setViewMode('auth');
     }
   };
 
@@ -115,10 +118,20 @@ export const Phone3DModel: React.FC<Phone3DModelProps> = ({ className = '', onOp
         }}
       />
 
-      {/* ── 3D PHONE CHASSIS ─────────────────────────────────── */}
+      {/* ── 3D PHONE CHASSIS (Click redirects to prototype sign in) ── */}
       <div
         ref={phoneRef}
-        className="relative transition-transform duration-200 ease-out will-change-transform cursor-pointer"
+        onClick={handleClickAction}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleClickAction();
+          }
+        }}
+        aria-label="Open Satmix Prototype Sign In"
+        className="relative transition-transform duration-200 ease-out will-change-transform cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50 rounded-[48px] active:scale-[0.98]"
         style={{
           transform: `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1, 1, 1)`,
           WebkitTransform: `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1, 1, 1)`,
