@@ -23,7 +23,6 @@ const PrivacyPolicyPage = React.lazy(() => import('./components/legal/PrivacyPol
 const TermsConditionsPage = React.lazy(() => import('./components/legal/TermsConditionsPage').then(m => ({ default: m.TermsConditionsPage })));
 const RefundPolicyPage = React.lazy(() => import('./components/legal/RefundPolicyPage').then(m => ({ default: m.RefundPolicyPage })));
 const CookiePolicyPage = React.lazy(() => import('./components/legal/CookiePolicyPage').then(m => ({ default: m.CookiePolicyPage })));
-const UnsubscribePage = React.lazy(() => import('./components/legal/UnsubscribePage').then(m => ({ default: m.UnsubscribePage })));
 const ThankYouPage = React.lazy(() => import('./components/legal/ThankYouPage').then(m => ({ default: m.ThankYouPage })));
 const NotFoundPage = React.lazy(() => import('./components/legal/NotFoundPage').then(m => ({ default: m.NotFoundPage })));
 
@@ -85,10 +84,7 @@ export function AppContent() {
             {/* 7. COOKIE POLICY & PREFERENCES PAGE */}
             {viewMode === 'cookies' && <CookiePolicyPage />}
 
-            {/* 8. EMAIL UNSUBSCRIBE & PREFERENCES (DPDP ACT 2023) */}
-            {viewMode === 'unsubscribe' && <UnsubscribePage />}
-
-            {/* 9. THANK YOU / CONFIRMATION PAGE */}
+            {/* 8. THANK YOU / CONFIRMATION PAGE */}
             {viewMode === 'thank-you' && <ThankYouPage />}
 
             {/* 10. CUSTOM 404 ERROR PAGE */}

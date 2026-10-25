@@ -9,6 +9,5 @@ Allow: /refund
 Allow: /cookies
 
 Disallow: /api/
-Disallow: /unsubscribe
 
 Sitemap: https://satmix.in/sitemap.xml

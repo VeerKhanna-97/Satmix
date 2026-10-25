@@ -36,7 +36,7 @@ import { fetchLiveCryptoPrices, FALLBACK_COINS } from '../utils/pricing';
 import { calculateStreakState, createEmptyStreakState } from '../utils/streakEngine';
 import { getBasketById } from '../data/baskets';
 
-export type ViewMode = 'marketing' | 'auth' | 'app' | 'privacy' | 'terms' | 'refund' | 'cookies' | 'thank-you' | '404' | 'unsubscribe';
+export type ViewMode = 'marketing' | 'auth' | 'app' | 'privacy' | 'terms' | 'refund' | 'cookies' | 'thank-you' | '404';
 export type AppTab = 'dashboard' | 'performance' | 'baskets' | 'transactions' | 'invest' | 'profile';
 export type DeviceFrame = 'full' | 'mobile';
 export type CookieConsentChoice = 'all' | 'essential' | null;
@@ -135,7 +135,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     try {
       const path = window.location.pathname.toLowerCase();
       const params = new URLSearchParams(window.location.search);
-      if (path.includes('unsubscribe') || params.get('view') === 'unsubscribe') return 'unsubscribe';
       if (path.includes('privacy') || params.get('view') === 'privacy') return 'privacy';
       if (path.includes('terms') || params.get('view') === 'terms') return 'terms';
       if (path.includes('refund') || params.get('view') === 'refund') return 'refund';
@@ -303,7 +302,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       cookies: 'Cookie Policy & Consent Settings : Satmix',
       'thank-you': 'Early Access Confirmed : Welcome to Satmix',
       '404': '404 Page Not Found : Satmix',
-      unsubscribe: 'Email Preferences & Unsubscribe : Satmix (DPDP Act 2023)',
     };
 
     document.title = titleMap[viewMode] || 'Satmix : Automated Daily Crypto Micro-Investing';

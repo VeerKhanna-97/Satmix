@@ -126,15 +126,6 @@ export const Footer: React.FC = () => {
               Cookie Policy
             </button>
             <span className="opacity-40">•</span>
-            <button
-              type="button"
-              onClick={() => setViewMode('unsubscribe')}
-              className="hover:opacity-80 transition-opacity"
-              style={{ color: colors.textSecondary }}
-            >
-              Unsubscribe
-            </button>
-            <span className="opacity-40">•</span>
             <a href="/#faq-section" onClick={() => setViewMode('marketing')} className="hover:opacity-80 transition-opacity" style={{ color: colors.textSecondary }}>
               FAQ
             </a>
