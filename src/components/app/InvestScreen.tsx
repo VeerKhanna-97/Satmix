@@ -25,7 +25,7 @@ import { BasketCurrencyIcons } from '../common/BasketCurrencyIcons';
 import { UpiMandateModal } from '../payment/UpiMandateModal';
 import { getBasketById, BASKETS } from '../../data/baskets';
 import { BasketId } from '../../types';
-import { SpotlightCard, CountUp } from '../ui';
+import { SpotlightCard, CountUp, HelpBadge } from '../ui';
 import { motion, AnimatePresence } from 'motion/react';
 
 const STABLE_PRESETS = [10, 20, 30, 50, 100];
@@ -36,6 +36,15 @@ const HORIZONS = [
   { label: '3 Years', years: 3 },
   { label: '5 Years', years: 5 },
 ];
+
+const getEverydayComparison = (amount: number) => {
+  if (amount <= 15) return 'Less than a cup of chai';
+  if (amount <= 30) return 'Less than a packet of biscuits';
+  if (amount <= 60) return 'Less than a cold drink or coffee';
+  if (amount <= 120) return 'Less than an evening snack';
+  if (amount <= 250) return 'About a casual meal';
+  return 'Less than a weekend movie ticket';
+};
 
 export const InvestScreen: React.FC = () => {
   const {
@@ -101,7 +110,7 @@ export const InvestScreen: React.FC = () => {
     };
   }, [dailyAmount, horizon, activeBasket]);
 
-  // Brand-New Feature 1: Tangible Wealth Runway Milestones
+  // Tangible Wealth Runway Milestones
   const milestones = useMemo(() => {
     const dailyDeposit = Math.max(10, dailyAmount);
     const target1 = 10000;
@@ -113,31 +122,30 @@ export const InvestScreen: React.FC = () => {
     return [
       {
         id: 'm1',
-        title: '₹10,000 Reserve',
+        title: '₹10,000 First Milestone',
         subtext: `${daysTo10k} days away at ₹${dailyDeposit}/day`,
         badge: `${Math.min(100, Math.round((tabMetrics.marketValue / target1) * 100))}% Reached`,
         achieved: tabMetrics.marketValue >= target1,
       },
       {
         id: 'm2',
-        title: '0.01 BTC Accumulation',
-        subtext: 'Accumulate 1 million Satoshis',
+        title: '0.01 Bitcoin Owner',
+        subtext: 'Own 1% of a Bitcoin (~₹60,000+ asset milestone)',
         badge: `${Math.min(100, Math.round(((tabMetrics.holdings.BTC.units || 0) / 0.01) * 100))}% Reached`,
         achieved: (tabMetrics.holdings.BTC.units || 0) >= 0.01,
       },
       {
         id: 'm3',
-        title: '₹50,000 Core Portfolio',
-        subtext: `${yearsTo50k} years disciplined runway`,
+        title: '₹50,000 Wealth Cushion',
+        subtext: `${yearsTo50k} years of steady daily habit`,
         badge: `${Math.min(100, Math.round((tabMetrics.marketValue / target2) * 100))}% Reached`,
         achieved: tabMetrics.marketValue >= target2,
       },
     ];
   }, [dailyAmount, tabMetrics.marketValue, tabMetrics.holdings.BTC.units]);
 
-  // Brand-New Feature 2: DCA Averaging Advantage (Cost vs Peak)
+  // Daily Saving Advantage (Cost vs Peak)
   const dcaAlpha = useMemo(() => {
-    // Weighted acquisition cost vs hypothetical peak market price
     return {
       advantagePct: 8.4,
       avgBtcPrice: 5840000,
@@ -146,7 +154,7 @@ export const InvestScreen: React.FC = () => {
     };
   }, []);
 
-  // Brand-New Feature 3: Net Realized Liquidity (1% TDS Transparency)
+  // Net Realized Liquidity (1% TDS Transparency)
   const netLiquidity = useMemo(() => {
     const grossVal = tabMetrics.marketValue;
     const tds1Pct = Math.round(grossVal * 0.01 * 100) / 100;
@@ -159,7 +167,7 @@ export const InvestScreen: React.FC = () => {
     };
   }, [tabMetrics.marketValue]);
 
-  // Asset P&L Contribution Breakdown (Filtered dynamically to held assets, calculated with real P&L and ROI)
+  // Asset Contribution Breakdown (Filtered dynamically to held assets)
   const assetAttribution = useMemo(() => {
     const rawList = [
       {
@@ -167,33 +175,31 @@ export const InvestScreen: React.FC = () => {
         name: 'Bitcoin',
         detail: tabMetrics.holdings.BTC,
         color: '#f7931b',
-        role: 'Store of Value Core',
+        role: "Digital Gold (World's #1 coin)",
       },
       {
         ticker: 'ETH',
         name: 'Ethereum',
         detail: tabMetrics.holdings.ETH,
         color: '#627eea',
-        role: 'Smart Contract Layer',
+        role: 'Digital Technology & Apps',
       },
       {
         ticker: 'SOL',
         name: 'Solana',
         detail: tabMetrics.holdings.SOL,
         color: '#9945fe',
-        role: 'High-Throughput Payments',
+        role: 'Fast Global Payments',
       },
       {
         ticker: 'USDT',
-        name: 'Tether USD',
+        name: 'Digital US Dollars',
         detail: tabMetrics.holdings.USDT,
         color: '#26a17b',
-        role: 'Capital Guard Reserve',
+        role: 'Capital Protection Reserve',
       },
     ];
 
-    // Filter to only currencies that the user has in their habit/portfolio (units > 0)
-    // If portfolio is empty, fallback to showing all 4 at zero baseline
     const hasAnyHoldings = rawList.some((item) => (item.detail?.units || 0) > 0.00000001);
     const active = hasAnyHoldings
       ? rawList.filter((item) => (item.detail?.units || 0) > 0.00000001)
@@ -206,7 +212,6 @@ export const InvestScreen: React.FC = () => {
       const rawGain = item.detail?.gainRupees ?? 0;
       const rawRoi = item.detail?.gainPercentage ?? 0;
 
-      // Clean zeros to avoid "-0" or "-0.0%" artifacts
       const pnlRupees = Math.abs(rawGain) < 0.5 ? 0 : Math.round(rawGain);
       const roiPct = Math.abs(rawRoi) < 0.05 ? 0 : Number(rawRoi.toFixed(1));
       const weight = Math.round((inrValue / totalHeldVal) * 100);
@@ -275,10 +280,10 @@ export const InvestScreen: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b" style={{ borderColor: colors.borderDim }}>
         <div>
           <h1 className="text-2xl font-bold tracking-tight" style={{ color: colors.textPrimary }}>
-            Strategy & Growth Engine
+            Grow Your Wealth
           </h1>
           <p className="text-xs sm:text-sm mt-0.5" style={{ color: colors.textSecondary }}>
-            Model long-term wealth compounding, verify rupee-cost averaging (RCA) alpha, and automate daily AutoPay execution
+            Choose your daily savings amount, see how your money compounds over time, and manage your automatic daily UPI.
           </p>
         </div>
 
@@ -299,9 +304,9 @@ export const InvestScreen: React.FC = () => {
 
       {/* ── 4 WATERMARK METRIC CARDS ──────────────────────────── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 font-mono">
-        {/* Card 1: Daily Auto-Save (Watermark: daily.jpg) */}
+        {/* Card 1: Daily Auto-Save */}
         <div
-          className="rounded-[18px] p-5 sm:p-6 border relative overflow-hidden backdrop-blur-md flex flex-col justify-between h-[132px]"
+          className="rounded-[18px] p-5 sm:p-6 lg:p-7 border relative overflow-hidden backdrop-blur-md flex flex-col justify-between min-h-[128px]"
           style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
         >
           <img
@@ -325,9 +330,9 @@ export const InvestScreen: React.FC = () => {
           </div>
         </div>
 
-        {/* Card 2: RCA Averaging Alpha (Watermark: Indian-Rupee-symbol.png) */}
+        {/* Card 2: Savings Advantage */}
         <div
-          className="rounded-[18px] p-5 sm:p-6 border relative overflow-hidden backdrop-blur-md flex flex-col justify-between h-[132px]"
+          className="rounded-[18px] p-5 sm:p-6 lg:p-7 border relative overflow-hidden backdrop-blur-md flex flex-col justify-between min-h-[128px]"
           style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
         >
           <img
@@ -337,22 +342,28 @@ export const InvestScreen: React.FC = () => {
             className="absolute -right-1 -top-1 w-20 h-20 sm:w-24 sm:h-24 object-contain pointer-events-none select-none opacity-[0.07] invert dark:invert-0"
           />
           <div className="relative z-10">
-            <span className="text-[11px] font-semibold uppercase tracking-wider block text-neutral-400">
-              RCA AVERAGING ALPHA
-            </span>
+            <div className="flex items-center gap-1">
+              <span className="text-[11px] font-semibold uppercase tracking-wider block text-neutral-400">
+                SAVINGS ADVANTAGE
+              </span>
+              <HelpBadge
+                title="Daily Saving Advantage"
+                content="By saving every morning, you automatically buy more coins when prices are low and less when prices are high, protecting you from bad timing."
+              />
+            </div>
             <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums text-emerald-400">
               +{dcaAlpha.advantagePct}%
             </div>
           </div>
           <div className="text-[11px] flex items-center gap-1.5 font-sans relative z-10" style={{ color: colors.textSecondary }}>
             <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Acquisition cost vs period peak</span>
+            <span>Lower buy price than peak</span>
           </div>
         </div>
 
-        {/* Card 3: 1Y Projected Valuation (Watermark: projected value.jpg) */}
+        {/* Card 3: Projected Value */}
         <div
-          className="rounded-[18px] p-5 sm:p-6 border relative overflow-hidden backdrop-blur-md flex flex-col justify-between h-[132px]"
+          className="rounded-[18px] p-5 sm:p-6 lg:p-7 border relative overflow-hidden backdrop-blur-md flex flex-col justify-between min-h-[128px]"
           style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
         >
           <img
@@ -362,9 +373,15 @@ export const InvestScreen: React.FC = () => {
             className="absolute -right-1 -top-1 w-20 h-20 sm:w-24 sm:h-24 object-contain pointer-events-none select-none opacity-[0.07] invert dark:invert-0"
           />
           <div className="relative z-10">
-            <span className="text-[11px] font-semibold uppercase tracking-wider block text-neutral-400">
-              {horizon.label} PROJECTED VALUE
-            </span>
+            <div className="flex items-center gap-1">
+              <span className="text-[11px] font-semibold uppercase tracking-wider block text-neutral-400">
+                {horizon.label} ESTIMATED VALUE
+              </span>
+              <HelpBadge
+                title="Estimated Growth"
+                content="Estimated value based on 365 days of consistent daily savings compounded at reference basket growth rates."
+              />
+            </div>
             <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums text-purple-400">
               <CountUp to={projection.futureValue} prefix="₹" duration={1} />
             </div>
@@ -375,9 +392,9 @@ export const InvestScreen: React.FC = () => {
           </div>
         </div>
 
-        {/* Card 4: Net Realized Liquidity (Watermark: liquidity.jpg with Rupee coin) */}
+        {/* Card 4: Instant Cashout */}
         <div
-          className="rounded-[18px] p-5 sm:p-6 border relative overflow-hidden backdrop-blur-md flex flex-col justify-between h-[132px]"
+          className="rounded-[18px] p-5 sm:p-6 lg:p-7 border relative overflow-hidden backdrop-blur-md flex flex-col justify-between min-h-[128px]"
           style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
         >
           <img
@@ -387,23 +404,29 @@ export const InvestScreen: React.FC = () => {
             className="absolute -right-2 -top-2 w-20 h-20 sm:w-24 sm:h-24 object-contain pointer-events-none select-none opacity-[0.07] invert dark:invert-0"
           />
           <div className="relative z-10">
-            <span className="text-[11px] font-semibold uppercase tracking-wider block text-neutral-400">
-              NET LIQUIDITY
-            </span>
+            <div className="flex items-center gap-1">
+              <span className="text-[11px] font-semibold uppercase tracking-wider block text-neutral-400">
+                INSTANT CASHOUT
+              </span>
+              <HelpBadge
+                title="Instant Bank Cashout"
+                content="Zero lock-in. You can withdraw your money straight to your bank account anytime via instant IMPS / UPI."
+              />
+            </div>
             <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums" style={{ color: colors.textPrimary }}>
               {netLiquidity.netPercentage}%
             </div>
           </div>
           <div className="text-[11px] flex items-center gap-1.5 font-sans relative z-10" style={{ color: colors.textSecondary }}>
             <Shield className="w-3.5 h-3.5 text-purple-400" />
-            <span>Less 1% TDS · Zero exit fee</span>
+            <span>Direct to bank • Zero exit fee</span>
           </div>
         </div>
       </div>
 
       {/* ── 68% / 32% INSTITUTIONAL GRID ─────────────────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-start">
-        {/* Left Column (68% width): Allocation Strategy, Daily Amount, Compounding Curve, DCA Alpha */}
+        {/* Left Column (68% width): Allocation Strategy, Daily Amount, Compounding Curve, Advantage */}
         <div className="lg:col-span-8 space-y-6">
           {/* Section 1: Basket Strategy Selector */}
           <SpotlightCard
@@ -414,10 +437,10 @@ export const InvestScreen: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-purple-400 block mb-0.5">
-                  Step 1 · Allocation Strategy
+                  Step 1 · Pick Your Mix
                 </span>
                 <h2 className="text-base font-bold" style={{ color: colors.textPrimary }}>
-                  Choose Your Crypto Basket
+                  Choose Your Savings Mix
                 </h2>
               </div>
               <span className="text-xs font-mono text-neutral-400">
@@ -454,19 +477,19 @@ export const InvestScreen: React.FC = () => {
                         </div>
                       ) : (
                         <span className="text-[10px] font-mono font-bold text-neutral-400 px-2 py-0.5 rounded border border-white/[0.08]">
-                          Min ₹{b.minDailyAmount}
+                          From ₹{b.minDailyAmount}/day
                         </span>
                       )}
                     </div>
 
                     <div className="text-xs font-mono font-semibold" style={{ color: isStable ? '#10B981' : '#F59E0B' }}>
-                      {isStable ? '85% USDT / 15% BTC' : '70% BTC / 20% ETH / 10% SOL'}
+                      {isStable ? '₹8.50 Digital USD + ₹1.50 BTC per ₹10' : '₹21 BTC + ₹6 ETH + ₹3 SOL per ₹30'}
                     </div>
 
                     <p className="text-[11px] mt-1.5 line-clamp-2" style={{ color: colors.textSecondary }}>
                       {isStable
-                        ? 'USD-pegged stable reserve shield. Minimal downside volatility with steady liquidity.'
-                        : 'Blue-chip long-term accumulation across the top 3 dominant decentralized networks.'}
+                        ? 'Shields your savings from market drops with dollar stability and steady growth.'
+                        : 'Captures the upside of the top 3 digital assets to build long-term wealth.'}
                     </p>
                   </button>
                 );
@@ -474,7 +497,7 @@ export const InvestScreen: React.FC = () => {
             </div>
           </SpotlightCard>
 
-          {/* Section 2: Daily SIP Amount */}
+          {/* Section 2: Daily Savings Amount */}
           <SpotlightCard
             spotlightColor="rgba(93, 23, 235, 0.08)"
             className="rounded-[20px] p-6 border shadow-xl space-y-5"
@@ -483,10 +506,10 @@ export const InvestScreen: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-purple-400 block mb-0.5">
-                  Step 2 · Disciplined Capital
+                  Step 2 · Pick Daily Amount
                 </span>
                 <h2 className="text-base font-bold" style={{ color: colors.textPrimary }}>
-                  Daily Investment Amount
+                  Daily Savings Amount
                 </h2>
               </div>
               <div className="text-right">
@@ -515,6 +538,12 @@ export const InvestScreen: React.FC = () => {
                 <span>Min: ₹{activeBasket.minDailyAmount}/day</span>
                 <span>Max: ₹500/day</span>
               </div>
+            </div>
+
+            {/* Everyday spending comparison */}
+            <div className="p-2.5 rounded-xl border flex items-center justify-between text-xs" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+              <span className="text-neutral-400">Daily equivalent:</span>
+              <span className="font-semibold text-emerald-400 font-mono">{getEverydayComparison(dailyAmount)}</span>
             </div>
 
             {/* Quick Preset Chips */}
@@ -557,7 +586,7 @@ export const InvestScreen: React.FC = () => {
                   Step 3 · Compounding Horizon
                 </span>
                 <h2 className="text-base font-bold" style={{ color: colors.textPrimary }}>
-                  Long-Term Wealth Trajectory
+                  Estimated Wealth Growth
                 </h2>
               </div>
 
@@ -628,15 +657,15 @@ export const InvestScreen: React.FC = () => {
 
               <div className="flex justify-between items-center text-[10px] font-mono text-neutral-400 pt-2 border-t mt-1" style={{ borderColor: colors.borderDim }}>
                 <span>Day 1 (₹0)</span>
-                <span>Principal: ₹{projection.totalInvested.toLocaleString('en-IN')}</span>
-                <span>Est. Gains: +₹{projection.totalGains.toLocaleString('en-IN')}</span>
+                <span>Total You Save: ₹{projection.totalInvested.toLocaleString('en-IN')}</span>
+                <span className="text-emerald-400 font-bold">Est. Profit: +₹{projection.totalGains.toLocaleString('en-IN')}</span>
               </div>
             </div>
 
-            {/* Wealth Runway Milestones (Council New Feature 2) */}
+            {/* Wealth Milestones */}
             <div className="pt-2">
               <span className="text-[11px] font-mono text-neutral-400 block mb-2">
-                Tangible Wealth Milestones (Runway Tracker)
+                Tangible Wealth Milestones
               </span>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {milestones.map((m) => (
@@ -659,7 +688,7 @@ export const InvestScreen: React.FC = () => {
             </div>
           </SpotlightCard>
 
-          {/* Section 4: The DCA Averaging Advantage (Council New Feature 1) */}
+          {/* Section 4: Daily Saving Advantage */}
           <SpotlightCard
             spotlightColor="rgba(16, 185, 129, 0.08)"
             className="rounded-[20px] p-6 border shadow-xl space-y-4"
@@ -689,7 +718,7 @@ export const InvestScreen: React.FC = () => {
                 <div className="text-base font-bold text-purple-400 tabular-nums">
                   ₹{(dcaAlpha.avgBtcPrice / 100000).toFixed(2)} Lakh / BTC
                 </div>
-                <span className="text-[10px] text-neutral-500">Disciplined 8:00 AM micro-fills</span>
+                <span className="text-[10px] text-neutral-500">Disciplined 8:00 AM daily auto-save</span>
               </div>
 
               <div className="p-3.5 rounded-xl border space-y-1 font-mono" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
@@ -697,15 +726,15 @@ export const InvestScreen: React.FC = () => {
                 <div className="text-base font-bold text-neutral-400 tabular-nums line-through">
                   ₹{(dcaAlpha.peakBtcPrice / 100000).toFixed(2)} Lakh / BTC
                 </div>
-                <span className="text-[10px] text-emerald-400">Avoided peak FOMO price</span>
+                <span className="text-[10px] text-emerald-400">Avoided peak market price</span>
               </div>
             </div>
           </SpotlightCard>
         </div>
 
-        {/* Right Column (32% width): Asset Attribution Ledger & AutoPay Controls */}
+        {/* Right Column (32% width): Asset Breakdown & AutoPay Controls */}
         <div className="lg:col-span-4 space-y-6">
-          {/* Card 1: Asset P&L Contribution Ledger (Replaces Redundant Monthly Bars) */}
+          {/* Card 1: Asset Breakdown */}
           <SpotlightCard
             spotlightColor="rgba(93, 23, 235, 0.08)"
             className="rounded-[20px] p-6 border shadow-xl space-y-4"
@@ -732,7 +761,7 @@ export const InvestScreen: React.FC = () => {
                 const formattedPnl = `${pnlSign}₹${Math.abs(asset.pnlRupees).toLocaleString('en-IN')}`;
 
                 const roiSign = isRoiGain ? '+' : '-';
-                const formattedRoi = `${roiSign}${Math.abs(asset.roiPct).toFixed(1)}% ROI`;
+                const formattedRoi = `${roiSign}${Math.abs(asset.roiPct).toFixed(1)}%`;
 
                 return (
                   <div key={asset.ticker} className="py-2.5 flex items-center justify-between">
@@ -765,37 +794,37 @@ export const InvestScreen: React.FC = () => {
           >
             <div>
               <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-purple-400 block mb-0.5">
-                Execution Spec
+                Auto-Save Details
               </span>
               <h3 className="text-base font-bold" style={{ color: colors.textPrimary }}>
-                UPI AutoPay Mandate Details
+                Daily UPI AutoPay Plan
               </h3>
             </div>
 
             {/* Execution Key Metrics */}
             <div className="divide-y divide-slate-200 dark:divide-white/[0.06] font-mono text-xs">
               <div className="py-2 flex justify-between items-center">
-                <span className="font-sans text-neutral-400">Daily Debit Amount</span>
+                <span className="font-sans text-neutral-400">Daily Amount</span>
                 <strong className="text-purple-400 font-bold tabular-nums">₹{dailyAmount} / day</strong>
               </div>
               <div className="py-2 flex justify-between items-center">
-                <span className="font-sans text-neutral-400">Monthly Run Rate</span>
+                <span className="font-sans text-neutral-400">Monthly Total</span>
                 <strong className="tabular-nums" style={{ color: colors.textPrimary }}>₹{Math.round(dailyAmount * 30.4).toLocaleString('en-IN')}</strong>
               </div>
               <div className="py-2 flex justify-between items-center">
-                <span className="font-sans text-neutral-400">Execution Schedule</span>
-                <strong style={{ color: colors.textPrimary }}>08:00 AM IST Daily</strong>
+                <span className="font-sans text-neutral-400">Schedule</span>
+                <strong style={{ color: colors.textPrimary }}>8:00 AM IST Daily</strong>
               </div>
               <div className="py-2 flex justify-between items-center">
                 <span className="font-sans text-neutral-400">Lock-in Period</span>
-                <span className="text-emerald-400 font-bold">Zero Days (Liquid)</span>
+                <span className="text-emerald-400 font-bold">Zero Days (Withdraw Anytime)</span>
               </div>
             </div>
 
-            {/* Net Realized Liquidity Transparency (Council Feature 3) */}
+            {/* Net Realized Liquidity Transparency */}
             <div className="p-3.5 rounded-xl border space-y-1.5 font-mono text-xs" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
               <div className="flex items-center justify-between font-sans">
-                <span className="font-semibold" style={{ color: colors.textPrimary }}>Net Realized Liquidity</span>
+                <span className="font-semibold" style={{ color: colors.textPrimary }}>What You Receive on Withdrawal</span>
                 <span className="text-emerald-400 font-bold">99% Payout</span>
               </div>
               <div className="flex justify-between text-[11px] text-neutral-400 pt-1">
@@ -803,13 +832,22 @@ export const InvestScreen: React.FC = () => {
                 <strong className="tabular-nums" style={{ color: colors.textPrimary }}>₹{netLiquidity.grossVal.toLocaleString('en-IN')}</strong>
               </div>
               <div className="flex justify-between text-[11px] text-neutral-400">
-                <span>Less 1% TDS (Sec 194S):</span>
+                <span className="flex items-center gap-1 font-sans">
+                  <span>Govt Tax (1% TDS):</span>
+                  <HelpBadge
+                    title="1% Tax Deducted at Source (TDS)"
+                    content="As per Indian tax law, 1% TDS is deducted on sales and deposited directly to the Income Tax Department against your PAN card. You can claim it back or offset it when filing your taxes. Satmix charges 0% exit fees."
+                  />
+                </span>
                 <strong className="text-rose-400 tabular-nums">-₹{netLiquidity.tds1Pct.toLocaleString('en-IN')}</strong>
               </div>
               <div className="flex justify-between text-[11px] text-purple-400 pt-1 border-t border-slate-200 dark:border-white/[0.06] font-bold">
                 <span>Net Bank Payout:</span>
                 <strong className="tabular-nums">₹{netLiquidity.netPayout.toLocaleString('en-IN')}</strong>
               </div>
+              <p className="text-[10px] text-neutral-400 pt-1 font-sans leading-relaxed">
+                *1% TDS is deposited directly to the Income Tax Department against your PAN card. Satmix charges zero exit penalties.
+              </p>
             </div>
 
             {/* Success message banner */}
@@ -878,7 +916,7 @@ export const InvestScreen: React.FC = () => {
                 className="w-full h-10 rounded-xl text-xs font-semibold border transition-all active:scale-[0.97] hover:bg-black/[0.04] dark:hover:bg-white/[0.04] flex items-center justify-center gap-1.5 cursor-pointer"
                 style={{ borderColor: colors.cardBorder, backgroundColor: colors.surface, color: colors.textPrimary }}
               >
-                <span>Authorize UPI AutoPay Mandate</span>
+                <span>Set Up Daily UPI AutoPay</span>
               </button>
             </div>
 

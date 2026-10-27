@@ -47,7 +47,7 @@ export const TrustStrip: React.FC = () => {
 
   return (
     <div
-      className="border-t border-b py-6 md:py-8 relative overflow-hidden"
+      className="border-t border-b py-8 md:py-10 relative overflow-hidden"
       style={{
         backgroundColor: colors.surface,
         borderColor: colors.borderDim,

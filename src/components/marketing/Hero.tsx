@@ -25,7 +25,7 @@ export const Hero: React.FC = () => {
   };
 
   return (
-    <section className="relative pt-6 sm:pt-10 md:pt-14 pb-14 sm:pb-20 md:pb-24 overflow-hidden">
+    <section className="relative pt-8 sm:pt-12 md:pt-16 pb-16 sm:pb-20 md:pb-24 overflow-hidden">
       {/* Dynamic Ambient Background Glows */}
       <div
         className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] sm:w-[900px] h-[500px] rounded-full blur-[140px] pointer-events-none opacity-20"

@@ -400,7 +400,7 @@ export const DashboardScreen: React.FC = () => {
       <div className="hidden sm:grid sm:grid-cols-3 gap-4 sm:gap-5 font-sans">
         {/* Card 1: Total Balance */}
         <div
-          className="relative overflow-hidden p-5 sm:p-6 rounded-[18px] border transition-all duration-300 flex flex-col justify-between h-[132px]"
+          className="relative overflow-hidden p-5 sm:p-6 lg:p-7 rounded-[18px] border transition-all duration-300 flex flex-col justify-between min-h-[128px]"
           style={{
             backgroundColor: themeMode === 'dark' ? '#0B0F15' : '#FFFFFF',
             borderColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
@@ -431,7 +431,7 @@ export const DashboardScreen: React.FC = () => {
 
         {/* Card 2: Today's P&L */}
         <div
-          className="relative overflow-hidden p-5 sm:p-6 rounded-[18px] border transition-all duration-300 flex flex-col justify-between h-[132px]"
+          className="relative overflow-hidden p-5 sm:p-6 lg:p-7 rounded-[18px] border transition-all duration-300 flex flex-col justify-between min-h-[128px]"
           style={{
             backgroundColor: themeMode === 'dark' ? '#0B0F15' : '#FFFFFF',
             borderColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
@@ -465,7 +465,7 @@ export const DashboardScreen: React.FC = () => {
 
         {/* Card 3: Total Return */}
         <div
-          className="relative overflow-hidden p-5 sm:p-6 rounded-[18px] border transition-all duration-300 flex flex-col justify-between h-[132px]"
+          className="relative overflow-hidden p-5 sm:p-6 lg:p-7 rounded-[18px] border transition-all duration-300 flex flex-col justify-between min-h-[128px]"
           style={{
             backgroundColor: themeMode === 'dark' ? '#0B0F15' : '#FFFFFF',
             borderColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
@@ -586,13 +586,13 @@ export const DashboardScreen: React.FC = () => {
             {/* Timeframe & Action Buttons (Single Unified Row on Mobile) */}
             <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-3 w-full sm:w-auto flex-nowrap">
               {/* Horizon / Timeframe Tabs */}
-              <div className="h-8 flex items-center gap-0.5 sm:gap-1 p-1 rounded-xl border text-[11px] sm:text-xs font-mono" style={{ backgroundColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.04)' : 'rgba(0, 0, 0, 0.03)', borderColor: colors.borderDim }}>
+              <div className="h-8 flex items-center gap-1 sm:gap-1.5 p-1 rounded-xl border text-[11px] sm:text-xs font-mono" style={{ backgroundColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.04)' : 'rgba(0, 0, 0, 0.03)', borderColor: colors.borderDim }}>
                 {(['1W', '1M', '3M', '1Y', 'ALL'] as const).map((t) => (
                   <button
                     key={t}
                     type="button"
                     onClick={() => setTimeframe(t)}
-                    className={`h-full px-2 sm:px-2.5 rounded-lg font-bold flex items-center justify-center transition-colors cursor-pointer select-none active:scale-[0.96] ${
+                    className={`h-full px-2.5 sm:px-3 rounded-lg font-bold flex items-center justify-center transition-colors cursor-pointer select-none active:scale-[0.96] ${
                       timeframe === t ? 'bg-[#5D17EB]/20 text-purple-600 dark:text-[#A78BFA] border border-[#8B5CF6]/40' : 'text-neutral-500 hover:text-slate-900 dark:text-neutral-400 dark:hover:text-white'
                     }`}
                   >
