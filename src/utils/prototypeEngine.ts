@@ -112,16 +112,23 @@ export function loadPrototypeState(): PrototypeState {
     const migratedState: PrototypeState = {
       ...initial,
       ...parsed,
+      users: Array.isArray(parsed?.users) ? parsed.users : [],
+      activity: Array.isArray(parsed?.activity) ? parsed.activity : [],
+      valueHistory: Array.isArray(parsed?.valueHistory) ? parsed.valueHistory : [],
+      notifications: { ...initial.notifications, ...(parsed?.notifications || {}) },
+      savedStreak: { ...initial.savedStreak, ...(parsed?.savedStreak || {}) },
       habits: {
         stable: {
           ...initial.habits.stable,
           ...(stableParsed || {}),
           dailyAmount: stableDaily,
+          holdings: { ...initial.habits.stable.holdings, ...(stableParsed?.holdings || {}) },
         },
         growth: {
           ...initial.habits.growth,
           ...(growthParsed || {}),
           dailyAmount: growthDaily,
+          holdings: { ...initial.habits.growth.holdings, ...(growthParsed?.holdings || {}) },
         },
       },
     };
@@ -260,7 +267,10 @@ export function accrueMissingDays(
   state: PrototypeState,
   livePrices: LiveCoinPrices = FALLBACK_LIVE_PRICES
 ): { state: PrototypeState; accruedCount: number } {
+  if (!state) return { state: createInitialPrototypeState(), accruedCount: 0 };
   const nextState: PrototypeState = JSON.parse(JSON.stringify(state));
+  if (!Array.isArray(nextState.activity)) nextState.activity = [];
+  if (!nextState.habits) nextState.habits = createInitialPrototypeState().habits;
   let accruedCount = 0;
 
   const today = new Date();

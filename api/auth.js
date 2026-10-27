@@ -87,6 +87,9 @@ export default async function handler(req, res) {
         const data = await response.json().catch(() => ({}));
 
         if (data && data.user) {
+          if (!data.user.createdAt) {
+            data.user.createdAt = new Date().toISOString();
+          }
           return res.status(200).json({
             success: true,
             found: true,

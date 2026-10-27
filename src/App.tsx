@@ -14,6 +14,7 @@ import { Footer } from './components/marketing/Footer';
 import { FloatingActionDock } from './components/marketing/FloatingActionDock';
 import { CookieBanner } from './components/common/CookieBanner';
 import { TesterBar } from './components/tester/TesterBar';
+import { ErrorBoundary } from './components/common/ErrorBoundary';
 
 // Lazy-loaded dynamic code-split routes (reduces initial marketing bundle payload)
 const AuthModal = React.lazy(() => import('./components/auth/AuthModal').then(m => ({ default: m.AuthModal })));
@@ -55,41 +56,43 @@ export function AppContent() {
 
         {/* 2. AUTHENTICATION / APP / LEGAL VIEWS (CODE-SPLIT DYNAMIC CHUNKS) */}
         {viewMode !== 'marketing' && (
-          <React.Suspense
-            fallback={
-              <div className="min-h-screen flex items-center justify-center font-mono text-xs" style={{ color: colors.textSecondary }}>
-                Loading Satmix...
-              </div>
-            }
-          >
-            {/* 2. AUTHENTICATION / QUIZ VIEW */}
-            {viewMode === 'auth' && (
-              <>
-                {authSubView === 'quiz' ? <RiskQuiz /> : <AuthModal />}
-              </>
-            )}
+          <ErrorBoundary>
+            <React.Suspense
+              fallback={
+                <div className="min-h-screen flex items-center justify-center font-mono text-xs" style={{ color: colors.textSecondary }}>
+                  Loading Satmix...
+                </div>
+              }
+            >
+              {/* 2. AUTHENTICATION / QUIZ VIEW */}
+              {viewMode === 'auth' && (
+                <>
+                  {authSubView === 'quiz' ? <RiskQuiz /> : <AuthModal />}
+                </>
+              )}
 
-            {/* 3. AUTHENTICATED WEB APP VIEW (satmix mobile app clone) */}
-            {viewMode === 'app' && <AppShell />}
+              {/* 3. AUTHENTICATED WEB APP VIEW (satmix mobile app clone) */}
+              {viewMode === 'app' && <AppShell />}
 
-            {/* 4. PRIVACY POLICY PAGE (DPDP ACT 2023) */}
-            {viewMode === 'privacy' && <PrivacyPolicyPage />}
+              {/* 4. PRIVACY POLICY PAGE (DPDP ACT 2023) */}
+              {viewMode === 'privacy' && <PrivacyPolicyPage />}
 
-            {/* 5. TERMS & CONDITIONS PAGE */}
-            {viewMode === 'terms' && <TermsConditionsPage />}
+              {/* 5. TERMS & CONDITIONS PAGE */}
+              {viewMode === 'terms' && <TermsConditionsPage />}
 
-            {/* 6. REFUND & CANCELLATION POLICY PAGE */}
-            {viewMode === 'refund' && <RefundPolicyPage />}
+              {/* 6. REFUND & CANCELLATION POLICY PAGE */}
+              {viewMode === 'refund' && <RefundPolicyPage />}
 
-            {/* 7. COOKIE POLICY & PREFERENCES PAGE */}
-            {viewMode === 'cookies' && <CookiePolicyPage />}
+              {/* 7. COOKIE POLICY & PREFERENCES PAGE */}
+              {viewMode === 'cookies' && <CookiePolicyPage />}
 
-            {/* 8. THANK YOU / CONFIRMATION PAGE */}
-            {viewMode === 'thank-you' && <ThankYouPage />}
+              {/* 8. THANK YOU / CONFIRMATION PAGE */}
+              {viewMode === 'thank-you' && <ThankYouPage />}
 
-            {/* 10. CUSTOM 404 ERROR PAGE */}
-            {viewMode === '404' && <NotFoundPage />}
-          </React.Suspense>
+              {/* 10. CUSTOM 404 ERROR PAGE */}
+              {viewMode === '404' && <NotFoundPage />}
+            </React.Suspense>
+          </ErrorBoundary>
         )}
       </div>
 
@@ -103,5 +106,9 @@ export function AppContent() {
 }
 
 export default function App() {
-  return <AppContent />;
+  return (
+    <ErrorBoundary>
+      <AppContent />
+    </ErrorBoundary>
+  );
 }

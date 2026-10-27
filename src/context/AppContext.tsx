@@ -142,6 +142,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       if (path.includes('refund') || params.get('view') === 'refund') return 'refund';
       if (path.includes('cookies') || params.get('view') === 'cookies') return 'cookies';
       if (path.includes('thank-you') || params.get('view') === 'thank-you') return 'thank-you';
+      if (path.includes('app') || params.get('view') === 'app') return 'app';
+      if (params.get('view') === 'login' || params.get('view') === 'auth') return 'auth';
       return 'marketing';
     } catch {
       return 'marketing';
@@ -221,33 +223,45 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return () => clearInterval(interval);
   }, [refreshPricesAndAccrue]);
 
-  // Derived Active User
+  // Derived Active User (Hardened against WebKit invalid date exceptions & empty records)
   const activeUser = useMemo(() => {
     if (!prototypeState.sessionUserId) return null;
-    const found = prototypeState.users.find((u) => u.id === prototypeState.sessionUserId);
+    const usersList = Array.isArray(prototypeState.users) ? prototypeState.users : [];
+    const found = usersList.find((u) => u && u.id === prototypeState.sessionUserId);
     if (!found) return null;
 
+    const safeName = (found.name || 'Veer Khanna').trim();
     const initials =
-      found.name
-        .trim()
+      safeName
         .split(' ')
+        .filter(Boolean)
         .map((p) => p[0])
         .join('')
         .toUpperCase()
         .slice(0, 2) || 'VK';
 
+    let memberSince = 'Oct 2026';
+    if (found.createdAt) {
+      try {
+        const d = new Date(found.createdAt);
+        if (!isNaN(d.getTime())) {
+          memberSince = d.toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
+        }
+      } catch {}
+    }
+
     const userProfile: UserProfile = {
       id: found.id,
-      name: found.name,
+      name: safeName,
       email: found.email || '',
       phone: found.phone || '',
       initials,
-      memberSince: new Date(found.createdAt).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }),
+      memberSince,
       kycStatus: 'UNVERIFIED',
       panNumberMasked: '',
       bankName: 'HDFC Bank',
       bankAccountMasked: '•••• 4129',
-      vpa: `${found.name.toLowerCase().replace(/[^a-z0-9]/g, '')}@okhdfcbank`,
+      vpa: `${safeName.toLowerCase().replace(/[^a-z0-9]/g, '') || 'satmix'}@okhdfcbank`,
       pinHash: found.password || '',
     };
     return userProfile;
@@ -366,7 +380,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Transaction Adapter (derived from activity ledger for unified views)
   const transactions: Transaction[] = useMemo(() => {
-    return prototypeState.activity.map((act) => {
+    const rawActivity = Array.isArray(prototypeState?.activity) ? prototypeState.activity : [];
+    return rawActivity.map((act) => {
       const basketName = act.basketId === 'stable' ? 'Stable Basket' : 'Growth Basket';
       const isDeposit = act.type === 'deposit';
       const isWithdrawal = act.type === 'withdrawal' || act.amount < 0;
@@ -620,19 +635,62 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
 
       // Hydrate local state with target user and their synchronized portfolio state
+      const safeCreatedAt = targetUser.createdAt && !isNaN(new Date(targetUser.createdAt).getTime())
+        ? targetUser.createdAt
+        : new Date().toISOString();
+
+      const hydratedUser = {
+        ...targetUser,
+        createdAt: safeCreatedAt,
+        name: (targetUser.name || 'Veer Khanna').trim(),
+        email: (targetUser.email || '').trim().toLowerCase(),
+        phone: targetUser.phone || '',
+      };
+
       updateStateAndPersist((prev) => {
-        const userExists = prev.users.some(
-          (u) => u.id === targetUser!.id || (u.email && u.email.toLowerCase() === targetUser!.email.toLowerCase())
+        const existingUsers = Array.isArray(prev.users) ? prev.users : [];
+        const userExists = existingUsers.some(
+          (u) => u && (u.id === hydratedUser.id || (u.email && u.email.toLowerCase() === hydratedUser.email.toLowerCase()))
         );
         const updatedUsers = userExists
-          ? prev.users.map((u) => (u.id === targetUser!.id ? targetUser! : u))
-          : [...prev.users, targetUser!];
+          ? existingUsers.map((u) => (u && u.id === hydratedUser.id ? hydratedUser : u))
+          : [...existingUsers, hydratedUser];
 
         return {
           ...prev,
           ...(cloudUserState || {}),
+          habits: {
+            ...prev.habits,
+            ...(cloudUserState?.habits || {}),
+            stable: {
+              ...prev.habits?.stable,
+              ...(cloudUserState?.habits?.stable || {}),
+              holdings: {
+                ...(prev.habits?.stable?.holdings || {}),
+                ...(cloudUserState?.habits?.stable?.holdings || {}),
+              },
+            },
+            growth: {
+              ...prev.habits?.growth,
+              ...(cloudUserState?.habits?.growth || {}),
+              holdings: {
+                ...(prev.habits?.growth?.holdings || {}),
+                ...(cloudUserState?.habits?.growth?.holdings || {}),
+              },
+            },
+          },
+          activity: Array.isArray(cloudUserState?.activity)
+            ? cloudUserState.activity
+            : (Array.isArray(prev.activity) ? prev.activity : []),
+          valueHistory: Array.isArray(cloudUserState?.valueHistory)
+            ? cloudUserState.valueHistory
+            : (Array.isArray(prev.valueHistory) ? prev.valueHistory : []),
+          savedStreak: {
+            ...(prev.savedStreak || {}),
+            ...(cloudUserState?.savedStreak || {}),
+          },
           users: updatedUsers,
-          sessionUserId: targetUser!.id,
+          sessionUserId: hydratedUser.id,
           tutorialDone: true,
           quizCompleted: true,
         };
