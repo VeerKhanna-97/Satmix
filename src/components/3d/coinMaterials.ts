@@ -220,38 +220,38 @@ function renderFaceColorPass(ctx: CanvasRenderingContext2D, asset: CryptoAsset, 
   ctx.fillRect(0, 0, TEXTURE_RES, TEXTURE_RES);
 
   // 2. Concentric minted rings & fluted bevel grooves
-  // Outer bright highlight ring
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.28)';
-  ctx.lineWidth = 10;
+  // Outer bright highlight ring (exact rim boundary: 512px)
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
+  ctx.lineWidth = 12;
   ctx.beginPath();
-  ctx.arc(center, center, 468, 0, Math.PI * 2);
+  ctx.arc(center, center, 502, 0, Math.PI * 2);
   ctx.stroke();
 
   // Stepped inner shadow groove
-  ctx.strokeStyle = 'rgba(0, 0, 0, 0.32)';
-  ctx.lineWidth = 6;
+  ctx.strokeStyle = 'rgba(0, 0, 0, 0.35)';
+  ctx.lineWidth = 8;
   ctx.beginPath();
-  ctx.arc(center, center, 446, 0, Math.PI * 2);
+  ctx.arc(center, center, 482, 0, Math.PI * 2);
   ctx.stroke();
 
   // Milled beaded ring (72 circular micro-dots)
   const dotCount = 72;
-  const dotRadius = 428;
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.38)';
+  const dotRadius = 462;
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
   for (let i = 0; i < dotCount; i++) {
     const a = (i / dotCount) * Math.PI * 2;
     const x = center + dotRadius * Math.cos(a);
     const y = center + dotRadius * Math.sin(a);
     ctx.beginPath();
-    ctx.arc(x, y, 2.8, 0, Math.PI * 2);
+    ctx.arc(x, y, 3.2, 0, Math.PI * 2);
     ctx.fill();
   }
 
   // Inner hairline ring
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.16)';
-  ctx.lineWidth = 2.5;
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+  ctx.lineWidth = 3;
   ctx.beginPath();
-  ctx.arc(center, center, 412, 0, Math.PI * 2);
+  ctx.arc(center, center, 442, 0, Math.PI * 2);
   ctx.stroke();
 
   // Radial lathe reflection lines
@@ -289,38 +289,38 @@ function renderFaceBumpPass(ctx: CanvasRenderingContext2D, asset: CryptoAsset, l
   ctx.fillStyle = '#808080';
   ctx.fillRect(0, 0, TEXTURE_RES, TEXTURE_RES);
 
-  // Outer raised rim plateau
-  ctx.strokeStyle = '#D8D8D8';
-  ctx.lineWidth = 22;
+  // Outer raised rim plateau (exact boundary to rim)
+  ctx.strokeStyle = '#E0E0E0';
+  ctx.lineWidth = 16;
   ctx.beginPath();
-  ctx.arc(center, center, 466, 0, Math.PI * 2);
+  ctx.arc(center, center, 502, 0, Math.PI * 2);
   ctx.stroke();
 
   // Rim groove (recessed dark notch)
-  ctx.strokeStyle = '#383838';
-  ctx.lineWidth = 8;
+  ctx.strokeStyle = '#303030';
+  ctx.lineWidth = 10;
   ctx.beginPath();
-  ctx.arc(center, center, 446, 0, Math.PI * 2);
+  ctx.arc(center, center, 482, 0, Math.PI * 2);
   ctx.stroke();
 
   // Milled beaded ring (raised dots)
   const dotCount = 72;
-  const dotRadius = 428;
-  ctx.fillStyle = '#C4C4C4';
+  const dotRadius = 462;
+  ctx.fillStyle = '#D0D0D0';
   for (let i = 0; i < dotCount; i++) {
     const a = (i / dotCount) * Math.PI * 2;
     const x = center + dotRadius * Math.cos(a);
     const y = center + dotRadius * Math.sin(a);
     ctx.beginPath();
-    ctx.arc(x, y, 3.2, 0, Math.PI * 2);
+    ctx.arc(x, y, 3.6, 0, Math.PI * 2);
     ctx.fill();
   }
 
   // Inner accent line
-  ctx.strokeStyle = '#A8A8A8';
+  ctx.strokeStyle = '#B0B0B0';
   ctx.lineWidth = 3;
   ctx.beginPath();
-  ctx.arc(center, center, 412, 0, Math.PI * 2);
+  ctx.arc(center, center, 442, 0, Math.PI * 2);
   ctx.stroke();
 
   // Micro lathe concentric turn rings
@@ -523,10 +523,10 @@ export function getCoinGeometry(): THREE.BufferGeometry {
     const x2 = innerRadius * Math.cos(theta2);
     const z2 = innerRadius * Math.sin(theta2);
 
-    const uv1u = 0.5 + (x1 / (2 * outerRadius));
-    const uv1v = 0.5 - (z1 / (2 * outerRadius));
-    const uv2u = 0.5 + (x2 / (2 * outerRadius));
-    const uv2v = 0.5 - (z2 / (2 * outerRadius));
+    const uv1u = 0.5 + x1 / (2 * innerRadius);
+    const uv1v = 0.5 - z1 / (2 * innerRadius);
+    const uv2u = 0.5 + x2 / (2 * innerRadius);
+    const uv2v = 0.5 - z2 / (2 * innerRadius);
 
     positions.push(0, frontY, 0, x1, frontY, z1, x2, frontY, z2);
     normals.push(0, 1, 0, 0, 1, 0, 0, 1, 0);
@@ -546,10 +546,10 @@ export function getCoinGeometry(): THREE.BufferGeometry {
     const x2 = innerRadius * Math.cos(theta2);
     const z2 = innerRadius * Math.sin(theta2);
 
-    const uv1u = 0.5 - (x1 / (2 * outerRadius));
-    const uv1v = 0.5 - (z1 / (2 * outerRadius));
-    const uv2u = 0.5 - (x2 / (2 * outerRadius));
-    const uv2v = 0.5 - (z2 / (2 * outerRadius));
+    const uv1u = 0.5 - x1 / (2 * innerRadius);
+    const uv1v = 0.5 - z1 / (2 * innerRadius);
+    const uv2u = 0.5 - x2 / (2 * innerRadius);
+    const uv2v = 0.5 - z2 / (2 * innerRadius);
 
     positions.push(0, backY, 0, x2, backY, z2, x1, backY, z1);
     normals.push(0, -1, 0, 0, -1, 0, 0, -1, 0);
