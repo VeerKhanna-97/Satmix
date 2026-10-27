@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   TrendingUp,
   ArrowUpRight,
@@ -21,10 +21,6 @@ interface Phone3DModelProps {
 export const Phone3DModel: React.FC<Phone3DModelProps> = ({ className = '', onOpenApp }) => {
   const { colors, setViewMode, setAuthSubView, isAuthenticated } = useApp();
 
-  // Horizon filter state (interactive)
-  const [horizon, setHorizon] = useState<'1W' | '1M' | '3M' | '1Y' | 'ALL'>('1M');
-  const [activeMix, setActiveMix] = useState<'all' | 'stable' | 'growth'>('all');
-
   const handleClickAction = () => {
     if (onOpenApp) {
       onOpenApp();
@@ -46,7 +42,7 @@ export const Phone3DModel: React.FC<Phone3DModelProps> = ({ className = '', onOp
         }}
       />
 
-      {/* ── PHONE CHASSIS (Completely Flat / Front-Facing with Zero Tilt) ── */}
+      {/* ── PHONE CHASSIS (Front-Facing with 3D Beveled Depth & Pure Static Display) ── */}
       <div
         onClick={handleClickAction}
         role="button"
@@ -60,14 +56,14 @@ export const Phone3DModel: React.FC<Phone3DModelProps> = ({ className = '', onOp
         aria-label="Open Satmix WebApp Dashboard"
         className="relative cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50 rounded-[48px] active:scale-[0.99] transition-transform duration-200"
       >
-        {/* Left Side: Volume Buttons */}
+        {/* Left Side: Tactile Volume Buttons */}
         <div className="absolute -left-[4px] top-[135px] w-[4px] h-[44px] rounded-l-sm bg-[#2A2C38] border-l border-y border-white/20 shadow-xs pointer-events-none z-30" />
         <div className="absolute -left-[4px] top-[190px] w-[4px] h-[44px] rounded-l-sm bg-[#2A2C38] border-l border-y border-white/20 shadow-xs pointer-events-none z-30" />
 
         {/* Right Side: Power Button */}
         <div className="absolute -right-[4px] top-[165px] w-[4px] h-[60px] rounded-r-sm bg-[#2A2C38] border-r border-y border-white/20 shadow-xs pointer-events-none z-30" />
 
-        {/* ── TITANIUM OUTER BEZEL (Crisp Frontal Phone Silhouette) ── */}
+        {/* ── TITANIUM OUTER BEZEL (Crisp Frontal Phone Silhouette with Specular Depth) ── */}
         <div
           className="relative w-[300px] min-[360px]:w-[325px] sm:w-[350px] h-[650px] min-[360px]:h-[685px] sm:h-[715px] rounded-[48px] p-[8px] sm:p-[10px] bg-gradient-to-b from-[#383B4A] via-[#1D1F2A] to-[#11121A] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.95),0_0_0_1px_rgba(255,255,255,0.18),0_0_40px_rgba(93,23,235,0.25)]"
         >
@@ -87,20 +83,15 @@ export const Phone3DModel: React.FC<Phone3DModelProps> = ({ className = '', onOp
                 </div>
               </div>
 
-              {/* ── PHONE SCREEN CONTENT (Matching the New Cleaner Dashboard View) ── */}
-              <div className="flex-1 flex flex-col justify-start px-3 sm:px-3.5 pt-9 sm:pt-10 pb-16 overflow-y-auto no-scrollbar space-y-3 select-none">
+              {/* ── PHONE SCREEN CONTENT (Matching the New Cleaner Dashboard View Exactly) ── */}
+              <div className="flex-1 flex flex-col justify-start px-3 sm:px-3.5 pt-9 sm:pt-10 pb-16 overflow-hidden space-y-3 select-none pointer-events-none">
                 
                 {/* 1. App Top Bar */}
                 <div className="flex items-center justify-between pb-0.5">
                   <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={handleClickAction}
-                      className="p-1 rounded-lg text-white/70 hover:text-white transition-colors"
-                      aria-label="Back"
-                    >
+                    <div className="p-1 rounded-lg text-white/70">
                       <ChevronLeft className="w-4 h-4" />
-                    </button>
+                    </div>
                     <div className="w-7 h-7 rounded-xl overflow-hidden bg-gradient-to-br from-[#7C3AED] to-[#5D17EB] flex items-center justify-center shadow-md p-0.5 border border-white/20">
                       <img src="/assets/images/satmix-logo.jpg" alt="Satmix Logo" className="w-full h-full object-cover rounded-lg" />
                     </div>
@@ -117,7 +108,7 @@ export const Phone3DModel: React.FC<Phone3DModelProps> = ({ className = '', onOp
                   </div>
                 </div>
 
-                {/* 2. CARD 1: Total Balance Master Card with Watermark & 2-Column Split */}
+                {/* 2. CARD 1: Total Balance Master Card with Positive Growth P&L */}
                 <div className="relative overflow-hidden rounded-[22px] bg-[#0B0F15] border border-white/[0.08] p-4 sm:p-4.5 shadow-lg">
                   {/* Large Indian Rupee Watermark */}
                   <IndianRupee
@@ -130,10 +121,10 @@ export const Phone3DModel: React.FC<Phone3DModelProps> = ({ className = '', onOp
                       TOTAL BALANCE
                     </span>
                     <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 text-white tabular-nums">
-                      ₹2,127.79
+                      ₹2,185.87
                     </div>
-                    <div className="inline-flex items-center gap-1 text-[11px] font-bold font-mono mt-1 text-rose-400">
-                      <span>↘ -5.43%</span>
+                    <div className="inline-flex items-center gap-1 text-[11px] font-bold font-mono mt-1 text-emerald-400">
+                      <span>↗ +12.45%</span>
                       <span className="text-neutral-400 font-normal">vs last month</span>
                     </div>
                   </div>
@@ -148,11 +139,11 @@ export const Phone3DModel: React.FC<Phone3DModelProps> = ({ className = '', onOp
                       <span className="text-[9px] font-semibold uppercase tracking-wider font-mono text-neutral-400 block">
                         TODAY'S P&L
                       </span>
-                      <div className="text-base font-extrabold font-mono text-rose-500 mt-0.5 tabular-nums">
-                        -₹122.21
+                      <div className="text-base font-extrabold font-mono text-emerald-400 mt-0.5 tabular-nums">
+                        +₹104.13
                       </div>
-                      <div className="text-[10px] font-bold font-mono text-rose-400 mt-0.5">
-                        ↘ -0.65%
+                      <div className="text-[10px] font-bold font-mono text-emerald-400 mt-0.5">
+                        ↗ +0.55%
                       </div>
                     </div>
 
@@ -162,10 +153,10 @@ export const Phone3DModel: React.FC<Phone3DModelProps> = ({ className = '', onOp
                         TOTAL RETURN
                       </span>
                       <div className="text-base font-extrabold font-mono text-white mt-0.5 tabular-nums">
-                        -5.4%
+                        +14.8%
                       </div>
-                      <div className="text-[10px] font-bold font-mono text-rose-400 mt-0.5">
-                        ↘ -5.4%
+                      <div className="text-[10px] font-bold font-mono text-emerald-400 mt-0.5">
+                        ↗ +14.8%
                       </div>
                     </div>
                   </div>
@@ -185,32 +176,32 @@ export const Phone3DModel: React.FC<Phone3DModelProps> = ({ className = '', onOp
                     </div>
                     <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 font-bold text-[11px] font-mono">
                       <TrendingUp className="w-3 h-3 flex-shrink-0" />
-                      <span>+96.80%</span>
+                      <span>+94.92%</span>
                     </div>
                   </div>
 
-                  {/* High-Fidelity SVG Trajectory Chart */}
+                  {/* High-Fidelity Straight / Curved Upward Trajectory Matching Reference */}
                   <div className="relative w-full h-24 sm:h-28 pt-1">
                     <svg className="w-full h-full overflow-visible" viewBox="0 0 280 85" preserveAspectRatio="none">
                       <defs>
                         <linearGradient id="purpleTrajectoryGrad" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#8B5CF6" stopOpacity="0.4" />
+                          <stop offset="0%" stopColor="#8B5CF6" stopOpacity="0.45" />
                           <stop offset="100%" stopColor="#8B5CF6" stopOpacity="0.0" />
                         </linearGradient>
                       </defs>
 
-                      {/* Dashed reference guide line */}
-                      <line x1="0" y1="72" x2="280" y2="15" stroke="rgba(255,255,255,0.2)" strokeWidth="1.2" strokeDasharray="3 3" />
+                      {/* Dashed reference target line */}
+                      <line x1="0" y1="78" x2="280" y2="12" stroke="rgba(255,255,255,0.22)" strokeWidth="1.2" strokeDasharray="3 3" />
 
                       {/* Area gradient under trajectory */}
                       <path
-                        d="M 0 72 Q 70 60 140 40 T 280 18 L 280 85 L 0 85 Z"
+                        d="M 0 78 L 280 18 L 280 85 L 0 85 Z"
                         fill="url(#purpleTrajectoryGrad)"
                       />
 
-                      {/* Glowing Violet Trajectory Curve */}
+                      {/* Glowing Violet Performance Trajectory Line */}
                       <path
-                        d="M 0 72 Q 70 60 140 40 T 280 18"
+                        d="M 0 78 L 280 18"
                         fill="none"
                         stroke="#A855F7"
                         strokeWidth="2.5"
@@ -221,86 +212,45 @@ export const Phone3DModel: React.FC<Phone3DModelProps> = ({ className = '', onOp
 
                   {/* Date Axis */}
                   <div className="flex justify-between text-[9px] font-mono text-neutral-400 px-1 pt-0.5">
-                    <span>28 Sept</span>
-                    <span>13 Oct</span>
-                    <span>27 Oct</span>
+                    <span>29 Sept</span>
+                    <span>14 Oct</span>
+                    <span>28 Oct</span>
                   </div>
 
-                  {/* Mix Switcher Tabs (All Mixes, Stable Mix, Growth Mix) */}
+                  {/* Mix Switcher Tabs (Static Display Matching Attached Dashboard) */}
                   <div className="grid grid-cols-3 gap-1 p-1 rounded-xl bg-white/[0.04] border border-white/[0.06] text-center">
-                    <button
-                      type="button"
-                      onClick={(e) => { e.stopPropagation(); setActiveMix('all'); }}
-                      className={`py-1.5 rounded-lg text-xs font-bold transition-all ${
-                        activeMix === 'all'
-                          ? 'bg-[#5D17EB] text-white shadow-xs'
-                          : 'text-neutral-400 hover:text-white'
-                      }`}
-                    >
+                    <div className="py-1.5 rounded-lg text-xs font-bold bg-[#5D17EB] text-white shadow-xs">
                       All Mixes
-                    </button>
-                    <button
-                      type="button"
-                      onClick={(e) => { e.stopPropagation(); setActiveMix('stable'); }}
-                      className={`py-1.5 rounded-lg text-xs font-bold transition-all ${
-                        activeMix === 'stable'
-                          ? 'bg-[#5D17EB] text-white shadow-xs'
-                          : 'text-neutral-400 hover:text-white'
-                      }`}
-                    >
+                    </div>
+                    <div className="py-1.5 rounded-lg text-xs font-bold text-neutral-400">
                       Stable Mix
-                    </button>
-                    <button
-                      type="button"
-                      onClick={(e) => { e.stopPropagation(); setActiveMix('growth'); }}
-                      className={`py-1.5 rounded-lg text-xs font-bold transition-all ${
-                        activeMix === 'growth'
-                          ? 'bg-[#5D17EB] text-white shadow-xs'
-                          : 'text-neutral-400 hover:text-white'
-                      }`}
-                    >
+                    </div>
+                    <div className="py-1.5 rounded-lg text-xs font-bold text-neutral-400">
                       Growth Mix
-                    </button>
+                    </div>
                   </div>
 
                   {/* Time Horizon Pills + Action Buttons in the EXACT SAME Row */}
                   <div className="flex items-center justify-between gap-1.5 pt-1">
                     {/* Time Horizon Pills */}
                     <div className="h-7 flex items-center gap-0.5 p-0.5 rounded-lg bg-white/[0.04] border border-white/[0.06] text-[10px] font-mono">
-                      {(['1W', '1M', '3M', '1Y', 'ALL'] as const).map((h) => (
-                        <button
-                          key={h}
-                          type="button"
-                          onClick={(e) => { e.stopPropagation(); setHorizon(h); }}
-                          className={`h-full px-1.5 rounded-md font-bold flex items-center justify-center transition-all ${
-                            horizon === h
-                              ? 'bg-[#5D17EB]/20 text-[#A78BFA] border border-[#8B5CF6]/40'
-                              : 'text-neutral-400 hover:text-white'
-                          }`}
-                        >
-                          {h}
-                        </button>
-                      ))}
+                      <span className="h-full px-1.5 rounded-md font-bold flex items-center justify-center text-neutral-400">1W</span>
+                      <span className="h-full px-1.5 rounded-md font-bold flex items-center justify-center bg-[#5D17EB]/20 text-[#A78BFA] border border-[#8B5CF6]/40">1M</span>
+                      <span className="h-full px-1.5 rounded-md font-bold flex items-center justify-center text-neutral-400">3M</span>
+                      <span className="h-full px-1.5 rounded-md font-bold flex items-center justify-center text-neutral-400">1Y</span>
+                      <span className="h-full px-1.5 rounded-md font-bold flex items-center justify-center text-neutral-400">ALL</span>
                     </div>
 
                     {/* Inline Quick Action Buttons: Add & Withdraw */}
                     <div className="flex items-center gap-1.5 flex-shrink-0">
-                      <button
-                        type="button"
-                        onClick={handleClickAction}
-                        className="h-7 px-2.5 rounded-lg font-bold text-[11px] bg-[#5D17EB] hover:bg-[#6D28D9] text-white flex items-center gap-1 shadow-sm active:scale-[0.96] transition-all"
-                      >
+                      <div className="h-7 px-2.5 rounded-lg font-bold text-[11px] bg-[#5D17EB] text-white flex items-center gap-1 shadow-sm">
                         <Plus className="w-3 h-3" strokeWidth={2.5} />
                         <span>Add</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={handleClickAction}
-                        className="h-7 px-2.5 rounded-lg font-bold text-[11px] bg-black/40 border border-white/20 text-white flex items-center gap-1 active:scale-[0.96] transition-all hover:bg-white/10"
-                      >
+                      </div>
+                      <div className="h-7 px-2.5 rounded-lg font-bold text-[11px] bg-black/40 border border-white/20 text-white flex items-center gap-1">
                         <ArrowUpRight className="w-3 h-3" strokeWidth={2} />
                         <span>Withdraw</span>
-                      </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -318,7 +268,7 @@ export const Phone3DModel: React.FC<Phone3DModelProps> = ({ className = '', onOp
               </div>
 
               {/* ── FUSED FLOATING BOTTOM NAVIGATION DOCK ── */}
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-40 w-fit pointer-events-auto">
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-40 w-fit pointer-events-none">
                 <div className="flex items-center gap-1 p-1 rounded-full border border-white/10 bg-[#0B0F15]/95 backdrop-blur-2xl shadow-2xl">
                   <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#5D17EB]/20 border border-[#8B5CF6]/40 text-purple-300 font-bold text-[10px]">
                     <Wallet className="w-3 h-3" />

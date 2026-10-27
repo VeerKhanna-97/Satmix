@@ -1,6 +1,7 @@
 // ============================================================
 // FILE: src/components/3d/HeroCoinsCanvas.tsx
 // PURPOSE: Interactive floating 3D WebGL crypto coin constellation for the Hero section
+//          Strictly 4 core assets: BTC, ETH, SOL, USDT
 // ============================================================
 
 import React, { useEffect, useRef } from 'react';
@@ -16,19 +17,19 @@ interface CoinSpec {
   hero?: boolean;
 }
 
-// Staggered 5-coin spatial field (spread into peripheral negative space)
+// Exactly 4 coins: BTC (center hero), ETH (left top), SOL (right top), USDT (left bottom)
 const DESKTOP_COINS: CoinSpec[] = [
   { asset: 'BTC', pos: [0.0, 0.2, 0.4], scale: 3.2, tilt: -0.28, phase: 0, hero: true },
   { asset: 'ETH', pos: [-3.8, 1.4, -1.2], scale: 2.1, tilt: 0.55, phase: 1.3 },
   { asset: 'SOL', pos: [3.9, 0.8, -1.0], scale: 2.1, tilt: -0.6, phase: 2.6 },
-  { asset: 'USDT', pos: [-5.2, -1.5, -2.8], scale: 1.5, tilt: 0.7, phase: 3.9 },
-  { asset: 'BTC', pos: [5.2, 2.2, -2.8], scale: 1.4, tilt: -0.75, phase: 5.1 },
+  { asset: 'USDT', pos: [-5.2, -1.5, -2.8], scale: 1.7, tilt: 0.7, phase: 3.9 },
 ];
 
 const MOBILE_COINS: CoinSpec[] = [
   { asset: 'BTC', pos: [0.0, 0.3, 0.1], scale: 2.3, tilt: -0.25, phase: 0, hero: true },
   { asset: 'ETH', pos: [-2.1, 1.8, -1.5], scale: 1.4, tilt: 0.45, phase: 1.5 },
-  { asset: 'USDT', pos: [2.1, -1.4, -1.5], scale: 1.3, tilt: -0.5, phase: 3.2 },
+  { asset: 'SOL', pos: [2.1, 1.0, -1.5], scale: 1.4, tilt: -0.5, phase: 2.5 },
+  { asset: 'USDT', pos: [-1.8, -2.0, -1.8], scale: 1.3, tilt: 0.3, phase: 3.8 },
 ];
 
 interface HeroCoinsCanvasProps {
