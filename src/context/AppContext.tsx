@@ -20,6 +20,7 @@ import {
 import { DARK_COLORS, LIGHT_COLORS } from '../theme/colors';
 import { hashPin, verifyPin } from '../utils/crypto';
 import {
+  createInitialPrototypeState,
   loadPrototypeState,
   savePrototypeState,
   accrueMissingDays,
@@ -230,7 +231,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const found = usersList.find((u) => u && u.id === prototypeState.sessionUserId);
     if (!found) return null;
 
-    const safeName = (found.name || 'Veer Khanna').trim();
+    const safeName = (found.name || 'Investor').trim();
     const initials =
       safeName
         .split(' ')
@@ -473,7 +474,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setDailyAmountState(amount);
   }, []);
 
-  // Authentication: Sign Up with Strict Credential Capture & Cloud Persistence
+  // Authentication: Sign Up with Strict Credential Capture & Authoritative Cloud Persistence
   const signUp = useCallback(
     async (name: string, email: string, password = '', phone = ''): Promise<{ success: boolean; error?: string }> => {
       const cleanEmail = email.trim().toLowerCase();
@@ -486,32 +487,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         };
       }
 
-      // Check if email or phone already registered locally
-      const exists = prototypeState.users.some(
-        (u) =>
-          u.email.toLowerCase() === cleanEmail ||
-          (cleanDigits && u.phone && u.phone.replace(/\D/g, '').slice(-10) === cleanDigits)
-      );
-      if (exists) {
-        return {
-          success: false,
-          error: 'An account with this email address or mobile number already exists. Please Sign In.',
-        };
-      }
-
       // Check if account already exists in central cloud repository (Google Sheets)
       try {
         const cloudCheck = await fetch('/api/auth', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'lookup', identifier: cleanEmail || cleanDigits }),
+          body: JSON.stringify({ action: 'lookup', identifier: cleanEmail }),
         });
         if (cloudCheck.ok) {
           const cloudRes = await cloudCheck.json();
           if (cloudRes?.found) {
             return {
               success: false,
-              error: 'An account with this email or mobile number already exists in Satmix. Please click \'Sign In\' to access your account.',
+              error: 'An account with this email already exists in Satmix. Please click \'Sign In\' to access your account.',
             };
           }
         }
@@ -519,11 +507,29 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         console.warn('Cloud signup check warning:', err);
       }
 
+      // Check phone duplication in cloud
+      try {
+        const phoneCheck = await fetch('/api/auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'lookup', identifier: cleanDigits }),
+        });
+        if (phoneCheck.ok) {
+          const phoneRes = await phoneCheck.json();
+          if (phoneRes?.found) {
+            return {
+              success: false,
+              error: 'An account with this mobile number already exists in Satmix. Please click \'Sign In\' to access your account.',
+            };
+          }
+        }
+      } catch (err) {
+        console.warn('Phone check warning:', err);
+      }
+
       // Hash password locally with SHA-256 for cybersecurity
       const passwordHash = password ? await hashPin(password) : 'mock_hash';
-      const formattedPhone = cleanDigits
-        ? `+91 ${cleanDigits.slice(0, 5)} ${cleanDigits.slice(5)}`
-        : '+91 98765 43210';
+      const formattedPhone = `+91 ${cleanDigits.slice(0, 5)} ${cleanDigits.slice(5)}`;
 
       const newUser = {
         id: `usr_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
@@ -534,16 +540,32 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         createdAt: new Date().toISOString(),
       };
 
-      // Background cloud persistence: register user in central auth repository & Google Sheets
+      const initialUserState = {
+        tutorialDone: false,
+        quizCompleted: false,
+        suggestedBasketId: null,
+        setupBasketId: null,
+        habits: {
+          stable: { setupAt: null, dailyAmount: 10, paused: true, streakStartedAt: null, holdings: { BTC: 0, ETH: 0, SOL: 0, USDT: 0 } },
+          growth: { setupAt: null, dailyAmount: 30, paused: true, streakStartedAt: null, holdings: { BTC: 0, ETH: 0, SOL: 0, USDT: 0 } },
+        },
+        activity: [],
+        valueHistory: [],
+        savedStreak: { longestStreak: 0, freezeUsedDates: [] },
+        virtualBalanceInr: 50000,
+      };
+
+      // Await central cloud registration to guarantee cross-device persistence immediately
       try {
-        fetch('/api/auth', {
+        await fetch('/api/auth', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             action: 'signup',
             user: newUser,
+            userState: initialUserState,
           }),
-        }).catch(() => {});
+        });
 
         fetch('/api/waitlist', {
           method: 'POST',
@@ -555,65 +577,75 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             source: 'Satmix WebApp Account Registration',
           }),
         }).catch(() => {});
-      } catch {
-        // Non-blocking background sync
+      } catch (err) {
+        console.warn('Cloud signup registration note:', err);
       }
 
-      updateStateAndPersist((prev) => ({
-        ...prev,
-        sessionUserId: newUser.id,
-        users: [...prev.users, newUser],
-        tutorialDone: false,
-        quizCompleted: false,
-        suggestedBasketId: null,
-        setupBasketId: null,
-      }));
+      const freshBase = createInitialPrototypeState();
 
-      // Route to tutorial
+      updateStateAndPersist((prev) => {
+        const existingUsers = Array.isArray(prev.users) ? prev.users : [];
+        return {
+          ...freshBase,
+          sessionUserId: newUser.id,
+          users: [...existingUsers.filter((u) => u && u.id !== newUser.id), newUser],
+          tutorialDone: false,
+          quizCompleted: false,
+          suggestedBasketId: null,
+          setupBasketId: null,
+        };
+      });
+
+      // Route to onboarding quiz
       setViewMode('auth');
       setAuthSubView('quiz');
       setTutorialOpen(true);
       return { success: true };
     },
-    [prototypeState.users, updateStateAndPersist]
+    [updateStateAndPersist]
   );
 
-  // Authentication: Strict Cross-Device Login by Email or Phone
+  // Authentication: Pure Credential-Based Cross-Device Login (Cloud Authoritative)
   const login = useCallback(
     async (identifier: string, password = ''): Promise<{ success: boolean; error?: string }> => {
       const cleanIdentifier = identifier.trim().toLowerCase();
-      const cleanDigits = identifier.replace(/\D/g, '').slice(-10);
+      const isEmail = cleanIdentifier.includes('@');
+      const cleanDigits = !isEmail ? cleanIdentifier.replace(/\D/g, '').slice(-10) : '';
 
-      // 1. Check local storage first
-      let targetUser = prototypeState.users.find((u) => {
-        const matchEmail = cleanIdentifier && u.email && u.email.toLowerCase() === cleanIdentifier;
-        const matchPhone = cleanDigits && u.phone && u.phone.replace(/\D/g, '').slice(-10) === cleanDigits;
-        return matchEmail || matchPhone;
-      });
-
+      // 1. Authenticate against central cloud database as Primary Source of Truth
+      let cloudUser: any = null;
       let cloudUserState: any = null;
+      let cloudLookupCompleted = false;
 
-      // 2. If not found locally on this device, look up in central cloud database (Google Sheets)
-      if (!targetUser) {
-        try {
-          const res = await fetch('/api/auth', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              action: 'login',
-              identifier: cleanIdentifier,
-            }),
-          });
-          if (res.ok) {
-            const json = await res.json();
-            if (json?.found && json?.user) {
-              targetUser = json.user;
-              cloudUserState = json.userState || {};
-            }
+      try {
+        const res = await fetch('/api/auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'login',
+            identifier: cleanIdentifier || cleanDigits,
+          }),
+        });
+        if (res.ok) {
+          const json = await res.json();
+          cloudLookupCompleted = true;
+          if (json?.found && json?.user) {
+            cloudUser = json.user;
+            cloudUserState = json.userState || {};
           }
-        } catch (err) {
-          console.warn('Cross-device cloud auth check note:', err);
         }
+      } catch (err) {
+        console.warn('Cloud auth lookup note (offline / network):', err);
+      }
+
+      // 2. Resolve target user (authoritative cloud record, fallback to cached accounts if offline)
+      let targetUser = cloudUser;
+      if (!targetUser && !cloudLookupCompleted) {
+        targetUser = prototypeState.users?.find((u) => {
+          const matchEmail = isEmail && u.email && u.email.toLowerCase() === cleanIdentifier;
+          const matchPhone = cleanDigits && u.phone && u.phone.replace(/\D/g, '').slice(-10) === cleanDigits;
+          return matchEmail || matchPhone;
+        });
       }
 
       if (!targetUser) {
@@ -623,7 +655,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         };
       }
 
-      // If password provided, verify hash (support mock_hash / transition gracefully)
+      // 3. Verify password hash if present
       if (password && targetUser.password && targetUser.password !== 'mock_hash') {
         const isMatch = await verifyPin(password, targetUser.password);
         if (!isMatch && targetUser.password !== password) {
@@ -634,7 +666,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         }
       }
 
-      // Hydrate local state with target user and their synchronized portfolio state
+      // 4. Hydrate user account and portfolio state specifically for THIS credential
       const safeCreatedAt = targetUser.createdAt && !isNaN(new Date(targetUser.createdAt).getTime())
         ? targetUser.createdAt
         : new Date().toISOString();
@@ -642,10 +674,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const hydratedUser = {
         ...targetUser,
         createdAt: safeCreatedAt,
-        name: (targetUser.name || 'Veer Khanna').trim(),
+        name: (targetUser.name || 'Investor').trim(),
         email: (targetUser.email || '').trim().toLowerCase(),
         phone: targetUser.phone || '',
       };
+
+      const freshBase = createInitialPrototypeState();
 
       updateStateAndPersist((prev) => {
         const existingUsers = Array.isArray(prev.users) ? prev.users : [];
@@ -656,47 +690,54 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           ? existingUsers.map((u) => (u && u.id === hydratedUser.id ? hydratedUser : u))
           : [...existingUsers, hydratedUser];
 
+        // Isolate state per user credentials (prevent bleeding habits/activity from another account)
+        const userHabits = cloudUserState?.habits || (prev.sessionUserId === hydratedUser.id ? prev.habits : freshBase.habits);
+        const userActivity = Array.isArray(cloudUserState?.activity)
+          ? cloudUserState.activity
+          : (prev.sessionUserId === hydratedUser.id && Array.isArray(prev.activity) ? prev.activity : []);
+        const userValueHistory = Array.isArray(cloudUserState?.valueHistory)
+          ? cloudUserState.valueHistory
+          : (prev.sessionUserId === hydratedUser.id && Array.isArray(prev.valueHistory) ? prev.valueHistory : []);
+        const userStreak = cloudUserState?.savedStreak || (prev.sessionUserId === hydratedUser.id ? prev.savedStreak : freshBase.savedStreak);
+        const userVirtualBalance = typeof cloudUserState?.virtualBalanceInr === 'number'
+          ? cloudUserState.virtualBalanceInr
+          : (prev.sessionUserId === hydratedUser.id ? prev.virtualBalanceInr : 50000);
+
         return {
-          ...prev,
-          ...(cloudUserState || {}),
+          ...freshBase,
+          users: updatedUsers,
+          sessionUserId: hydratedUser.id,
+          tutorialDone: cloudUserState?.tutorialDone ?? true,
+          quizCompleted: cloudUserState?.quizCompleted ?? true,
+          suggestedBasketId: cloudUserState?.suggestedBasketId || null,
+          setupBasketId: cloudUserState?.setupBasketId || null,
           habits: {
-            ...prev.habits,
-            ...(cloudUserState?.habits || {}),
             stable: {
-              ...prev.habits?.stable,
-              ...(cloudUserState?.habits?.stable || {}),
+              ...freshBase.habits.stable,
+              ...(userHabits?.stable || {}),
               holdings: {
-                ...(prev.habits?.stable?.holdings || {}),
-                ...(cloudUserState?.habits?.stable?.holdings || {}),
+                ...freshBase.habits.stable.holdings,
+                ...(userHabits?.stable?.holdings || {}),
               },
             },
             growth: {
-              ...prev.habits?.growth,
-              ...(cloudUserState?.habits?.growth || {}),
+              ...freshBase.habits.growth,
+              ...(userHabits?.growth || {}),
               holdings: {
-                ...(prev.habits?.growth?.holdings || {}),
-                ...(cloudUserState?.habits?.growth?.holdings || {}),
+                ...freshBase.habits.growth.holdings,
+                ...(userHabits?.growth?.holdings || {}),
               },
             },
           },
-          activity: Array.isArray(cloudUserState?.activity)
-            ? cloudUserState.activity
-            : (Array.isArray(prev.activity) ? prev.activity : []),
-          valueHistory: Array.isArray(cloudUserState?.valueHistory)
-            ? cloudUserState.valueHistory
-            : (Array.isArray(prev.valueHistory) ? prev.valueHistory : []),
-          savedStreak: {
-            ...(prev.savedStreak || {}),
-            ...(cloudUserState?.savedStreak || {}),
-          },
-          users: updatedUsers,
-          sessionUserId: hydratedUser.id,
-          tutorialDone: true,
-          quizCompleted: true,
+          activity: userActivity,
+          valueHistory: userValueHistory,
+          savedStreak: userStreak,
+          virtualBalanceInr: userVirtualBalance,
+          lastAccruedDate: cloudUserState?.lastAccruedDate || null,
         };
       });
 
-      // Route directly into the app dashboard with tutorial and quiz completed
+      // Route directly into the app dashboard
       setViewMode('app');
       setActiveTab('dashboard');
       setTutorialOpen(false);

@@ -36,8 +36,13 @@ export default async function handler(req, res) {
     }
 
     const { action = 'lookup', identifier = '', user = null, userState = null } = payload || {};
-    const cleanId = (identifier || user?.email || user?.phone || '').trim().toLowerCase();
-    const cleanPhone = cleanId.replace(/\D/g, '').slice(-10);
+    const rawId = (identifier || user?.email || user?.phone || '').trim().toLowerCase();
+    const isEmail = rawId.includes('@');
+    const cleanId = rawId;
+    // Only treat as phone if explicitly not an email or from explicit user.phone
+    const cleanPhone = !isEmail
+      ? rawId.replace(/\D/g, '').slice(-10)
+      : (user?.phone ? String(user.phone).replace(/\D/g, '').slice(-10) : '');
 
     // 1. SIGNUP ACTION: Register user in central cloud roster
     if (action === 'signup' && user) {
