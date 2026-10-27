@@ -254,6 +254,55 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [prototypeState.sessionUserId, prototypeState.users]);
 
   const isAuthenticated = !!activeUser;
+  // ── AUTO-SYNC ACTIVE LOCAL USER ACCOUNT TO CLOUD (MULTI-DEVICE PERSISTENCE) ──
+  // Automatically syncs the active account from this machine (laptop) to Google Sheets
+  // so that mobile phones and secondary devices can seamlessly log into the exact same account.
+  useEffect(() => {
+    if (!activeUser) return;
+
+    const syncAccountToCloud = async () => {
+      try {
+        const currentUserObj = prototypeState.users.find((u) => u.id === activeUser.id);
+        const passwordHash = currentUserObj?.password || 'mock_hash';
+
+        const payload = {
+          action: 'signup',
+          user: {
+            id: activeUser.id,
+            name: activeUser.name,
+            email: activeUser.email,
+            phone: activeUser.phone,
+            password: passwordHash,
+            createdAt: currentUserObj?.createdAt || new Date().toISOString(),
+          },
+          userState: {
+            habits: prototypeState.habits,
+            activity: prototypeState.activity,
+            valueHistory: prototypeState.valueHistory,
+            tutorialDone: true,
+            quizCompleted: true,
+            suggestedBasketId: prototypeState.suggestedBasketId,
+            setupBasketId: prototypeState.setupBasketId,
+            savedStreak: prototypeState.savedStreak,
+            virtualBalanceInr: prototypeState.virtualBalanceInr,
+            lastAccruedDate: prototypeState.lastAccruedDate,
+          },
+        };
+
+        await fetch('/api/auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+      } catch (err) {
+        console.warn('Auto cloud account sync note:', err);
+      }
+    };
+
+    const timer = setTimeout(syncAccountToCloud, 1000);
+    return () => clearTimeout(timer);
+  }, [activeUser?.id, activeUser?.email, activeUser?.phone, prototypeState.habits, prototypeState.activity?.length]);
+
 
   // Theme Sync
   useEffect(() => {
@@ -435,6 +484,26 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         };
       }
 
+      // Check if account already exists in central cloud repository (Google Sheets)
+      try {
+        const cloudCheck = await fetch('/api/auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'lookup', identifier: cleanEmail || cleanDigits }),
+        });
+        if (cloudCheck.ok) {
+          const cloudRes = await cloudCheck.json();
+          if (cloudRes?.found) {
+            return {
+              success: false,
+              error: 'An account with this email or mobile number already exists in Satmix. Please click \'Sign In\' to access your account.',
+            };
+          }
+        }
+      } catch (err) {
+        console.warn('Cloud signup check warning:', err);
+      }
+
       // Hash password locally with SHA-256 for cybersecurity
       const passwordHash = password ? await hashPin(password) : 'mock_hash';
       const formattedPhone = cleanDigits
@@ -502,12 +571,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
       // 1. Check local storage first
       let targetUser = prototypeState.users.find((u) => {
-        const matchEmail = u.email.toLowerCase() === cleanIdentifier;
+        const matchEmail = cleanIdentifier && u.email && u.email.toLowerCase() === cleanIdentifier;
         const matchPhone = cleanDigits && u.phone && u.phone.replace(/\D/g, '').slice(-10) === cleanDigits;
         return matchEmail || matchPhone;
       });
 
-      // 2. If not found locally on this device, look up in central cloud database
+      let cloudUserState: any = null;
+
+      // 2. If not found locally on this device, look up in central cloud database (Google Sheets)
       if (!targetUser) {
         try {
           const res = await fetch('/api/auth', {
@@ -522,19 +593,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             const json = await res.json();
             if (json?.found && json?.user) {
               targetUser = json.user;
-              // Hydrate local state with user found from another device
-              updateStateAndPersist((prev) => {
-                const userExists = prev.users.some(
-                  (u) => u.id === targetUser!.id || u.email.toLowerCase() === targetUser!.email.toLowerCase()
-                );
-                const updatedUsers = userExists ? prev.users : [...prev.users, targetUser!];
-                return {
-                  ...prev,
-                  ...(json.userState || {}),
-                  users: updatedUsers,
-                  sessionUserId: targetUser!.id,
-                };
-              });
+              cloudUserState = json.userState || {};
             }
           }
         } catch (err) {
@@ -545,12 +604,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       if (!targetUser) {
         return {
           success: false,
-          error: 'No registered account found with these credentials. Please check or Sign Up.',
+          error: 'No registered account found with these credentials. Please check your email or mobile number, or Sign Up.',
         };
       }
 
-      // If password provided, verify hash
-      if (password && targetUser.password) {
+      // If password provided, verify hash (support mock_hash / transition gracefully)
+      if (password && targetUser.password && targetUser.password !== 'mock_hash') {
         const isMatch = await verifyPin(password, targetUser.password);
         if (!isMatch && targetUser.password !== password) {
           return {
@@ -560,27 +619,33 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         }
       }
 
-      updateStateAndPersist((prev) => ({
-        ...prev,
-        sessionUserId: targetUser!.id,
-      }));
+      // Hydrate local state with target user and their synchronized portfolio state
+      updateStateAndPersist((prev) => {
+        const userExists = prev.users.some(
+          (u) => u.id === targetUser!.id || (u.email && u.email.toLowerCase() === targetUser!.email.toLowerCase())
+        );
+        const updatedUsers = userExists
+          ? prev.users.map((u) => (u.id === targetUser!.id ? targetUser! : u))
+          : [...prev.users, targetUser!];
 
-      // Session Gate check:
-      if (!prototypeState.tutorialDone) {
-        setViewMode('auth');
-        setAuthSubView('quiz');
-        setTutorialOpen(true);
-      } else if (!prototypeState.quizCompleted) {
-        setViewMode('auth');
-        setAuthSubView('quiz');
-      } else {
-        setViewMode('app');
-        setActiveTab('dashboard');
-      }
+        return {
+          ...prev,
+          ...(cloudUserState || {}),
+          users: updatedUsers,
+          sessionUserId: targetUser!.id,
+          tutorialDone: true,
+          quizCompleted: true,
+        };
+      });
+
+      // Route directly into the app dashboard with tutorial and quiz completed
+      setViewMode('app');
+      setActiveTab('dashboard');
+      setTutorialOpen(false);
 
       return { success: true };
     },
-    [prototypeState.users, prototypeState.tutorialDone, prototypeState.quizCompleted, updateStateAndPersist]
+    [prototypeState.users, updateStateAndPersist]
   );
 
   // Logout
