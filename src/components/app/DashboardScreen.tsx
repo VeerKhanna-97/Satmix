@@ -328,7 +328,7 @@ export const DashboardScreen: React.FC = () => {
             <span className="text-[10px] font-bold uppercase tracking-wider block font-mono text-neutral-400">
               Total Balance
             </span>
-            <div className="text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums text-white">
+            <div className="text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums" style={{ color: colors.textPrimary }}>
               {scrubbedPoint ? (
                 `₹${scrubbedPoint.value.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
               ) : (
@@ -382,7 +382,7 @@ export const DashboardScreen: React.FC = () => {
             <span className="text-[10px] font-semibold uppercase tracking-wider font-mono text-neutral-400">
               Total Return
             </span>
-            <div className="text-lg font-extrabold font-mono tracking-tight mt-1 tabular-nums text-white">
+            <div className="text-lg font-extrabold font-mono tracking-tight mt-1 tabular-nums" style={{ color: colors.textPrimary }}>
               {tabMetrics.netDeltaPercentage >= 0 ? '+' : '-'}{Math.abs(tabMetrics.netDeltaPercentage).toFixed(1)}%
             </div>
             <div
@@ -411,7 +411,7 @@ export const DashboardScreen: React.FC = () => {
             <span className="text-[11px] font-semibold uppercase tracking-wider block font-mono text-neutral-400">
               Total Balance
             </span>
-            <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums text-white">
+            <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums" style={{ color: colors.textPrimary }}>
               {scrubbedPoint ? (
                 `₹${scrubbedPoint.value.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
               ) : (
@@ -480,7 +480,7 @@ export const DashboardScreen: React.FC = () => {
             <span className="text-[11px] font-semibold uppercase tracking-wider block font-mono text-neutral-400">
               Total Return
             </span>
-            <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums text-white">
+            <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums" style={{ color: colors.textPrimary }}>
               {tabMetrics.netDeltaPercentage >= 0 ? '+' : '-'}{Math.abs(tabMetrics.netDeltaPercentage).toFixed(1)}%
             </div>
           </div>
@@ -509,7 +509,7 @@ export const DashboardScreen: React.FC = () => {
             {/* Header: Title, Subtitle, Gain Pill */}
             <div className="flex items-center justify-between gap-4 mb-2">
               <div>
-                <h3 className="text-lg font-bold text-white tracking-tight">
+                <h3 className="text-lg font-bold tracking-tight" style={{ color: colors.textPrimary }}>
                   Portfolio Value
                 </h3>
                 <p className="text-xs text-neutral-400 mt-0.5 font-medium">
@@ -559,9 +559,9 @@ export const DashboardScreen: React.FC = () => {
           </div>
 
           {/* Controls Footer: Basket Filter, Horizon Tabs & Quick Actions */}
-          <div className="pt-4 border-t border-white/[0.06] flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-2">
+          <div className="pt-4 border-t flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-2" style={{ borderColor: colors.borderDim }}>
             {/* Basket Filter Tabs: Full width 3-column split on mobile, compact on desktop */}
-            <div className="w-full sm:w-fit grid grid-cols-3 sm:flex items-center gap-1 p-1 rounded-xl bg-white/[0.04] border border-white/5">
+            <div className="w-full sm:w-fit grid grid-cols-3 sm:flex items-center gap-1 p-1 rounded-xl border" style={{ backgroundColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.04)' : 'rgba(0, 0, 0, 0.03)', borderColor: colors.borderDim }}>
               {[
                 { id: 'all', label: 'All Mixes' },
                 { id: 'stable', label: 'Stable Mix' },
@@ -574,7 +574,7 @@ export const DashboardScreen: React.FC = () => {
                     type="button"
                     onClick={() => setActiveTabFilter(tab.id as 'all' | 'stable' | 'growth')}
                     className={`px-3 py-1.5 sm:py-1 rounded-lg text-xs font-bold transition-all text-center cursor-pointer select-none active:scale-[0.96] ${
-                      isActive ? 'bg-[#5D17EB] text-white shadow-xs' : 'text-neutral-400 hover:text-white'
+                      isActive ? 'bg-[#5D17EB] text-white shadow-xs' : 'text-neutral-500 hover:text-slate-900 dark:text-neutral-400 dark:hover:text-white'
                     }`}
                   >
                     {tab.label}
@@ -586,14 +586,14 @@ export const DashboardScreen: React.FC = () => {
             {/* Timeframe & Action Buttons (Single Unified Row on Mobile) */}
             <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-3 w-full sm:w-auto flex-nowrap">
               {/* Horizon / Timeframe Tabs */}
-              <div className="h-8 flex items-center gap-0.5 sm:gap-1 p-1 rounded-xl bg-white/[0.04] border border-white/5 text-[11px] sm:text-xs font-mono">
+              <div className="h-8 flex items-center gap-0.5 sm:gap-1 p-1 rounded-xl border text-[11px] sm:text-xs font-mono" style={{ backgroundColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.04)' : 'rgba(0, 0, 0, 0.03)', borderColor: colors.borderDim }}>
                 {(['1W', '1M', '3M', '1Y', 'ALL'] as const).map((t) => (
                   <button
                     key={t}
                     type="button"
                     onClick={() => setTimeframe(t)}
                     className={`h-full px-2 sm:px-2.5 rounded-lg font-bold flex items-center justify-center transition-colors cursor-pointer select-none active:scale-[0.96] ${
-                      timeframe === t ? 'bg-[#5D17EB]/25 text-[#A78BFA] border border-[#8B5CF6]/40' : 'text-neutral-400 hover:text-white'
+                      timeframe === t ? 'bg-[#5D17EB]/20 text-purple-600 dark:text-[#A78BFA] border border-[#8B5CF6]/40' : 'text-neutral-500 hover:text-slate-900 dark:text-neutral-400 dark:hover:text-white'
                     }`}
                   >
                     {t}
@@ -615,7 +615,8 @@ export const DashboardScreen: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setWithdrawOpen(true)}
-                  className="h-8 px-3 rounded-xl font-bold text-xs border border-white/10 text-neutral-300 hover:text-white hover:bg-white/5 transition-all active:scale-[0.96] inline-flex items-center gap-1.5 cursor-pointer select-none"
+                  className="h-8 px-3 rounded-xl font-bold text-xs border transition-all active:scale-[0.96] inline-flex items-center gap-1.5 cursor-pointer select-none"
+                  style={{ borderColor: colors.borderDim, color: colors.textPrimary, backgroundColor: themeMode === 'dark' ? 'transparent' : 'rgba(0, 0, 0, 0.03)' }}
                   title="Withdraw Funds"
                 >
                   <ArrowUpRight className="w-3.5 h-3.5" strokeWidth={2} />
@@ -637,7 +638,7 @@ export const DashboardScreen: React.FC = () => {
           <div>
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-bold text-white tracking-tight">
+                <h3 className="text-lg font-bold tracking-tight" style={{ color: colors.textPrimary }}>
                   Asset Allocation
                 </h3>
                 <p className="text-xs text-neutral-400 mt-0.5">
@@ -658,7 +659,7 @@ export const DashboardScreen: React.FC = () => {
                   cy="80"
                   r="52"
                   fill="transparent"
-                  stroke="rgba(255, 255, 255, 0.05)"
+                  stroke={themeMode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.06)'}
                   strokeWidth="20"
                 />
 
@@ -696,7 +697,7 @@ export const DashboardScreen: React.FC = () => {
                 <span className="text-[10px] uppercase font-mono font-bold tracking-wider text-neutral-400">
                   {allocationHoldings.length === 0 ? 'Empty' : 'Holdings'}
                 </span>
-                <span className="text-base font-extrabold font-mono text-white tabular-nums">
+                <span className="text-base font-extrabold font-mono tabular-nums" style={{ color: colors.textPrimary }}>
                   ₹{Math.round(totalAllocationValue).toLocaleString('en-IN')}
                 </span>
               </div>
@@ -708,12 +709,12 @@ export const DashboardScreen: React.FC = () => {
                 {allocationHoldings.map((item) => (
                   <div
                     key={item.coin}
-                    className="flex items-center justify-between py-1.5 px-2 rounded-lg hover:bg-white/[0.04] transition-colors"
+                    className="flex items-center justify-between py-1.5 px-2 rounded-lg hover:bg-black/[0.04] dark:hover:bg-white/[0.04] transition-colors"
                   >
                     <div className="flex items-center gap-2.5">
                       <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
                       <div className="flex items-center gap-1.5">
-                        <span className="text-neutral-200 font-semibold">{item.label}</span>
+                        <span className="font-semibold" style={{ color: colors.textPrimary }}>{item.label}</span>
                         <span className="text-[10px] font-mono font-bold text-neutral-400">({item.coin})</span>
                       </div>
                     </div>
@@ -721,7 +722,7 @@ export const DashboardScreen: React.FC = () => {
                       <span className="font-mono text-neutral-400 text-[11px] tabular-nums hidden sm:inline">
                         ₹{item.inrValue.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </span>
-                      <span className="font-mono font-bold text-neutral-200 tabular-nums min-w-[44px] text-right">
+                      <span className="font-mono font-bold tabular-nums min-w-[44px] text-right" style={{ color: colors.textPrimary }}>
                         {item.percentage.toFixed(1)}%
                       </span>
                     </div>
@@ -755,7 +756,7 @@ export const DashboardScreen: React.FC = () => {
                   className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                     isActive
                       ? 'bg-purple-500/10 text-purple-400 border border-purple-500/25 shadow-xs'
-                      : 'text-neutral-400 hover:text-white border border-transparent hover:bg-white/[0.04]'
+                      : 'text-neutral-500 hover:text-slate-900 dark:text-neutral-400 dark:hover:text-white border border-transparent hover:bg-black/[0.04] dark:hover:bg-white/[0.04]'
                   }`}
                 >
                   {tab.label}

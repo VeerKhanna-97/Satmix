@@ -12,7 +12,7 @@ import {
 import { useApp } from '../../context/AppContext';
 
 export const TransactionsScreen: React.FC = () => {
-  const { prototypeState, tabMetrics, themeMode } = useApp();
+  const { prototypeState, tabMetrics, themeMode, colors } = useApp();
   const [filterType, setFilterType] = useState<'all' | 'buy' | 'withdrawal'>('all');
 
   const isDark = themeMode === 'dark';
@@ -46,11 +46,11 @@ export const TransactionsScreen: React.FC = () => {
             borderColor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
           }}
         >
-          <span className="absolute top-4 right-4 text-3xl font-mono opacity-5 pointer-events-none select-none text-white font-bold">₹</span>
+          <span className="absolute top-4 right-4 text-3xl font-mono opacity-5 pointer-events-none select-none text-slate-900 dark:text-white font-bold">₹</span>
           <span className="text-[11px] font-bold uppercase tracking-wider block font-mono text-neutral-400">
             Total Volume
           </span>
-          <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums text-white">
+          <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums" style={{ color: colors.textPrimary }}>
             ₹{totalVolume.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </div>
           <div className="inline-flex items-center gap-1 mt-2 px-2 py-0.5 rounded-md text-[11px] font-bold font-mono bg-purple-500/10 text-purple-400 border border-purple-500/20">
@@ -66,11 +66,11 @@ export const TransactionsScreen: React.FC = () => {
             borderColor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
           }}
         >
-          <Receipt className="absolute top-4 right-4 w-12 h-12 opacity-5 pointer-events-none text-white" />
+          <Receipt className="absolute top-4 right-4 w-12 h-12 opacity-5 pointer-events-none text-slate-900 dark:text-white" />
           <span className="text-[11px] font-bold uppercase tracking-wider block font-mono text-neutral-400">
             Transactions
           </span>
-          <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums text-white">
+          <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums" style={{ color: colors.textPrimary }}>
             {totalCount}
           </div>
           <div className="inline-flex items-center gap-1 mt-2 px-2 py-0.5 rounded-md text-[11px] font-bold font-mono bg-emerald-500/10 text-emerald-400">
@@ -86,11 +86,11 @@ export const TransactionsScreen: React.FC = () => {
             borderColor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
           }}
         >
-          <Calendar className="absolute top-4 right-4 w-12 h-12 opacity-5 pointer-events-none text-white" />
+          <Calendar className="absolute top-4 right-4 w-12 h-12 opacity-5 pointer-events-none text-slate-900 dark:text-white" />
           <span className="text-[11px] font-bold uppercase tracking-wider block font-mono text-neutral-400">
             Avg. Size
           </span>
-          <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums text-white">
+          <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums" style={{ color: colors.textPrimary }}>
             ₹{avgSize.toLocaleString('en-IN')}
           </div>
           <div className="inline-flex items-center gap-1 mt-2 px-2 py-0.5 rounded-md text-[11px] font-bold font-mono bg-emerald-500/10 text-emerald-400">
@@ -106,11 +106,11 @@ export const TransactionsScreen: React.FC = () => {
             borderColor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
           }}
         >
-          <Layers className="absolute top-4 right-4 w-12 h-12 opacity-5 pointer-events-none text-white" />
+          <Layers className="absolute top-4 right-4 w-12 h-12 opacity-5 pointer-events-none text-slate-900 dark:text-white" />
           <span className="text-[11px] font-bold uppercase tracking-wider block font-mono text-neutral-400">
             Buy/Sell Ratio
           </span>
-          <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums text-white">
+          <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums" style={{ color: colors.textPrimary }}>
             {buyCount}:{sellCount}
           </div>
           <div className="inline-flex items-center gap-1 mt-2 px-2 py-0.5 rounded-md text-[11px] font-bold font-mono bg-purple-500/10 text-purple-400 border border-purple-500/20">
@@ -129,7 +129,7 @@ export const TransactionsScreen: React.FC = () => {
       >
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
-            <h3 className="text-base sm:text-lg font-bold text-white tracking-tight">
+            <h3 className="text-base sm:text-lg font-bold tracking-tight" style={{ color: colors.textPrimary }}>
               Recent Transactions
             </h3>
             <p className="text-xs text-neutral-400 mt-0.5">
@@ -138,7 +138,7 @@ export const TransactionsScreen: React.FC = () => {
           </div>
 
           {/* Filter Pills */}
-          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-white/[0.04] border border-white/5 text-xs font-semibold">
+          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-black/[0.04] dark:bg-white/[0.04] border border-black/5 dark:border-white/5 text-xs font-semibold">
             {(['all', 'buy', 'withdrawal'] as const).map((t) => (
               <button
                 key={t}
@@ -146,7 +146,7 @@ export const TransactionsScreen: React.FC = () => {
                 className={`px-3 py-1 rounded-lg transition-colors capitalize cursor-pointer ${
                   filterType === t
                     ? 'bg-[#5D17EB] text-white font-bold shadow-xs'
-                    : 'text-neutral-400 hover:text-white'
+                    : 'text-neutral-500 hover:text-slate-900 dark:text-neutral-400 dark:hover:text-white'
                 }`}
               >
                 {t === 'all' ? 'All Activity' : t === 'buy' ? 'Deposits' : 'Withdrawals'}
@@ -159,7 +159,7 @@ export const TransactionsScreen: React.FC = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-left font-sans text-xs">
             <thead>
-              <tr className="border-b border-white/[0.08] text-[10px] font-mono uppercase tracking-wider text-neutral-400">
+              <tr className="border-b border-slate-200 dark:border-white/[0.08] text-[10px] font-mono uppercase tracking-wider text-neutral-400">
                 <th className="pb-3 font-semibold">Type</th>
                 <th className="pb-3 font-semibold">Basket / Asset</th>
                 <th className="pb-3 font-semibold">Allocations</th>
@@ -167,7 +167,7 @@ export const TransactionsScreen: React.FC = () => {
                 <th className="pb-3 font-semibold text-right">Execution Date</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/[0.04] font-mono">
+            <tbody className="divide-y divide-slate-100 dark:divide-white/[0.04] font-mono">
               {filteredActivities.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="py-12 text-center text-neutral-500">
@@ -180,7 +180,7 @@ export const TransactionsScreen: React.FC = () => {
                   const basketLabel = act.basketId === 'stable' ? 'Stable Mix' : 'Growth Mix';
 
                   return (
-                    <tr key={act.id} className="hover:bg-white/[0.02] transition-colors group">
+                    <tr key={act.id} className="hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors group">
                       {/* TYPE Badge */}
                       <td className="py-3.5 pr-4">
                         <span
@@ -197,7 +197,7 @@ export const TransactionsScreen: React.FC = () => {
 
                       {/* Basket / Asset */}
                       <td className="py-3.5 pr-4">
-                        <strong className="text-neutral-200 font-bold font-sans text-xs sm:text-sm block">
+                        <strong className="text-slate-800 dark:text-neutral-200 font-bold font-sans text-xs sm:text-sm block">
                           {basketLabel}
                         </strong>
                         <span className="text-[10px] text-neutral-500 font-mono">
@@ -210,8 +210,8 @@ export const TransactionsScreen: React.FC = () => {
                         {act.fills && act.fills.length > 0 ? (
                           <div className="flex flex-wrap gap-2">
                             {act.fills.map((f) => (
-                              <span key={f.asset} className="text-neutral-300">
-                                {f.asset}: <strong className="text-neutral-200">₹{Math.round(f.inr)}</strong>
+                              <span key={f.asset} className="text-slate-600 dark:text-neutral-300">
+                                {f.asset}: <strong className="text-slate-800 dark:text-neutral-200">₹{Math.round(f.inr)}</strong>
                               </span>
                             ))}
                           </div>
@@ -224,7 +224,7 @@ export const TransactionsScreen: React.FC = () => {
                       <td className="py-3.5 pr-4 text-right">
                         <span
                           className={`text-sm sm:text-base font-bold tabular-nums ${
-                            isBuy ? 'text-white' : 'text-rose-400'
+                            isBuy ? (isDark ? 'text-white' : 'text-slate-900') : 'text-rose-500 dark:text-rose-400'
                           }`}
                         >
                           {isBuy ? '+' : '-'}₹{Math.abs(act.amount).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}

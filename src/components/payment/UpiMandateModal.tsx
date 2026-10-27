@@ -162,7 +162,7 @@ export const UpiMandateModal: React.FC<UpiMandateModalProps> = ({ isOpen, onClos
                 required
               />
               <label htmlFor="mandate-consent" className="text-[11px] leading-tight select-none cursor-pointer" style={{ color: colors.textSecondary }}>
-                I authorize a recurring daily UPI AutoPay mandate of <strong className="text-white font-semibold">₹{dailyAmount}/day</strong> from {bankName} under the renewal terms above.
+                I authorize a recurring daily UPI AutoPay mandate of <strong className="font-semibold" style={{ color: colors.textPrimary }}>₹{dailyAmount}/day</strong> from {bankName} under the renewal terms above.
               </label>
             </div>
 

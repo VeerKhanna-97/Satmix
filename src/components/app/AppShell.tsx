@@ -95,10 +95,13 @@ export const AppShell: React.FC = () => {
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={`relative flex items-center gap-2 py-2 transition-colors duration-200 select-none cursor-pointer ${
-                    isActive ? 'text-white font-bold' : 'text-neutral-400 hover:text-neutral-200 font-medium'
+                    isActive ? 'font-bold' : 'font-medium opacity-70 hover:opacity-100'
                   }`}
+                  style={{
+                    color: isActive ? colors.textPrimary : colors.textSecondary,
+                  }}
                 >
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-purple-400' : 'text-neutral-400'}`} />
+                  <Icon className={`w-4 h-4 ${isActive ? 'text-purple-600 dark:text-purple-400' : ''}`} style={{ color: isActive ? undefined : colors.textSecondary }} />
                   <span>{tab.label}</span>
                   {isActive && (
                     <motion.div
@@ -205,7 +208,7 @@ export const AppShell: React.FC = () => {
                     )}
                     <span className="relative z-10 flex items-center gap-1">
                       <Icon className="w-4 h-4 flex-shrink-0" strokeWidth={isActive ? 2.5 : 2} />
-                      <span className={`text-[11px] sm:text-[12px] tracking-tight ${isActive ? 'font-bold text-purple-400 inline' : 'font-semibold hidden sm:inline'}`}>
+                      <span className={`text-[11px] sm:text-[12px] tracking-tight ${isActive ? 'font-bold text-purple-600 dark:text-purple-400 inline' : 'font-semibold hidden sm:inline'}`}>
                         {tab.label === 'Strategy & Growth' ? 'Growth' : tab.label}
                       </span>
                     </span>
@@ -220,7 +223,7 @@ export const AppShell: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setFeedbackOpen(true)}
-                className="relative flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-full text-purple-400 hover:text-purple-300 hover:bg-purple-500/10 active:scale-[0.97] transition-all select-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50"
+                className="relative flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-full text-purple-600 dark:text-purple-400 hover:text-purple-500 hover:bg-purple-500/10 active:scale-[0.97] transition-all select-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50"
                 aria-label="Feedback and Reviews"
               >
                 <MessageSquare className="w-4 h-4 flex-shrink-0 text-purple-400" />

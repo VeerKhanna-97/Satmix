@@ -314,7 +314,7 @@ export const InvestScreen: React.FC = () => {
             <span className="text-[11px] font-semibold uppercase tracking-wider block text-neutral-400">
               DAILY AUTO-SAVE
             </span>
-            <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums text-white">
+            <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums" style={{ color: colors.textPrimary }}>
               ₹{dailyAmount}<span className="text-xs font-normal text-neutral-400">/day</span>
             </div>
           </div>
@@ -390,7 +390,7 @@ export const InvestScreen: React.FC = () => {
             <span className="text-[11px] font-semibold uppercase tracking-wider block text-neutral-400">
               NET LIQUIDITY
             </span>
-            <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums text-neutral-100">
+            <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums" style={{ color: colors.textPrimary }}>
               {netLiquidity.netPercentage}%
             </div>
           </div>
@@ -670,7 +670,7 @@ export const InvestScreen: React.FC = () => {
                 <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-400 block mb-0.5">
                   Behavioral Alpha
                 </span>
-                <h3 className="text-base font-bold text-white">
+                <h3 className="text-base font-bold" style={{ color: colors.textPrimary }}>
                   The Rupee-Cost Averaging (RCA) Advantage
                 </h3>
               </div>
@@ -679,7 +679,7 @@ export const InvestScreen: React.FC = () => {
               </span>
             </div>
 
-            <p className="text-xs leading-relaxed text-neutral-300">
+            <p className="text-xs leading-relaxed" style={{ color: colors.textSecondary }}>
               By automating small daily purchases instead of trying to predict market tops and bottoms with lump sums, your effective acquisition cost is cushioned against sharp volatility spikes.
             </p>
 
@@ -715,7 +715,7 @@ export const InvestScreen: React.FC = () => {
               <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-purple-400 block mb-0.5">
                 Realized Attribution
               </span>
-              <h3 className="text-base font-bold text-white">
+              <h3 className="text-base font-bold" style={{ color: colors.textPrimary }}>
                 Asset P&L Contribution
               </h3>
               <p className="text-xs text-neutral-400 mt-0.5">
@@ -723,7 +723,7 @@ export const InvestScreen: React.FC = () => {
               </p>
             </div>
 
-            <div className="divide-y divide-white/[0.06] text-xs font-mono">
+            <div className="divide-y divide-slate-200 dark:divide-white/[0.06] text-xs font-mono">
               {assetAttribution.map((asset) => {
                 const isGain = asset.pnlRupees >= 0;
                 const isRoiGain = asset.roiPct >= 0;
@@ -739,7 +739,7 @@ export const InvestScreen: React.FC = () => {
                     <div className="flex items-center gap-2.5">
                       <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: asset.color }} />
                       <div>
-                        <span className="font-bold text-white">{asset.name}</span>
+                        <span className="font-bold" style={{ color: colors.textPrimary }}>{asset.name}</span>
                         <span className="text-[10px] text-neutral-400 block font-sans">{asset.role}</span>
                       </div>
                     </div>
@@ -767,24 +767,24 @@ export const InvestScreen: React.FC = () => {
               <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-purple-400 block mb-0.5">
                 Execution Spec
               </span>
-              <h3 className="text-base font-bold text-white">
+              <h3 className="text-base font-bold" style={{ color: colors.textPrimary }}>
                 UPI AutoPay Mandate Details
               </h3>
             </div>
 
             {/* Execution Key Metrics */}
-            <div className="divide-y divide-white/[0.06] font-mono text-xs">
+            <div className="divide-y divide-slate-200 dark:divide-white/[0.06] font-mono text-xs">
               <div className="py-2 flex justify-between items-center">
                 <span className="font-sans text-neutral-400">Daily Debit Amount</span>
                 <strong className="text-purple-400 font-bold tabular-nums">₹{dailyAmount} / day</strong>
               </div>
               <div className="py-2 flex justify-between items-center">
                 <span className="font-sans text-neutral-400">Monthly Run Rate</span>
-                <strong className="text-neutral-200 tabular-nums">₹{Math.round(dailyAmount * 30.4).toLocaleString('en-IN')}</strong>
+                <strong className="tabular-nums" style={{ color: colors.textPrimary }}>₹{Math.round(dailyAmount * 30.4).toLocaleString('en-IN')}</strong>
               </div>
               <div className="py-2 flex justify-between items-center">
                 <span className="font-sans text-neutral-400">Execution Schedule</span>
-                <strong className="text-neutral-200">08:00 AM IST Daily</strong>
+                <strong style={{ color: colors.textPrimary }}>08:00 AM IST Daily</strong>
               </div>
               <div className="py-2 flex justify-between items-center">
                 <span className="font-sans text-neutral-400">Lock-in Period</span>
@@ -795,18 +795,18 @@ export const InvestScreen: React.FC = () => {
             {/* Net Realized Liquidity Transparency (Council Feature 3) */}
             <div className="p-3.5 rounded-xl border space-y-1.5 font-mono text-xs" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
               <div className="flex items-center justify-between font-sans">
-                <span className="font-semibold text-neutral-300">Net Realized Liquidity</span>
+                <span className="font-semibold" style={{ color: colors.textPrimary }}>Net Realized Liquidity</span>
                 <span className="text-emerald-400 font-bold">99% Payout</span>
               </div>
               <div className="flex justify-between text-[11px] text-neutral-400 pt-1">
                 <span>Gross Portfolio Value:</span>
-                <strong className="text-neutral-200 tabular-nums">₹{netLiquidity.grossVal.toLocaleString('en-IN')}</strong>
+                <strong className="tabular-nums" style={{ color: colors.textPrimary }}>₹{netLiquidity.grossVal.toLocaleString('en-IN')}</strong>
               </div>
               <div className="flex justify-between text-[11px] text-neutral-400">
                 <span>Less 1% TDS (Sec 194S):</span>
                 <strong className="text-rose-400 tabular-nums">-₹{netLiquidity.tds1Pct.toLocaleString('en-IN')}</strong>
               </div>
-              <div className="flex justify-between text-[11px] text-purple-400 pt-1 border-t border-white/[0.06] font-bold">
+              <div className="flex justify-between text-[11px] text-purple-400 pt-1 border-t border-slate-200 dark:border-white/[0.06] font-bold">
                 <span>Net Bank Payout:</span>
                 <strong className="tabular-nums">₹{netLiquidity.netPayout.toLocaleString('en-IN')}</strong>
               </div>
@@ -827,7 +827,7 @@ export const InvestScreen: React.FC = () => {
                   <div className="flex items-center justify-between p-3 rounded-xl border text-xs" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
                     <div className="flex items-center gap-2">
                       <span className={`w-2 h-2 rounded-full ${isHabitActive ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
-                      <span className="font-bold text-white">
+                      <span className="font-bold" style={{ color: colors.textPrimary }}>
                         {isHabitActive ? 'Daily Habit Running' : 'Habit Paused'}
                       </span>
                     </div>
@@ -875,8 +875,8 @@ export const InvestScreen: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setMandateModalOpen(true)}
-                className="w-full h-10 rounded-xl text-xs font-semibold border transition-all active:scale-[0.97] hover:bg-white/[0.04] text-neutral-300 flex items-center justify-center gap-1.5 cursor-pointer"
-                style={{ borderColor: colors.cardBorder, backgroundColor: colors.surface }}
+                className="w-full h-10 rounded-xl text-xs font-semibold border transition-all active:scale-[0.97] hover:bg-black/[0.04] dark:hover:bg-white/[0.04] flex items-center justify-center gap-1.5 cursor-pointer"
+                style={{ borderColor: colors.cardBorder, backgroundColor: colors.surface, color: colors.textPrimary }}
               >
                 <span>Authorize UPI AutoPay Mandate</span>
               </button>
@@ -884,11 +884,11 @@ export const InvestScreen: React.FC = () => {
 
             {/* Zero Lock-In Peace of Mind Notice */}
             <div className="p-3.5 rounded-xl border text-[11px] space-y-1" style={{ backgroundColor: 'rgba(93, 23, 235, 0.04)', borderColor: colors.borderDim }}>
-              <div className="flex items-center gap-1.5 text-xs font-bold text-white">
+              <div className="flex items-center gap-1.5 text-xs font-bold" style={{ color: colors.textPrimary }}>
                 <Shield className="w-3.5 h-3.5 text-purple-400" />
                 <span>Zero Lock-In Commitment</span>
               </div>
-              <p className="leading-relaxed text-neutral-400">
+              <p className="leading-relaxed" style={{ color: colors.textSecondary }}>
                 Debits are processed via NPCI UPI AutoPay directly from your linked bank account. Pause, adjust amounts, or withdraw back to your bank account anytime with zero exit penalties.
               </p>
             </div>
