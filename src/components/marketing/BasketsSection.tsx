@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Shield, Rocket, CheckCircle2, ArrowRight } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { BASKETS } from '../../data/baskets';
@@ -6,7 +6,6 @@ import { BasketId } from '../../types';
 import { getAssetBarColor } from '../../theme/colors';
 import { SpotlightCard, Magnet, FadeIn, Tilt3DCard, HelpBadge } from '../ui';
 import { BasketCurrencyIcons } from '../common/BasketCurrencyIcons';
-import { BasketCoinStackCanvas } from '../3d/BasketCoinStackCanvas';
 import { motion } from 'motion/react';
 
 const ASSET_EXPLANATIONS: Record<string, { title: string; desc: string }> = {
@@ -30,7 +29,6 @@ const ASSET_EXPLANATIONS: Record<string, { title: string; desc: string }> = {
 
 export const BasketsSection: React.FC = () => {
   const { colors, themeMode, setViewMode, setAuthSubView, setSelectedBasketId, isAuthenticated } = useApp();
-  const [hoveredTickers, setHoveredTickers] = useState<Record<string, string | null>>({});
 
   const handleSelectBasket = (id: BasketId) => {
     setSelectedBasketId(id);
@@ -40,10 +38,6 @@ export const BasketsSection: React.FC = () => {
       setAuthSubView('signup');
       setViewMode('auth');
     }
-  };
-
-  const setHoveredTickerForBasket = (basketId: string, ticker: string | null) => {
-    setHoveredTickers((prev) => ({ ...prev, [basketId]: ticker }));
   };
 
   return (
@@ -63,7 +57,6 @@ export const BasketsSection: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10 max-w-5xl mx-auto">
           {BASKETS.map((basket, bIdx) => {
             const isLow = basket.id === 'stable';
-            const activeHovered = hoveredTickers[basket.id] ?? null;
 
             return (
               <FadeIn key={basket.id} delay={0.15 + bIdx * 0.1} direction={isLow ? 'left' : 'right'} className="h-full">
@@ -106,7 +99,7 @@ export const BasketsSection: React.FC = () => {
 
                     {/* Everyday Rupee Split Explainer */}
                     <div
-                      className="p-3 rounded-xl border mb-4 flex items-center justify-between gap-2"
+                      className="p-3 rounded-xl border mb-5 flex items-center justify-between gap-2"
                       style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}
                     >
                       <div className="flex items-center gap-2">
@@ -121,21 +114,6 @@ export const BasketsSection: React.FC = () => {
                         title="How Your Money Is Split"
                         content={isLow ? 'Every ₹10 you save is split: ₹8.50 buys Digital US Dollars to prevent drops, and ₹1.50 buys Bitcoin for steady growth.' : 'Every ₹30 you save is split automatically across Bitcoin (₹21), Ethereum (₹6), and Solana (₹3).'}
                       />
-                    </div>
-
-                    {/* 3D Interactive Coin Stack Stage */}
-                    <div
-                      className="w-full h-36 rounded-xl border mb-5 overflow-hidden relative flex items-center justify-center transition-colors cursor-grab active:cursor-grabbing"
-                      style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}
-                    >
-                      <BasketCoinStackCanvas
-                        basketId={basket.id}
-                        activeAssetTicker={activeHovered}
-                        className="w-full h-full"
-                      />
-                      <div className="absolute bottom-2 right-2.5 px-2 py-0.5 rounded-md text-[10px] font-mono tabular-nums bg-black/40 border border-white/10 text-white/70 backdrop-blur-xs pointer-events-none">
-                        {activeHovered ? `${activeHovered} LIFTED` : 'DRAG TO ROTATE'}
-                      </div>
                     </div>
 
                     {/* 3 Metric Pills */}
@@ -166,7 +144,7 @@ export const BasketsSection: React.FC = () => {
                       </div>
                     </div>
 
-                    {/* Allocation Bars with Interactive Hover Sync */}
+                    {/* Allocation Bars with Spring Fill */}
                     <div className="space-y-2.5 mb-6">
                       <div className="flex items-center justify-between">
                         <span className="text-[11px] font-bold uppercase tracking-wider" style={{ color: colors.textSecondary }}>
@@ -176,23 +154,15 @@ export const BasketsSection: React.FC = () => {
                       </div>
                       {basket.allocation.map((item) => {
                         const expl = ASSET_EXPLANATIONS[item.ticker] || { title: item.label, desc: item.desc };
-                        const isCurrentActive = activeHovered === item.ticker;
 
                         return (
-                          <div
-                            key={item.ticker}
-                            onMouseEnter={() => setHoveredTickerForBasket(basket.id, item.ticker)}
-                            onMouseLeave={() => setHoveredTickerForBasket(basket.id, null)}
-                            className={`p-1.5 -mx-1.5 rounded-lg transition-colors cursor-pointer ${
-                              isCurrentActive ? 'bg-white/[0.06]' : 'hover:bg-white/[0.02]'
-                            }`}
-                          >
-                            <div className="flex justify-between items-center text-xs font-semibold mb-1">
+                          <div key={item.ticker} className="space-y-1">
+                            <div className="flex justify-between items-center text-xs font-semibold">
                               <span className="flex items-center gap-1" style={{ color: colors.textPrimary }}>
                                 <span>{item.label} ({item.ticker})</span>
                                 <HelpBadge title={expl.title} content={expl.desc} />
                               </span>
-                              <span className="font-mono tabular-nums" style={{ color: isCurrentActive ? colors.accent : colors.textSecondary }}>
+                              <span className="font-mono tabular-nums" style={{ color: colors.textSecondary }}>
                                 {item.pct}%
                               </span>
                             </div>
@@ -254,3 +224,5 @@ export const BasketsSection: React.FC = () => {
     </section>
   );
 };
+
+export default BasketsSection;
