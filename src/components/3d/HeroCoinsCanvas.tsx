@@ -67,21 +67,20 @@ export const HeroCoinsCanvas: React.FC<HeroCoinsCanvasProps> = ({ className = ''
     renderer.toneMappingExposure = 1.05;
     container.appendChild(renderer.domElement);
 
-    // Studio Lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.65);
+    // Balanced, high-fidelity studio lighting that preserves rich color saturation
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.1);
     scene.add(ambientLight);
 
-    const keyLight = new THREE.DirectionalLight(0xffffff, 1.8);
+    const keyLight = new THREE.DirectionalLight(0xffffff, 1.4);
     keyLight.position.set(3, 5, 6);
     scene.add(keyLight);
 
-    // Subtle violet rim light
-    const rimLight1 = new THREE.DirectionalLight(0x8b5cff, 2.2);
+    // Subtle neutral rim and fill lights
+    const rimLight1 = new THREE.DirectionalLight(0xffffff, 0.8);
     rimLight1.position.set(-4, 2, -4);
     scene.add(rimLight1);
 
-    // Mint fill light matching Satmix branding
-    const rimLight2 = new THREE.DirectionalLight(0x00f5b8, 1.2);
+    const rimLight2 = new THREE.DirectionalLight(0xffffff, 0.6);
     rimLight2.position.set(4, -2, -3);
     scene.add(rimLight2);
 

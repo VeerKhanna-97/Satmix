@@ -1,11 +1,12 @@
 // ============================================================
 // FILE: src/components/3d/coinMaterials.ts
-// PURPOSE: High-res procedural canvas textures with official currency logos,
-//          beveled coin geometry, and physical PBR materials for 3D crypto coins
-//          Supported assets: BTC, ETH, SOL, USDT
+// PURPOSE: High-res procedural canvas textures with official cryptocurrency logos,
+//          authentic brand color gradients, and physical PBR materials
+//          Assets: BTC, ETH, SOL, USDT
 // ============================================================
 
 import * as THREE from 'three';
+import { OFFICIAL_COIN_LOGOS } from './coinLogoData';
 
 export type CryptoAsset = 'BTC' | 'ETH' | 'SOL' | 'USDT';
 export type CoinType = CryptoAsset;
@@ -16,46 +17,46 @@ export interface AssetColorConfig {
   gradientEnd: string;
   edgeColor: string;
   emissiveColor: string;
+  logoScale: number;
 }
 
+// Highly saturated, vibrant brand colors matching official token standards
 const ASSET_CONFIGS: Record<CryptoAsset, AssetColorConfig> = {
   BTC: {
-    gradientStart: '#F7931A',
-    gradientEnd: '#E8860F',
-    edgeColor: '#C46D08',
+    gradientStart: '#FFA126',
+    gradientEnd: '#E67E00',
+    edgeColor: '#C26A00',
     emissiveColor: '#F7931A',
+    logoScale: 0.62,
   },
   ETH: {
-    gradientStart: '#627EEA',
-    gradientEnd: '#5068D6',
-    edgeColor: '#4358A8',
+    gradientStart: '#7A96F8',
+    gradientMid: '#5773E3',
+    gradientEnd: '#3B52BA',
+    edgeColor: '#30449E',
     emissiveColor: '#627EEA',
+    logoScale: 0.58,
   },
   SOL: {
-    gradientStart: '#9945FF',
-    gradientMid: '#5F7CF0',
-    gradientEnd: '#14F195',
-    edgeColor: '#5A3BD6',
-    emissiveColor: '#14F195',
+    gradientStart: '#A855F7',
+    gradientMid: '#6366F1',
+    gradientEnd: '#10B981',
+    edgeColor: '#6B21A8',
+    emissiveColor: '#10B981',
+    logoScale: 0.60,
   },
   USDT: {
-    gradientStart: '#26A17B',
-    gradientEnd: '#1F8D6B',
-    edgeColor: '#166E53',
+    gradientStart: '#2BC999',
+    gradientEnd: '#1E9E78',
+    edgeColor: '#167B5E',
     emissiveColor: '#26A17B',
+    logoScale: 0.60,
   },
-};
-
-const LOGO_PATHS: Record<CryptoAsset, string> = {
-  BTC: '/currencies/bitcoin.png',
-  ETH: '/currencies/ethereum-eth-logo.png',
-  SOL: '/currencies/Solana.png',
-  USDT: '/currencies/USDT.png',
 };
 
 const TEXTURE_RES = 1024;
 
-// Cache map for generated textures, materials, and shared geometry to avoid memory churn
+// Cache map for generated textures, materials, and shared geometry
 const textureCache = new Map<string, THREE.CanvasTexture>();
 const materialCache = new Map<CryptoAsset, THREE.Material[]>();
 const loadedLogoImages = new Map<CryptoAsset, HTMLImageElement>();
@@ -70,23 +71,29 @@ function createCanvas2D(width = TEXTURE_RES, height = TEXTURE_RES): [HTMLCanvasE
 }
 
 /**
- * Preloads the official coin logo images from public/currencies/
- * When loaded, seamlessly redraws textures and sets needsUpdate = true.
+ * Initializes and caches the official base64 logo images
  */
-function preloadLogo(asset: CryptoAsset) {
-  if (typeof window === 'undefined') return;
-  if (loadedLogoImages.has(asset)) return;
+function initOfficialLogo(asset: CryptoAsset): HTMLImageElement | undefined {
+  if (typeof window === 'undefined') return undefined;
+  if (loadedLogoImages.has(asset)) {
+    return loadedLogoImages.get(asset);
+  }
+
+  const base64Uri = OFFICIAL_COIN_LOGOS[asset];
+  if (!base64Uri) return undefined;
 
   const img = new Image();
-  img.crossOrigin = 'anonymous';
-  img.src = LOGO_PATHS[asset];
+  img.src = base64Uri;
+  loadedLogoImages.set(asset, img);
+
   img.onload = () => {
-    loadedLogoImages.set(asset, img);
-    refreshCoinTextures(asset);
+    refreshTextures(asset);
   };
+
+  return img;
 }
 
-function refreshCoinTextures(asset: CryptoAsset) {
+function refreshTextures(asset: CryptoAsset) {
   const colorTex = textureCache.get(`face-color-${asset}`);
   const img = loadedLogoImages.get(asset);
   if (colorTex && colorTex.image && img) {
@@ -110,69 +117,15 @@ function refreshCoinTextures(asset: CryptoAsset) {
 }
 
 /**
- * Fallback procedural drawing when image is still loading
- */
-function drawFallbackGlyph(ctx: CanvasRenderingContext2D, asset: CryptoAsset, color = '#FFFFFF') {
-  const center = TEXTURE_RES / 2;
-  ctx.save();
-  ctx.translate(center, center);
-  ctx.fillStyle = color;
-  ctx.strokeStyle = color;
-
-  if (asset === 'BTC') {
-    ctx.rotate((14 * Math.PI) / 180);
-    ctx.font = `800 ${TEXTURE_RES * 0.54}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('B', TEXTURE_RES * 0.015, TEXTURE_RES * 0.02);
-    const notchW = 24;
-    const notchH = 55;
-    for (const offset of [-TEXTURE_RES * 0.075, TEXTURE_RES * 0.005]) {
-      ctx.fillRect(offset, -TEXTURE_RES * 0.28, notchW, notchH);
-      ctx.fillRect(offset, TEXTURE_RES * 0.21, notchW, notchH);
-    }
-  } else if (asset === 'ETH') {
-    const w = TEXTURE_RES * 0.38;
-    const h = 54;
-    const r = h / 2;
-    const drawPill = (y: number, pillW: number) => {
-      ctx.beginPath();
-      ctx.roundRect(-pillW / 2, y - h / 2, pillW, h, r);
-      ctx.fill();
-    };
-    drawPill(-TEXTURE_RES * 0.16, w);
-    drawPill(0, w * 0.72);
-    drawPill(TEXTURE_RES * 0.16, w);
-  } else if (asset === 'SOL') {
-    ctx.lineWidth = 48;
-    ctx.beginPath();
-    ctx.arc(0, 0, 190, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.arc(0, 0, 80, 0, Math.PI * 2);
-    ctx.fill();
-  } else if (asset === 'USDT') {
-    ctx.fillRect(-175, -180, 350, 58);
-    ctx.fillRect(-30, -180, 60, 360);
-    ctx.lineWidth = 42;
-    ctx.beginPath();
-    ctx.ellipse(0, 25, 185, 75, 0, 0, Math.PI * 2);
-    ctx.stroke();
-  }
-
-  ctx.restore();
-}
-
-/**
- * Renders the official currency logo in the center of the coin face
+ * Draws the official coin logo centered with high-resolution bicubic sharpness
  */
 function drawOfficialLogo(ctx: CanvasRenderingContext2D, asset: CryptoAsset, logoImg?: HTMLImageElement) {
   const center = TEXTURE_RES / 2;
-  const targetSize = asset === 'BTC' ? 520 : asset === 'SOL' ? 480 : 490;
+  const cfg = ASSET_CONFIGS[asset];
+  const targetSize = Math.round(TEXTURE_RES * cfg.logoScale);
 
   if (logoImg && logoImg.complete && logoImg.naturalWidth > 0) {
     ctx.save();
-    // Render official logo centered with crisp dimensions
     ctx.drawImage(
       logoImg,
       center - targetSize / 2,
@@ -181,14 +134,11 @@ function drawOfficialLogo(ctx: CanvasRenderingContext2D, asset: CryptoAsset, log
       targetSize
     );
     ctx.restore();
-  } else {
-    // If image is still fetching, use crisp geometric fallback
-    drawFallbackGlyph(ctx, asset, '#FFFFFF');
   }
 }
 
 /**
- * Full render pass for Color Map
+ * Full render pass for Face Color Map
  */
 function renderFaceColorPass(ctx: CanvasRenderingContext2D, asset: CryptoAsset, logoImg?: HTMLImageElement) {
   const center = TEXTURE_RES / 2;
@@ -196,32 +146,45 @@ function renderFaceColorPass(ctx: CanvasRenderingContext2D, asset: CryptoAsset, 
 
   ctx.clearRect(0, 0, TEXTURE_RES, TEXTURE_RES);
 
-  // 1. Base metallic background gradient
+  // 1. Rich saturated gradient matching official cryptocurrency branding
   if (asset === 'SOL') {
-    const grad = ctx.createLinearGradient(120, TEXTURE_RES - 120, TEXTURE_RES - 120, 120);
+    const grad = ctx.createLinearGradient(140, TEXTURE_RES - 140, TEXTURE_RES - 140, 140);
     grad.addColorStop(0, cfg.gradientStart);
-    if (cfg.gradientMid) grad.addColorStop(0.52, cfg.gradientMid);
+    if (cfg.gradientMid) grad.addColorStop(0.5, cfg.gradientMid);
+    grad.addColorStop(1, cfg.gradientEnd);
+    ctx.fillStyle = grad;
+  } else if (asset === 'ETH') {
+    const grad = ctx.createRadialGradient(
+      center - 40,
+      center - 60,
+      40,
+      center,
+      center,
+      TEXTURE_RES * 0.5
+    );
+    grad.addColorStop(0, cfg.gradientStart);
+    if (cfg.gradientMid) grad.addColorStop(0.65, cfg.gradientMid);
     grad.addColorStop(1, cfg.gradientEnd);
     ctx.fillStyle = grad;
   } else {
     const grad = ctx.createRadialGradient(
-      center - 50,
-      center - 70,
-      30,
+      center - 40,
+      center - 60,
+      40,
       center,
       center,
-      TEXTURE_RES * 0.49
+      TEXTURE_RES * 0.5
     );
     grad.addColorStop(0, cfg.gradientStart);
-    grad.addColorStop(0.75, cfg.gradientEnd);
+    grad.addColorStop(0.72, cfg.gradientEnd);
     grad.addColorStop(1, cfg.edgeColor);
     ctx.fillStyle = grad;
   }
   ctx.fillRect(0, 0, TEXTURE_RES, TEXTURE_RES);
 
-  // 2. Concentric minted rings & fluted bevel grooves
-  // Outer bright highlight ring (exact rim boundary: 512px)
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
+  // 2. Concentric minted rings flush to rim boundary (r = 512px)
+  // Outer bright highlight rim
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
   ctx.lineWidth = 12;
   ctx.beginPath();
   ctx.arc(center, center, 502, 0, Math.PI * 2);
@@ -237,7 +200,7 @@ function renderFaceColorPass(ctx: CanvasRenderingContext2D, asset: CryptoAsset, 
   // Milled beaded ring (72 circular micro-dots)
   const dotCount = 72;
   const dotRadius = 462;
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.48)';
   for (let i = 0; i < dotCount; i++) {
     const a = (i / dotCount) * Math.PI * 2;
     const x = center + dotRadius * Math.cos(a);
@@ -248,30 +211,30 @@ function renderFaceColorPass(ctx: CanvasRenderingContext2D, asset: CryptoAsset, 
   }
 
   // Inner hairline ring
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.22)';
   ctx.lineWidth = 3;
   ctx.beginPath();
   ctx.arc(center, center, 442, 0, Math.PI * 2);
   ctx.stroke();
 
-  // Radial lathe reflection lines
+  // Radial lathe reflection sheen lines
   ctx.save();
   ctx.translate(center, center);
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
   ctx.lineWidth = 1.5;
   for (let deg = 0; deg < 360; deg += 12) {
     const rad = (deg * Math.PI) / 180;
     ctx.beginPath();
     ctx.moveTo(Math.cos(rad) * 60, Math.sin(rad) * 60);
-    ctx.lineTo(Math.cos(rad) * 400, Math.sin(rad) * 400);
+    ctx.lineTo(Math.cos(rad) * 430, Math.sin(rad) * 430);
     ctx.stroke();
   }
   ctx.restore();
 
-  // 3. Official Logo in Center
+  // 3. Official Logo in Center with specular depth shadow
   ctx.save();
-  ctx.shadowColor = 'rgba(0, 0, 0, 0.35)';
-  ctx.shadowBlur = 10;
+  ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
+  ctx.shadowBlur = 12;
   ctx.shadowOffsetY = 4;
   drawOfficialLogo(ctx, asset, logoImg);
   ctx.restore();
@@ -289,8 +252,8 @@ function renderFaceBumpPass(ctx: CanvasRenderingContext2D, asset: CryptoAsset, l
   ctx.fillStyle = '#808080';
   ctx.fillRect(0, 0, TEXTURE_RES, TEXTURE_RES);
 
-  // Outer raised rim plateau (exact boundary to rim)
-  ctx.strokeStyle = '#E0E0E0';
+  // Outer raised rim plateau
+  ctx.strokeStyle = '#E2E2E2';
   ctx.lineWidth = 16;
   ctx.beginPath();
   ctx.arc(center, center, 502, 0, Math.PI * 2);
@@ -306,7 +269,7 @@ function renderFaceBumpPass(ctx: CanvasRenderingContext2D, asset: CryptoAsset, l
   // Milled beaded ring (raised dots)
   const dotCount = 72;
   const dotRadius = 462;
-  ctx.fillStyle = '#D0D0D0';
+  ctx.fillStyle = '#D4D4D4';
   for (let i = 0; i < dotCount; i++) {
     const a = (i / dotCount) * Math.PI * 2;
     const x = center + dotRadius * Math.cos(a);
@@ -324,7 +287,7 @@ function renderFaceBumpPass(ctx: CanvasRenderingContext2D, asset: CryptoAsset, l
   ctx.stroke();
 
   // Micro lathe concentric turn rings
-  for (let r = 80; r < 400; r += 32) {
+  for (let r = 80; r < 430; r += 32) {
     ctx.strokeStyle = r % 64 === 0 ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)';
     ctx.lineWidth = 1.5;
     ctx.beginPath();
@@ -345,15 +308,14 @@ function renderFaceBumpPass(ctx: CanvasRenderingContext2D, asset: CryptoAsset, l
  * Creates high-resolution 1024x1024 color map for coin face
  */
 export function createFaceColorTexture(asset: CryptoAsset): THREE.CanvasTexture {
-  preloadLogo(asset);
+  const logoImg = initOfficialLogo(asset);
   const cacheKey = `face-color-${asset}`;
   if (textureCache.has(cacheKey)) {
     return textureCache.get(cacheKey)!;
   }
 
   const [canvas, ctx] = createCanvas2D();
-  const img = loadedLogoImages.get(asset);
-  renderFaceColorPass(ctx, asset, img);
+  renderFaceColorPass(ctx, asset, logoImg);
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
@@ -366,15 +328,14 @@ export function createFaceColorTexture(asset: CryptoAsset): THREE.CanvasTexture 
  * Creates 1024x1024 grayscale bump map with slight blur & rim groove creating physical raised depth
  */
 export function createFaceBumpTexture(asset: CryptoAsset): THREE.CanvasTexture {
-  preloadLogo(asset);
+  const logoImg = initOfficialLogo(asset);
   const cacheKey = `face-bump-${asset}`;
   if (textureCache.has(cacheKey)) {
     return textureCache.get(cacheKey)!;
   }
 
   const [canvas, ctx] = createCanvas2D();
-  const img = loadedLogoImages.get(asset);
-  renderFaceBumpPass(ctx, asset, img);
+  renderFaceBumpPass(ctx, asset, logoImg);
 
   const texture = new THREE.CanvasTexture(canvas);
   textureCache.set(cacheKey, texture);
@@ -429,7 +390,7 @@ export function getCoinGeometry(): THREE.BufferGeometry {
   const thickness = 0.08;
   const halfH = thickness / 2;
   const bevelRadius = 0.012;
-  const innerRadius = outerRadius - bevelRadius;
+  const innerRadius = outerRadius - bevelRadius; // 0.328
   const radialSegments = 96;
 
   const bevelSteps = 4;
@@ -506,12 +467,12 @@ export function getCoinGeometry(): THREE.BufferGeometry {
 
       positions.push(v3x, v3y, v3z, v2x, v2y, v2z, v4x, v4y, v4z);
       normals.push(n3x, n3y, n3z, n2x, n2y, n2z, n4x, n4y, n4z);
-      uvs.push(u2, vValA, u1, vValB, u2, vValB);
+      uvs.push(u2, vValA, u1, vValB, u2, vValA);
     }
   }
   const edgeIndexCount = positions.length / 3 - edgeStartIndex;
 
-  // Group 1: Front Face (+Y)
+  // Group 1: Front Face (+Y) - Exactly scaled to innerRadius
   const frontStartIndex = positions.length / 3;
   const frontY = halfH;
   for (let i = 0; i < radialSegments; i++) {
@@ -534,7 +495,7 @@ export function getCoinGeometry(): THREE.BufferGeometry {
   }
   const frontIndexCount = positions.length / 3 - frontStartIndex;
 
-  // Group 2: Back Face (-Y)
+  // Group 2: Back Face (-Y) - Exactly scaled to innerRadius
   const backStartIndex = positions.length / 3;
   const backY = -halfH;
   for (let i = 0; i < radialSegments; i++) {
@@ -574,7 +535,7 @@ export function getCoinGeometry(): THREE.BufferGeometry {
 }
 
 /**
- * Returns physical materials: [edgeMaterial, frontFaceMaterial, backFaceMaterial]
+ * Returns physical PBR materials with calibrated saturation, metallic sheen, and clearcoat
  */
 export function getCoinMaterials(asset: CryptoAsset): THREE.Material[] {
   if (materialCache.has(asset)) {
@@ -586,41 +547,41 @@ export function getCoinMaterials(asset: CryptoAsset): THREE.Material[] {
   const bumpMap = createFaceBumpTexture(asset);
   const edgeBump = createEdgeBumpTexture();
 
-  // 1. Edge Material
+  // 1. Edge Material - Rich brushed metallic rim
   const edgeMaterial = new THREE.MeshPhysicalMaterial({
     color: new THREE.Color(cfg.edgeColor),
-    metalness: 0.65,
-    roughness: 0.28,
-    clearcoat: 0.6,
-    clearcoatRoughness: 0.2,
+    metalness: 0.72,
+    roughness: 0.22,
+    clearcoat: 0.8,
+    clearcoatRoughness: 0.15,
     bumpMap: edgeBump,
     bumpScale: 1.8,
   });
 
-  // 2. Front Face Material
+  // 2. Front Face Material - Vivid color fidelity with high-contrast specular reflections
   const faceMaterial = new THREE.MeshPhysicalMaterial({
     map: colorMap,
     bumpMap: bumpMap,
-    bumpScale: 1.8,
-    metalness: 0.55,
-    roughness: 0.28,
-    clearcoat: 0.6,
-    clearcoatRoughness: 0.2,
+    bumpScale: 1.5,
+    metalness: 0.40,
+    roughness: 0.22,
+    clearcoat: 0.85,
+    clearcoatRoughness: 0.12,
     emissive: new THREE.Color(cfg.emissiveColor),
-    emissiveIntensity: 0.12,
+    emissiveIntensity: 0.08,
   });
 
   // 3. Back Face Material
   const backMaterial = new THREE.MeshPhysicalMaterial({
     map: colorMap,
     bumpMap: bumpMap,
-    bumpScale: 1.8,
-    metalness: 0.55,
-    roughness: 0.28,
-    clearcoat: 0.6,
-    clearcoatRoughness: 0.2,
+    bumpScale: 1.5,
+    metalness: 0.40,
+    roughness: 0.22,
+    clearcoat: 0.85,
+    clearcoatRoughness: 0.12,
     emissive: new THREE.Color(cfg.emissiveColor),
-    emissiveIntensity: 0.12,
+    emissiveIntensity: 0.08,
   });
 
   const materials: THREE.Material[] = [edgeMaterial, faceMaterial, backMaterial];
