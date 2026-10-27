@@ -2,6 +2,7 @@ import React from 'react';
 import { ArrowRight, ChevronDown } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { FadeIn, WordRotator, Phone3DModel } from '../ui';
+import { HeroCoinsCanvas } from '../3d/HeroCoinsCanvas';
 
 export const Hero: React.FC = () => {
   const { colors, setViewMode, setAuthSubView, isAuthenticated } = useApp();
@@ -33,6 +34,9 @@ export const Hero: React.FC = () => {
           background: `radial-gradient(circle, ${colors.accent} 0%, rgba(93, 23, 235, 0.45) 45%, transparent 75%)`,
         }}
       />
+
+      {/* 3D WebGL Floating Crypto Coin Constellation */}
+      <HeroCoinsCanvas className="z-0 opacity-80 lg:opacity-100" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
