@@ -33,7 +33,7 @@ export const EDUCATIONAL_GUIDES = [
 export const FAQ_ITEMS = [
   {
     question: 'What is Satmix?',
-    answer: 'Satmix is a micro-savings app that helps you build wealth automatically. Instead of buying expensive full coins or staring at trading charts all day, Satmix automatically saves ₹10 to ₹50 every morning from your favorite UPI app (Google Pay, PhonePe, or Paytm) into curated digital assets.',
+    answer: 'Satmix is a micro-savings app that helps you build wealth automatically. Instead of buying expensive full coins or staring at trading charts all day, Satmix automatically saves ₹10 to ₹50 every morning from your favorite UPI app into curated digital assets.',
   },
   {
     question: 'How does daily UPI auto-saving work?',
