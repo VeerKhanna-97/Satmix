@@ -89,9 +89,9 @@ export const FloatingActionDock: React.FC = () => {
                 color: colors.primaryText,
                 borderColor: colors.borderAccent,
               }}
-              aria-label={isAuthenticated ? 'Open Satmix Web Dashboard' : 'Launch Satmix Web App'}
+              aria-label="Launch Satmix App"
             >
-              <span>{isAuthenticated ? 'Open Dashboard' : 'Launch Web App'}</span>
+              <span>Launch App</span>
               <ArrowRight className="w-3.5 h-3.5 transition-transform duration-150 group-hover:translate-x-0.5" />
             </button>
           </motion.div>

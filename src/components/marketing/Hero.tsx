@@ -70,7 +70,7 @@ export const Hero: React.FC = () => {
                   className="w-full sm:w-auto h-12 px-7 rounded-xl font-semibold text-sm shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_4px_16px_rgba(93,23,235,0.25)] transition-[transform,background-color,box-shadow] duration-150 ease-out active:scale-[0.96] inline-flex items-center justify-center gap-2 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50 cursor-pointer"
                   style={{ backgroundColor: colors.primary, color: colors.primaryText }}
                 >
-                  <span>{isAuthenticated ? 'Open Web Dashboard' : 'Start with ₹10/Day'}</span>
+                  <span>Launch App</span>
                   <ArrowRight className="w-4 h-4 flex-shrink-0" />
                 </button>
 
