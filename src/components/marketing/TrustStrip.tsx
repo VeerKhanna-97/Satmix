@@ -10,8 +10,8 @@ export const TrustStrip: React.FC = () => {
     {
       iconDarkSrc: '/icons/instant.png',
       iconLightSrc: '/icons/instant-light.png',
-      title: 'Instant 24/7 Liquidity',
-      desc: '0% Lock-in • Withdraw Anytime',
+      title: 'Instant Withdrawals',
+      desc: 'Zero lock-in • Withdraw anytime',
       bgColor: isLight ? 'rgba(15, 23, 42, 0.05)' : 'rgba(255, 255, 255, 0.08)',
       borderColor: isLight ? 'rgba(15, 23, 42, 0.12)' : 'rgba(255, 255, 255, 0.15)',
       spotlight: isLight ? 'rgba(15, 23, 42, 0.08)' : 'rgba(255, 255, 255, 0.12)',
@@ -19,8 +19,8 @@ export const TrustStrip: React.FC = () => {
     {
       iconDarkSrc: '/icons/autopay.png',
       iconLightSrc: '/icons/autopay-light.png',
-      title: 'NPCI UPI AutoPay',
-      desc: 'Automated 8:00 AM Daily Debits',
+      title: 'Daily UPI AutoPay',
+      desc: 'Automated daily micro-savings',
       bgColor: colors.accentTint,
       borderColor: colors.borderAccent,
       spotlight: colors.accentTint,
@@ -28,8 +28,8 @@ export const TrustStrip: React.FC = () => {
     {
       iconDarkSrc: '/icons/dashboard.png',
       iconLightSrc: '/icons/dashboard-light.png',
-      title: 'Smart Dashboard',
-      desc: 'Real-Time P&L & Portfolio Tracking',
+      title: 'Live Profit Tracking',
+      desc: 'See your returns in real time',
       bgColor: isLight ? 'rgba(2, 132, 199, 0.08)' : 'rgba(56, 189, 248, 0.10)',
       borderColor: isLight ? 'rgba(2, 132, 199, 0.22)' : 'rgba(56, 189, 248, 0.25)',
       spotlight: isLight ? 'rgba(2, 132, 199, 0.12)' : 'rgba(56, 189, 248, 0.15)',
@@ -37,8 +37,8 @@ export const TrustStrip: React.FC = () => {
     {
       iconDarkSrc: '/icons/custody.png',
       iconLightSrc: '/icons/custody-light.png',
-      title: 'Regulated Custody (TBA)',
-      desc: 'Held via Regulated Execution Partner',
+      title: 'Safe & Secure',
+      desc: 'Protected with licensed partners',
       bgColor: colors.purpleTint,
       borderColor: colors.borderPurple,
       spotlight: colors.accentTint,
@@ -87,10 +87,10 @@ export const TrustStrip: React.FC = () => {
                     />
                   </div>
                   <div className="min-w-0 flex-1 w-full">
-                    <div className="font-bold text-xs sm:text-sm truncate transition-colors" style={{ color: colors.textPrimary }}>
+                    <div className="font-bold text-xs sm:text-sm tracking-tight transition-colors line-clamp-1" style={{ color: colors.textPrimary }}>
                       {item.title}
                     </div>
-                    <div className="text-[10px] sm:text-xs truncate mt-0.5 font-normal" style={{ color: colors.textSecondary }}>
+                    <div className="text-[10px] sm:text-xs mt-0.5 font-normal line-clamp-2 leading-relaxed" style={{ color: colors.textSecondary }}>
                       {item.desc}
                     </div>
                   </div>
