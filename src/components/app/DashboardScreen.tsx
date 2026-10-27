@@ -360,7 +360,7 @@ export const DashboardScreen: React.FC = () => {
           {/* Sub-Metric 1: Today's P&L */}
           <div className="pr-3 flex flex-col justify-between">
             <span className="text-[10px] font-semibold uppercase tracking-wider font-mono text-neutral-400">
-              Today's P&L
+              Today's Return
             </span>
             <div
               className="text-lg font-extrabold font-mono tracking-tight mt-1 tabular-nums"
@@ -444,7 +444,7 @@ export const DashboardScreen: React.FC = () => {
           )}
           <div className="relative z-10">
             <span className="text-[11px] font-semibold uppercase tracking-wider block font-mono text-neutral-400">
-              Today's P&L
+              Today's Return
             </span>
             <div
               className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums"

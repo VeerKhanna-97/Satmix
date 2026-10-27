@@ -4,9 +4,28 @@ import { useApp } from '../../context/AppContext';
 import { BASKETS } from '../../data/baskets';
 import { BasketId } from '../../types';
 import { getAssetBarColor } from '../../theme/colors';
-import { SpotlightCard, Magnet, FadeIn, Tilt3DCard } from '../ui';
+import { SpotlightCard, Magnet, FadeIn, Tilt3DCard, HelpBadge } from '../ui';
 import { BasketCurrencyIcons } from '../common/BasketCurrencyIcons';
 import { motion } from 'motion/react';
+
+const ASSET_EXPLANATIONS: Record<string, { title: string; desc: string }> = {
+  USDT: {
+    title: 'Digital US Dollars (USDT)',
+    desc: 'A digital asset pegged 1:1 to the US Dollar (~₹88-90). Protects your savings from market drops while holding dollar value.',
+  },
+  BTC: {
+    title: 'Bitcoin (BTC)',
+    desc: 'Often called "Digital Gold". The world’s largest digital asset with proven 10+ year long-term compounding.',
+  },
+  ETH: {
+    title: 'Ethereum (ETH)',
+    desc: 'The global computing network powering decentralized finance, applications, and smart contracts worldwide.',
+  },
+  SOL: {
+    title: 'Solana (SOL)',
+    desc: 'An ultra-fast blockchain capable of thousands of transactions per second with near-zero network fees.',
+  },
+};
 
 export const BasketsSection: React.FC = () => {
   const { colors, themeMode, setViewMode, setAuthSubView, setSelectedBasketId, isAuthenticated } = useApp();
@@ -27,10 +46,10 @@ export const BasketsSection: React.FC = () => {
         {/* Title */}
         <FadeIn delay={0.05} direction="up" className="text-center max-w-2xl mx-auto mb-8 sm:mb-12 md:mb-16 space-y-3">
           <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight" style={{ color: colors.textPrimary }}>
-            Choose Your Investment Strategy
+            Pick the Right Mix for You
           </h2>
           <p className="text-sm md:text-base leading-relaxed" style={{ color: colors.textSecondary }}>
-            We match you with a basket tailored to your risk quiz profile, with 100% control to adjust or switch anytime in the Web App.
+            Start from as little as ₹10/day. Choose between capital protection or high long-term growth. Switch anytime with one tap.
           </p>
         </FadeIn>
 
@@ -66,73 +85,113 @@ export const BasketsSection: React.FC = () => {
                       </div>
 
                       <div className="text-right font-mono">
-                        <span className="text-[11px] block font-sans" style={{ color: colors.textSecondary }}>Objective</span>
+                        <span className="text-[11px] block font-sans" style={{ color: colors.textSecondary }}>Target</span>
                         <span className="text-base font-extrabold font-mono" style={{ color: isLow ? colors.semanticSuccess : colors.accent }}>
                           {basket.returnRange}
                         </span>
                       </div>
                     </div>
 
-                    <p className="text-xs leading-relaxed mb-6" style={{ color: colors.textSecondary }}>
+                    <p className="text-xs leading-relaxed mb-4" style={{ color: colors.textSecondary }}>
                       {basket.tagline}
                     </p>
+
+                    {/* Everyday Rupee Split Explainer */}
+                    <div
+                      className="p-3 rounded-xl border mb-5 flex items-center justify-between gap-2"
+                      style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-bold font-mono px-2 py-0.5 rounded tracking-wider" style={{ backgroundColor: colors.accentTint, color: colors.accent }}>
+                          {isLow ? '₹10 / DAY' : '₹30 / DAY'}
+                        </span>
+                        <span className="text-[11px] font-semibold" style={{ color: colors.textPrimary }}>
+                          {isLow ? '₹8.50 in USD + ₹1.50 in BTC' : '₹21 in BTC + ₹6 in ETH + ₹3 in SOL'}
+                        </span>
+                      </div>
+                      <HelpBadge
+                        title="How Your Money Is Split"
+                        content={isLow ? 'Every ₹10 you save is split: ₹8.50 buys Digital US Dollars to prevent drops, and ₹1.50 buys Bitcoin for steady growth.' : 'Every ₹30 you save is split automatically across Bitcoin (₹21), Ethereum (₹6), and Solana (₹3).'}
+                      />
+                    </div>
 
                     {/* 3 Metric Pills */}
                     <div className="grid grid-cols-3 gap-1.5 sm:gap-2 p-2.5 sm:p-3.5 rounded-2xl border mb-5 sm:mb-6 text-center font-mono text-xs transition-colors" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
                       <div>
-                        <span className="text-[10px] font-sans block" style={{ color: colors.textSecondary }}>Profile</span>
+                        <span className="text-[10px] font-sans block" style={{ color: colors.textSecondary }}>Risk Level</span>
                         <strong className="text-xs" style={{ color: colors.textPrimary }}>{basket.historicalCagr}</strong>
                       </div>
                       <div>
-                        <span className="text-[10px] font-sans block" style={{ color: colors.textSecondary }}>Volatility</span>
+                        <div className="flex items-center justify-center gap-0.5">
+                          <span className="text-[10px] font-sans" style={{ color: colors.textSecondary }}>Price Swings</span>
+                          <HelpBadge
+                            title="Price Swings"
+                            content={isLow ? 'Low swings: The majority of this basket is in Digital Dollars, protecting your value from sudden drops.' : 'Higher swings: Digital assets fluctuate day to day, but reward long-term savers over years.'}
+                          />
+                        </div>
                         <strong className="text-xs" style={{ color: isLow ? colors.semanticSuccess : colors.accent }}>{basket.volatility}</strong>
                       </div>
                       <div>
-                        <span className="text-[10px] font-sans block" style={{ color: colors.textSecondary }}>Strategy</span>
+                        <div className="flex items-center justify-center gap-0.5">
+                          <span className="text-[10px] font-sans" style={{ color: colors.textSecondary }}>Method</span>
+                          <HelpBadge
+                            title="Hands-Free Auto-Save"
+                            content="No manual trading or market timing needed. Your daily savings are invested automatically each morning."
+                          />
+                        </div>
                         <strong className="text-xs" style={{ color: colors.textPrimary }}>{basket.rebalance}</strong>
                       </div>
                     </div>
 
                     {/* Allocation Bars with Spring Fill */}
-                    <div className="space-y-2 mb-6">
-                      <span className="text-[11px] font-bold uppercase tracking-wider block" style={{ color: colors.textSecondary }}>
-                        Target Portfolio Allocation
-                      </span>
-                      {basket.allocation.map((item) => (
-                        <div key={item.ticker} className="space-y-1">
-                          <div className="flex justify-between text-xs font-semibold">
-                            <span style={{ color: colors.textPrimary }}>{item.label} ({item.ticker})</span>
-                            <span className="font-mono" style={{ color: colors.textSecondary }}>{item.pct}%</span>
+                    <div className="space-y-2.5 mb-6">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] font-bold uppercase tracking-wider" style={{ color: colors.textSecondary }}>
+                          Asset Breakdown
+                        </span>
+                        <span className="text-[10px] font-mono text-gray-400">100% Spot Assets</span>
+                      </div>
+                      {basket.allocation.map((item) => {
+                        const expl = ASSET_EXPLANATIONS[item.ticker] || { title: item.label, desc: item.desc };
+                        return (
+                          <div key={item.ticker} className="space-y-1">
+                            <div className="flex justify-between items-center text-xs font-semibold">
+                              <span className="flex items-center gap-1" style={{ color: colors.textPrimary }}>
+                                <span>{item.label} ({item.ticker})</span>
+                                <HelpBadge title={expl.title} content={expl.desc} />
+                              </span>
+                              <span className="font-mono tabular-nums" style={{ color: colors.textSecondary }}>{item.pct}%</span>
+                            </div>
+                            <div
+                              className="h-1.5 w-full rounded-full overflow-hidden"
+                              style={{ backgroundColor: themeMode === 'light' ? '#E2E8F0' : colors.surface }}
+                            >
+                              <motion.div
+                                className="h-full rounded-full"
+                                initial={{ width: 0 }}
+                                whileInView={{ width: `${item.pct}%` }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                                style={{
+                                  backgroundColor: getAssetBarColor(item.ticker, themeMode),
+                                  boxShadow: item.ticker === 'ETH' && themeMode === 'light' ? '0 0 0 1px rgba(15, 23, 42, 0.15)' : undefined,
+                                }}
+                              />
+                            </div>
                           </div>
-                          <div
-                            className="h-1.5 w-full rounded-full overflow-hidden"
-                            style={{ backgroundColor: themeMode === 'light' ? '#E2E8F0' : colors.surface }}
-                          >
-                            <motion.div
-                              className="h-full rounded-full"
-                              initial={{ width: 0 }}
-                              whileInView={{ width: `${item.pct}%` }}
-                              viewport={{ once: true }}
-                              transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                              style={{
-                                backgroundColor: getAssetBarColor(item.ticker, themeMode),
-                                boxShadow: item.ticker === 'ETH' && themeMode === 'light' ? '0 0 0 1px rgba(15, 23, 42, 0.15)' : undefined,
-                              }}
-                            />
-                          </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
 
                     {/* Bullet Highlights */}
                     <div className="space-y-2 mb-6 text-xs font-medium" style={{ color: colors.textSecondary }}>
                       <div className="flex items-center gap-2">
                         <CheckCircle2 className="w-4 h-4 flex-shrink-0" style={{ color: colors.accent }} />
-                        <span>Execution Engine: <strong style={{ color: colors.textPrimary }}>{basket.custodyPartner}</strong></span>
+                        <span>Security: <strong style={{ color: colors.textPrimary }}>Protected Storage</strong> (segregated partner custody)</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <CheckCircle2 className="w-4 h-4 flex-shrink-0" style={{ color: colors.accent }} />
-                        <span>Zero churn discipline (maximizes long-term compounding)</span>
+                        <span>Zero lock-in: <strong style={{ color: colors.textPrimary }}>Cash out anytime</strong> to your bank account</span>
                       </div>
                     </div>
                   </div>
@@ -141,7 +200,7 @@ export const BasketsSection: React.FC = () => {
                   <div className="pt-2">
                     <button
                       onClick={() => handleSelectBasket(basket.id)}
-                      className="w-full h-11 rounded-xl font-semibold text-xs tracking-wide shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] transition-[transform,background-color,box-shadow] duration-100 ease-out active:scale-[0.96] flex items-center justify-center gap-2 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                      className="w-full h-11 rounded-xl font-semibold text-xs tracking-wide shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] transition-[transform,background-color,box-shadow] duration-100 ease-out active:scale-[0.96] flex items-center justify-center gap-2 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50 cursor-pointer"
                       style={{
                         backgroundColor: colors.primary,
                         color: colors.primaryText,

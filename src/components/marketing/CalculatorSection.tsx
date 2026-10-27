@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { Shield, Rocket, ArrowRight } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
-import { SpotlightCard, CountUp, Magnet, FadeIn } from '../ui';
+import { SpotlightCard, CountUp, Magnet, FadeIn, HelpBadge } from '../ui';
 import { BasketCurrencyIcons } from '../common/BasketCurrencyIcons';
 
 export const CalculatorSection: React.FC = () => {
@@ -13,10 +13,6 @@ export const CalculatorSection: React.FC = () => {
 
   const minSavings = strategy === 'high' ? 30 : 10;
 
-  // Strategy switch logic:
-  // Growth basket starts at ₹30/day so change that accordingly
-  // and have the slider default to that amount if the user has it set at anything lower,
-  // and don't change if not below 30 for the growth basket.
   const handleStrategyChange = useCallback((newStrat: 'low' | 'high') => {
     setStrategy(newStrat);
     if (newStrat === 'high') {
@@ -26,11 +22,7 @@ export const CalculatorSection: React.FC = () => {
 
   const annualRate = strategy === 'low' ? 0.08 : 0.28;
 
-  // Mathematically accurate daily DCA compounding calculation:
-  // With daily recurring deposits d deployed across N = 365 days,
-  // capital added on day k only compounds for the remaining days of the year.
-  // r_daily = (1 + annualRate)^(1/365) - 1
-  // FV = d * ((1 + r_daily)^366 - (1 + r_daily)) / r_daily
+  // Mathematically accurate daily compounding calculation across 365 days
   const calculations = useMemo(() => {
     const totalInvested = dailySavings * 365;
     const dailyRate = Math.pow(1 + annualRate, 1 / 365) - 1;
@@ -58,6 +50,15 @@ export const CalculatorSection: React.FC = () => {
 
   const presets = strategy === 'high' ? [30, 50, 100, 200, 300, 500] : [10, 25, 50, 100, 250, 500];
 
+  const getEverydayComparison = (amount: number) => {
+    if (amount <= 15) return 'Less than a cup of chai';
+    if (amount <= 30) return 'Less than a packet of biscuits';
+    if (amount <= 60) return 'Less than a cold drink or coffee';
+    if (amount <= 120) return 'Less than an evening snack';
+    if (amount <= 250) return 'About a casual meal';
+    return 'Less than a weekend movie ticket';
+  };
+
   return (
     <section id="calc-section" className="py-12 sm:py-16 md:py-24 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -67,7 +68,7 @@ export const CalculatorSection: React.FC = () => {
             See Your Savings Grow in Real Time
           </h2>
           <p className="text-sm sm:text-base leading-relaxed max-w-xl mx-auto mt-1" style={{ color: colors.textSecondary }}>
-            Calculate your portfolio estimate powered by systematic daily Rupee Cost Averaging.
+            See how saving small amounts every morning builds meaningful wealth over 1 year compared to letting money sit idle.
           </p>
         </FadeIn>
 
@@ -83,14 +84,20 @@ export const CalculatorSection: React.FC = () => {
               <div className="space-y-6">
                 {/* Strategy Selector */}
                 <div>
-                  <span className="block text-xs font-bold uppercase tracking-wider mb-2" style={{ color: colors.textSecondary }}>
-                    1. Select Systematic Basket
-                  </span>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="block text-xs font-bold uppercase tracking-wider" style={{ color: colors.textSecondary }}>
+                      1. Pick Your Mix
+                    </span>
+                    <HelpBadge
+                      title="Investment Mix"
+                      content="Choose between Stable (shields savings with Digital US Dollars) or Growth (aims for higher wealth with Bitcoin and Ethereum)."
+                    />
+                  </div>
                   <div className="grid grid-cols-2 gap-3">
                     <button
                       type="button"
                       onClick={() => handleStrategyChange('low')}
-                      className="p-3.5 rounded-2xl border text-left transition-[background-color,border-color,transform] duration-150 ease-out active:scale-[0.98] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                      className="p-3.5 rounded-2xl border text-left transition-[background-color,border-color,transform] duration-150 ease-out active:scale-[0.98] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50 cursor-pointer"
                       style={{
                         backgroundColor: strategy === 'low' ? colors.accentTint : colors.surface,
                         borderColor: strategy === 'low' ? colors.accent : colors.cardBorder,
@@ -101,7 +108,7 @@ export const CalculatorSection: React.FC = () => {
                         <span className="font-bold text-xs" style={{ color: colors.textPrimary }}>Stable Basket</span>
                       </div>
                       <div className="flex justify-between items-baseline mt-1">
-                        <span className="text-[11px] font-mono text-emerald-500 font-bold">~8% Benchmark</span>
+                        <span className="text-[11px] font-mono text-emerald-500 font-bold">~8% Est. Growth</span>
                         <span className="text-[9px]" style={{ color: colors.textTertiary }}>min ₹10/day</span>
                       </div>
                     </button>
@@ -109,7 +116,7 @@ export const CalculatorSection: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => handleStrategyChange('high')}
-                      className="p-3.5 rounded-2xl border text-left transition-[background-color,border-color,transform] duration-150 ease-out active:scale-[0.98] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
+                      className="p-3.5 rounded-2xl border text-left transition-[background-color,border-color,transform] duration-150 ease-out active:scale-[0.98] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50 cursor-pointer"
                       style={{
                         backgroundColor: strategy === 'high' ? colors.accentTint : colors.surface,
                         borderColor: strategy === 'high' ? colors.accent : colors.cardBorder,
@@ -120,7 +127,7 @@ export const CalculatorSection: React.FC = () => {
                         <span className="font-bold text-xs" style={{ color: colors.textPrimary }}>Growth Basket</span>
                       </div>
                       <div className="flex justify-between items-baseline mt-1">
-                        <span className="text-[11px] font-mono text-emerald-500 font-bold">~28% Benchmark</span>
+                        <span className="text-[11px] font-mono text-emerald-500 font-bold">~28% Est. Growth</span>
                         <span className="text-[9px]" style={{ color: colors.textTertiary }}>min ₹30/day</span>
                       </div>
                     </button>
@@ -131,7 +138,7 @@ export const CalculatorSection: React.FC = () => {
                 <div>
                   <div className="flex items-center justify-between mb-2.5">
                     <span className="text-xs font-bold uppercase tracking-wider" style={{ color: colors.textSecondary }}>
-                      2. Daily Investment Amount
+                      2. Daily Savings Amount
                     </span>
                     <div className="text-right">
                       <span className="text-2xl sm:text-3xl font-extrabold font-mono" style={{ color: colors.textPrimary }}>
@@ -164,6 +171,12 @@ export const CalculatorSection: React.FC = () => {
                     />
                   </div>
 
+                  {/* Everyday spending comparison pill */}
+                  <div className="mt-1 flex items-center justify-between text-[11px]">
+                    <span className="text-gray-400 font-medium">Daily equivalent:</span>
+                    <span className="font-semibold text-emerald-400 font-mono">{getEverydayComparison(dailySavings)}</span>
+                  </div>
+
                   {/* Preset Chips */}
                   <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 mt-2.5">
                     {presets.map((preset) => (
@@ -171,7 +184,7 @@ export const CalculatorSection: React.FC = () => {
                         key={preset}
                         type="button"
                         onClick={() => setDailySavings(preset)}
-                        className="h-9 sm:h-8 rounded-lg text-xs font-semibold font-mono border transition-[transform,background-color,border-color] duration-150 ease-out active:scale-[0.97] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50 flex items-center justify-center"
+                        className="h-9 sm:h-8 rounded-lg text-xs font-semibold font-mono border transition-[transform,background-color,border-color] duration-150 ease-out active:scale-[0.97] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50 flex items-center justify-center cursor-pointer"
                         style={{
                           backgroundColor: dailySavings === preset ? colors.primary : colors.surface,
                           borderColor: dailySavings === preset ? colors.primary : colors.cardBorder,
@@ -197,10 +210,10 @@ export const CalculatorSection: React.FC = () => {
                       setViewMode('auth');
                     }
                   }}
-                  className="w-full h-12 rounded-xl font-semibold text-sm shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_4px_16px_rgba(93,23,235,0.25)] transition-[transform,background-color,box-shadow] duration-150 ease-out active:scale-[0.98] flex items-center justify-center gap-2 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50"
+                  className="w-full h-12 rounded-xl font-semibold text-sm shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_4px_16px_rgba(93,23,235,0.25)] transition-[transform,background-color,box-shadow] duration-150 ease-out active:scale-[0.98] flex items-center justify-center gap-2 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50 cursor-pointer"
                   style={{ backgroundColor: colors.primary, color: colors.primaryText }}
                 >
-                  <span>Automate with This Plan (₹{dailySavings}/day)</span>
+                  <span>Start Saving ₹{dailySavings}/day</span>
                   <ArrowRight className="w-4 h-4 flex-shrink-0" />
                 </button>
               </div>
@@ -220,7 +233,11 @@ export const CalculatorSection: React.FC = () => {
               <div className="space-y-5">
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] font-bold uppercase tracking-wider font-mono flex items-center gap-1.5" style={{ color: colors.accent }}>
-                    <span>1-YEAR ESTIMATED ACCUMULATION (DCA)</span>
+                    <span>1-YEAR ESTIMATED WEALTH</span>
+                    <HelpBadge
+                      title="Automated Daily Saving"
+                      content="By saving every morning, you automatically buy more when prices are low and less when prices are high, protecting you from bad timing."
+                    />
                   </span>
                   <span className="text-[10px] px-2 py-0.5 rounded-md font-bold border font-mono tracking-wider tabular-nums" style={{ backgroundColor: colors.mintTint, color: colors.semanticSuccess, borderColor: colors.borderMint }}>
                     +₹{calculations.estimatedGains.toLocaleString('en-IN')} (+{calculations.gainPercent}%)
@@ -238,7 +255,7 @@ export const CalculatorSection: React.FC = () => {
                     />
                   </div>
                   <div className="text-xs mt-1" style={{ color: colors.textSecondary }}>
-                    Calculated using systematic daily rupee-cost averaging.
+                    Total estimated value after 1 full year of automated daily micro-savings.
                   </div>
                 </div>
 
@@ -246,7 +263,7 @@ export const CalculatorSection: React.FC = () => {
                 <div className="grid grid-cols-2 gap-4 p-4 rounded-2xl border transition-colors" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
                   <div>
                     <span className="block text-[11px] font-medium" style={{ color: colors.textSecondary }}>
-                      Total Principal Outlay
+                      Total Money You Save
                     </span>
                     <span className="text-lg font-bold font-mono mt-0.5 block" style={{ color: colors.textPrimary }}>
                       <CountUp to={calculations.totalInvested} prefix="₹" duration={0.8} />
@@ -254,7 +271,7 @@ export const CalculatorSection: React.FC = () => {
                   </div>
                   <div>
                     <span className="block text-[11px] font-medium text-emerald-500">
-                      Estimated Gain
+                      Estimated Profit
                     </span>
                     <span className="text-lg font-bold font-mono text-emerald-500 mt-0.5 block">
                       <CountUp to={calculations.estimatedGains} prefix="+₹" duration={0.8} />
@@ -265,7 +282,7 @@ export const CalculatorSection: React.FC = () => {
 
               {/* Disclaimer */}
               <p className="text-[11px] leading-relaxed pt-5" style={{ color: colors.textTertiary }}>
-                *Calculated daily across 365 days based on reference basket rates. Digital assets carry market risk.
+                *Calculated daily across 365 days based on reference growth rates. Digital assets fluctuate in market price.
               </p>
             </SpotlightCard>
           </FadeIn>

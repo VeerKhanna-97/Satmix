@@ -7,53 +7,57 @@ export const EDUCATIONAL_GUIDES = [
   {
     id: 'g1',
     category: 'HABIT BUILDING',
-    title: 'Why Daily ₹10 Beats Monthly Market Timing',
+    title: 'Why Saving ₹10 Daily Beats Guessing the Market',
     readTime: '2 min read',
-    summary: 'Daily rupee-cost averaging smoothens volatility, automatically buying more units during dips without chart stress.',
-    content: 'When investing a monthly lump sum, you take full price risk on a single calendar day. By automating daily micro-investments from ₹10/day via UPI AutoPay, you accumulate assets across 30 separate price points every month—lowering average cost basis without watching candlestick charts.',
+    summary: 'Saving a small amount every morning smooths out price swings, so you never worry about buying at the wrong time.',
+    content: 'When investing a big amount all at once, you take high risk if prices drop tomorrow. By saving tiny amounts daily (like ₹10 or ₹30 via UPI), you automatically buy across 30 different price points each month. You get more when prices are low and less when they are high—without ever staring at charts.',
   },
   {
     id: 'g2',
-    category: 'EXECUTION & STORAGE',
-    title: 'Regulated Partner Execution & Secure Storage',
+    category: 'SAFETY & STORAGE',
+    title: 'Safe Storage & Regulated Custody',
     readTime: '3 min read',
-    summary: 'Crypto will be bought and held through a regulated execution partner (to be announced). Orders execute systematically via direct batch engines.',
-    content: 'After your morning UPI AutoPay debit, scheduled batch engines execute spot market orders in your exact basket ratio. Portfolio ledgers update with fractional holdings once fills confirm on-chain.',
+    summary: 'Digital assets are held with licensed partner custodians in direct spot accounts with 100% verified ownership.',
+    content: 'After your morning UPI auto-save, our system converts your rupees into exact fractions of top digital assets. Your assets are stored in segregated partner custody accounts—never lent out, leveraged, or traded against you.',
   },
   {
     id: 'g3',
-    category: 'PORTFOLIO STRATEGY',
-    title: 'Automated 2-Basket Diversification',
+    category: 'SAVINGS MIX',
+    title: 'How Our Two Baskets Protect Your Money',
     readTime: '3 min read',
-    summary: 'Balance stability and upside with rule-based index weighting across Bitcoin, Ethereum, and Solana.',
-    content: 'Rather than betting on volatile single tokens, Satmix organizes your daily capital into mathematical allocations: Stable Basket for capital stability or Growth Basket (70% BTC / 20% ETH / 10% SOL) for broader market capture.',
+    summary: 'Balance dollar safety and Bitcoin growth with simple, pre-tested asset splits.',
+    content: 'Instead of gambling on single tokens, Satmix automatically splits your daily amount into curated assets: the Stable Basket protects your savings with 85% Digital US Dollars, while the Growth Basket captures the long-term wealth of Bitcoin, Ethereum, and Solana.',
   },
 ];
 
 export const FAQ_ITEMS = [
   {
     question: 'What is Satmix?',
-    answer: 'Satmix is an automated micro-investing platform that makes crypto ownership simple for young Indians. Set a daily UPI AutoPay from ₹10/day into a curated risk basket (Stable or Growth). No coin picking, no chart watching, and no market timing.',
+    answer: 'Satmix is a micro-savings app that helps you build wealth automatically. Instead of buying expensive full coins or staring at trading charts all day, Satmix automatically saves ₹10 to ₹50 every morning from your favorite UPI app (Google Pay, PhonePe, or Paytm) into curated digital assets.',
   },
   {
-    question: 'How does daily UPI AutoPay & batch execution work?',
-    answer: 'You authorize a daily UPI mandate (via PhonePe, Google Pay, or Paytm). Between 8:00 and 8:30 AM IST, your chosen amount (from ₹10) is debited. At 9:00 AM IST, our automated batch engine executes spot buy orders in your basket ratio, syncing exact fractions directly to your portfolio.',
+    question: 'How does daily UPI auto-saving work?',
+    answer: 'You approve the daily amount once in your favorite UPI app. Every morning between 8:00 AM and 8:30 AM, that exact amount is saved automatically. You never need to enter your UPI PIN each day, and you can pause or cancel anytime with one tap.',
   },
   {
-    question: 'Can I change my daily investment amount or pause anytime?',
-    answer: 'Yes. Satmix gives you 100% control with zero lock-in. You can adjust your daily amount, skip a day, pause your UPI mandate, or restart anytime directly from your dashboard with one tap.',
+    question: 'Can I lose money if the market drops?',
+    answer: 'Market prices go up and down. That is why daily auto-saving (buying a tiny bit every single day) is powerful: you automatically buy more when prices are low and less when prices are high, protecting you from bad timing. If you want maximum peace of mind, the Stable Basket keeps 85% of your money in Digital US Dollars to protect your savings from drops.',
   },
   {
-    question: 'How are my crypto assets stored and safeguarded?',
-    answer: 'Crypto will be bought and held through a regulated execution partner (to be announced). Orders are executed directly into segregated spot holdings, ensuring maximum security, verifiable ownership, and transparency.',
+    question: 'How are my digital assets stored and safeguarded?',
+    answer: 'Your assets are held through licensed, regulated custody partners in direct segregated spot holdings. We do not lend your funds, engage in leverage, or trade against you.',
   },
   {
     question: 'Can I pause investing or withdraw to my bank anytime?',
-    answer: 'Yes. There are zero lock-ins. You can pause, modify, or cancel your daily UPI mandate with one tap. Similarly, you can sell your portfolio and request direct withdrawal to your linked bank account 24/7.',
+    answer: 'Yes. There are zero lock-ins. You can pause, modify, or cancel your daily UPI mandate with one tap. When you want to withdraw, your balance is converted to rupees and sent straight to your bank account via instant IMPS / UPI 24/7.',
+  },
+  {
+    question: 'Do I need to complete KYC before starting?',
+    answer: 'You can start saving ₹10 immediately with just your mobile number. You only need to complete a quick 1-minute PAN verification when you decide to withdraw funds to your bank account.',
   },
   {
     question: 'What is the minimum daily amount to start?',
-    answer: 'You can start with just ₹10 per day. Small, consistent daily accumulation builds meaningful asset exposure over months and years without financial stress.',
+    answer: 'Just ₹10 per day—literally less than the price of a cup of chai. You can increase, decrease, pause, or withdraw whenever you want.',
   },
 ];
 

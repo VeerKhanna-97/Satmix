@@ -54,9 +54,9 @@ export const HoldingsMatrixTable: React.FC<HoldingsMatrixTableProps> = ({
             <th className="py-3.5 px-3 text-right font-bold">Units Held</th>
             <th className="py-3.5 px-3 text-right font-bold hidden sm:table-cell">Avg Buy (INR)</th>
             <th className="py-3.5 px-3 text-right font-bold hidden md:table-cell">Spot Price (INR)</th>
-            <th className="py-3.5 px-3 text-right font-bold hidden lg:table-cell">Cost Basis</th>
+            <th className="py-3.5 px-3 text-right font-bold hidden lg:table-cell">Amount Saved</th>
             <th className="py-3.5 px-3 text-right font-bold">Valuation</th>
-            <th className="py-3.5 px-3 text-right font-bold">Unrealized P&L</th>
+            <th className="py-3.5 px-3 text-right font-bold">Total Return</th>
             <th className="py-3.5 px-4 text-right font-bold">ROI</th>
             <th className="py-3.5 pr-3 w-8"></th>
           </tr>

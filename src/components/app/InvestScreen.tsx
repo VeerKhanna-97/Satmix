@@ -668,19 +668,19 @@ export const InvestScreen: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-400 block mb-0.5">
-                  Behavioral Alpha
+                  Daily Habit Benefit
                 </span>
                 <h3 className="text-base font-bold" style={{ color: colors.textPrimary }}>
-                  The Rupee-Cost Averaging (RCA) Advantage
+                  The Daily Saving Advantage
                 </h3>
               </div>
               <span className="px-2.5 py-1 rounded-md text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                +{dcaAlpha.advantagePct}% EFFICIENCY
+                +{dcaAlpha.advantagePct}% BETTER THAN PEAK
               </span>
             </div>
 
             <p className="text-xs leading-relaxed" style={{ color: colors.textSecondary }}>
-              By automating small daily purchases instead of trying to predict market tops and bottoms with lump sums, your effective acquisition cost is cushioned against sharp volatility spikes.
+              By saving small amounts every morning instead of trying to guess market peaks, your average purchase price stays lower and shields you from bad timing.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
@@ -713,13 +713,13 @@ export const InvestScreen: React.FC = () => {
           >
             <div>
               <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-purple-400 block mb-0.5">
-                Realized Attribution
+                Breakdown by Coin
               </span>
               <h3 className="text-base font-bold" style={{ color: colors.textPrimary }}>
-                Asset P&L Contribution
+                Profit by Asset
               </h3>
               <p className="text-xs text-neutral-400 mt-0.5">
-                Exact rupee return by underlying holding
+                See how much profit each coin generated for you
               </p>
             </div>
 

@@ -63,11 +63,11 @@ export const InvestmentDashboard: React.FC<InvestmentDashboardProps> = ({
                 className="text-[10px] font-mono px-2 py-0.5 rounded-md border font-bold uppercase tracking-wider"
                 style={{ backgroundColor: colors.surface, borderColor: colors.borderDim, color: colors.accent }}
               >
-                LIVE MTM
+                LIVE VALUE
               </span>
             </div>
             <p className="text-xs mt-0.5" style={{ color: colors.textSecondary }}>
-              Real-time multi-asset aggregation from ledger fills & spot market valuations.
+              Real-time portfolio value updated with live market prices.
             </p>
           </div>
         </div>
@@ -115,7 +115,7 @@ export const InvestmentDashboard: React.FC<InvestmentDashboardProps> = ({
         >
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-[11px]" style={{ color: colors.textTertiary }}>
-              Net Cost Basis
+              Total Money Saved
             </span>
             <Wallet className="w-4 h-4 text-slate-400" />
           </div>
@@ -123,7 +123,7 @@ export const InvestmentDashboard: React.FC<InvestmentDashboardProps> = ({
             {formatINR(metrics.totalInvestedINR)}
           </div>
           <span className="text-[10px] font-mono block mt-1" style={{ color: colors.textSecondary }}>
-            Net cash settled from ledger
+            Total amount deposited via UPI
           </span>
         </div>
 
@@ -134,7 +134,7 @@ export const InvestmentDashboard: React.FC<InvestmentDashboardProps> = ({
         >
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-[11px]" style={{ color: colors.textTertiary }}>
-              Unrealized Return
+              Total Profit / Loss
             </span>
             {metrics.totalUnrealizedPnLINR >= 0 ? (
               <ArrowUpRight className="w-4 h-4 text-emerald-500" />
@@ -151,7 +151,7 @@ export const InvestmentDashboard: React.FC<InvestmentDashboardProps> = ({
             {formatINR(Math.abs(metrics.totalUnrealizedPnLINR))}
           </div>
           <span className="text-[10px] font-mono block mt-1" style={{ color: colors.textSecondary }}>
-            MTM net dollar-weighted gain
+            Returns based on live market prices
           </span>
         </div>
 
@@ -162,7 +162,7 @@ export const InvestmentDashboard: React.FC<InvestmentDashboardProps> = ({
         >
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-[11px]" style={{ color: colors.textTertiary }}>
-              Portfolio ROI
+              Total Return %
             </span>
             <TrendingUp className="w-4 h-4 text-indigo-400" />
           </div>
@@ -175,7 +175,7 @@ export const InvestmentDashboard: React.FC<InvestmentDashboardProps> = ({
             {Math.abs(metrics.totalROI).toFixed(2)}%
           </div>
           <span className="text-[10px] font-mono block mt-1" style={{ color: colors.textSecondary }}>
-            All-time capital appreciation
+            Overall portfolio growth percentage
           </span>
         </div>
       </div>

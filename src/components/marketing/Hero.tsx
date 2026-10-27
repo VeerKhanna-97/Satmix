@@ -57,7 +57,7 @@ export const Hero: React.FC = () => {
 
             <FadeIn delay={0.18} direction="up">
               <p className="text-base sm:text-lg max-w-2xl mx-auto lg:mx-0 leading-relaxed" style={{ color: colors.textSecondary }}>
-                No coin picking. No market timing. No staring at charts. Auto-invest from ₹10 daily via UPI AutoPay into curated baskets of top crypto assets. Withdraw to your bank anytime.
+                Save small. Compound big. Automatically save from ₹10 daily into top digital assets using your favorite UPI app (Google Pay, PhonePe, Paytm). No trading skills needed. Cash out to your bank anytime.
               </p>
             </FadeIn>
 

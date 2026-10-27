@@ -114,11 +114,11 @@ export const BasketsScreen: React.FC = () => {
                   {/* Metrics Grid */}
                   <div className="grid grid-cols-3 gap-2 p-3 rounded-2xl border mb-6 text-center font-mono text-xs" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
                     <div>
-                      <span className="text-[10px] font-sans block" style={{ color: colors.textTertiary }}>Historical CAGR</span>
+                      <span className="text-[10px] font-sans block" style={{ color: colors.textTertiary }}>Growth Focus</span>
                       <strong style={{ color: colors.textPrimary }}>{basket.historicalCagr}</strong>
                     </div>
                     <div>
-                      <span className="text-[10px] font-sans block" style={{ color: colors.textTertiary }}>Volatility</span>
+                      <span className="text-[10px] font-sans block" style={{ color: colors.textTertiary }}>Price Swings</span>
                       <strong style={{ color: isStable ? colors.semanticSuccess : colors.semanticWarning }}>{basket.volatility}</strong>
                     </div>
                     <div>

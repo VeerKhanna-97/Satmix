@@ -26,7 +26,7 @@ export const StepsSection: React.FC = () => {
             Savings Made Simple in 3 Steps
           </h2>
           <p className="text-sm sm:text-base max-w-xl mx-auto leading-relaxed" style={{ color: colors.textSecondary }}>
-            Disciplined daily micro-accumulation engineered for compliant, diversified digital assets.
+            Save small amounts every morning without thinking about it. 100% automated via UPI.
           </p>
         </FadeIn>
 
@@ -34,8 +34,8 @@ export const StepsSection: React.FC = () => {
         <div className="flex md:hidden items-center justify-between p-1 rounded-xl mb-6 border max-w-[320px] mx-auto shadow-sm" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
           {[
             { num: '01', label: 'Amount' },
-            { num: '02', label: 'AutoPay' },
-            { num: '03', label: 'Custody' },
+            { num: '02', label: 'Auto-Save' },
+            { num: '03', label: 'Grow' },
           ].map((step, idx) => (
             <button
               key={idx}
@@ -82,7 +82,7 @@ export const StepsSection: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5 text-xs font-bold text-white">
                     <Calendar className="w-3.5 h-3.5" style={{ color: colors.accent }} />
-                    <span>Daily Savings Setup</span>
+                    <span>Pick Daily Amount</span>
                   </div>
                   <span className="text-[8px] px-2 py-0.5 rounded-md font-bold font-mono tracking-wider" style={{ backgroundColor: colors.accentTint, color: colors.accent, border: `1px solid ${colors.borderAccent}` }}>
                     ACTIVE
@@ -133,7 +133,7 @@ export const StepsSection: React.FC = () => {
                 01
               </div>
               <h3 className="font-extrabold text-sm mt-1.5 h-5 flex items-center justify-center truncate" style={{ color: colors.textPrimary }}>
-                Select Your Daily Amount
+                Pick Your Daily Amount (From ₹10)
               </h3>
             </div>
           </div>
@@ -163,8 +163,8 @@ export const StepsSection: React.FC = () => {
               {/* In-App Screen Content */}
               <div className="flex-1 rounded-2xl p-3 border space-y-2.5 shadow-inner relative overflow-hidden flex flex-col" style={{ backgroundColor: '#11131C', borderColor: '#262B3D' }}>
                 <div className="text-center">
-                  <div className="text-xs font-bold text-white">Select UPI Payment Method</div>
-                  <div className="text-[9px] text-gray-400">Debits 8:00–8:30 AM every morning</div>
+                  <div className="text-xs font-bold text-white">Select Your UPI App</div>
+                  <div className="text-[9px] text-gray-400">Auto-saves 8:00–8:30 AM every morning</div>
                 </div>
 
                 {/* 2x2 Payment Gateways Grid */}
@@ -206,12 +206,12 @@ export const StepsSection: React.FC = () => {
                   className="w-full py-2 rounded-xl font-bold text-[11px] text-center shadow-md mt-0.5 transition-transform hover:scale-[1.02]"
                   style={{ backgroundColor: colors.primary, color: colors.primaryText }}
                 >
-                  Authorize UPI AutoPay
+                  Approve Daily Auto-Save
                 </div>
 
                 <div className="flex items-center justify-center gap-1 text-[9px] font-semibold" style={{ color: colors.accent }}>
                   <ShieldCheck className="w-3 h-3" />
-                  <span>NPCI UPI AutoPay Framework</span>
+                  <span>Safe & Bank-Grade via NPCI AutoPay</span>
                 </div>
               </div>
             </div>
@@ -229,7 +229,7 @@ export const StepsSection: React.FC = () => {
                 02
               </div>
               <h3 className="font-extrabold text-sm mt-1.5 h-5 flex items-center justify-center truncate" style={{ color: colors.textPrimary }}>
-                Authorize UPI AutoPay
+                Approve Daily UPI Once
               </h3>
             </div>
           </div>
@@ -259,8 +259,8 @@ export const StepsSection: React.FC = () => {
               {/* In-App Screen Content */}
               <div className="flex-1 rounded-2xl p-3 border space-y-2 shadow-inner relative overflow-hidden flex flex-col" style={{ backgroundColor: '#11131C', borderColor: '#262B3D' }}>
                 <div className="text-center">
-                  <div className="text-xs font-bold text-white">9:00 AM Batch Execution</div>
-                  <div className="text-[9px] text-gray-400">Automated daily spot buy execution</div>
+                  <div className="text-xs font-bold text-white">Automated Compounding</div>
+                  <div className="text-[9px] text-gray-400">Coins bought automatically at best price</div>
                 </div>
 
                 {/* Basket Card Preview */}
@@ -278,11 +278,11 @@ export const StepsSection: React.FC = () => {
                   </div>
                   <div className="p-1.5 rounded-lg bg-black/30 border border-gray-800 text-[8px] text-gray-400 font-mono transition-colors hover:border-gray-700">
                     <span className="block font-bold text-emerald-400 text-[10px]">9 AM</span>
-                    <span>BATCH BUY</span>
+                    <span>AUTO-SAVE</span>
                   </div>
                   <div className="p-1.5 rounded-lg bg-black/30 border border-gray-800 text-[8px] text-gray-400 font-mono transition-colors hover:border-gray-700">
                     <span className="block font-bold text-amber-400 text-[10px]">24/7</span>
-                    <span>PAYOUT</span>
+                    <span>CASH OUT</span>
                   </div>
                 </div>
               </div>
@@ -301,7 +301,7 @@ export const StepsSection: React.FC = () => {
                 03
               </div>
               <h3 className="font-extrabold text-sm mt-1.5 h-5 flex items-center justify-center truncate" style={{ color: colors.textPrimary }}>
-                Batch Buy & Accumulate
+                Watch It Grow & Cash Out Anytime
               </h3>
             </div>
           </div>
