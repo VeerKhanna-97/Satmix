@@ -18,7 +18,14 @@ export const Footer: React.FC = () => {
   const { colors, setViewMode, setAuthSubView } = useApp();
 
   return (
-    <footer className="border-t pt-12 sm:pt-16 pb-28 sm:pb-16" style={{ backgroundColor: colors.bg, borderColor: colors.borderDim }}>
+    <footer className="relative pt-12 sm:pt-16 pb-28 sm:pb-16" style={{ backgroundColor: 'transparent' }}>
+      {/* Soft gradient hairline transition into footer */}
+      <div
+        className="w-full h-px mb-12 sm:mb-16 pointer-events-none"
+        style={{
+          background: 'linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.08) 30%, rgba(255, 255, 255, 0.08) 70%, transparent 100%)',
+        }}
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-10 border-b" style={{ borderColor: colors.borderDim }}>
           {/* Logo & Tagline */}

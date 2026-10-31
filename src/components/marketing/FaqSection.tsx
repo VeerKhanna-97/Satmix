@@ -18,8 +18,15 @@ export const FaqSection: React.FC = () => {
     <section
       id="faq-section"
       className="py-16 sm:py-20 md:py-28 relative overflow-hidden scroll-mt-20 sm:scroll-mt-24"
-      style={{ backgroundColor: colors.surface }}
+      style={{ backgroundColor: 'transparent' }}
     >
+      {/* Subtle atmospheric ambient glow */}
+      <div
+        className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] rounded-full blur-[140px] pointer-events-none opacity-12"
+        style={{
+          background: `radial-gradient(circle, ${colors.accent} 0%, transparent 70%)`,
+        }}
+      />
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
         <FadeIn delay={0.05} direction="up" className="text-center max-w-xl mx-auto mb-12 sm:mb-16 space-y-3">

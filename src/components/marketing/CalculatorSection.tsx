@@ -115,6 +115,13 @@ export const CalculatorSection: React.FC = () => {
 
   return (
     <section id="calc-section" className="py-12 sm:py-16 md:py-24 relative overflow-hidden scroll-mt-20 sm:scroll-mt-24">
+      {/* Subtle ambient connector glow */}
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] rounded-full blur-[140px] pointer-events-none opacity-15"
+        style={{
+          background: `radial-gradient(circle, ${colors.accent} 0%, transparent 70%)`,
+        }}
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* ── SECTION HEADER ────── */}
         <FadeIn delay={0.05} direction="up" className="text-center max-w-2xl mx-auto mb-8 sm:mb-12 space-y-2">

@@ -50,7 +50,14 @@ export const TrustStrip: React.FC = () => {
 
   return (
     <section className="py-6 sm:py-8 relative overflow-hidden bg-transparent">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Subtle ambient connector glow flowing into WaitlistSection */}
+      <div
+        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-24 pointer-events-none blur-[60px] opacity-10"
+        style={{
+          background: `radial-gradient(ellipse at center, ${colors.accent} 0%, transparent 70%)`,
+        }}
+      />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 md:gap-5">
           {trustItems.map((item, idx) => {
             const iconSrc = isLight ? item.iconLightSrc : item.iconDarkSrc;

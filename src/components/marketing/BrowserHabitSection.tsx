@@ -59,9 +59,19 @@ export const BrowserHabitSection: React.FC = () => {
   return (
     <section
       id="browser-habit-section"
-      className="relative py-16 sm:py-24 lg:py-32 overflow-hidden border-t"
-      style={{ backgroundColor: colors.bg, borderColor: colors.borderDim }}
+      className="relative py-16 sm:py-24 lg:py-32 overflow-hidden"
+      style={{ backgroundColor: 'transparent' }}
     >
+      {/* Seamless ambient background glow */}
+      <div
+        className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] rounded-full blur-[140px] pointer-events-none opacity-15"
+        style={{
+          background:
+            themeMode === 'dark'
+              ? 'radial-gradient(circle, rgba(168, 85, 247, 0.16) 0%, transparent 70%)'
+              : 'radial-gradient(circle, rgba(168, 85, 247, 0.08) 0%, transparent 70%)',
+        }}
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* ── 1. CENTERED SECTION HEADER ── */}

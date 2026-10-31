@@ -144,13 +144,18 @@ export const WaitlistSection: React.FC = () => {
   return (
     <section
       id="waitlist-section"
-      className="py-14 sm:py-20 md:py-24 relative overflow-hidden border-t"
-      style={{ backgroundColor: colors.bg, borderColor: colors.borderDim }}
+      className="py-14 sm:py-20 md:py-24 relative overflow-hidden"
+      style={{ backgroundColor: 'transparent' }}
     >
-      {/* Ambient background glow */}
+      {/* Seamless atmospheric ambient blend connecting from TrustStrip and Hero */}
       <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[340px] rounded-full blur-[140px] pointer-events-none opacity-20"
-        style={{ background: colors.accent }}
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            themeMode === 'dark'
+              ? 'radial-gradient(ellipse 70% 50% at 50% 0%, rgba(93, 23, 235, 0.09) 0%, transparent 70%), radial-gradient(circle at 50% 50%, rgba(93, 23, 235, 0.06) 0%, transparent 65%)'
+              : 'radial-gradient(ellipse 70% 50% at 50% 0%, rgba(93, 23, 235, 0.04) 0%, transparent 70%), radial-gradient(circle at 50% 50%, rgba(93, 23, 235, 0.03) 0%, transparent 65%)',
+        }}
       />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
