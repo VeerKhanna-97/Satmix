@@ -58,6 +58,13 @@ export const InvestScreen: React.FC = () => {
   const [mandateModalOpen, setMandateModalOpen] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
 
+  const minSavings = activeBasket.minDailyAmount;
+  const maxSavings = 500;
+  const sliderPercentage = Math.min(
+    100,
+    Math.max(0, ((dailyAmount - minSavings) / (maxSavings - minSavings)) * 100)
+  );
+
   const horizon = HORIZONS[horizonIdx];
   const presets = selectedBasketId === 'stable' ? STABLE_PRESETS : GROWTH_PRESETS;
   const currentHabit = selectedBasketId === 'stable' ? prototypeState.habits.stable : prototypeState.habits.growth;
@@ -464,22 +471,37 @@ export const InvestScreen: React.FC = () => {
             </div>
 
             {/* Range Slider */}
-            <div>
-              <input
-                type="range"
-                min={activeBasket.minDailyAmount}
-                max="500"
-                step="5"
-                value={dailyAmount}
-                onChange={(e) =>
-                  setDailyAmount(Math.max(activeBasket.minDailyAmount, parseInt(e.target.value, 10) || activeBasket.minDailyAmount))
-                }
-                className="w-full h-2 rounded-lg appearance-none cursor-pointer accent-purple-500"
-                style={{ backgroundColor: colors.surface }}
-              />
-              <div className="flex justify-between text-[10px] font-mono text-neutral-400 mt-2">
-                <span>Min: ₹{activeBasket.minDailyAmount}/day</span>
-                <span>Max: ₹500/day</span>
+            <div className="space-y-2.5">
+              <div className="relative py-1">
+                <input
+                  type="range"
+                  min={minSavings}
+                  max={maxSavings}
+                  step="5"
+                  value={dailyAmount}
+                  onChange={(e) =>
+                    setDailyAmount(Math.max(minSavings, parseInt(e.target.value, 10) || minSavings))
+                  }
+                  aria-label="Daily savings amount"
+                  className="w-full h-3 rounded-full appearance-none cursor-pointer focus:outline-none transition-all shadow-inner border border-white/10"
+                  style={{
+                    background: `linear-gradient(to right, #8B5CF6 0%, #A855F7 ${sliderPercentage}%, ${
+                      themeMode === 'light' ? 'rgba(0, 0, 0, 0.12)' : 'rgba(255, 255, 255, 0.15)'
+                    } ${sliderPercentage}%, ${
+                      themeMode === 'light' ? 'rgba(0, 0, 0, 0.12)' : 'rgba(255, 255, 255, 0.15)'
+                    } 100%)`,
+                  }}
+                />
+              </div>
+              <div className="flex justify-between text-[11px] font-mono text-neutral-400">
+                <span className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400" />
+                  Min: ₹{minSavings}/day
+                </span>
+                <span className="flex items-center gap-1.5">
+                  Max: ₹{maxSavings}/day
+                  <span className="w-1.5 h-1.5 rounded-full bg-neutral-600" />
+                </span>
               </div>
             </div>
 
