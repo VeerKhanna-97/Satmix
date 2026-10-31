@@ -5,20 +5,13 @@ import {
   TrendingUp,
   CheckCircle2,
   ArrowRight,
-  Sparkles,
-  Calendar,
-  Lock,
-  Coins,
+  Clock,
+  Target,
   Check,
   PauseCircle,
   PlayCircle,
-  Clock,
-  Target,
-  Percent,
-  Award,
-  Layers,
-  ArrowUpRight,
-  Info,
+  PiggyBank,
+  Sparkles,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { BasketCurrencyIcons } from '../common/BasketCurrencyIcons';
@@ -26,7 +19,6 @@ import { UpiMandateModal } from '../payment/UpiMandateModal';
 import { getBasketById, BASKETS } from '../../data/baskets';
 import { BasketId } from '../../types';
 import { SpotlightCard, CountUp, HelpBadge } from '../ui';
-import { motion, AnimatePresence } from 'motion/react';
 
 const STABLE_PRESETS = [10, 20, 30, 50, 100];
 const GROWTH_PRESETS = [30, 50, 100, 250, 500];
@@ -80,37 +72,38 @@ export const InvestScreen: React.FC = () => {
     }
   };
 
-  // Compounding math calculations
+  // Mathematically calibrated compounding projections (Satmix Basket vs Idle Bank Savings)
   const projection = useMemo(() => {
     const months = horizon.years * 12;
     const monthlyRate = activeBasket.growthRate / 12;
     const monthlyDeposit = dailyAmount * (365 / 12);
 
     let accumulatedValue = 0;
-    const trajectory: { month: number; invested: number; value: number }[] = [];
+    const bankAnnualRate = 0.035; // 3.5% standard Indian bank savings account interest
+    const bankMonthlyRate = bankAnnualRate / 12;
+    let bankAccumulated = 0;
 
     for (let m = 1; m <= months; m++) {
       accumulatedValue = accumulatedValue * (1 + monthlyRate) + monthlyDeposit;
-      const totalInv = dailyAmount * (365 / 12) * m;
-      trajectory.push({
-        month: m,
-        invested: Math.round(totalInv),
-        value: Math.round(accumulatedValue),
-      });
+      bankAccumulated = bankAccumulated * (1 + bankMonthlyRate) + monthlyDeposit;
     }
 
     const totalInvested = dailyAmount * 365 * horizon.years;
     const totalGains = Math.max(0, accumulatedValue - totalInvested);
+    const bankGains = Math.max(0, bankAccumulated - totalInvested);
+    const extraVsBank = Math.max(0, accumulatedValue - bankAccumulated);
 
     return {
       totalInvested: Math.round(totalInvested),
       futureValue: Math.round(accumulatedValue),
       totalGains: Math.round(totalGains),
-      trajectory,
+      bankValue: Math.round(bankAccumulated),
+      bankGains: Math.round(bankGains),
+      extraVsBank: Math.round(extraVsBank),
     };
   }, [dailyAmount, horizon, activeBasket]);
 
-  // Tangible Wealth Runway Milestones
+  // Tangible Wealth Milestones (grounded in everyday saver targets)
   const milestones = useMemo(() => {
     const dailyDeposit = Math.max(10, dailyAmount);
     const target1 = 10000;
@@ -129,32 +122,22 @@ export const InvestScreen: React.FC = () => {
       },
       {
         id: 'm2',
-        title: '0.01 Bitcoin Owner',
-        subtext: 'Own 1% of a Bitcoin (~₹60,000+ asset milestone)',
+        title: '0.01 Bitcoin Milestone',
+        subtext: 'Accumulate 1% of a full Bitcoin',
         badge: `${Math.min(100, Math.round(((tabMetrics.holdings.BTC.units || 0) / 0.01) * 100))}% Reached`,
         achieved: (tabMetrics.holdings.BTC.units || 0) >= 0.01,
       },
       {
         id: 'm3',
         title: '₹50,000 Wealth Cushion',
-        subtext: `${yearsTo50k} years of steady daily habit`,
+        subtext: `${yearsTo50k} years of disciplined daily habit`,
         badge: `${Math.min(100, Math.round((tabMetrics.marketValue / target2) * 100))}% Reached`,
         achieved: tabMetrics.marketValue >= target2,
       },
     ];
   }, [dailyAmount, tabMetrics.marketValue, tabMetrics.holdings.BTC.units]);
 
-  // Daily Saving Advantage (Cost vs Peak)
-  const dcaAlpha = useMemo(() => {
-    return {
-      advantagePct: 8.4,
-      avgBtcPrice: 5840000,
-      peakBtcPrice: 6420000,
-      savingsRupees: 580000,
-    };
-  }, []);
-
-  // Net Realized Liquidity (1% TDS Transparency)
+  // Net Realized Liquidity (1% TDS Indian Tax Transparency)
   const netLiquidity = useMemo(() => {
     const grossVal = tabMetrics.marketValue;
     const tds1Pct = Math.round(grossVal * 0.01 * 100) / 100;
@@ -167,68 +150,6 @@ export const InvestScreen: React.FC = () => {
     };
   }, [tabMetrics.marketValue]);
 
-  // Asset Contribution Breakdown (Filtered dynamically to held assets)
-  const assetAttribution = useMemo(() => {
-    const rawList = [
-      {
-        ticker: 'BTC',
-        name: 'Bitcoin',
-        detail: tabMetrics.holdings.BTC,
-        color: '#f7931b',
-        role: "Digital Gold (World's #1 coin)",
-      },
-      {
-        ticker: 'ETH',
-        name: 'Ethereum',
-        detail: tabMetrics.holdings.ETH,
-        color: '#627eea',
-        role: 'Digital Technology & Apps',
-      },
-      {
-        ticker: 'SOL',
-        name: 'Solana',
-        detail: tabMetrics.holdings.SOL,
-        color: '#9945fe',
-        role: 'Fast Global Payments',
-      },
-      {
-        ticker: 'USDT',
-        name: 'Digital US Dollars',
-        detail: tabMetrics.holdings.USDT,
-        color: '#26a17b',
-        role: 'Capital Protection Reserve',
-      },
-    ];
-
-    const hasAnyHoldings = rawList.some((item) => (item.detail?.units || 0) > 0.00000001);
-    const active = hasAnyHoldings
-      ? rawList.filter((item) => (item.detail?.units || 0) > 0.00000001)
-      : rawList;
-
-    const totalHeldVal = active.reduce((sum, item) => sum + (item.detail?.inrValue || 0), 0) || 1;
-
-    return active.map((item) => {
-      const inrValue = item.detail?.inrValue || 0;
-      const rawGain = item.detail?.gainRupees ?? 0;
-      const rawRoi = item.detail?.gainPercentage ?? 0;
-
-      const pnlRupees = Math.abs(rawGain) < 0.5 ? 0 : Math.round(rawGain);
-      const roiPct = Math.abs(rawRoi) < 0.05 ? 0 : Number(rawRoi.toFixed(1));
-      const weight = Math.round((inrValue / totalHeldVal) * 100);
-
-      return {
-        ticker: item.ticker,
-        name: item.name,
-        inrValue,
-        pnlRupees,
-        roiPct,
-        weight,
-        color: item.color,
-        role: item.role,
-      };
-    });
-  }, [tabMetrics.holdings]);
-
   const handleSaveHabit = async () => {
     await setupHabit(selectedBasketId, dailyAmount);
     triggerConfetti();
@@ -236,54 +157,16 @@ export const InvestScreen: React.FC = () => {
     setTimeout(() => setSaveSuccess(false), 3500);
   };
 
-  // SVG Area Line Chart geometry for projection curve
-  const chartSvg = useMemo(() => {
-    const points = projection.trajectory;
-    if (points.length === 0) return { path: '', area: '', maxVal: 0, width: 600, height: 160 };
-
-    const maxVal = Math.max(...points.map((p) => p.value));
-    const width = 640;
-    const height = 170;
-    const padX = 20;
-    const padY = 20;
-
-    const coords = points.map((p, idx) => {
-      const x = padX + (idx / (points.length - 1)) * (width - padX * 2);
-      const y = height - padY - (p.value / (maxVal || 1)) * (height - padY * 2);
-      return { x, y };
-    });
-
-    let path = `M ${coords[0].x.toFixed(2)},${coords[0].y.toFixed(2)}`;
-    for (let i = 0; i < coords.length - 1; i++) {
-      const p0 = coords[i === 0 ? 0 : i - 1];
-      const p1 = coords[i];
-      const p2 = coords[i + 1];
-      const p3 = coords[i + 2 < coords.length ? i + 2 : coords.length - 1];
-
-      const cp1x = p1.x + (p2.x - p0.x) / 6;
-      const cp1y = p1.y + (p2.y - p0.y) / 6;
-      const cp2x = p2.x - (p3.x - p1.x) / 6;
-      const cp2y = p2.y - (p3.y - p1.y) / 6;
-
-      path += ` C ${cp1x.toFixed(2)},${cp1y.toFixed(2)} ${cp2x.toFixed(2)},${cp2y.toFixed(2)} ${p2.x.toFixed(2)},${p2.y.toFixed(2)}`;
-    }
-
-    const lastCoord = coords[coords.length - 1];
-    const area = `${path} L ${lastCoord.x.toFixed(2)},${height} L ${coords[0].x.toFixed(2)},${height} Z`;
-
-    return { path, area, maxVal, width, height };
-  }, [projection.trajectory]);
-
   return (
     <div className="space-y-6 animate-fade-in max-w-7xl mx-auto pb-12">
       {/* ── TOP HEADER BANNER ─────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b" style={{ borderColor: colors.borderDim }}>
         <div>
           <h1 className="text-2xl font-bold tracking-tight" style={{ color: colors.textPrimary }}>
-            Grow Your Wealth
+            Strategy & Growth
           </h1>
           <p className="text-xs sm:text-sm mt-0.5" style={{ color: colors.textSecondary }}>
-            Choose your daily savings amount, see how your money compounds over time, and manage your automatic daily UPI.
+            Configure your daily savings habit, see how small amounts compound over time, and manage your automated daily UPI.
           </p>
         </div>
 
@@ -296,17 +179,17 @@ export const InvestScreen: React.FC = () => {
               color: '#8B5CF6',
             }}
           >
-            <Zap className="w-3.5 h-3.5 fill-current" />
-            08:00 AM IST DAILY
+            <Clock className="w-3.5 h-3.5" />
+            <span>08:00 AM IST DAILY</span>
           </span>
         </div>
       </div>
 
-      {/* ── 4 WATERMARK METRIC CARDS ──────────────────────────── */}
+      {/* ── 4 WATERMARK METRIC CARDS (HIGH-SIGNAL HABIT ANCHORS) ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 font-mono">
         {/* Card 1: Daily Auto-Save */}
         <div
-          className="rounded-[18px] p-5 sm:p-6 lg:p-7 border relative overflow-hidden backdrop-blur-md flex flex-col justify-between min-h-[128px]"
+          className="rounded-[18px] p-5 sm:p-6 border relative overflow-hidden backdrop-blur-md flex flex-col justify-between min-h-[128px]"
           style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
         >
           <img
@@ -330,9 +213,9 @@ export const InvestScreen: React.FC = () => {
           </div>
         </div>
 
-        {/* Card 2: Savings Advantage */}
+        {/* Card 2: Monthly Commitment (Replaced trader alpha with real budget anchor) */}
         <div
-          className="rounded-[18px] p-5 sm:p-6 lg:p-7 border relative overflow-hidden backdrop-blur-md flex flex-col justify-between min-h-[128px]"
+          className="rounded-[18px] p-5 sm:p-6 border relative overflow-hidden backdrop-blur-md flex flex-col justify-between min-h-[128px]"
           style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
         >
           <img
@@ -344,26 +227,26 @@ export const InvestScreen: React.FC = () => {
           <div className="relative z-10">
             <div className="flex items-center gap-1">
               <span className="text-[11px] font-semibold uppercase tracking-wider block text-neutral-400">
-                SAVINGS ADVANTAGE
+                MONTHLY BUDGET
               </span>
               <HelpBadge
-                title="Daily Saving Advantage"
-                content="By saving every morning, you automatically buy more coins when prices are low and less when prices are high, protecting you from bad timing."
+                title="Automated Monthly Impact"
+                content="Your linked UPI app debits your chosen micro-saving amount every morning at 8:00 AM automatically. You can pause or adjust it anytime."
               />
             </div>
             <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums text-emerald-400">
-              +{dcaAlpha.advantagePct}%
+              ₹{Math.round(dailyAmount * 30.4).toLocaleString('en-IN')}
             </div>
           </div>
           <div className="text-[11px] flex items-center gap-1.5 font-sans relative z-10" style={{ color: colors.textSecondary }}>
-            <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Lower buy price than peak</span>
+            <PiggyBank className="w-3.5 h-3.5 text-emerald-400" />
+            <span>~30 micro-buys every month</span>
           </div>
         </div>
 
         {/* Card 3: Projected Value */}
         <div
-          className="rounded-[18px] p-5 sm:p-6 lg:p-7 border relative overflow-hidden backdrop-blur-md flex flex-col justify-between min-h-[128px]"
+          className="rounded-[18px] p-5 sm:p-6 border relative overflow-hidden backdrop-blur-md flex flex-col justify-between min-h-[128px]"
           style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
         >
           <img
@@ -379,7 +262,7 @@ export const InvestScreen: React.FC = () => {
               </span>
               <HelpBadge
                 title="Estimated Growth"
-                content="Estimated value based on 365 days of consistent daily savings compounded at reference basket growth rates."
+                content="Estimated future value based on consistent daily micro-investing compounded at reference basket growth rates. Past performance is not a guarantee."
               />
             </div>
             <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums text-purple-400">
@@ -394,7 +277,7 @@ export const InvestScreen: React.FC = () => {
 
         {/* Card 4: Instant Cashout */}
         <div
-          className="rounded-[18px] p-5 sm:p-6 lg:p-7 border relative overflow-hidden backdrop-blur-md flex flex-col justify-between min-h-[128px]"
+          className="rounded-[18px] p-5 sm:p-6 border relative overflow-hidden backdrop-blur-md flex flex-col justify-between min-h-[128px]"
           style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
         >
           <img
@@ -410,7 +293,7 @@ export const InvestScreen: React.FC = () => {
               </span>
               <HelpBadge
                 title="Instant Bank Cashout"
-                content="Zero lock-in. You can withdraw your money straight to your bank account anytime via instant IMPS / UPI."
+                content="Zero lock-in. You can withdraw your money straight to your bank account anytime via instant IMPS / UPI. Satmix charges 0% exit fees."
               />
             </div>
             <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums" style={{ color: colors.textPrimary }}>
@@ -424,11 +307,12 @@ export const InvestScreen: React.FC = () => {
         </div>
       </div>
 
-      {/* ── 68% / 32% INSTITUTIONAL GRID ─────────────────────── */}
+      {/* ── 2-COLUMN INSTITUTIONAL GRID (CONFIG + FORECAST on Left, EXECUTION on Right) ── */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-start">
-        {/* Left Column (68% width): Allocation Strategy, Daily Amount, Compounding Curve, Advantage */}
-        <div className="lg:col-span-8 space-y-6">
-          {/* Section 1: Basket Strategy Selector */}
+        {/* Left Column (7 Cols): Stance Selector, Daily Dial, Compounding Reality */}
+        <div className="lg:col-span-7 space-y-6">
+          
+          {/* Section 1: Savings Mix (Interactive Segmented Stance Selector) */}
           <SpotlightCard
             spotlightColor="rgba(93, 23, 235, 0.08)"
             className="rounded-[20px] p-6 border shadow-xl space-y-4"
@@ -437,21 +321,23 @@ export const InvestScreen: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-purple-400 block mb-0.5">
-                  Step 1 · Pick Your Mix
+                  Step 1 · Choose Your Stance
                 </span>
                 <h2 className="text-base font-bold" style={{ color: colors.textPrimary }}>
-                  Choose Your Savings Mix
+                  Curated Savings Stance
                 </h2>
               </div>
               <span className="text-xs font-mono text-neutral-400">
-                2 Curated Mixes
+                Passive & Hands-Free
               </span>
             </div>
 
+            {/* Seamless 2-Option Segmented Selector */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
               {BASKETS.map((b) => {
                 const isSelected = selectedBasketId === b.id;
                 const isStable = b.id === 'stable';
+
                 return (
                   <button
                     key={b.id}
@@ -459,7 +345,7 @@ export const InvestScreen: React.FC = () => {
                     onClick={() => handleBasketChange(b.id)}
                     className={`p-4 rounded-xl border text-left transition-all duration-150 ease-out active:scale-[0.98] relative cursor-pointer ${
                       isSelected
-                        ? 'border-purple-500/50 bg-purple-500/[0.06] shadow-[0_0_20px_rgba(93,23,235,0.15)]'
+                        ? 'border-purple-500/50 bg-purple-500/[0.08] shadow-[0_0_20px_rgba(93,23,235,0.15)]'
                         : 'border-white/[0.08] hover:border-white/[0.16] hover:bg-white/[0.02]'
                     }`}
                     style={{ backgroundColor: isSelected ? undefined : colors.surface }}
@@ -467,9 +353,14 @@ export const InvestScreen: React.FC = () => {
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
                         <BasketCurrencyIcons basketId={b.id} size="sm" />
-                        <span className="font-bold text-sm" style={{ color: colors.textPrimary }}>
-                          {b.name}
-                        </span>
+                        <div>
+                          <span className="font-bold text-sm block" style={{ color: colors.textPrimary }}>
+                            {b.name}
+                          </span>
+                          <span className="text-[10px] font-mono text-neutral-400">
+                            {isStable ? 'Capital First' : 'Wealth First'}
+                          </span>
+                        </div>
                       </div>
                       {isSelected ? (
                         <div className="w-5 h-5 rounded-full bg-purple-400/20 text-purple-400 flex items-center justify-center border border-purple-400/40">
@@ -482,14 +373,15 @@ export const InvestScreen: React.FC = () => {
                       )}
                     </div>
 
-                    <div className="text-xs font-mono font-semibold" style={{ color: isStable ? '#10B981' : '#F59E0B' }}>
-                      {isStable ? '₹8.50 Digital USD + ₹1.50 BTC per ₹10' : '₹21 BTC + ₹6 ETH + ₹3 SOL per ₹30'}
+                    {/* Exact Rupee Split Rule */}
+                    <div className="p-2 rounded-lg bg-black/20 border border-white/[0.04] text-[11px] font-mono font-semibold" style={{ color: isStable ? '#10B981' : '#F59E0B' }}>
+                      {isStable ? '₹8.50 USD + ₹1.50 BTC per ₹10' : '₹21 BTC + ₹6 ETH + ₹3 SOL per ₹30'}
                     </div>
 
-                    <p className="text-[11px] mt-1.5 line-clamp-2" style={{ color: colors.textSecondary }}>
+                    <p className="text-[11px] mt-2 line-clamp-2 leading-relaxed" style={{ color: colors.textSecondary }}>
                       {isStable
-                        ? 'Shields your savings from market drops with dollar stability and steady growth.'
-                        : 'Captures the upside of the top 3 digital assets to build long-term wealth.'}
+                        ? 'Shields savings with dollar stability (~8% p.a. ref). Best for capital safety.'
+                        : 'Captures upside across top 3 digital assets (~28% p.a. ref). Best for 1+ year growth.'}
                     </p>
                   </button>
                 );
@@ -497,7 +389,7 @@ export const InvestScreen: React.FC = () => {
             </div>
           </SpotlightCard>
 
-          {/* Section 2: Daily Savings Amount */}
+          {/* Section 2: Daily Savings Amount (Tactile Habit Dial) */}
           <SpotlightCard
             spotlightColor="rgba(93, 23, 235, 0.08)"
             className="rounded-[20px] p-6 border shadow-xl space-y-5"
@@ -506,10 +398,10 @@ export const InvestScreen: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-purple-400 block mb-0.5">
-                  Step 2 · Pick Daily Amount
+                  Step 2 · Daily Habit
                 </span>
                 <h2 className="text-base font-bold" style={{ color: colors.textPrimary }}>
-                  Daily Savings Amount
+                  Set Your Daily Amount
                 </h2>
               </div>
               <div className="text-right">
@@ -540,16 +432,10 @@ export const InvestScreen: React.FC = () => {
               </div>
             </div>
 
-            {/* Everyday spending comparison */}
-            <div className="p-2.5 rounded-xl border flex items-center justify-between text-xs" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
-              <span className="text-neutral-400">Daily equivalent:</span>
-              <span className="font-semibold text-emerald-400 font-mono">{getEverydayComparison(dailyAmount)}</span>
-            </div>
-
             {/* Quick Preset Chips */}
             <div className="space-y-2">
               <span className="text-[11px] font-mono text-neutral-400 block">
-                Quick Selection Presets
+                Quick Selection Chips
               </span>
               <div className="flex items-center gap-2 flex-wrap">
                 {presets.map((preset) => {
@@ -561,7 +447,7 @@ export const InvestScreen: React.FC = () => {
                       onClick={() => setDailyAmount(preset)}
                       className={`min-w-[64px] h-9 px-3.5 rounded-xl text-xs font-bold font-mono border transition-all duration-150 ease-out active:scale-[0.96] cursor-pointer ${
                         isSelected
-                          ? 'bg-purple-500/15 border-purple-400 text-purple-300 shadow-[0_0_12px_rgba(93,23,235,0.25)]'
+                          ? 'bg-purple-500/20 border-purple-400 text-purple-300 shadow-[0_0_12px_rgba(93,23,235,0.25)]'
                           : 'border-white/[0.08] hover:border-white/[0.18] text-neutral-300 hover:bg-white/[0.04]'
                       }`}
                       style={{ backgroundColor: isSelected ? undefined : colors.surface }}
@@ -572,9 +458,18 @@ export const InvestScreen: React.FC = () => {
                 })}
               </div>
             </div>
+
+            {/* Relatable Everyday Spending Equivalent */}
+            <div className="p-3 rounded-xl border flex items-center justify-between text-xs font-sans" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+              <span className="text-neutral-400">Daily equivalent:</span>
+              <span className="font-semibold text-emerald-400 flex items-center gap-1.5">
+                <span>☕</span>
+                <span>{getEverydayComparison(dailyAmount)}</span>
+              </span>
+            </div>
           </SpotlightCard>
 
-          {/* Section 3: Compounding Trajectory & Wealth Milestones */}
+          {/* Section 3: The Compounding Forecast (Transparent Reality vs Bank) */}
           <SpotlightCard
             spotlightColor="rgba(93, 23, 235, 0.08)"
             className="rounded-[20px] p-6 border shadow-xl space-y-4"
@@ -583,15 +478,15 @@ export const InvestScreen: React.FC = () => {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-purple-400 block mb-0.5">
-                  Step 3 · Compounding Horizon
+                  Step 3 · Compounding Reality
                 </span>
                 <h2 className="text-base font-bold" style={{ color: colors.textPrimary }}>
-                  Estimated Wealth Growth
+                  What Your Money Builds
                 </h2>
               </div>
 
               {/* Horizon Switcher Pills */}
-              <div className="flex items-center p-1 rounded-xl border gap-1" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+              <div className="flex items-center p-1 rounded-xl border gap-1 self-start sm:self-auto" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
                 {HORIZONS.map((h, idx) => (
                   <button
                     key={h.label}
@@ -609,63 +504,54 @@ export const InvestScreen: React.FC = () => {
               </div>
             </div>
 
-            {/* Glowing SVG Area Line Chart */}
-            <div className="pt-2 relative overflow-hidden rounded-xl border p-3" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
-              <div className="flex justify-between items-center text-xs font-mono mb-2 px-1">
-                <span className="text-neutral-400">Compounding Curve ({horizon.years * 365} Days)</span>
-                <span className="text-emerald-400 font-bold tabular-nums">Peak: ₹{projection.futureValue.toLocaleString('en-IN')}</span>
+            {/* Direct Comparison: You Deposit vs Satmix Compounded vs Idle Bank */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+              {/* Box 1: What You Put In */}
+              <div className="p-3.5 rounded-xl border space-y-1 font-mono" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+                <span className="text-[10px] uppercase text-neutral-400 block font-sans">You Deposit</span>
+                <div className="text-lg font-bold text-white tabular-nums">
+                  ₹{projection.totalInvested.toLocaleString('en-IN')}
+                </div>
+                <span className="text-[10px] text-neutral-500 block font-sans">
+                  ₹{dailyAmount}/day × {horizon.years * 365} days
+                </span>
               </div>
 
-              <div className="h-40 w-full relative">
-                <svg
-                  viewBox={`0 0 ${chartSvg.width} ${chartSvg.height}`}
-                  preserveAspectRatio="none"
-                  className="w-full h-full overflow-visible"
-                >
-                  <defs>
-                    <linearGradient id="strategyGlowArea" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#8B5CF6" stopOpacity="0.32" />
-                      <stop offset="85%" stopColor="#8B5CF6" stopOpacity="0.02" />
-                      <stop offset="100%" stopColor="#8B5CF6" stopOpacity="0" />
-                    </linearGradient>
-                  </defs>
-
-                  {/* Horizontal grid lines */}
-                  <line x1="20" y1="40" x2="620" y2="40" stroke="rgba(255,255,255,0.05)" strokeDasharray="4 4" />
-                  <line x1="20" y1="85" x2="620" y2="85" stroke="rgba(255,255,255,0.05)" strokeDasharray="4 4" />
-                  <line x1="20" y1="130" x2="620" y2="130" stroke="rgba(255,255,255,0.05)" strokeDasharray="4 4" />
-
-                  {/* Gradient Area */}
-                  {chartSvg.area && (
-                    <path d={chartSvg.area} fill="url(#strategyGlowArea)" />
-                  )}
-
-                  {/* Glowing Stroke */}
-                  {chartSvg.path && (
-                    <path
-                      d={chartSvg.path}
-                      fill="none"
-                      stroke="#8B5CF6"
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="filter drop-shadow-[0_0_8px_rgba(139,92,246,0.6)]"
-                    />
-                  )}
-                </svg>
+              {/* Box 2: Satmix Compounded Value */}
+              <div className="p-3.5 rounded-xl border border-purple-500/30 bg-purple-500/[0.06] space-y-1 font-mono">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] uppercase text-purple-300 font-sans font-semibold">Satmix Value</span>
+                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold">
+                    +₹{projection.totalGains.toLocaleString('en-IN')}
+                  </span>
+                </div>
+                <div className="text-lg font-bold text-purple-300 tabular-nums">
+                  ₹{projection.futureValue.toLocaleString('en-IN')}
+                </div>
+                <span className="text-[10px] text-emerald-400 block font-sans">
+                  ~{Math.round(activeBasket.growthRate * 100)}% p.a. reference
+                </span>
               </div>
 
-              <div className="flex justify-between items-center text-[10px] font-mono text-neutral-400 pt-2 border-t mt-1" style={{ borderColor: colors.borderDim }}>
-                <span>Day 1 (₹0)</span>
-                <span>Total You Save: ₹{projection.totalInvested.toLocaleString('en-IN')}</span>
-                <span className="text-emerald-400 font-bold">Est. Profit: +₹{projection.totalGains.toLocaleString('en-IN')}</span>
+              {/* Box 3: Idle Bank Alternative */}
+              <div className="p-3.5 rounded-xl border space-y-1 font-mono" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] uppercase text-neutral-400 font-sans">Bank Account</span>
+                  <span className="text-[9px] text-neutral-400 font-mono">3.5% p.a.</span>
+                </div>
+                <div className="text-lg font-bold text-neutral-400 tabular-nums">
+                  ₹{projection.bankValue.toLocaleString('en-IN')}
+                </div>
+                <span className="text-[10px] text-purple-400 block font-sans font-semibold">
+                  Satmix +₹{projection.extraVsBank.toLocaleString('en-IN')} ahead
+                </span>
               </div>
             </div>
 
-            {/* Wealth Milestones */}
+            {/* Tangible Wealth Milestones */}
             <div className="pt-2">
               <span className="text-[11px] font-mono text-neutral-400 block mb-2">
-                Tangible Wealth Milestones
+                Habit Milestones
               </span>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {milestones.map((m) => (
@@ -687,106 +573,12 @@ export const InvestScreen: React.FC = () => {
               </div>
             </div>
           </SpotlightCard>
-
-          {/* Section 4: Daily Saving Advantage */}
-          <SpotlightCard
-            spotlightColor="rgba(16, 185, 129, 0.08)"
-            className="rounded-[20px] p-6 border shadow-xl space-y-4"
-            style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-400 block mb-0.5">
-                  Daily Habit Benefit
-                </span>
-                <h3 className="text-base font-bold" style={{ color: colors.textPrimary }}>
-                  The Daily Saving Advantage
-                </h3>
-              </div>
-              <span className="px-2.5 py-1 rounded-md text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                +{dcaAlpha.advantagePct}% BETTER THAN PEAK
-              </span>
-            </div>
-
-            <p className="text-xs leading-relaxed" style={{ color: colors.textSecondary }}>
-              By saving small amounts every morning instead of trying to guess market peaks, your average purchase price stays lower and shields you from bad timing.
-            </p>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-              <div className="p-3.5 rounded-xl border space-y-1 font-mono" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
-                <span className="text-[10px] uppercase text-neutral-400">Your Average Buy Price</span>
-                <div className="text-base font-bold text-purple-400 tabular-nums">
-                  ₹{(dcaAlpha.avgBtcPrice / 100000).toFixed(2)} Lakh / BTC
-                </div>
-                <span className="text-[10px] text-neutral-500">Disciplined 8:00 AM daily auto-save</span>
-              </div>
-
-              <div className="p-3.5 rounded-xl border space-y-1 font-mono" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
-                <span className="text-[10px] uppercase text-neutral-400">Period Peak Market Price</span>
-                <div className="text-base font-bold text-neutral-400 tabular-nums line-through">
-                  ₹{(dcaAlpha.peakBtcPrice / 100000).toFixed(2)} Lakh / BTC
-                </div>
-                <span className="text-[10px] text-emerald-400">Avoided peak market price</span>
-              </div>
-            </div>
-          </SpotlightCard>
         </div>
 
-        {/* Right Column (32% width): Asset Breakdown & AutoPay Controls */}
-        <div className="lg:col-span-4 space-y-6">
-          {/* Card 1: Asset Breakdown */}
-          <SpotlightCard
-            spotlightColor="rgba(93, 23, 235, 0.08)"
-            className="rounded-[20px] p-6 border shadow-xl space-y-4"
-            style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
-          >
-            <div>
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-purple-400 block mb-0.5">
-                Breakdown by Coin
-              </span>
-              <h3 className="text-base font-bold" style={{ color: colors.textPrimary }}>
-                Profit by Asset
-              </h3>
-              <p className="text-xs text-neutral-400 mt-0.5">
-                See how much profit each coin generated for you
-              </p>
-            </div>
-
-            <div className="divide-y divide-slate-200 dark:divide-white/[0.06] text-xs font-mono">
-              {assetAttribution.map((asset) => {
-                const isGain = asset.pnlRupees >= 0;
-                const isRoiGain = asset.roiPct >= 0;
-
-                const pnlSign = isGain ? '+' : '-';
-                const formattedPnl = `${pnlSign}₹${Math.abs(asset.pnlRupees).toLocaleString('en-IN')}`;
-
-                const roiSign = isRoiGain ? '+' : '-';
-                const formattedRoi = `${roiSign}${Math.abs(asset.roiPct).toFixed(1)}%`;
-
-                return (
-                  <div key={asset.ticker} className="py-2.5 flex items-center justify-between">
-                    <div className="flex items-center gap-2.5">
-                      <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: asset.color }} />
-                      <div>
-                        <span className="font-bold" style={{ color: colors.textPrimary }}>{asset.name}</span>
-                        <span className="text-[10px] text-neutral-400 block font-sans">{asset.role}</span>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <span className={`font-bold tabular-nums block ${isGain ? 'text-emerald-400' : 'text-rose-400'}`}>
-                        {formattedPnl}
-                      </span>
-                      <span className={`text-[10px] block font-mono ${isRoiGain ? 'text-emerald-400/80' : 'text-rose-400/80'}`}>
-                        {formattedRoi}
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </SpotlightCard>
-
-          {/* Card 2: AutoPay Mandate Execution & Controls */}
+        {/* Right Column (5 Cols): AutoPay Mandate Execution & Liquidity Guarantee */}
+        <div className="lg:col-span-5 space-y-6">
+          
+          {/* Card: AutoPay Plan & Activation */}
           <SpotlightCard
             spotlightColor="rgba(93, 23, 235, 0.08)"
             className="rounded-[20px] p-6 border shadow-xl space-y-5"
@@ -794,38 +586,38 @@ export const InvestScreen: React.FC = () => {
           >
             <div>
               <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-purple-400 block mb-0.5">
-                Auto-Save Details
+                Automated Plan
               </span>
               <h3 className="text-base font-bold" style={{ color: colors.textPrimary }}>
-                Daily UPI AutoPay Plan
+                Daily UPI AutoPay Details
               </h3>
             </div>
 
-            {/* Execution Key Metrics */}
+            {/* Key Execution Metrics */}
             <div className="divide-y divide-slate-200 dark:divide-white/[0.06] font-mono text-xs">
-              <div className="py-2 flex justify-between items-center">
+              <div className="py-2.5 flex justify-between items-center">
                 <span className="font-sans text-neutral-400">Daily Amount</span>
                 <strong className="text-purple-400 font-bold tabular-nums">₹{dailyAmount} / day</strong>
               </div>
-              <div className="py-2 flex justify-between items-center">
-                <span className="font-sans text-neutral-400">Monthly Total</span>
-                <strong className="tabular-nums" style={{ color: colors.textPrimary }}>₹{Math.round(dailyAmount * 30.4).toLocaleString('en-IN')}</strong>
+              <div className="py-2.5 flex justify-between items-center">
+                <span className="font-sans text-neutral-400">Monthly Budget</span>
+                <strong className="tabular-nums text-white">₹{Math.round(dailyAmount * 30.4).toLocaleString('en-IN')}</strong>
               </div>
-              <div className="py-2 flex justify-between items-center">
-                <span className="font-sans text-neutral-400">Schedule</span>
-                <strong style={{ color: colors.textPrimary }}>8:00 AM IST Daily</strong>
+              <div className="py-2.5 flex justify-between items-center">
+                <span className="font-sans text-neutral-400">Daily Execution</span>
+                <strong className="text-white">8:00 AM IST Daily</strong>
               </div>
-              <div className="py-2 flex justify-between items-center">
+              <div className="py-2.5 flex justify-between items-center">
                 <span className="font-sans text-neutral-400">Lock-in Period</span>
                 <span className="text-emerald-400 font-bold">Zero Days (Withdraw Anytime)</span>
               </div>
             </div>
 
-            {/* Net Realized Liquidity Transparency */}
+            {/* 1% TDS Transparency (Govt Tax Law) */}
             <div className="p-3.5 rounded-xl border space-y-1.5 font-mono text-xs" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
               <div className="flex items-center justify-between font-sans">
-                <span className="font-semibold" style={{ color: colors.textPrimary }}>What You Receive on Withdrawal</span>
-                <span className="text-emerald-400 font-bold">99% Payout</span>
+                <span className="font-semibold" style={{ color: colors.textPrimary }}>Liquidity Guarantee</span>
+                <span className="text-emerald-400 font-bold">99% Net Payout</span>
               </div>
               <div className="flex justify-between text-[11px] text-neutral-400 pt-1">
                 <span>Gross Portfolio Value:</span>
@@ -835,8 +627,8 @@ export const InvestScreen: React.FC = () => {
                 <span className="flex items-center gap-1 font-sans">
                   <span>Govt Tax (1% TDS):</span>
                   <HelpBadge
-                    title="1% Tax Deducted at Source (TDS)"
-                    content="As per Indian tax law, 1% TDS is deducted on sales and deposited directly to the Income Tax Department against your PAN card. You can claim it back or offset it when filing your taxes. Satmix charges 0% exit fees."
+                    title="1% TDS on Crypto Withdrawals"
+                    content="As mandated by the Govt of India, 1% TDS is deducted on sales and deposited directly to the Income Tax Department against your PAN card. You can claim it back when filing taxes. Satmix charges 0% exit fees."
                   />
                 </span>
                 <strong className="text-rose-400 tabular-nums">-₹{netLiquidity.tds1Pct.toLocaleString('en-IN')}</strong>
@@ -858,7 +650,7 @@ export const InvestScreen: React.FC = () => {
               </div>
             )}
 
-            {/* Habit Status & Action Buttons */}
+            {/* Primary Action Buttons */}
             <div className="space-y-3 pt-1">
               {isHabitConfigured ? (
                 <div className="space-y-3">
@@ -906,7 +698,7 @@ export const InvestScreen: React.FC = () => {
                   className="w-full h-12 rounded-xl text-xs font-bold tracking-wide shadow-[0_0_20px_rgba(93,23,235,0.4)] bg-gradient-to-r from-[#5D17EB] to-[#7C3AED] hover:brightness-105 text-white transition-all active:scale-[0.97] flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <Zap className="w-4 h-4 fill-current" />
-                  <span>Start Daily Auto-Saving (₹{dailyAmount}/day)</span>
+                  <span>Activate Daily AutoPay (₹{dailyAmount}/day)</span>
                 </button>
               )}
 
