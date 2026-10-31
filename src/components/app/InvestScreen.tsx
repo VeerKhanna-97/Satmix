@@ -375,7 +375,7 @@ export const InvestScreen: React.FC = () => {
 
                     {/* Exact Rupee Split Rule */}
                     <div className="p-2 rounded-lg bg-black/20 border border-white/[0.04] text-[11px] font-mono font-semibold" style={{ color: isStable ? '#10B981' : '#F59E0B' }}>
-                      {isStable ? '₹8.50 USD + ₹1.50 BTC per ₹10' : '₹21 BTC + ₹6 ETH + ₹3 SOL per ₹30'}
+                      {isStable ? '₹8.5 Digital USD + ₹1.5 BTC per ₹10' : '₹21 BTC + ₹6 ETH + ₹3 SOL per ₹30'}
                     </div>
 
                     <p className="text-[11px] mt-2 line-clamp-2 leading-relaxed" style={{ color: colors.textSecondary }}>
@@ -386,6 +386,57 @@ export const InvestScreen: React.FC = () => {
                   </button>
                 );
               })}
+            </div>
+
+            {/* Active Stance Split Confirmation Banner */}
+            <div
+              className={`p-3.5 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-all duration-200 ${
+                selectedBasketId === 'stable'
+                  ? 'border-emerald-500/25 bg-emerald-500/[0.06]'
+                  : 'border-purple-500/25 bg-purple-500/[0.06]'
+              }`}
+            >
+              <div className="flex items-start sm:items-center gap-2.5">
+                <div
+                  className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5 sm:mt-0 ${
+                    selectedBasketId === 'stable'
+                      ? 'bg-emerald-500/20 text-emerald-400'
+                      : 'bg-purple-500/20 text-purple-400'
+                  }`}
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                </div>
+                <div>
+                  <div
+                    className="text-xs sm:text-sm font-semibold font-mono tracking-tight"
+                    style={{ color: colors.textPrimary }}
+                  >
+                    {selectedBasketId === 'stable'
+                      ? 'Every ₹10 is split into ₹8.5 Digital USD + ₹1.5 BTC automatically.'
+                      : 'Every ₹30 is split into ₹21 BTC + ₹6 ETH + ₹3 SOL automatically.'}
+                  </div>
+                  {dailyAmount > activeBasket.minDailyAmount && (
+                    <div className="text-[11px] font-mono mt-0.5 text-neutral-400">
+                      At your selected ₹{dailyAmount}/day:{' '}
+                      <span className={selectedBasketId === 'stable' ? 'text-emerald-400 font-semibold' : 'text-purple-400 font-semibold'}>
+                        {selectedBasketId === 'stable'
+                          ? `₹${(dailyAmount * 0.85).toFixed(1)} Digital USD + ₹${(dailyAmount * 0.15).toFixed(1)} BTC daily`
+                          : `₹${(dailyAmount * 0.7).toFixed(1)} BTC + ₹${(dailyAmount * 0.2).toFixed(1)} ETH + ₹${(dailyAmount * 0.1).toFixed(1)} SOL daily`}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <span
+                className={`text-[10px] font-mono font-bold uppercase tracking-wider px-2.5 py-1 rounded-md border shrink-0 self-start sm:self-auto ${
+                  selectedBasketId === 'stable'
+                    ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+                    : 'bg-purple-500/10 text-purple-400 border-purple-500/30'
+                }`}
+              >
+                Daily
+              </span>
             </div>
           </SpotlightCard>
 
