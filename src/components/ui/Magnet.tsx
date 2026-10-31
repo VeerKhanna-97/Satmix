@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react';
-import { motion } from 'motion/react';
+import React, { useRef } from 'react';
+import { motion, useMotionValue, useSpring } from 'motion/react';
 
 interface MagnetProps {
   children: React.ReactNode;
@@ -15,20 +15,35 @@ export const Magnet: React.FC<MagnetProps> = ({
   active = true,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const rectRef = useRef<{ left: number; top: number; width: number; height: number } | null>(null);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+  const xMotion = useMotionValue(0);
+  const yMotion = useMotionValue(0);
+
+  const xSpring = useSpring(xMotion, { stiffness: 360, damping: 28, mass: 0.35 });
+  const ySpring = useSpring(yMotion, { stiffness: 360, damping: 28, mass: 0.35 });
+
+  const handleMouseEnter = () => {
     if (!ref.current || !active) return;
     const { left, top, width, height } = ref.current.getBoundingClientRect();
+    rectRef.current = { left, top, width, height };
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!rectRef.current || !active) return;
+    const { left, top, width, height } = rectRef.current;
     const centerX = left + width / 2;
     const centerY = top + height / 2;
     const x = ((e.clientX - centerX) / (width / 2)) * strength;
     const y = ((e.clientY - centerY) / (height / 2)) * strength;
-    setPosition({ x, y });
+    xMotion.set(x);
+    yMotion.set(y);
   };
 
   const handleMouseLeave = () => {
-    setPosition({ x: 0, y: 0 });
+    xMotion.set(0);
+    yMotion.set(0);
+    rectRef.current = null;
   };
 
   const hasDisplayOrWidth =
@@ -41,10 +56,10 @@ export const Magnet: React.FC<MagnetProps> = ({
   return (
     <motion.div
       ref={ref}
+      onMouseEnter={handleMouseEnter}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      animate={{ x: position.x, y: position.y }}
-      transition={{ type: 'spring', stiffness: 360, damping: 28, mass: 0.35 }}
+      style={{ x: xSpring, y: ySpring }}
       className={`${baseDisplay} ${className}`.trim()}
     >
       {children}

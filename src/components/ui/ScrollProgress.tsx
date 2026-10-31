@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 export interface ScrollProgressProps {
   color?: string;
@@ -11,29 +11,28 @@ export const ScrollProgress: React.FC<ScrollProgressProps> = ({
   height = 2,
   className = '',
 }) => {
-  const [progress, setProgress] = useState(0);
+  const barRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let ticking = false;
 
+    const updateProgress = () => {
+      if (!barRef.current) return;
+      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = totalHeight > 0 ? Math.min(1, Math.max(0, window.scrollY / totalHeight)) : 0;
+      barRef.current.style.transform = `scaleX(${progress})`;
+      ticking = false;
+    };
+
     const handleScroll = () => {
       if (!ticking) {
-        window.requestAnimationFrame(() => {
-          const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
-          if (totalHeight > 0) {
-            const currentProgress = Math.min(1, Math.max(0, window.scrollY / totalHeight));
-            setProgress(currentProgress);
-          } else {
-            setProgress(0);
-          }
-          ticking = false;
-        });
+        window.requestAnimationFrame(updateProgress);
         ticking = true;
       }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
+    updateProgress();
 
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -45,9 +44,10 @@ export const ScrollProgress: React.FC<ScrollProgressProps> = ({
       aria-hidden="true"
     >
       <div
+        ref={barRef}
         className="h-full transition-transform duration-75 ease-out origin-left will-change-transform"
         style={{
-          transform: `scaleX(${progress})`,
+          transform: 'scaleX(0)',
           backgroundColor: color,
           boxShadow: `0 0 10px ${color}, 0 0 4px ${color}`,
         }}
@@ -55,3 +55,5 @@ export const ScrollProgress: React.FC<ScrollProgressProps> = ({
     </div>
   );
 };
+
+export default ScrollProgress;

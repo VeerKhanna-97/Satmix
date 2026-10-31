@@ -1,11 +1,12 @@
 // ============================================================
 // FILE: src/components/3d/coinMaterials.ts
-// PURPOSE: High-res procedural canvas textures with official cryptocurrency logos,
-//          authentic brand color gradients, and physical PBR materials
+// PURPOSE: High-res authentic procedural canvas textures with official cryptocurrency logos,
+//          exact beveled geometry, and calibrated PBR physical materials for both light & dark mode.
 //          Assets: BTC, ETH, SOL, USDT
 // ============================================================
 
 import * as THREE from 'three';
+import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { OFFICIAL_COIN_LOGOS } from './coinLogoData';
 
 export type CryptoAsset = 'BTC' | 'ETH' | 'SOL' | 'USDT';
@@ -20,43 +21,43 @@ export interface AssetColorConfig {
   logoScale: number;
 }
 
-// Highly saturated, vibrant brand colors matching official token standards
+// Calibrated, luminous, high-vibrancy brand standards that pop in both light and dark backgrounds
 const ASSET_CONFIGS: Record<CryptoAsset, AssetColorConfig> = {
   BTC: {
-    gradientStart: '#FFA126',
+    gradientStart: '#FFAC1C',
     gradientEnd: '#E67E00',
-    edgeColor: '#C26A00',
+    edgeColor: '#D97706',
     emissiveColor: '#F7931A',
-    logoScale: 0.62,
-  },
-  ETH: {
-    gradientStart: '#7A96F8',
-    gradientMid: '#5773E3',
-    gradientEnd: '#3B52BA',
-    edgeColor: '#30449E',
-    emissiveColor: '#627EEA',
     logoScale: 0.58,
   },
+  ETH: {
+    gradientStart: '#7C98F8',
+    gradientMid: '#5A75E6',
+    gradientEnd: '#4258BD',
+    edgeColor: '#4358A8',
+    emissiveColor: '#627EEA',
+    logoScale: 0.56,
+  },
   SOL: {
-    gradientStart: '#A855F7',
-    gradientMid: '#6366F1',
-    gradientEnd: '#10B981',
-    edgeColor: '#6B21A8',
+    gradientStart: '#C084FC',
+    gradientMid: '#818CF8',
+    gradientEnd: '#34D399',
+    edgeColor: '#7C3AED',
     emissiveColor: '#10B981',
-    logoScale: 0.60,
+    logoScale: 0.58,
   },
   USDT: {
-    gradientStart: '#2BC999',
-    gradientEnd: '#1E9E78',
-    edgeColor: '#167B5E',
-    emissiveColor: '#26A17B',
-    logoScale: 0.60,
+    gradientStart: '#34D399',
+    gradientEnd: '#10B981',
+    edgeColor: '#059669',
+    emissiveColor: '#10B981',
+    logoScale: 0.58,
   },
 };
 
 const TEXTURE_RES = 1024;
 
-// Cache map for generated textures, materials, and shared geometry
+// Cache map for generated textures, materials, and shared geometry to avoid memory duplication
 const textureCache = new Map<string, THREE.CanvasTexture>();
 const materialCache = new Map<CryptoAsset, THREE.Material[]>();
 const loadedLogoImages = new Map<CryptoAsset, HTMLImageElement>();
@@ -117,7 +118,7 @@ function refreshTextures(asset: CryptoAsset) {
 }
 
 /**
- * Draws the official coin logo centered with high-resolution bicubic sharpness
+ * Draws the official coin logo centered with crisp scaling
  */
 function drawOfficialLogo(ctx: CanvasRenderingContext2D, asset: CryptoAsset, logoImg?: HTMLImageElement) {
   const center = TEXTURE_RES / 2;
@@ -148,19 +149,19 @@ function renderFaceColorPass(ctx: CanvasRenderingContext2D, asset: CryptoAsset, 
 
   // 1. Rich saturated gradient matching official cryptocurrency branding
   if (asset === 'SOL') {
-    const grad = ctx.createLinearGradient(140, TEXTURE_RES - 140, TEXTURE_RES - 140, 140);
+    const grad = ctx.createLinearGradient(120, TEXTURE_RES - 120, TEXTURE_RES - 120, 120);
     grad.addColorStop(0, cfg.gradientStart);
     if (cfg.gradientMid) grad.addColorStop(0.5, cfg.gradientMid);
     grad.addColorStop(1, cfg.gradientEnd);
     ctx.fillStyle = grad;
   } else if (asset === 'ETH') {
     const grad = ctx.createRadialGradient(
-      center - 40,
-      center - 60,
+      center - 30,
+      center - 50,
       40,
       center,
       center,
-      TEXTURE_RES * 0.5
+      TEXTURE_RES * 0.52
     );
     grad.addColorStop(0, cfg.gradientStart);
     if (cfg.gradientMid) grad.addColorStop(0.65, cfg.gradientMid);
@@ -168,39 +169,39 @@ function renderFaceColorPass(ctx: CanvasRenderingContext2D, asset: CryptoAsset, 
     ctx.fillStyle = grad;
   } else {
     const grad = ctx.createRadialGradient(
-      center - 40,
-      center - 60,
+      center - 30,
+      center - 50,
       40,
       center,
       center,
-      TEXTURE_RES * 0.5
+      TEXTURE_RES * 0.52
     );
     grad.addColorStop(0, cfg.gradientStart);
-    grad.addColorStop(0.72, cfg.gradientEnd);
+    grad.addColorStop(0.75, cfg.gradientEnd);
     grad.addColorStop(1, cfg.edgeColor);
     ctx.fillStyle = grad;
   }
   ctx.fillRect(0, 0, TEXTURE_RES, TEXTURE_RES);
 
-  // 2. Concentric minted rings flush to rim boundary (r = 512px)
-  // Outer bright highlight rim
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
-  ctx.lineWidth = 12;
+  // 2. Concentric Minted Beveled Face Features (Calibrated to r = 0.88 * 512 = 450px)
+  // Outer rim highlight groove
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
+  ctx.lineWidth = 10;
   ctx.beginPath();
-  ctx.arc(center, center, 502, 0, Math.PI * 2);
+  ctx.arc(center, center, 460, 0, Math.PI * 2);
   ctx.stroke();
 
   // Stepped inner shadow groove
-  ctx.strokeStyle = 'rgba(0, 0, 0, 0.35)';
-  ctx.lineWidth = 8;
+  ctx.strokeStyle = 'rgba(0, 0, 0, 0.28)';
+  ctx.lineWidth = 6;
   ctx.beginPath();
-  ctx.arc(center, center, 482, 0, Math.PI * 2);
+  ctx.arc(center, center, 442, 0, Math.PI * 2);
   ctx.stroke();
 
   // Milled beaded ring (72 circular micro-dots)
   const dotCount = 72;
-  const dotRadius = 462;
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.48)';
+  const dotRadius = 420;
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
   for (let i = 0; i < dotCount; i++) {
     const a = (i / dotCount) * Math.PI * 2;
     const x = center + dotRadius * Math.cos(a);
@@ -212,9 +213,9 @@ function renderFaceColorPass(ctx: CanvasRenderingContext2D, asset: CryptoAsset, 
 
   // Inner hairline ring
   ctx.strokeStyle = 'rgba(255, 255, 255, 0.22)';
-  ctx.lineWidth = 3;
+  ctx.lineWidth = 2.5;
   ctx.beginPath();
-  ctx.arc(center, center, 442, 0, Math.PI * 2);
+  ctx.arc(center, center, 400, 0, Math.PI * 2);
   ctx.stroke();
 
   // Radial lathe reflection sheen lines
@@ -226,16 +227,16 @@ function renderFaceColorPass(ctx: CanvasRenderingContext2D, asset: CryptoAsset, 
     const rad = (deg * Math.PI) / 180;
     ctx.beginPath();
     ctx.moveTo(Math.cos(rad) * 60, Math.sin(rad) * 60);
-    ctx.lineTo(Math.cos(rad) * 430, Math.sin(rad) * 430);
+    ctx.lineTo(Math.cos(rad) * 390, Math.sin(rad) * 390);
     ctx.stroke();
   }
   ctx.restore();
 
   // 3. Official Logo in Center with specular depth shadow
   ctx.save();
-  ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
-  ctx.shadowBlur = 12;
-  ctx.shadowOffsetY = 4;
+  ctx.shadowColor = 'rgba(0, 0, 0, 0.35)';
+  ctx.shadowBlur = 10;
+  ctx.shadowOffsetY = 3;
   drawOfficialLogo(ctx, asset, logoImg);
   ctx.restore();
 }
@@ -253,41 +254,41 @@ function renderFaceBumpPass(ctx: CanvasRenderingContext2D, asset: CryptoAsset, l
   ctx.fillRect(0, 0, TEXTURE_RES, TEXTURE_RES);
 
   // Outer raised rim plateau
-  ctx.strokeStyle = '#E2E2E2';
+  ctx.strokeStyle = '#D8D8D8';
   ctx.lineWidth = 16;
   ctx.beginPath();
-  ctx.arc(center, center, 502, 0, Math.PI * 2);
+  ctx.arc(center, center, 460, 0, Math.PI * 2);
   ctx.stroke();
 
   // Rim groove (recessed dark notch)
-  ctx.strokeStyle = '#303030';
-  ctx.lineWidth = 10;
+  ctx.strokeStyle = '#383838';
+  ctx.lineWidth = 8;
   ctx.beginPath();
-  ctx.arc(center, center, 482, 0, Math.PI * 2);
+  ctx.arc(center, center, 442, 0, Math.PI * 2);
   ctx.stroke();
 
   // Milled beaded ring (raised dots)
   const dotCount = 72;
-  const dotRadius = 462;
-  ctx.fillStyle = '#D4D4D4';
+  const dotRadius = 420;
+  ctx.fillStyle = '#C8C8C8';
   for (let i = 0; i < dotCount; i++) {
     const a = (i / dotCount) * Math.PI * 2;
     const x = center + dotRadius * Math.cos(a);
     const y = center + dotRadius * Math.sin(a);
     ctx.beginPath();
-    ctx.arc(x, y, 3.6, 0, Math.PI * 2);
+    ctx.arc(x, y, 3.4, 0, Math.PI * 2);
     ctx.fill();
   }
 
   // Inner accent line
-  ctx.strokeStyle = '#B0B0B0';
-  ctx.lineWidth = 3;
+  ctx.strokeStyle = '#A8A8A8';
+  ctx.lineWidth = 2.5;
   ctx.beginPath();
-  ctx.arc(center, center, 442, 0, Math.PI * 2);
+  ctx.arc(center, center, 400, 0, Math.PI * 2);
   ctx.stroke();
 
   // Micro lathe concentric turn rings
-  for (let r = 80; r < 430; r += 32) {
+  for (let r = 80; r < 390; r += 32) {
     ctx.strokeStyle = r % 64 === 0 ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)';
     ctx.lineWidth = 1.5;
     ctx.beginPath();
@@ -298,7 +299,7 @@ function renderFaceBumpPass(ctx: CanvasRenderingContext2D, asset: CryptoAsset, l
   // Raised Logo Plateau
   ctx.save();
   ctx.shadowColor = '#FFFFFF';
-  ctx.shadowBlur = 6;
+  ctx.shadowBlur = 5;
   drawOfficialLogo(ctx, asset, logoImg);
   drawOfficialLogo(ctx, asset, logoImg);
   ctx.restore();
@@ -378,164 +379,66 @@ export function createEdgeBumpTexture(): THREE.CanvasTexture {
 }
 
 /**
- * Builds smooth non-indexed buffer geometry for a coin with beveled edges.
- * Dimensions: outer radius ~0.34, thickness ~0.08, 96 radial segments.
+ * Builds the exact procedural coin geometry matching the original artifact:
+ * - Outer radius = 0.34
+ * - Inner face disk radius = 0.34 * 0.82 = 0.2788
+ * - Rim thickness = 0.08
+ * - Beveled lathe contour (outer rim + chamfer corners) merged with front/back planar disks.
  */
 export function getCoinGeometry(): THREE.BufferGeometry {
   if (sharedCoinGeometry) {
     return sharedCoinGeometry;
   }
 
-  const outerRadius = 0.34;
-  const thickness = 0.08;
-  const halfH = thickness / 2;
-  const bevelRadius = 0.012;
-  const innerRadius = outerRadius - bevelRadius; // 0.328
-  const radialSegments = 96;
+  const outerR = 0.34;
+  const innerR = outerR * 0.82; // 0.2788
+  const halfH = 0.08 / 2;       // 0.04
+  const innerHalfH = halfH * 0.62; // 0.0248
 
-  const bevelSteps = 4;
-  const profile: { r: number; y: number; nr: number; ny: number }[] = [];
+  // The 8-point beveled lathe contour profile
+  const contourPoints = [
+    new THREE.Vector2(innerR, -innerHalfH),
+    new THREE.Vector2(innerR + 0.006, -halfH),
+    new THREE.Vector2(outerR - 0.01, -halfH),
+    new THREE.Vector2(outerR, -halfH + 0.01),
+    new THREE.Vector2(outerR, halfH - 0.01),
+    new THREE.Vector2(outerR - 0.01, halfH),
+    new THREE.Vector2(innerR + 0.006, halfH),
+    new THREE.Vector2(innerR, innerHalfH),
+  ];
 
-  for (let j = 0; j <= bevelSteps; j++) {
-    const phi = -Math.PI / 2 + (Math.PI / 2) * (j / bevelSteps);
-    profile.push({
-      r: innerRadius + bevelRadius * Math.cos(phi),
-      y: -halfH + bevelRadius + bevelRadius * Math.sin(phi),
-      nr: Math.cos(phi),
-      ny: Math.sin(phi),
-    });
-  }
+  // 1. Lathe Geometry for Edge + Bevel Rim
+  const rimGeom = new THREE.LatheGeometry(contourPoints, 96);
 
-  const straightWallYTop = halfH - bevelRadius;
-  if (straightWallYTop > profile[profile.length - 1].y) {
-    profile.push({
-      r: outerRadius,
-      y: straightWallYTop,
-      nr: 1,
-      ny: 0,
-    });
-  }
+  // 2. Front Face Cap Circle Geometry (+Y)
+  const frontCap = new THREE.CircleGeometry(innerR, 96);
+  frontCap.rotateX(-Math.PI / 2);
+  frontCap.translate(0, innerHalfH, 0);
 
-  for (let j = 1; j <= bevelSteps; j++) {
-    const phi = (Math.PI / 2) * (j / bevelSteps);
-    profile.push({
-      r: innerRadius + bevelRadius * Math.cos(phi),
-      y: halfH - bevelRadius + bevelRadius * Math.sin(phi),
-      nr: Math.cos(phi),
-      ny: Math.sin(phi),
-    });
-  }
+  // 3. Back Face Cap Circle Geometry (-Y)
+  const backCap = new THREE.CircleGeometry(innerR, 96);
+  backCap.rotateX(Math.PI / 2);
+  backCap.rotateY(Math.PI);
+  backCap.translate(0, -innerHalfH, 0);
 
-  const profileCount = profile.length;
-  const positions: number[] = [];
-  const normals: number[] = [];
-  const uvs: number[] = [];
+  // Merge the 3 geometries with distinct material groups:
+  // Group 0: Rim (Lathe)
+  // Group 1: Front Face (Circle)
+  // Group 2: Back Face (Circle)
+  const merged = BufferGeometryUtils.mergeGeometries(
+    [rimGeom.toNonIndexed(), frontCap.toNonIndexed(), backCap.toNonIndexed()],
+    true
+  );
 
-  // Group 0: Edge & Bevels
-  const edgeStartIndex = 0;
-  for (let i = 0; i < radialSegments; i++) {
-    const theta1 = (i / radialSegments) * Math.PI * 2;
-    const theta2 = ((i + 1) / radialSegments) * Math.PI * 2;
-    const u1 = i / radialSegments;
-    const u2 = (i + 1) / radialSegments;
+  merged.computeVertexNormals();
+  merged.computeBoundingSphere();
 
-    const cos1 = Math.cos(theta1);
-    const sin1 = Math.sin(theta1);
-    const cos2 = Math.cos(theta2);
-    const sin2 = Math.sin(theta2);
-
-    for (let p = 0; p < profileCount - 1; p++) {
-      const pA = profile[p];
-      const pB = profile[p + 1];
-
-      const v1x = pA.r * cos1; const v1y = pA.y; const v1z = pA.r * sin1;
-      const v2x = pB.r * cos1; const v2y = pB.y; const v2z = pB.r * sin1;
-      const v3x = pA.r * cos2; const v3y = pA.y; const v3z = pA.r * sin2;
-      const v4x = pB.r * cos2; const v4y = pB.y; const v4z = pB.r * sin2;
-
-      const n1x = pA.nr * cos1; const n1y = pA.ny; const n1z = pA.nr * sin1;
-      const n2x = pB.nr * cos1; const n2y = pB.ny; const n2z = pB.nr * sin1;
-      const n3x = pA.nr * cos2; const n3y = pA.ny; const n3z = pA.nr * sin2;
-      const n4x = pB.nr * cos2; const n4y = pB.ny; const n4z = pB.nr * sin2;
-
-      const vValA = p / (profileCount - 1);
-      const vValB = (p + 1) / (profileCount - 1);
-
-      positions.push(v1x, v1y, v1z, v2x, v2y, v2z, v3x, v3y, v3z);
-      normals.push(n1x, n1y, n1z, n2x, n2y, n2z, n3x, n3y, n3z);
-      uvs.push(u1, vValA, u1, vValB, u2, vValA);
-
-      positions.push(v3x, v3y, v3z, v2x, v2y, v2z, v4x, v4y, v4z);
-      normals.push(n3x, n3y, n3z, n2x, n2y, n2z, n4x, n4y, n4z);
-      uvs.push(u2, vValA, u1, vValB, u2, vValA);
-    }
-  }
-  const edgeIndexCount = positions.length / 3 - edgeStartIndex;
-
-  // Group 1: Front Face (+Y) - Exactly scaled to innerRadius
-  const frontStartIndex = positions.length / 3;
-  const frontY = halfH;
-  for (let i = 0; i < radialSegments; i++) {
-    const theta1 = (i / radialSegments) * Math.PI * 2;
-    const theta2 = ((i + 1) / radialSegments) * Math.PI * 2;
-
-    const x1 = innerRadius * Math.cos(theta1);
-    const z1 = innerRadius * Math.sin(theta1);
-    const x2 = innerRadius * Math.cos(theta2);
-    const z2 = innerRadius * Math.sin(theta2);
-
-    const uv1u = 0.5 + x1 / (2 * innerRadius);
-    const uv1v = 0.5 - z1 / (2 * innerRadius);
-    const uv2u = 0.5 + x2 / (2 * innerRadius);
-    const uv2v = 0.5 - z2 / (2 * innerRadius);
-
-    positions.push(0, frontY, 0, x1, frontY, z1, x2, frontY, z2);
-    normals.push(0, 1, 0, 0, 1, 0, 0, 1, 0);
-    uvs.push(0.5, 0.5, uv1u, uv1v, uv2u, uv2v);
-  }
-  const frontIndexCount = positions.length / 3 - frontStartIndex;
-
-  // Group 2: Back Face (-Y) - Exactly scaled to innerRadius
-  const backStartIndex = positions.length / 3;
-  const backY = -halfH;
-  for (let i = 0; i < radialSegments; i++) {
-    const theta1 = (i / radialSegments) * Math.PI * 2;
-    const theta2 = ((i + 1) / radialSegments) * Math.PI * 2;
-
-    const x1 = innerRadius * Math.cos(theta1);
-    const z1 = innerRadius * Math.sin(theta1);
-    const x2 = innerRadius * Math.cos(theta2);
-    const z2 = innerRadius * Math.sin(theta2);
-
-    const uv1u = 0.5 - x1 / (2 * innerRadius);
-    const uv1v = 0.5 - z1 / (2 * innerRadius);
-    const uv2u = 0.5 - x2 / (2 * innerRadius);
-    const uv2v = 0.5 - z2 / (2 * innerRadius);
-
-    positions.push(0, backY, 0, x2, backY, z2, x1, backY, z1);
-    normals.push(0, -1, 0, 0, -1, 0, 0, -1, 0);
-    uvs.push(0.5, 0.5, uv2u, uv2v, uv1u, uv1v);
-  }
-  const backIndexCount = positions.length / 3 - backStartIndex;
-
-  const geom = new THREE.BufferGeometry();
-  geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-  geom.setAttribute('normal', new THREE.Float32BufferAttribute(normals, 3));
-  geom.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
-
-  geom.addGroup(edgeStartIndex, edgeIndexCount, 0);
-  geom.addGroup(frontStartIndex, frontIndexCount, 1);
-  geom.addGroup(backStartIndex, backIndexCount, 2);
-
-  geom.computeBoundingBox();
-  geom.computeBoundingSphere();
-
-  sharedCoinGeometry = geom;
+  sharedCoinGeometry = merged;
   return sharedCoinGeometry;
 }
 
 /**
- * Returns physical PBR materials with calibrated saturation, metallic sheen, and clearcoat
+ * Returns physical PBR materials with vibrant, luminous reflection in both light and dark modes
  */
 export function getCoinMaterials(asset: CryptoAsset): THREE.Material[] {
   if (materialCache.has(asset)) {
@@ -547,41 +450,41 @@ export function getCoinMaterials(asset: CryptoAsset): THREE.Material[] {
   const bumpMap = createFaceBumpTexture(asset);
   const edgeBump = createEdgeBumpTexture();
 
-  // 1. Edge Material - Rich brushed metallic rim
+  // 1. Edge Material - Rich polished metallic rim with flute ridges
   const edgeMaterial = new THREE.MeshPhysicalMaterial({
     color: new THREE.Color(cfg.edgeColor),
-    metalness: 0.72,
-    roughness: 0.22,
-    clearcoat: 0.8,
+    metalness: 0.65,
+    roughness: 0.25,
+    clearcoat: 0.7,
     clearcoatRoughness: 0.15,
     bumpMap: edgeBump,
-    bumpScale: 1.8,
+    bumpScale: 1.5,
   });
 
-  // 2. Front Face Material - Vivid color fidelity with high-contrast specular reflections
+  // 2. Front Face Material - Vivid brand colors with bright specular sheen
   const faceMaterial = new THREE.MeshPhysicalMaterial({
     map: colorMap,
     bumpMap: bumpMap,
-    bumpScale: 1.5,
-    metalness: 0.40,
+    bumpScale: 1.6,
+    metalness: 0.35,
     roughness: 0.22,
     clearcoat: 0.85,
     clearcoatRoughness: 0.12,
     emissive: new THREE.Color(cfg.emissiveColor),
-    emissiveIntensity: 0.08,
+    emissiveIntensity: 0.22,
   });
 
   // 3. Back Face Material
   const backMaterial = new THREE.MeshPhysicalMaterial({
     map: colorMap,
     bumpMap: bumpMap,
-    bumpScale: 1.5,
-    metalness: 0.40,
+    bumpScale: 1.6,
+    metalness: 0.35,
     roughness: 0.22,
     clearcoat: 0.85,
     clearcoatRoughness: 0.12,
     emissive: new THREE.Color(cfg.emissiveColor),
-    emissiveIntensity: 0.08,
+    emissiveIntensity: 0.22,
   });
 
   const materials: THREE.Material[] = [edgeMaterial, faceMaterial, backMaterial];

@@ -1,20 +1,52 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Calculator } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
-import { Magnet } from '../ui';
 import { motion, AnimatePresence } from 'motion/react';
 
 export const FloatingActionDock: React.FC = () => {
   const { colors, setViewMode, setAuthSubView, isAuthenticated } = useApp();
   const [visible, setVisible] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
+    const handleMenuChange = (e: Event) => {
+      const customEvent = e as CustomEvent<{ open?: boolean }>;
+      setIsMenuOpen(Boolean(customEvent.detail?.open));
+    };
+    window.addEventListener('satmix:mobile-menu', handleMenuChange);
+    return () => window.removeEventListener('satmix:mobile-menu', handleMenuChange);
+  }, []);
+
+  useEffect(() => {
+    let ticking = false;
+
     const handleScroll = () => {
-      // Reveal button once scrolled past hero (approx 350px)
-      if (window.scrollY > 350) {
-        setVisible(true);
-      } else {
-        setVisible(false);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          // Do not show if mobile menu is open
+          if (document.body.dataset.mobileMenuOpen === 'true') {
+            setVisible(false);
+            ticking = false;
+            return;
+          }
+
+          // Reveal once scrolled past the hero (~380px)
+          const pastHero = window.scrollY > 380;
+          
+          // Auto-hide when user is near bottom footer or inside calculator section to prevent collision
+          const calcEl = document.getElementById('calc-section');
+          const isOverCalc =
+            calcEl &&
+            window.scrollY >= calcEl.offsetTop - 120 &&
+            window.scrollY <= calcEl.offsetTop + calcEl.offsetHeight - 120;
+
+          const scrollBottom =
+            window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 160;
+
+          setVisible(pastHero && !isOverCalc && !scrollBottom);
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 
@@ -31,59 +63,62 @@ export const FloatingActionDock: React.FC = () => {
     }
   };
 
+  const isBodyMenuOpen = typeof document !== 'undefined' && document.body?.dataset?.mobileMenuOpen === 'true';
+  const isMenuBlocked = isMenuOpen || isBodyMenuOpen;
+
   return (
     <AnimatePresence>
-      {visible && (
+      {visible && !isMenuBlocked && (
         <>
-          {/* Mobile Bottom Sticky CTA Bar (Strict 48px touch targets for mobile accessibility) */}
+          {/* ── MOBILE DETACHED FLOATING GLASS CAPSULE (Floats 20px above edge, never covers screen) ── */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 30 }}
-            transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed bottom-0 left-0 right-0 z-40 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] sm:hidden border-t backdrop-blur-xl pointer-events-auto flex items-center gap-2.5"
-            style={{
-              backgroundColor: colors.cardHigh,
-              borderColor: colors.cardBorder,
-            }}
+            initial={{ opacity: 0, y: 24, scale: 0.94 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.94 }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+            className="satmix-floating-dock fixed bottom-5 left-1/2 -translate-x-1/2 z-40 sm:hidden pointer-events-auto select-none"
+            aria-label="Quick Actions"
           >
-            <a
-              href="#calc-section"
-              className="flex-1 min-h-[48px] py-3 px-3 rounded-xl border text-center font-bold text-xs flex items-center justify-center transition-colors"
-              style={{
-                backgroundColor: colors.surface,
-                borderColor: colors.cardBorder,
-                color: colors.textPrimary,
-              }}
-              aria-label="Calculate Potential Crypto Growth"
-            >
-              Calculate
-            </a>
+            <div className="flex items-center gap-1.5 p-1.5 rounded-full border border-white/15 bg-[#090b0e]/85 backdrop-blur-2xl shadow-[0_16px_36px_-6px_rgba(0,0,0,0.8),inset_0_1px_0_0_rgba(255,255,255,0.12)]">
+              {/* Secondary Quick Jump: Calculator */}
+              <a
+                href="#calc-section"
+                className="h-9 px-3 rounded-full text-neutral-300 hover:text-white font-medium text-xs flex items-center gap-1.5 transition-colors active:scale-[0.96]"
+                aria-label="Jump to Growth Calculator"
+              >
+                <Calculator className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Calc</span>
+              </a>
 
-            <button
-              type="button"
-              onClick={handleLaunch}
-              className="flex-1 h-11 px-4 rounded-xl font-semibold text-xs shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.2)] flex items-center justify-center gap-1.5 transition-[transform,background-color] duration-150 ease-out active:scale-[0.98] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
-              style={{ backgroundColor: colors.primary, color: colors.primaryText }}
-              aria-label={isAuthenticated ? 'Open Satmix Dashboard' : 'Start with ₹10 a day'}
-            >
-              <span>{isAuthenticated ? 'Open App' : 'Start ₹10/Day'}</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
+              {/* Fine Hairline Separator */}
+              <div className="w-px h-4 bg-white/15" />
+
+              {/* Primary High-Conversion CTA */}
+              <button
+                type="button"
+                onClick={handleLaunch}
+                className="h-9 px-4 rounded-full font-semibold text-xs shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_4px_16px_rgba(93,23,235,0.35)] flex items-center justify-center gap-1.5 transition-[transform,background-color] duration-150 ease-out active:scale-[0.96] cursor-pointer"
+                style={{ backgroundColor: colors.primary, color: colors.primaryText }}
+                aria-label={isAuthenticated ? 'Open Satmix Dashboard' : 'Start with ₹10 a day'}
+              >
+                <span>{isAuthenticated ? 'Open App' : 'Start ₹10/day'}</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </motion.div>
 
-          {/* Desktop Floating Pill */}
+          {/* ── DESKTOP FLOATING PILL (Bottom Right Corner) ── */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 16 }}
+            initial={{ opacity: 0, scale: 0.92, y: 16 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 16 }}
-            transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
-            className="hidden sm:block fixed bottom-6 right-6 z-40 pointer-events-auto"
+            exit={{ opacity: 0, scale: 0.92, y: 16 }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+            className="hidden sm:block fixed bottom-6 right-6 z-40 pointer-events-auto select-none"
           >
             <button
               type="button"
               onClick={handleLaunch}
-              className="h-11 px-4 rounded-xl font-semibold text-xs shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_8px_24px_rgba(0,0,0,0.35)] transition-[transform,background-color,box-shadow] duration-150 ease-out active:scale-[0.98] flex items-center gap-2 border select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50 group"
+              className="h-11 px-5 rounded-full font-semibold text-xs shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_12px_28px_rgba(0,0,0,0.45)] transition-[transform,background-color,box-shadow] duration-150 ease-out active:scale-[0.96] flex items-center gap-2 border select-none cursor-pointer group backdrop-blur-xl"
               style={{
                 backgroundColor: colors.primary,
                 color: colors.primaryText,
@@ -91,7 +126,7 @@ export const FloatingActionDock: React.FC = () => {
               }}
               aria-label="Launch Satmix App"
             >
-              <span>Launch App</span>
+              <span>{isAuthenticated ? 'Open Dashboard' : 'Start ₹10/day'}</span>
               <ArrowRight className="w-3.5 h-3.5 transition-transform duration-150 group-hover:translate-x-0.5" />
             </button>
           </motion.div>
@@ -100,3 +135,5 @@ export const FloatingActionDock: React.FC = () => {
     </AnimatePresence>
   );
 };
+
+export default FloatingActionDock;

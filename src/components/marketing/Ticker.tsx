@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Activity } from 'lucide-react';
 
-export const Ticker: React.FC = () => {
+export const Ticker: React.FC = React.memo(() => {
   const { liveCoins, colors } = useApp();
+
+  const repeatedCoins = useMemo(() => {
+    return [...liveCoins, ...liveCoins, ...liveCoins];
+  }, [liveCoins]);
 
   return (
     <div
@@ -38,7 +42,7 @@ export const Ticker: React.FC = () => {
 
       {/* Infinite Smooth Marquee */}
       <div className="flex animate-ticker whitespace-nowrap gap-8 items-center pl-4">
-        {[...liveCoins, ...liveCoins, ...liveCoins].map((coin, index) => {
+        {repeatedCoins.map((coin, index) => {
           const isUp = coin.changePercent24Hr >= 0;
           return (
             <div key={`${coin.id}-${index}`} className="inline-flex items-center gap-2">
@@ -64,4 +68,6 @@ export const Ticker: React.FC = () => {
       </div>
     </div>
   );
-};
+});
+
+export default Ticker;

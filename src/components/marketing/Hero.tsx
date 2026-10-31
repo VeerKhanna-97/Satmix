@@ -1,11 +1,11 @@
 import React from 'react';
-import { ArrowRight, ChevronDown } from 'lucide-react';
+import { ArrowRight, ChevronDown, Check } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { FadeIn, WordRotator, Phone3DModel } from '../ui';
 import { HeroCoinsCanvas } from '../3d/HeroCoinsCanvas';
 
 export const Hero: React.FC = () => {
-  const { colors, setViewMode, setAuthSubView, isAuthenticated } = useApp();
+  const { colors, themeMode, setViewMode, setAuthSubView, isAuthenticated } = useApp();
 
   const handleStartSaving = () => {
     if (isAuthenticated) {
@@ -35,8 +35,38 @@ export const Hero: React.FC = () => {
         }}
       />
 
-      {/* 3D WebGL Floating Crypto Coin Constellation */}
-      <HeroCoinsCanvas className="z-0 opacity-80 lg:opacity-100" />
+      {/* 3D WebGL Floating Crypto Coin Constellation (Layer 0) */}
+      <HeroCoinsCanvas themeMode={themeMode} className="z-0 opacity-90 lg:opacity-100" />
+
+      {/* Atmospheric Soft Frost Vignette — Desktop Layer (Subtle Peripheral Blend) */}
+      <div
+        className="hidden lg:block absolute inset-0 pointer-events-none z-[1] transition-colors duration-500"
+        style={{
+          background:
+            themeMode === 'dark'
+              ? 'radial-gradient(ellipse 65% 55% at 32% 45%, rgba(9, 10, 14, 0.72) 0%, rgba(9, 10, 14, 0.45) 55%, rgba(9, 10, 14, 0.05) 100%)'
+              : 'radial-gradient(ellipse 65% 55% at 32% 45%, rgba(248, 250, 252, 0.78) 0%, rgba(248, 250, 252, 0.50) 55%, rgba(248, 250, 252, 0.10) 100%)',
+          backdropFilter: 'blur(3px)',
+          WebkitBackdropFilter: 'blur(3px)',
+          maskImage: 'radial-gradient(ellipse 80% 65% at 35% 45%, black 20%, transparent 80%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 80% 65% at 35% 45%, black 20%, transparent 80%)',
+        }}
+      />
+
+      {/* Atmospheric Strong Frost Vignette — Mobile Phone Layer (Deep Opacity & Strong Blur for Crystal-Clear Text Readability) */}
+      <div
+        className="block lg:hidden absolute inset-0 pointer-events-none z-[1] transition-colors duration-500"
+        style={{
+          background:
+            themeMode === 'dark'
+              ? 'radial-gradient(ellipse 92% 75% at 50% 28%, rgba(9, 10, 14, 0.94) 0%, rgba(9, 10, 14, 0.88) 45%, rgba(9, 10, 14, 0.50) 75%, transparent 100%)'
+              : 'radial-gradient(ellipse 92% 75% at 50% 28%, rgba(248, 250, 252, 0.96) 0%, rgba(248, 250, 252, 0.90) 45%, rgba(248, 250, 252, 0.50) 75%, transparent 100%)',
+          backdropFilter: 'blur(8px)',
+          WebkitBackdropFilter: 'blur(8px)',
+          maskImage: 'radial-gradient(ellipse 95% 80% at 50% 28%, black 55%, transparent 95%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 95% 80% at 50% 28%, black 55%, transparent 95%)',
+        }}
+      />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
@@ -111,6 +141,30 @@ export const Hero: React.FC = () => {
             </FadeIn>
           </div>
         </div>
+
+        {/* ── CORE TRUST PILLARS & REGULATORY TRANSPARENCY ── */}
+        <FadeIn delay={0.28} direction="up">
+          <div className="mt-12 sm:mt-16 text-center relative z-10">
+            <ul className="mx-auto flex max-w-2xl flex-wrap justify-center items-center gap-x-6 sm:gap-x-8 gap-y-2.5 text-xs sm:text-sm font-medium">
+              {[
+                'Spot buys only',
+                'In your own exchange account',
+                'Fees shown before every buy',
+              ].map((item) => (
+                <li key={item} className="flex items-center gap-2" style={{ color: colors.textSecondary }}>
+                  <Check className="w-4 h-4 text-emerald-400 stroke-[2.5] flex-shrink-0" aria-hidden="true" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+            <p
+              className="mx-auto mt-3 max-w-md text-[11.5px] sm:text-xs leading-relaxed"
+              style={{ color: colors.textTertiary }}
+            >
+              Crypto is volatile. You can lose money. Satmix does not give investment advice.
+            </p>
+          </div>
+        </FadeIn>
       </div>
     </section>
   );

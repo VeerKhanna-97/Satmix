@@ -1,7 +1,16 @@
 import React from 'react';
-import { BookOpen, Compass, Eye, ShieldCheck, RefreshCw, Coins } from 'lucide-react';
+import {
+  ShieldCheck,
+  RefreshCw,
+  Coins,
+  CheckCircle2,
+  XCircle,
+  Zap,
+  TrendingDown,
+  TrendingUp,
+} from 'lucide-react';
 import { useApp } from '../../context/AppContext';
-import { SpotlightCard, Magnet, FadeIn } from '../ui';
+import { SpotlightCard, FadeIn } from '../ui';
 
 const LinkedinIcon = () => (
   <svg className="w-3 h-3 fill-current" viewBox="0 0 24 24">
@@ -10,130 +19,207 @@ const LinkedinIcon = () => (
 );
 
 export const AboutSection: React.FC = () => {
-  const { colors } = useApp();
+  const { colors, themeMode } = useApp();
 
   return (
-    <section id="about-section" className="py-12 sm:py-16 md:py-24 relative overflow-hidden">
+    <section id="about-section" className="py-16 sm:py-20 md:py-28 relative overflow-hidden scroll-mt-20 sm:scroll-mt-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* ── 1. SECTION HEADER ────── */}
-        <FadeIn delay={0.05} direction="up" className="text-center max-w-2xl mx-auto mb-6 sm:mb-8 md:mb-10 space-y-2">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight pt-0.5" style={{ color: colors.textPrimary }}>
+        <FadeIn delay={0.05} direction="up" className="text-center max-w-2xl mx-auto mb-10 sm:mb-12 md:mb-16 space-y-2">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight pt-0.5 font-display" style={{ color: colors.textPrimary }}>
             Daily Crypto. Starting at ₹10.
           </h2>
           <p className="text-sm sm:text-base leading-relaxed max-w-xl mx-auto mt-1.5" style={{ color: colors.textSecondary }}>
-            Making daily crypto ownership simple for young Indians who want to start small and stay consistent.
+            The financial thesis, automated mechanics, and system architecture behind Satmix.
           </p>
         </FadeIn>
 
-        {/* ── 2. THREE-CARD GRID ───── */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 items-stretch max-w-5xl mx-auto mb-10 sm:mb-14 md:mb-16">
-          {/* Card 1: Core Belief */}
-          <FadeIn delay={0.1} direction="up" className="h-full">
-            <SpotlightCard
-              spotlightColor={colors.accentTint}
-              className="rounded-3xl p-5 sm:p-7 lg:p-8 border shadow-xl flex flex-col justify-start h-full backdrop-blur-md transition-all duration-300 hover:scale-[1.02]"
-              style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
-            >
-              <div
-                className="w-11 h-11 rounded-2xl flex items-center justify-center transition-transform duration-300 hover:scale-110"
-                style={{ backgroundColor: colors.accentTint, color: colors.accent }}
+        {/* ── 2. EDITORIAL BENTO (RESTRUCTURED CARDS) ────── */}
+        <div className="max-w-5xl mx-auto space-y-5 sm:space-y-6 mb-16 sm:mb-20 md:mb-24">
+          
+          {/* ── TOP TIER: CORE CONVICTION & CONTRAST BENTO (2 Columns) ── */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-stretch">
+            
+            {/* Left Card: The Core Thesis & Invariants (7 Cols) */}
+            <FadeIn delay={0.1} direction="up" className="lg:col-span-7 h-full">
+              <SpotlightCard
+                spotlightColor={colors.accentTint}
+                className="rounded-[28px] p-6 sm:p-8 lg:p-9 border shadow-xl flex flex-col justify-between h-full backdrop-blur-md relative overflow-hidden"
+                style={{
+                  backgroundColor: colors.card,
+                  borderColor: colors.cardBorder,
+                }}
               >
-                <BookOpen className="w-5 h-5" />
-              </div>
-              <h3 className="text-lg font-bold mt-4 h-6 flex items-center" style={{ color: colors.textPrimary }}>
-                Core Belief
-              </h3>
-              <p className="text-xs sm:text-sm leading-relaxed mt-2" style={{ color: colors.textSecondary }}>
-                Most people do not fail at crypto because they picked the wrong coin. They fail because starting feels expensive, complicated, and stressful. Satmix removes that friction completely.
-              </p>
-            </SpotlightCard>
-          </FadeIn>
+                <div>
+                  {/* High-Impact Statement */}
+                  <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-white leading-snug">
+                    Most people don’t fail at crypto because they picked the wrong coin.
+                  </h3>
 
-          {/* Card 2: Our Mission */}
-          <FadeIn delay={0.2} direction="up" className="h-full">
-            <SpotlightCard
-              spotlightColor={colors.primaryTint}
-              className="rounded-3xl p-5 sm:p-7 lg:p-8 border shadow-xl flex flex-col justify-start h-full backdrop-blur-md transition-all duration-300 hover:scale-[1.02]"
-              style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
-            >
-              <div
-                className="w-11 h-11 rounded-2xl flex items-center justify-center transition-transform duration-300 hover:scale-110"
-                style={{ backgroundColor: colors.primaryTint, color: colors.textPrimary }}
-              >
-                <Compass className="w-5 h-5" />
-              </div>
-              <h3 className="text-lg font-bold mt-4 h-6 flex items-center" style={{ color: colors.textPrimary }}>
-                Our Mission
-              </h3>
-              <p className="text-xs sm:text-sm leading-relaxed mt-2" style={{ color: colors.textSecondary }}>
-                Let someone set a UPI AutoPay from ₹10 a day and automatically buy a clear risk basket. No coin picking. No market timing. No chart anxiety.
-              </p>
-            </SpotlightCard>
-          </FadeIn>
+                  <p className="text-sm text-neutral-400 leading-relaxed mt-3.5">
+                    They fail because lump-sum investing forces retail users to guess market tops and bottoms. Starting feels expensive, complicated, and anxiety-inducing. Satmix replaces speculative timing with a mathematical daily micro-saving habit.
+                  </p>
+                </div>
 
-          {/* Card 3: Our Vision */}
-          <FadeIn delay={0.3} direction="up" className="h-full">
-            <SpotlightCard
-              spotlightColor={colors.accentTint}
-              className="rounded-3xl p-5 sm:p-7 lg:p-8 border shadow-xl flex flex-col justify-start h-full backdrop-blur-md transition-all duration-300 hover:scale-[1.02]"
-              style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
-            >
-              <div
-                className="w-11 h-11 rounded-2xl flex items-center justify-center transition-transform duration-300 hover:scale-110"
-                style={{ backgroundColor: colors.accentTint, color: colors.accent }}
+                {/* 3 Core Invariant Badges */}
+                <div className="grid grid-cols-3 gap-2 sm:gap-3 pt-6 sm:pt-8 border-t border-white/[0.08] mt-6 select-none">
+                  <div className="p-2.5 sm:p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] text-center">
+                    <span className="block text-[11px] sm:text-xs font-bold text-white">No Coin Picking</span>
+                    <span className="block text-[10px] text-neutral-400 mt-0.5">Curated Baskets</span>
+                  </div>
+                  <div className="p-2.5 sm:p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] text-center">
+                    <span className="block text-[11px] sm:text-xs font-bold text-white">No Market Timing</span>
+                    <span className="block text-[10px] text-neutral-400 mt-0.5">Daily Rupee Cost Avg</span>
+                  </div>
+                  <div className="p-2.5 sm:p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] text-center">
+                    <span className="block text-[11px] sm:text-xs font-bold text-white">No Chart Anxiety</span>
+                    <span className="block text-[10px] text-neutral-400 mt-0.5">100% Autopilot</span>
+                  </div>
+                </div>
+              </SpotlightCard>
+            </FadeIn>
+
+            {/* Right Card: RCA vs The Lump-Sum Trap (5 Cols) */}
+            <FadeIn delay={0.18} direction="up" className="lg:col-span-5 h-full">
+              <SpotlightCard
+                spotlightColor={colors.accentTint}
+                className="rounded-[28px] p-6 sm:p-8 border shadow-xl flex flex-col justify-between h-full backdrop-blur-md relative overflow-hidden"
+                style={{
+                  backgroundColor: colors.card,
+                  borderColor: colors.cardBorder,
+                }}
               >
-                <Eye className="w-5 h-5" />
-              </div>
-              <h3 className="text-lg font-bold mt-4 h-6 flex items-center" style={{ color: colors.textPrimary }}>
-                Our Vision
-              </h3>
-              <p className="text-xs sm:text-sm leading-relaxed mt-2" style={{ color: colors.textSecondary }}>
-                Make daily crypto ownership simple for young Indians who want to start small and stay consistent through seamless, institutional-grade fintech automation.
-              </p>
-            </SpotlightCard>
-          </FadeIn>
+                <div>
+                  <h3 className="text-lg sm:text-xl font-bold tracking-tight text-white mb-2">
+                    Lump-Sum vs. Daily RCA
+                  </h3>
+                  <p className="text-xs text-neutral-400 leading-relaxed mb-4">
+                    Why buying smaller amounts daily mathematically outperforms trying to time market dips.
+                  </p>
+                </div>
+
+                {/* Direct Comparison Split */}
+                <div className="space-y-3 select-none">
+                  {/* The Old Way: Lump Sum */}
+                  <div className="p-3.5 rounded-2xl border border-red-500/20 bg-red-500/[0.04]">
+                    <div className="flex items-center gap-2 text-xs font-bold text-rose-400 mb-1">
+                      <XCircle className="w-3.5 h-3.5 shrink-0" />
+                      <span>The Lump-Sum Trap</span>
+                    </div>
+                    <p className="text-[11px] text-neutral-400 leading-snug">
+                      High emotional exposure. Buying at hype peaks, panic selling on dips, and 24/7 stress.
+                    </p>
+                  </div>
+
+                  {/* The Satmix Way: Daily RCA */}
+                  <div className="p-3.5 rounded-2xl border border-emerald-500/30 bg-emerald-500/[0.06]">
+                    <div className="flex items-center gap-2 text-xs font-bold text-emerald-400 mb-1">
+                      <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                      <span>The Satmix Daily Habit</span>
+                    </div>
+                    <p className="text-[11px] text-neutral-300 leading-snug">
+                      Automatically accumulates more units when prices drop and fewer when they rise. Zero chart watching.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="pt-3.5 mt-2 border-t border-white/[0.06] text-[11px] font-mono text-emerald-400 text-center select-none">
+                  Smooths volatility over months & years
+                </div>
+              </SpotlightCard>
+            </FadeIn>
+          </div>
+
+          {/* ── BOTTOM TIER: 3 OPERATIONAL GUARANTEES (3 Columns) ── */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
+            
+            {/* Guarantee 1: 100% Autopilot UPI */}
+            <FadeIn delay={0.22} direction="up" className="h-full">
+              <SpotlightCard
+                spotlightColor={colors.accentTint}
+                className="rounded-[24px] p-6 border shadow-lg flex flex-col justify-between h-full backdrop-blur-md"
+                style={{
+                  backgroundColor: colors.surface,
+                  borderColor: colors.cardBorder,
+                }}
+              >
+                <div>
+                  <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 mb-4 select-none">
+                    <Zap className="w-5 h-5" />
+                  </div>
+                  <h4 className="text-base font-bold text-white mb-2">
+                    100% Autopilot Mandates
+                  </h4>
+                  <p className="text-xs sm:text-[13px] text-neutral-400 leading-relaxed">
+                    Set up your daily recurring micro-saving once via Google Pay, PhonePe, or Paytm. Executes automatically every morning without daily OTPs or PIN entry.
+                  </p>
+                </div>
+                <div className="pt-4 mt-4 border-t border-white/[0.06] text-[11px] font-mono text-purple-400">
+                  from ₹10/day • 0 daily effort
+                </div>
+              </SpotlightCard>
+            </FadeIn>
+
+            {/* Guarantee 2: Zero Tax-Event Rebalancing */}
+            <FadeIn delay={0.28} direction="up" className="h-full">
+              <SpotlightCard
+                spotlightColor={colors.accentTint}
+                className="rounded-[24px] p-6 border shadow-lg flex flex-col justify-between h-full backdrop-blur-md"
+                style={{
+                  backgroundColor: colors.surface,
+                  borderColor: colors.cardBorder,
+                }}
+              >
+                <div>
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 mb-4 select-none">
+                    <ShieldCheck className="w-5 h-5" />
+                  </div>
+                  <h4 className="text-base font-bold text-white mb-2">
+                    Zero Tax-Event Rebalancing
+                  </h4>
+                  <p className="text-xs sm:text-[13px] text-neutral-400 leading-relaxed">
+                    Portfolio ratios are adjusted exclusively through incoming daily buy proportions. Nothing is ever sold to rebalance, protecting you from India's 30% VDA tax and 1% TDS.
+                  </p>
+                </div>
+                <div className="pt-4 mt-4 border-t border-white/[0.06] text-[11px] font-mono text-emerald-400">
+                  New buys only • 0 taxable sales
+                </div>
+              </SpotlightCard>
+            </FadeIn>
+
+            {/* Guarantee 3: 24/7 Bank Liquidity */}
+            <FadeIn delay={0.34} direction="up" className="h-full">
+              <SpotlightCard
+                spotlightColor={colors.accentTint}
+                className="rounded-[24px] p-6 border shadow-lg flex flex-col justify-between h-full backdrop-blur-md"
+                style={{
+                  backgroundColor: colors.surface,
+                  borderColor: colors.cardBorder,
+                }}
+              >
+                <div>
+                  <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 mb-4 select-none">
+                    <Coins className="w-5 h-5" />
+                  </div>
+                  <h4 className="text-base font-bold text-white mb-2">
+                    24/7 Bank Liquidity
+                  </h4>
+                  <p className="text-xs sm:text-[13px] text-neutral-400 leading-relaxed">
+                    Zero lock-ins and zero withdrawal penalties. Convert your holdings back to rupees and withdraw directly to your verified Indian bank account via instant IMPS / UPI anytime.
+                  </p>
+                </div>
+                <div className="pt-4 mt-4 border-t border-white/[0.06] text-[11px] font-mono text-amber-400">
+                  Direct IMPS / UPI • 0 lock-ins
+                </div>
+              </SpotlightCard>
+            </FadeIn>
+          </div>
         </div>
 
-        {/* ── 3. WHY DAILY AUTO-INVESTING DEEP DIVE ─────────── */}
-        <FadeIn delay={0.15}>
-          <SpotlightCard
-            spotlightColor={colors.accentTint}
-            className="rounded-3xl p-5 sm:p-8 lg:p-10 border shadow-xl mb-10 sm:mb-14 md:mb-16 max-w-5xl mx-auto backdrop-blur-md"
-            style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder }}
-          >
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-              <div className="lg:col-span-7 space-y-3.5">
-                <h3 className="text-xl sm:text-2xl font-bold" style={{ color: colors.textPrimary }}>
-                  Why Daily Micro-Investing with Rupee Cost Averaging?
-                </h3>
-                <p className="text-xs md:text-sm leading-relaxed" style={{ color: colors.textSecondary }}>
-                  Lump-sum investing forces retail users to guess market timing. Satmix applies <strong>Rupee Cost Averaging (RCA)</strong>: you automatically buy more units when market prices dip and fewer when they peak, smoothing out crypto volatility over months and years without checking charts.
-                </p>
-                <div className="pt-1.5 flex flex-wrap gap-4 text-xs font-semibold" style={{ color: colors.textPrimary }}>
-                  <span className="flex items-center gap-1.5"><ShieldCheck className="w-4 h-4" style={{ color: colors.textSecondary }} /> Regulated Execution (TBA)</span>
-                  <span className="flex items-center gap-1.5"><RefreshCw className="w-4 h-4" style={{ color: colors.accent }} /> Daily UPI AutoPay</span>
-                  <span className="flex items-center gap-1.5"><Coins className="w-4 h-4" style={{ color: colors.accent }} /> 24/7 Bank Liquidity</span>
-                </div>
-              </div>
-
-              <div className="lg:col-span-5 grid grid-cols-1 gap-3">
-                <div className="p-4 rounded-2xl border transition-all duration-300 hover:scale-[1.02]" style={{ backgroundColor: colors.card, borderColor: colors.borderDim }}>
-                  <div className="font-bold text-xs" style={{ color: colors.textPrimary }}>100% Autopilot Mandates</div>
-                  <div className="text-[11px] mt-0.5" style={{ color: colors.textSecondary }}>Set it up once via Google Pay, PhonePe, or Paytm from ₹10/day.</div>
-                </div>
-                <div className="p-4 rounded-2xl border transition-all duration-300 hover:scale-[1.02]" style={{ backgroundColor: colors.card, borderColor: colors.borderDim }}>
-                  <div className="font-bold text-xs" style={{ color: colors.textPrimary }}>No Lock-ins or Hidden Penalties</div>
-                  <div className="text-[11px] mt-0.5" style={{ color: colors.textSecondary }}>Pause, modify, or withdraw your capital back to your bank anytime 24/7.</div>
-                </div>
-              </div>
-            </div>
-          </SpotlightCard>
-        </FadeIn>
-
-        {/* ── 4. LEADERSHIP TEAM ─────────────────────────────── */}
+        {/* ── 3. LEADERSHIP TEAM (Prestige Editorial Finish) ── */}
         <div className="max-w-5xl mx-auto">
           <FadeIn delay={0.05} className="text-center max-w-xl mx-auto mb-8 md:mb-10 space-y-1">
-            <h3 className="text-2xl font-bold" style={{ color: colors.textPrimary }}>
+            <h3 className="text-2xl font-bold font-display" style={{ color: colors.textPrimary }}>
               The Minds Behind Satmix
             </h3>
             <p className="text-xs md:text-sm" style={{ color: colors.textSecondary }}>
@@ -149,7 +235,7 @@ export const AboutSection: React.FC = () => {
                 className="rounded-3xl p-5 border text-center space-y-3 shadow-lg backdrop-blur-md"
                 style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
               >
-                <div className="w-20 h-20 rounded-full mx-auto overflow-hidden border-2 shadow-md transition-transform duration-300 hover:scale-105" style={{ borderColor: colors.borderAccent }}>
+                <div className="w-20 h-20 rounded-full mx-auto overflow-hidden border-2 shadow-md select-none" style={{ borderColor: colors.borderAccent }}>
                   <img src="/assets/images/CEO.jpeg" alt="Sheiden Borges" width="80" height="80" loading="lazy" decoding="async" className="w-full h-full object-cover object-center" />
                 </div>
                 <div>
@@ -176,7 +262,7 @@ export const AboutSection: React.FC = () => {
                 className="rounded-3xl p-5 border text-center space-y-3 shadow-lg backdrop-blur-md"
                 style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
               >
-                <div className="w-20 h-20 rounded-full mx-auto overflow-hidden border-2 shadow-md transition-transform duration-300 hover:scale-105" style={{ borderColor: colors.borderAccent }}>
+                <div className="w-20 h-20 rounded-full mx-auto overflow-hidden border-2 shadow-md select-none" style={{ borderColor: colors.borderAccent }}>
                   <img src="/assets/images/CTO.jpeg" alt="Veer Khanna" width="80" height="80" loading="lazy" decoding="async" className="w-full h-full object-cover object-center" />
                 </div>
                 <div>
@@ -203,7 +289,7 @@ export const AboutSection: React.FC = () => {
                 className="rounded-3xl p-5 border text-center space-y-3 shadow-lg backdrop-blur-md"
                 style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
               >
-                <div className="w-20 h-20 rounded-full mx-auto overflow-hidden border-2 shadow-md transition-transform duration-300 hover:scale-105" style={{ borderColor: colors.borderAccent }}>
+                <div className="w-20 h-20 rounded-full mx-auto overflow-hidden border-2 shadow-md select-none" style={{ borderColor: colors.borderAccent }}>
                   <img src="/assets/images/CFO.jpeg" alt="Shashank Jajodia" width="80" height="80" loading="lazy" decoding="async" className="w-full h-full object-cover object-center" />
                 </div>
                 <div>
@@ -228,3 +314,5 @@ export const AboutSection: React.FC = () => {
     </section>
   );
 };
+
+export default AboutSection;

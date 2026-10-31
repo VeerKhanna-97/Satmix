@@ -5,8 +5,8 @@ import { Header } from './components/marketing/Header';
 import { Hero } from './components/marketing/Hero';
 import { TrustStrip } from './components/marketing/TrustStrip';
 import { StepsSection } from './components/marketing/StepsSection';
+import { BrowserHabitSection } from './components/marketing/BrowserHabitSection';
 import { CalculatorSection } from './components/marketing/CalculatorSection';
-import { BasketsSection } from './components/marketing/BasketsSection';
 import { AboutSection } from './components/marketing/AboutSection';
 import { FaqSection } from './components/marketing/FaqSection';
 import { WaitlistSection } from './components/marketing/WaitlistSection';
@@ -44,8 +44,8 @@ export function AppContent() {
               <TrustStrip />
               <WaitlistSection />
               <StepsSection />
+              <BrowserHabitSection />
               <CalculatorSection />
-              <BasketsSection />
               <AboutSection />
               <FaqSection />
             </main>

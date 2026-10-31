@@ -32,32 +32,36 @@ export const EDUCATIONAL_GUIDES = [
 
 export const FAQ_ITEMS = [
   {
-    question: 'What is Satmix?',
-    answer: 'Satmix is a micro-savings app that helps you build wealth automatically. Instead of buying expensive full coins or staring at trading charts all day, Satmix automatically saves ₹10 to ₹50 every morning from your favorite UPI app into curated digital assets.',
+    question: 'Does Satmix hold my money or crypto?',
+    answer: 'No. Satmix is a non-custodial execution layer. Your fiat and crypto are held directly in your own segregated, protected account with regulated Indian FIU-registered exchange partners. Satmix never takes custody of your assets, never pools customer funds, and cannot touch or lend your keys.',
+  },
+  {
+    question: 'Can Satmix withdraw from my account?',
+    answer: 'No. Satmix has zero withdrawal authority over your bank account or crypto holdings. Daily buys occur strictly via an NPCI-regulated UPI AutoPay mandate with an explicit cap (from ₹10/day) that you authenticate and approve once in your UPI app. You can pause, modify, or cancel this mandate at any moment directly from your UPI app. Withdrawals from your crypto back to your bank account can only ever be initiated by you.',
+  },
+  {
+    question: 'How do I take my money out?',
+    answer: 'Anytime with zero lock-in periods or withdrawal penalties. When you tap withdraw, your crypto assets are converted to Indian Rupees at real-time market execution prices and sent directly to your verified bank account via instant IMPS / 24/7 UPI rails.',
+  },
+  {
+    question: 'Is this a way to save money?',
+    answer: 'Yes. Satmix transforms crypto from high-stress market timing into a disciplined daily micro-saving habit powered by Rupee Cost Averaging (RCA). Instead of trying to guess volatile market peaks or bottoms, you invest small amounts (from ₹10/day) automatically every morning. Over time, this smooths out volatility and builds long-term asset ownership without active chart watching.',
+  },
+  {
+    question: 'Do you sell my crypto to rebalance?',
+    answer: 'Never. Selling crypto to rebalance portfolio weights triggers taxable events under Indian law (30% VDA capital gains tax plus 1% TDS on every sell transaction). Instead, Satmix uses intelligent inflow rebalancing: target asset ratios are maintained exclusively by adjusting the proportion of your incoming daily buys, keeping your mix on target without incurring taxable sales.',
+  },
+  {
+    question: 'What does it cost?',
+    answer: 'Transparent, flat pricing with zero hidden spreads: a flat 1% platform fee per daily transaction plus mandatory 18% GST on that fee only (e.g. on a ₹30 daily buy, the Satmix fee is ₹0.30 and GST is ₹0.05, meaning ₹29.65 goes directly into purchasing your crypto). There are no subscription fees, account maintenance charges, or deposit fees.',
   },
   {
     question: 'How does daily UPI auto-saving work?',
-    answer: 'You approve the daily amount once in your favorite UPI app. Every morning between 8:00 AM and 8:30 AM, that exact amount is saved automatically. You never need to enter your UPI PIN each day, and you can pause or cancel anytime with one tap.',
-  },
-  {
-    question: 'Can I lose money if the market drops?',
-    answer: 'Market prices go up and down. That is why daily auto-saving (buying a tiny bit every single day) is powerful: you automatically buy more when prices are low and less when prices are high, protecting you from bad timing. If you want maximum peace of mind, the Stable Basket keeps 85% of your money in Digital US Dollars to protect your savings from drops.',
-  },
-  {
-    question: 'How are my digital assets stored and safeguarded?',
-    answer: 'Your assets are held through licensed, regulated custody partners in direct segregated spot holdings. We do not lend your funds, engage in leverage, or trade against you.',
-  },
-  {
-    question: 'Can I pause investing or withdraw to my bank anytime?',
-    answer: 'Yes. There are zero lock-ins. You can pause, modify, or cancel your daily UPI mandate with one tap. When you want to withdraw, your balance is converted to rupees and sent straight to your bank account via instant IMPS / UPI 24/7.',
+    answer: 'You approve the daily amount once in your favorite UPI app (Google Pay, PhonePe, Paytm, or BHIM). Every morning between 8:00 AM and 8:30 AM, that exact amount is saved automatically without requiring an OTP or daily PIN. You never need to enter your UPI PIN each day, and you can pause or cancel anytime with one tap.',
   },
   {
     question: 'Do I need to complete KYC before starting?',
-    answer: 'You can start saving ₹10 immediately with just your mobile number. You only need to complete a quick 1-minute PAN verification when you decide to withdraw funds to your bank account.',
-  },
-  {
-    question: 'What is the minimum daily amount to start?',
-    answer: 'Just ₹10 per day—literally less than the price of a cup of chai. You can increase, decrease, pause, or withdraw whenever you want.',
+    answer: 'You can start your daily micro-saving habit with just your mobile number and UPI ID. Quick 1-minute PAN and bank account verification is only required when you decide to withdraw funds to your bank account, in strict compliance with FIU-IND regulations.',
   },
 ];
 

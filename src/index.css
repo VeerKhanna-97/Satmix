@@ -30,6 +30,15 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
+  /* Force instant zero-lag hiding of floating action dock when mobile menu is active */
+  body[data-mobile-menu-open="true"] .satmix-floating-dock,
+  body[data-mobile-menu-open="true"] [aria-label="Quick Actions"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
   /* Prevent iOS Safari forceful auto-zooming on input focus */
   @media screen and (max-width: 767px) {
     input[type='text'],
@@ -64,58 +73,20 @@
   animation-play-state: paused;
 }
 
-/* ── High-Performance Deceleration Ease-Out Curves (Apple / Linear Standard) ── */
-:root {
-  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-out-swift: cubic-bezier(0, 0, 0.2, 1);
-  --ease-spring-press: cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-/* Fast, Butter-Smooth Fade In: Pure opacity prevents CSS transform containing-block traps on fixed/portal elements */
+/* Fade in utility */
 @keyframes fadeIn {
-  0% {
+  from {
     opacity: 0;
+    transform: translateY(6px);
   }
-  100% {
-    opacity: 1;
-  }
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  will-change: opacity;
-}
-
-/* Snappy Slide Up with High-Velocity Ease-Out for Sections & Cards */
-@keyframes easeSlideUp {
-  0% {
-    opacity: 0;
-    transform: translateY(18px);
-  }
-  100% {
+  to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-.animate-slide-up {
-  animation: easeSlideUp 0.34s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  will-change: transform, opacity;
-}
-
-.animate-elastic-in {
-  animation: easeSlideUp 0.34s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  will-change: transform, opacity;
-}
-
-/* Premium Tactile Utilities */
-.transition-ease-fast {
-  transition: all 0.16s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.transition-ease-smooth {
-  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+.animate-fade-in {
+  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Shiny Sweep Shimmer */
@@ -144,53 +115,12 @@
   animation: ambientGlow 8s ease-in-out infinite;
 }
 
-/* Optimus Word Animation: Character Stagger Blur-in */
-.animate-char-in {
-  opacity: 0;
-  filter: blur(28px);
-  animation: 0.52s cubic-bezier(0.22, 1, 0.36, 1) forwards char-in;
-  transform: translateY(100%);
-  display: inline-block;
-  will-change: transform, opacity, filter;
-}
 
-@keyframes char-in {
-  0% {
-    opacity: 0;
-    filter: blur(28px);
-    transform: translateY(100%);
-  }
-  100% {
-    opacity: 1;
-    filter: blur(0px);
-    transform: translateY(0);
-  }
-}
 
-/* 3D Perspective & Preservation Utilities */
-.perspective-1000 {
-  perspective: 1000px;
-}
-.transform-style-3d {
-  transform-style: preserve-3d;
-}
-.backface-hidden {
-  backface-visibility: hidden;
-}
 
-/* Subtle continuous 3D idle floating animation */
-@keyframes float3D {
-  0%, 100% {
-    transform: translateY(0px) rotateX(4deg) rotateY(-6deg);
-  }
-  50% {
-    transform: translateY(-8px) rotateX(-4deg) rotateY(6deg);
-  }
-}
 
-.animate-float-3d {
-  animation: float3D 6s ease-in-out infinite;
-}
+
+
 /* Accessibility: High-Contrast Focus Visible Rings (Primary: #5D17EB, Legacy: #F7931A) */
 :focus-visible {
   outline: 2px solid #5D17EB !important;

@@ -1,6 +1,13 @@
+// ============================================================
+// FILE: src/components/marketing/TrustStrip.tsx
+// PURPOSE: Trust & key feature metrics bar.
+//          Understated, calm, static (zero mouse/hover reactivity),
+//          and seamlessly blended with the canvas background.
+// ============================================================
+
 import React from 'react';
 import { useApp } from '../../context/AppContext';
-import { SpotlightCard, FadeIn } from '../ui';
+import { FadeIn } from '../ui';
 
 export const TrustStrip: React.FC = () => {
   const { colors, themeMode } = useApp();
@@ -12,63 +19,53 @@ export const TrustStrip: React.FC = () => {
       iconLightSrc: '/icons/instant-light.png',
       title: 'Instant Withdrawals',
       desc: 'Zero lock-in • Withdraw anytime',
-      bgColor: isLight ? 'rgba(15, 23, 42, 0.05)' : 'rgba(255, 255, 255, 0.08)',
-      borderColor: isLight ? 'rgba(15, 23, 42, 0.12)' : 'rgba(255, 255, 255, 0.15)',
-      spotlight: isLight ? 'rgba(15, 23, 42, 0.08)' : 'rgba(255, 255, 255, 0.12)',
+      bgColor: isLight ? 'rgba(15, 23, 42, 0.04)' : 'rgba(255, 255, 255, 0.06)',
+      borderColor: isLight ? 'rgba(15, 23, 42, 0.08)' : 'rgba(255, 255, 255, 0.10)',
     },
     {
       iconDarkSrc: '/icons/autopay.png',
       iconLightSrc: '/icons/autopay-light.png',
       title: 'Daily UPI AutoPay',
       desc: 'Automated daily micro-savings',
-      bgColor: colors.accentTint,
-      borderColor: colors.borderAccent,
-      spotlight: colors.accentTint,
+      bgColor: isLight ? 'rgba(93, 23, 235, 0.06)' : 'rgba(93, 23, 235, 0.12)',
+      borderColor: isLight ? 'rgba(93, 23, 235, 0.18)' : 'rgba(93, 23, 235, 0.25)',
     },
     {
       iconDarkSrc: '/icons/dashboard.png',
       iconLightSrc: '/icons/dashboard-light.png',
       title: 'Live Profit Tracking',
       desc: 'See your returns in real time',
-      bgColor: isLight ? 'rgba(2, 132, 199, 0.08)' : 'rgba(56, 189, 248, 0.10)',
-      borderColor: isLight ? 'rgba(2, 132, 199, 0.22)' : 'rgba(56, 189, 248, 0.25)',
-      spotlight: isLight ? 'rgba(2, 132, 199, 0.12)' : 'rgba(56, 189, 248, 0.15)',
+      bgColor: isLight ? 'rgba(2, 132, 199, 0.06)' : 'rgba(56, 189, 248, 0.08)',
+      borderColor: isLight ? 'rgba(2, 132, 199, 0.16)' : 'rgba(56, 189, 248, 0.20)',
     },
     {
       iconDarkSrc: '/icons/custody.png',
       iconLightSrc: '/icons/custody-light.png',
       title: 'Safe & Secure',
       desc: 'Protected with licensed partners',
-      bgColor: colors.purpleTint,
-      borderColor: colors.borderPurple,
-      spotlight: colors.accentTint,
+      bgColor: isLight ? 'rgba(124, 58, 237, 0.06)' : 'rgba(124, 58, 237, 0.12)',
+      borderColor: isLight ? 'rgba(124, 58, 237, 0.18)' : 'rgba(124, 58, 237, 0.25)',
     },
   ];
 
   return (
-    <div
-      className="border-t border-b py-8 md:py-10 relative overflow-hidden"
-      style={{
-        backgroundColor: colors.surface,
-        borderColor: colors.borderDim,
-      }}
-    >
+    <section className="py-6 sm:py-8 relative overflow-hidden bg-transparent">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 md:gap-5">
           {trustItems.map((item, idx) => {
             const iconSrc = isLight ? item.iconLightSrc : item.iconDarkSrc;
             return (
-              <FadeIn key={idx} delay={idx * 0.08} direction="up" className="h-full">
-                <SpotlightCard
-                  spotlightColor={item.spotlight}
-                  className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 p-3.5 sm:p-5 rounded-2xl border transition-all duration-300 hover:scale-[1.02] cursor-default group h-full"
+              <FadeIn key={idx} delay={idx * 0.05} direction="up" className="h-full">
+                <div
+                  className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 p-3.5 sm:p-4 rounded-2xl border h-full select-none"
                   style={{
-                    backgroundColor: colors.card,
-                    borderColor: colors.cardBorder,
+                    backgroundColor: isLight ? 'rgba(15, 23, 42, 0.02)' : 'rgba(255, 255, 255, 0.02)',
+                    borderColor: isLight ? 'rgba(15, 23, 42, 0.06)' : 'rgba(255, 255, 255, 0.06)',
                   }}
                 >
+                  {/* Static Icon Container */}
                   <div
-                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center flex-shrink-0 border transition-transform duration-300 group-hover:scale-110 p-2 sm:p-2.5 shadow-sm"
+                    className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center flex-shrink-0 border p-2 sm:p-2.5"
                     style={{
                       backgroundColor: item.bgColor,
                       borderColor: item.borderColor,
@@ -77,29 +74,39 @@ export const TrustStrip: React.FC = () => {
                     <img
                       src={iconSrc}
                       alt={item.title}
-                      className="w-full h-full object-contain select-none transition-opacity duration-200"
+                      className="w-full h-full object-contain select-none"
                       style={{
                         filter: isLight
-                          ? 'drop-shadow(0 1px 1px rgba(0,0,0,0.05))'
-                          : 'drop-shadow(0 1px 2px rgba(0,0,0,0.4))',
+                          ? 'drop-shadow(0 1px 1px rgba(0,0,0,0.04))'
+                          : 'drop-shadow(0 1px 2px rgba(0,0,0,0.3))',
                       }}
                       loading="lazy"
                     />
                   </div>
+
+                  {/* Text Content */}
                   <div className="min-w-0 flex-1 w-full">
-                    <div className="font-bold text-xs sm:text-sm tracking-tight transition-colors line-clamp-1" style={{ color: colors.textPrimary }}>
+                    <div
+                      className="font-semibold text-xs sm:text-sm tracking-tight truncate"
+                      style={{ color: colors.textPrimary }}
+                    >
                       {item.title}
                     </div>
-                    <div className="text-[10px] sm:text-xs mt-0.5 font-normal line-clamp-2 leading-relaxed" style={{ color: colors.textSecondary }}>
+                    <div
+                      className="text-[10px] sm:text-xs mt-0.5 font-normal truncate leading-relaxed"
+                      style={{ color: colors.textSecondary }}
+                    >
                       {item.desc}
                     </div>
                   </div>
-                </SpotlightCard>
+                </div>
               </FadeIn>
             );
           })}
         </div>
       </div>
-    </div>
+    </section>
   );
 };
+
+export default TrustStrip;

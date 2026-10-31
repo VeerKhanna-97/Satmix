@@ -1,8 +1,62 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import { Shield, Rocket, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
-import { SpotlightCard, CountUp, Magnet, FadeIn, HelpBadge } from '../ui';
+import { SpotlightCard, CountUp, FadeIn, HelpBadge } from '../ui';
 import { BasketCurrencyIcons } from '../common/BasketCurrencyIcons';
+
+interface AssetBreakdownItem {
+  id: string;
+  name: string;
+  ticker: string;
+  symbolLetter: string;
+  whatItIs: string;
+  color: string;
+  stablePct: number;
+  growthPct: number;
+}
+
+const ASSET_SEGREGATION_DATA: AssetBreakdownItem[] = [
+  {
+    id: 'usdt',
+    name: 'Tether (USDT)',
+    ticker: 'USDT',
+    symbolLetter: 'T',
+    whatItIs: 'A stablecoin designed to track the US dollar. It can still lose its peg.',
+    color: '#00C99A',
+    stablePct: 70,
+    growthPct: 0,
+  },
+  {
+    id: 'btc',
+    name: 'Bitcoin',
+    ticker: 'BTC',
+    symbolLetter: 'B',
+    whatItIs: 'The oldest and largest crypto asset.',
+    color: '#F7931A',
+    stablePct: 30,
+    growthPct: 70,
+  },
+  {
+    id: 'eth',
+    name: 'Ether',
+    ticker: 'ETH',
+    symbolLetter: 'E',
+    whatItIs: 'The asset that powers the Ethereum network.',
+    color: '#627EEA',
+    stablePct: 0,
+    growthPct: 20,
+  },
+  {
+    id: 'sol',
+    name: 'Solana',
+    ticker: 'SOL',
+    symbolLetter: 'S',
+    whatItIs: 'A newer, faster network. Moves more sharply than BTC.',
+    color: '#9945FF',
+    stablePct: 0,
+    growthPct: 10,
+  },
+];
 
 export const CalculatorSection: React.FC = () => {
   const { colors, setViewMode, setAuthSubView, isAuthenticated } = useApp();
@@ -45,7 +99,7 @@ export const CalculatorSection: React.FC = () => {
     };
   }, [dailySavings, annualRate]);
 
-  // Range fill percentage for ultra-smooth slider track
+  // Range fill percentage for smooth slider track
   const sliderPercentage = ((dailySavings - minSavings) / (500 - minSavings)) * 100;
 
   const presets = strategy === 'high' ? [30, 50, 100, 200, 300, 500] : [10, 25, 50, 100, 250, 500];
@@ -60,11 +114,11 @@ export const CalculatorSection: React.FC = () => {
   };
 
   return (
-    <section id="calc-section" className="py-12 sm:py-16 md:py-24 relative overflow-hidden">
+    <section id="calc-section" className="py-12 sm:py-16 md:py-24 relative overflow-hidden scroll-mt-20 sm:scroll-mt-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* ── 1. SECTION HEADER ────── */}
-        <FadeIn delay={0.05} direction="up" className="text-center max-w-2xl mx-auto mb-6 sm:mb-8 md:mb-10 space-y-2">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight pt-0.5" style={{ color: colors.textPrimary }}>
+        {/* ── SECTION HEADER ────── */}
+        <FadeIn delay={0.05} direction="up" className="text-center max-w-2xl mx-auto mb-8 sm:mb-12 space-y-2">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight pt-0.5 font-display" style={{ color: colors.textPrimary }}>
             See Your Savings Grow in Real Time
           </h2>
           <p className="text-sm sm:text-base leading-relaxed max-w-xl mx-auto mt-1" style={{ color: colors.textSecondary }}>
@@ -72,83 +126,116 @@ export const CalculatorSection: React.FC = () => {
           </p>
         </FadeIn>
 
-        {/* ── 2. MAIN CALCULATOR 2-COLUMN GRID ── */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-stretch max-w-5xl mx-auto">
-          {/* ── LEFT CARD: CONTROLS ─────────────────────────── */}
-          <FadeIn delay={0.15} direction="left" className="h-full">
+        {/* ── RESTRUCTURED 2-COLUMN LAYOUT: CONTROLS (LEFT) vs. ESTIMATES & ASSET BREAKDOWN (RIGHT) ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start max-w-6xl mx-auto">
+          {/* ── LEFT COLUMN: CONTROLS ─────────────────────────── */}
+          <FadeIn delay={0.15} direction="left" className="lg:col-span-5 h-full">
             <SpotlightCard
               spotlightColor={colors.accentTint}
-              className="rounded-2xl p-4.5 sm:p-7 lg:p-9 border shadow-xl flex flex-col justify-between h-full"
+              className="rounded-2xl p-5 sm:p-7 border shadow-xl flex flex-col justify-between h-full"
               style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
             >
               <div className="space-y-6">
-                {/* Strategy Selector */}
+                {/* 1. Pick Your Mix (Toggle Switch with Crypto Logos) */}
                 <div>
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center justify-between mb-2.5">
                     <span className="block text-xs font-bold uppercase tracking-wider" style={{ color: colors.textSecondary }}>
                       1. Pick Your Mix
                     </span>
                     <HelpBadge
                       title="Investment Mix"
-                      content="Choose between Stable (shields savings with Digital US Dollars) or Growth (aims for higher wealth with Bitcoin and Ethereum)."
+                      content="Toggle between Stable (shields savings with Digital US Dollars) or Growth (aims for higher wealth with Bitcoin, Ether, and Solana)."
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-3">
+
+                  {/* Unified Segmented Toggle Switch */}
+                  <div
+                    role="tablist"
+                    aria-label="Select investment basket strategy"
+                    className="relative p-1 rounded-xl border flex items-center select-none"
+                    style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder }}
+                  >
+                    {/* Animated Sliding Highlight Pill */}
+                    <div
+                      className="absolute top-1 bottom-1 rounded-lg transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] pointer-events-none"
+                      style={{
+                        left: strategy === 'low' ? '4px' : 'calc(50% + 2px)',
+                        width: 'calc(50% - 6px)',
+                        backgroundColor: colors.card,
+                        border: `1px solid ${colors.borderDim || 'rgba(255, 255, 255, 0.12)'}`,
+                        boxShadow: '0 4px 14px rgba(0, 0, 0, 0.45)',
+                      }}
+                    />
+
+                    {/* Stable Option */}
                     <button
                       type="button"
+                      role="tab"
+                      aria-selected={strategy === 'low'}
                       onClick={() => handleStrategyChange('low')}
-                      className="p-3.5 rounded-2xl border text-left transition-[background-color,border-color,transform] duration-150 ease-out active:scale-[0.98] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50 cursor-pointer"
-                      style={{
-                        backgroundColor: strategy === 'low' ? colors.accentTint : colors.surface,
-                        borderColor: strategy === 'low' ? colors.accent : colors.cardBorder,
-                      }}
+                      className={`relative z-10 flex-1 py-2.5 px-3 rounded-lg flex items-center justify-between text-left transition-colors duration-200 cursor-pointer active:scale-[0.98] ${
+                        strategy === 'low' ? 'text-white' : 'text-neutral-400 hover:text-neutral-200'
+                      }`}
                     >
-                      <div className="flex items-center gap-1.5 mb-1">
+                      <div className="flex items-center gap-2 min-w-0">
                         <BasketCurrencyIcons basketId="stable" size="xs" />
-                        <span className="font-bold text-xs" style={{ color: colors.textPrimary }}>Stable Basket</span>
+                        <div className="truncate">
+                          <span className="block font-bold text-xs sm:text-sm leading-tight truncate">
+                            Stable
+                          </span>
+                          <span className="block text-[10px] text-neutral-400 font-mono mt-0.5">
+                            from ₹10/day
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex justify-between items-baseline mt-1">
-                        <span className="text-[11px] font-mono text-emerald-500 font-bold">~8% Est. Growth</span>
-                        <span className="text-[9px]" style={{ color: colors.textTertiary }}>min ₹10/day</span>
-                      </div>
+                      <span className="text-[11px] font-mono font-bold text-emerald-400 pl-1 shrink-0 [font-variant-numeric:tabular-nums]">
+                        ~8%
+                      </span>
                     </button>
 
+                    {/* Growth Option */}
                     <button
                       type="button"
+                      role="tab"
+                      aria-selected={strategy === 'high'}
                       onClick={() => handleStrategyChange('high')}
-                      className="p-3.5 rounded-2xl border text-left transition-[background-color,border-color,transform] duration-150 ease-out active:scale-[0.98] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50 cursor-pointer"
-                      style={{
-                        backgroundColor: strategy === 'high' ? colors.accentTint : colors.surface,
-                        borderColor: strategy === 'high' ? colors.accent : colors.cardBorder,
-                      }}
+                      className={`relative z-10 flex-1 py-2.5 px-3 rounded-lg flex items-center justify-between text-left transition-colors duration-200 cursor-pointer active:scale-[0.98] ${
+                        strategy === 'high' ? 'text-white' : 'text-neutral-400 hover:text-neutral-200'
+                      }`}
                     >
-                      <div className="flex items-center gap-1.5 mb-1">
+                      <div className="flex items-center gap-2 min-w-0">
                         <BasketCurrencyIcons basketId="growth" size="xs" />
-                        <span className="font-bold text-xs" style={{ color: colors.textPrimary }}>Growth Basket</span>
+                        <div className="truncate">
+                          <span className="block font-bold text-xs sm:text-sm leading-tight truncate">
+                            Growth
+                          </span>
+                          <span className="block text-[10px] text-neutral-400 font-mono mt-0.5">
+                            from ₹30/day
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex justify-between items-baseline mt-1">
-                        <span className="text-[11px] font-mono text-emerald-500 font-bold">~28% Est. Growth</span>
-                        <span className="text-[9px]" style={{ color: colors.textTertiary }}>min ₹30/day</span>
-                      </div>
+                      <span className="text-[11px] font-mono font-bold text-emerald-400 pl-1 shrink-0 [font-variant-numeric:tabular-nums]">
+                        ~28%
+                      </span>
                     </button>
                   </div>
                 </div>
 
-                {/* Daily Smooth Slider */}
+                {/* 2. Daily Savings Amount */}
                 <div>
                   <div className="flex items-center justify-between mb-2.5">
                     <span className="text-xs font-bold uppercase tracking-wider" style={{ color: colors.textSecondary }}>
                       2. Daily Savings Amount
                     </span>
                     <div className="text-right">
-                      <span className="text-2xl sm:text-3xl font-extrabold font-mono" style={{ color: colors.textPrimary }}>
+                      <span className="text-2xl sm:text-3xl font-extrabold font-mono [font-variant-numeric:tabular-nums]" style={{ color: colors.textPrimary }}>
                         ₹{dailySavings}
                       </span>
                       <span className="text-xs font-normal ml-1" style={{ color: colors.textSecondary }}>/day</span>
                     </div>
                   </div>
 
-                  {/* Smooth Range Track with Dynamic Gradient Fill */}
+                  {/* Range Slider Track */}
                   <div className="relative py-1.5">
                     <input
                       id="daily-savings-slider"
@@ -171,7 +258,7 @@ export const CalculatorSection: React.FC = () => {
                     />
                   </div>
 
-                  {/* Everyday spending comparison pill */}
+                  {/* Daily spending comparison */}
                   <div className="mt-1 flex items-center justify-between text-[11px]">
                     <span className="text-gray-400 font-medium">Daily equivalent:</span>
                     <span className="font-semibold text-emerald-400 font-mono">{getEverydayComparison(dailySavings)}</span>
@@ -184,7 +271,7 @@ export const CalculatorSection: React.FC = () => {
                         key={preset}
                         type="button"
                         onClick={() => setDailySavings(preset)}
-                        className="h-9 sm:h-8 rounded-lg text-xs font-semibold font-mono border transition-[transform,background-color,border-color] duration-150 ease-out active:scale-[0.97] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50 flex items-center justify-center cursor-pointer"
+                        className="h-8 rounded-lg text-xs font-semibold font-mono border transition-[transform,background-color,border-color] duration-150 ease-out active:scale-[0.97] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 flex items-center justify-center cursor-pointer [font-variant-numeric:tabular-nums]"
                         style={{
                           backgroundColor: dailySavings === preset ? colors.primary : colors.surface,
                           borderColor: dailySavings === preset ? colors.primary : colors.cardBorder,
@@ -210,7 +297,7 @@ export const CalculatorSection: React.FC = () => {
                       setViewMode('auth');
                     }
                   }}
-                  className="w-full h-12 rounded-xl font-semibold text-sm shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_4px_16px_rgba(93,23,235,0.25)] transition-[transform,background-color,box-shadow] duration-150 ease-out active:scale-[0.98] flex items-center justify-center gap-2 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50 cursor-pointer"
+                  className="w-full h-12 rounded-xl font-semibold text-sm shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_4px_16px_rgba(93,23,235,0.25)] transition-[transform,background-color,box-shadow] duration-150 ease-out active:scale-[0.96] flex items-center justify-center gap-2 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50 cursor-pointer"
                   style={{ backgroundColor: colors.primary, color: colors.primaryText }}
                 >
                   <span>Start Saving ₹{dailySavings}/day</span>
@@ -220,17 +307,18 @@ export const CalculatorSection: React.FC = () => {
             </SpotlightCard>
           </FadeIn>
 
-          {/* ── RIGHT CARD: RESULTS ─────────────────────────── */}
-          <FadeIn delay={0.25} direction="right" className="h-full">
+          {/* ── RIGHT COLUMN: PROJECTED ESTIMATES + ASSET SEGREGATION IN ONE SUBSECTION ── */}
+          <FadeIn delay={0.25} direction="right" className="lg:col-span-7 h-full">
             <SpotlightCard
               spotlightColor={colors.accentTint}
-              className="rounded-2xl p-4.5 sm:p-7 lg:p-9 border shadow-xl flex flex-col justify-between h-full"
+              className="rounded-2xl border shadow-xl overflow-hidden flex flex-col justify-between h-full"
               style={{
-                background: `linear-gradient(135deg, ${colors.card} 0%, ${colors.cardHigh || colors.card} 100%)`,
+                backgroundColor: colors.card,
                 borderColor: colors.cardBorder,
               }}
             >
-              <div className="space-y-5">
+              {/* 1. UPPER SUBSECTION: PROJECTED ESTIMATES */}
+              <div className="p-5 sm:p-7 space-y-5">
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] font-bold uppercase tracking-wider font-mono flex items-center gap-1.5" style={{ color: colors.accent }}>
                     <span>1-YEAR ESTIMATED WEALTH</span>
@@ -239,14 +327,14 @@ export const CalculatorSection: React.FC = () => {
                       content="By saving every morning, you automatically buy more when prices are low and less when prices are high, protecting you from bad timing."
                     />
                   </span>
-                  <span className="text-[10px] px-2 py-0.5 rounded-md font-bold border font-mono tracking-wider tabular-nums" style={{ backgroundColor: colors.mintTint, color: colors.semanticSuccess, borderColor: colors.borderMint }}>
+                  <span className="text-[10px] px-2 py-0.5 rounded-md font-bold border font-mono tracking-wider [font-variant-numeric:tabular-nums]" style={{ backgroundColor: colors.mintTint, color: colors.semanticSuccess, borderColor: colors.borderMint }}>
                     +₹{calculations.estimatedGains.toLocaleString('en-IN')} (+{calculations.gainPercent}%)
                   </span>
                 </div>
 
-                {/* Total Balance Result with Live CountUp */}
+                {/* Big CountUp Result */}
                 <div>
-                  <div className="text-4xl sm:text-5xl font-extrabold font-mono tracking-tight flex items-baseline" style={{ color: colors.textPrimary }}>
+                  <div className="text-4xl sm:text-5xl font-extrabold font-mono tracking-tight flex items-baseline [font-variant-numeric:tabular-nums]" style={{ color: colors.textPrimary }}>
                     <CountUp
                       to={calculations.accumulatedValue}
                       prefix="₹"
@@ -259,31 +347,128 @@ export const CalculatorSection: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Stats Split Grid */}
-                <div className="grid grid-cols-2 gap-4 p-4 rounded-2xl border transition-colors" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+                {/* Total Saved vs. Profit Comparison Grid */}
+                <div className="grid grid-cols-2 gap-3.5 p-3.5 sm:p-4 rounded-xl border transition-colors" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
                   <div>
                     <span className="block text-[11px] font-medium" style={{ color: colors.textSecondary }}>
                       Total Money You Save
                     </span>
-                    <span className="text-lg font-bold font-mono mt-0.5 block" style={{ color: colors.textPrimary }}>
+                    <span className="text-base sm:text-lg font-bold font-mono mt-0.5 block [font-variant-numeric:tabular-nums]" style={{ color: colors.textPrimary }}>
                       <CountUp to={calculations.totalInvested} prefix="₹" duration={0.8} />
                     </span>
                   </div>
                   <div>
-                    <span className="block text-[11px] font-medium text-emerald-500">
+                    <span className="block text-[11px] font-medium text-emerald-400">
                       Estimated Profit
                     </span>
-                    <span className="text-lg font-bold font-mono text-emerald-500 mt-0.5 block">
+                    <span className="text-base sm:text-lg font-bold font-mono text-emerald-400 mt-0.5 block [font-variant-numeric:tabular-nums]">
                       <CountUp to={calculations.estimatedGains} prefix="+₹" duration={0.8} />
                     </span>
                   </div>
                 </div>
               </div>
 
-              {/* Disclaimer */}
-              <p className="text-[11px] leading-relaxed pt-5" style={{ color: colors.textTertiary }}>
-                *Calculated daily across 365 days based on reference growth rates. Digital assets fluctuate in market price.
-              </p>
+              {/* 2. LOWER SUBSECTION: ASSET SEGREGATION BREAKDOWN */}
+              <div className="border-t" style={{ borderColor: colors.borderDim }}>
+                {/* Table Header */}
+                <div
+                  className="grid grid-cols-12 px-5 sm:px-7 py-3 text-[11px] font-semibold text-neutral-400 border-b select-none tracking-wide bg-white/[0.015]"
+                  style={{ borderColor: colors.borderDim }}
+                >
+                  <div className="col-span-5 sm:col-span-4">Asset</div>
+                  <div className="col-span-4 sm:col-span-5">What it is</div>
+                  <div className="col-span-3 sm:col-span-3 text-right">Share of each buy</div>
+                </div>
+
+                {/* Asset Rows */}
+                <div className="divide-y" style={{ borderColor: colors.borderDim }}>
+                  {ASSET_SEGREGATION_DATA.map((asset) => {
+                    const share = strategy === 'low' ? asset.stablePct : asset.growthPct;
+                    const isActive = share > 0;
+
+                    return (
+                      <div
+                        key={asset.id}
+                        className={`grid grid-cols-12 items-center px-5 sm:px-7 py-3 sm:py-3.5 transition-colors duration-200 ${
+                          isActive ? 'bg-transparent' : 'opacity-35'
+                        }`}
+                      >
+                        {/* Col 1: Asset Badge & Ticker */}
+                        <div className="col-span-5 sm:col-span-4 flex items-center gap-2.5">
+                          <div
+                            className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs font-mono shrink-0 border transition-colors"
+                            style={{
+                              borderColor: isActive ? `${asset.color}60` : 'rgba(255, 255, 255, 0.1)',
+                              color: isActive ? asset.color : 'rgba(255, 255, 255, 0.4)',
+                              backgroundColor: isActive ? `${asset.color}15` : 'transparent',
+                            }}
+                          >
+                            {asset.symbolLetter}
+                          </div>
+                          <div className="min-w-0">
+                            <span
+                              className={`font-bold text-xs sm:text-[13px] block truncate transition-colors ${
+                                isActive ? 'text-white' : 'text-neutral-400'
+                              }`}
+                            >
+                              {asset.name}
+                            </span>
+                            <span className="text-[10px] font-mono text-neutral-400 block">
+                              {asset.ticker}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Col 2: What it is */}
+                        <div className="col-span-4 sm:col-span-5 pr-2">
+                          <p
+                            className={`text-[11px] sm:text-xs leading-snug transition-colors ${
+                              isActive ? 'text-neutral-300' : 'text-neutral-500'
+                            }`}
+                          >
+                            {asset.whatItIs}
+                          </p>
+                        </div>
+
+                        {/* Col 3: Share of each buy */}
+                        <div className="col-span-3 sm:col-span-3 flex flex-col items-end justify-center select-none">
+                          <span
+                            className={`font-mono font-extrabold text-sm sm:text-lg [font-variant-numeric:tabular-nums] transition-colors ${
+                              isActive ? 'text-white' : 'text-neutral-500'
+                            }`}
+                          >
+                            {share}%
+                          </span>
+                          {isActive && (
+                            <div
+                              className="h-1 rounded-full mt-1 transition-all duration-300"
+                              style={{
+                                width: `${Math.max(14, (share / 70) * 36)}px`,
+                                backgroundColor: asset.color,
+                              }}
+                            />
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Footer Callout */}
+                <div
+                  className="px-5 sm:px-7 py-3 text-[11px] text-neutral-400 font-normal border-t select-none bg-white/[0.01]"
+                  style={{ borderColor: colors.borderDim }}
+                >
+                  Kept on target with new buys only. Nothing is sold to rebalance.
+                </div>
+              </div>
+
+              {/* Bottom Footnote */}
+              <div className="px-5 sm:px-7 py-2.5 border-t" style={{ borderColor: colors.borderDim }}>
+                <p className="text-[10px] leading-relaxed" style={{ color: colors.textTertiary }}>
+                  *Calculated daily across 365 days based on reference growth rates. Digital assets fluctuate in market price.
+                </p>
+              </div>
             </SpotlightCard>
           </FadeIn>
         </div>

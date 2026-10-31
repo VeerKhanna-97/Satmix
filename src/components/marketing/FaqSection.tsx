@@ -1,83 +1,69 @@
 import React, { useState } from 'react';
-import { ChevronDown, HelpCircle } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { FAQ_ITEMS } from '../../data/mockData';
-import { SpotlightCard, FadeIn } from '../ui';
+import { FadeIn } from '../ui';
 import { motion, AnimatePresence } from 'motion/react';
 
 export const FaqSection: React.FC = () => {
   const { colors } = useApp();
-  // First question open by default (index 0)
-  const [openIdx, setOpenIdx] = useState<number | null>(0);
+  // All accordion drawers closed by default as shown in reference design
+  const [openIdx, setOpenIdx] = useState<number | null>(null);
 
   const toggle = (idx: number) => {
     setOpenIdx(openIdx === idx ? null : idx);
   };
 
   return (
-    <section id="faq-section" className="py-12 sm:py-16 md:py-24 lg:py-28 border-t relative overflow-hidden" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <section
+      id="faq-section"
+      className="py-16 sm:py-20 md:py-28 relative overflow-hidden scroll-mt-20 sm:scroll-mt-24"
+      style={{ backgroundColor: colors.surface }}
+    >
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
-        <FadeIn delay={0.05} direction="up" className="text-center max-w-2xl mx-auto mb-8 sm:mb-12 md:mb-16 space-y-3">
-          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight" style={{ color: colors.textPrimary }}>
+        <FadeIn delay={0.05} direction="up" className="text-center max-w-xl mx-auto mb-12 sm:mb-16 space-y-3">
+          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight font-display" style={{ color: colors.textPrimary }}>
             Frequently Asked Questions
           </h2>
           <p className="text-sm md:text-base leading-relaxed" style={{ color: colors.textSecondary }}>
-            Everything you need to know about automated micro-savings, UPI AutoPay, and compliance.
+            Direct, transparent answers on custody, automated UPI execution, and fee architecture.
           </p>
         </FadeIn>
 
-        {/* FAQ List with SpotlightCard and Smooth Height Drawer */}
-        <div className="space-y-4">
+        {/* Minimal Hairline Accordion List */}
+        <div className="border-t border-white/10 divide-y divide-white/10">
           {FAQ_ITEMS.map((item, idx) => {
             const isOpen = openIdx === idx;
             return (
-              <FadeIn key={idx} delay={idx * 0.06} direction="up">
-                <SpotlightCard
-                  spotlightColor={colors.purpleTint}
-                  className={`rounded-2xl border transition-all duration-300 overflow-hidden backdrop-blur-md ${
-                    isOpen
-                      ? 'shadow-[0_8px_30px_rgba(197,160,89,0.12)]'
-                      : 'hover:border-slate-700'
-                  }`}
-                  style={{
-                    backgroundColor: colors.card,
-                    borderColor: isOpen ? colors.accent : colors.cardBorder,
-                  }}
-                >
-                  {/* Accessible Question Header Button */}
+              <FadeIn key={idx} delay={idx * 0.04} direction="up">
+                <div className="group transition-colors duration-200">
+                  {/* Question Header Button */}
                   <button
                     type="button"
                     aria-expanded={isOpen}
                     aria-controls={`faq-answer-${idx}`}
                     onClick={() => toggle(idx)}
-                    className="w-full p-4 sm:p-6 text-left flex items-center justify-between gap-3 sm:gap-4 font-bold text-sm md:text-base select-none transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50"
-                    style={{ color: isOpen ? colors.textPrimary : colors.textSecondary }}
+                    className="w-full py-5 sm:py-6 text-left flex items-center justify-between gap-4 select-none cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500/50"
                   >
-                    <span className="flex items-center gap-2.5 sm:gap-3">
-                      <div
-                        className="w-7 h-7 rounded-xl flex items-center justify-center transition-colors duration-300 flex-shrink-0"
-                        style={{
-                          backgroundColor: isOpen ? colors.purpleTint : 'rgba(255, 255, 255, 0.05)',
-                          color: isOpen ? colors.accent : colors.textTertiary,
-                        }}
-                      >
-                        <HelpCircle className="w-4 h-4 flex-shrink-0" />
-                      </div>
-                      <span className="transition-colors duration-300 text-xs sm:text-base font-bold" style={{ color: isOpen ? colors.textPrimary : colors.textSecondary }}>
-                        {item.question}
-                      </span>
+                    <span
+                      className={`text-base sm:text-lg font-medium transition-colors duration-200 ${
+                        isOpen ? 'text-white' : 'text-neutral-200 group-hover:text-white'
+                      }`}
+                    >
+                      {item.question}
                     </span>
 
-                    <ChevronDown
-                      className={`w-4 h-4 flex-shrink-0 transition-transform duration-300 ease-out ${
-                        isOpen ? 'rotate-180' : ''
+                    <span
+                      className={`w-7 h-7 flex items-center justify-center flex-shrink-0 transition-transform duration-300 ease-out ${
+                        isOpen ? 'rotate-45 text-emerald-400' : 'text-neutral-400 group-hover:text-white'
                       }`}
-                      style={{ color: isOpen ? colors.accent : colors.textTertiary }}
-                    />
+                    >
+                      <Plus className="w-5 h-5 stroke-[1.75]" />
+                    </span>
                   </button>
 
-                  {/* Smooth Spring Accordion Drawer */}
+                  {/* Smooth Accordion Drawer */}
                   <AnimatePresence initial={false}>
                     {isOpen && (
                       <motion.div
@@ -88,19 +74,16 @@ export const FaqSection: React.FC = () => {
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: 'auto', opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                        transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
                         className="overflow-hidden"
                       >
-                        <div
-                          className="px-4 pb-4 pt-1 sm:px-6 sm:pb-5 text-xs md:text-sm leading-relaxed border-t"
-                          style={{ color: colors.textSecondary, borderColor: colors.borderDim }}
-                        >
+                        <div className="pb-6 pt-1 text-sm sm:text-[15px] leading-relaxed text-[#94a3b8] [font-variant-numeric:tabular-nums]">
                           {item.answer}
                         </div>
                       </motion.div>
                     )}
                   </AnimatePresence>
-                </SpotlightCard>
+                </div>
               </FadeIn>
             );
           })}

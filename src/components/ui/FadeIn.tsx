@@ -9,6 +9,8 @@ export interface FadeInProps {
   direction?: 'up' | 'down' | 'left' | 'right' | 'none';
   distance?: number;
   elastic?: boolean;
+  once?: boolean;
+  amount?: number | 'some' | 'all';
 }
 
 // Apple / Linear standard deceleration curve: fast initial departure, silky settle
@@ -19,10 +21,12 @@ export const FadeIn: React.FC<FadeInProps> = ({
   children,
   className = '',
   delay = 0,
-  duration = 0.36,
+  duration = 0.45,
   direction = 'up',
-  distance = 18,
+  distance = 20,
   elastic = false,
+  once = false,
+  amount = 0.12,
 }) => {
   const [reducedMotion, setReducedMotion] = useState(false);
 
@@ -41,13 +45,13 @@ export const FadeIn: React.FC<FadeInProps> = ({
   const getInitial = () => {
     switch (direction) {
       case 'up':
-        return { opacity: 0, y: distance, x: 0 };
+        return { opacity: 0, y: distance, x: 0, scale: 0.985 };
       case 'down':
-        return { opacity: 0, y: -distance, x: 0 };
+        return { opacity: 0, y: -distance, x: 0, scale: 0.985 };
       case 'left':
-        return { opacity: 0, x: distance, y: 0 };
+        return { opacity: 0, x: distance, y: 0, scale: 0.985 };
       case 'right':
-        return { opacity: 0, x: -distance, y: 0 };
+        return { opacity: 0, x: -distance, y: 0, scale: 0.985 };
       case 'none':
       default:
         return { opacity: 0, scale: 0.98 };
@@ -72,7 +76,8 @@ export const FadeIn: React.FC<FadeInProps> = ({
     <motion.div
       initial={getInitial()}
       whileInView={getWhileInView()}
-      viewport={{ once: true, margin: '-24px' }}
+      viewport={{ once, amount, margin: '-50px 0px -50px 0px' }}
+      style={{ willChange: 'transform, opacity' }}
       className={className}
     >
       {children}
