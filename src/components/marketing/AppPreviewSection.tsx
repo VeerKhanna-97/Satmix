@@ -359,39 +359,26 @@ export const AppPreviewSection: React.FC = () => {
                     {/* Chart Controls & Action Buttons */}
                     <div className="flex items-center justify-between pt-1">
                       <div
-                        className={`flex items-center gap-1 p-1 rounded-xl border text-[11px] font-mono ${
-                          isLight ? 'bg-slate-100 border-slate-200' : 'bg-black/40 border-white/5'
+                        className={`flex items-center gap-1 text-[11px] font-mono px-2 py-1 rounded-lg border ${
+                          isLight ? 'bg-slate-100 text-slate-600 border-slate-200' : 'bg-black/30 text-neutral-400 border-white/5'
                         }`}
                       >
-                        <span className="px-2.5 py-1 rounded-lg bg-purple-600 text-white font-bold shadow-xs">All Mixes</span>
-                        <span className={`px-2.5 py-1 ${isLight ? 'text-slate-600 font-medium' : 'text-neutral-400'}`}>Stable Mix</span>
-                        <span className={`px-2.5 py-1 ${isLight ? 'text-slate-600 font-medium' : 'text-neutral-400'}`}>Growth Mix</span>
+                        <span className="px-1.5 py-0.5">1W</span>
+                        <span className={`font-bold px-2 py-0.5 rounded ${isLight ? 'bg-white text-slate-900 shadow-xs' : 'bg-white/10 text-white'}`}>
+                          1M
+                        </span>
+                        <span className="px-1.5 py-0.5">3M</span>
+                        <span className="px-1.5 py-0.5">1Y</span>
+                        <span className="px-1.5 py-0.5">ALL</span>
                       </div>
 
                       <div className="flex items-center gap-2">
-                        <div
-                          className={`flex items-center gap-1 text-[11px] font-mono px-2 py-1 rounded-lg ${
-                            isLight ? 'bg-slate-100 text-slate-600' : 'bg-black/30 text-neutral-400'
-                          }`}
-                        >
-                          <span>1W</span>
-                          <span className={`font-bold px-1.5 py-0.5 rounded ${isLight ? 'bg-white text-slate-900 shadow-xs' : 'bg-white/10 text-white'}`}>
-                            1M
-                          </span>
-                          <span>3M</span>
-                          <span>1Y</span>
-                          <span>ALL</span>
-                        </div>
-                        <button type="button" className="h-8 px-3 rounded-lg bg-purple-600 hover:bg-purple-500 font-bold text-xs text-white flex items-center gap-1 shadow-xs cursor-pointer">
-                          <Plus className="w-3.5 h-3.5" />
-                          <span>Add</span>
-                        </button>
                         <button
                           type="button"
-                          className={`h-8 px-3 rounded-lg font-semibold text-xs flex items-center gap-1 cursor-pointer transition-colors ${
+                          className={`h-8 px-3 rounded-lg font-semibold text-xs flex items-center gap-1 cursor-pointer transition-colors border ${
                             isLight
-                              ? 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200'
-                              : 'bg-white/10 hover:bg-white/15 text-neutral-300'
+                              ? 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-300'
+                              : 'bg-white/10 hover:bg-white/15 text-neutral-200 border-white/10'
                           }`}
                         >
                           <ArrowUpRight className="w-3.5 h-3.5" />

@@ -302,29 +302,6 @@ export const Phone3DModel: React.FC<Phone3DModelProps> = ({ className = '', onOp
                     <span>28 Oct</span>
                   </div>
 
-                  {/* Mix Switcher Tabs */}
-                  <div
-                    className="grid grid-cols-3 gap-1 p-1 rounded-xl text-center border"
-                    style={{
-                      backgroundColor: isLight ? '#F1F5F9' : 'rgba(255, 255, 255, 0.04)',
-                      borderColor: isLight ? 'rgba(15, 23, 42, 0.08)' : 'rgba(255, 255, 255, 0.06)',
-                    }}
-                  >
-                    <div className="py-1.5 rounded-lg text-xs font-bold bg-[#5D17EB] text-white shadow-xs">
-                      All Mixes
-                    </div>
-                    <div className={`py-1.5 rounded-lg text-xs font-bold ${
-                      isLight ? 'text-slate-600' : 'text-neutral-400'
-                    }`}>
-                      Stable Mix
-                    </div>
-                    <div className={`py-1.5 rounded-lg text-xs font-bold ${
-                      isLight ? 'text-slate-600' : 'text-neutral-400'
-                    }`}>
-                      Growth Mix
-                    </div>
-                  </div>
-
                   {/* Time Horizon Pills + Action Buttons in the EXACT SAME Row */}
                   <div className="flex items-center justify-between gap-1.5 pt-1">
                     {/* Time Horizon Pills */}
@@ -344,12 +321,8 @@ export const Phone3DModel: React.FC<Phone3DModelProps> = ({ className = '', onOp
                       <span className={`h-full px-1.5 rounded-md font-bold flex items-center justify-center ${isLight ? 'text-slate-500' : 'text-neutral-400'}`}>ALL</span>
                     </div>
 
-                    {/* Inline Quick Action Buttons: Add & Withdraw */}
+                    {/* Inline Quick Action Button: Withdraw */}
                     <div className="flex items-center gap-1.5 flex-shrink-0">
-                      <div className="h-7 px-2.5 rounded-lg font-bold text-[11px] bg-[#5D17EB] text-white flex items-center gap-1 shadow-sm">
-                        <Plus className="w-3 h-3" strokeWidth={2.5} />
-                        <span>Add</span>
-                      </div>
                       <div className={`h-7 px-2.5 rounded-lg font-bold text-[11px] border flex items-center gap-1 ${
                         isLight ? 'bg-slate-100 border-slate-300 text-slate-800' : 'bg-black/40 border-white/20 text-white'
                       }`}>

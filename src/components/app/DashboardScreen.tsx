@@ -599,72 +599,47 @@ export const DashboardScreen: React.FC = () => {
             </div>
           </div>
 
-          {/* Controls Footer: Basket Filter, Horizon Tabs & Quick Actions */}
-          <div className="pt-4 border-t flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-2" style={{ borderColor: colors.borderDim }}>
-            {/* Basket Filter Tabs: Full width 3-column split on mobile, compact on desktop */}
-            <div className="w-full sm:w-fit grid grid-cols-3 sm:flex items-center gap-1 p-1 rounded-xl border" style={{ backgroundColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.04)' : 'rgba(0, 0, 0, 0.03)', borderColor: colors.borderDim }}>
-              {[
-                { id: 'all', label: 'All Mixes' },
-                { id: 'stable', label: 'Stable Mix' },
-                { id: 'growth', label: 'Growth Mix' },
-              ].map((tab) => {
-                const isActive = activeTabFilter === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    type="button"
-                    onClick={() => setActiveTabFilter(tab.id as 'all' | 'stable' | 'growth')}
-                    className={`px-3 py-1.5 sm:py-1 rounded-lg text-xs font-bold transition-all text-center cursor-pointer select-none active:scale-[0.96] ${
-                      isActive ? 'bg-[#5D17EB] text-white shadow-xs' : 'text-neutral-500 hover:text-slate-900 dark:text-neutral-400 dark:hover:text-white'
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
-                );
-              })}
+          {/* Controls Footer: Time Horizon Tabs & Withdraw Action (Mix Tabs & One-Time Add Removed) */}
+          <div className="pt-4 border-t flex items-center justify-between gap-3 mt-2" style={{ borderColor: colors.borderDim }}>
+            {/* Horizon / Timeframe Tabs */}
+            <div
+              className="h-8 flex items-center gap-0.5 sm:gap-1.5 p-1 rounded-xl border text-[11px] sm:text-xs font-mono"
+              style={{
+                backgroundColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.04)' : 'rgba(0, 0, 0, 0.03)',
+                borderColor: colors.borderDim,
+              }}
+            >
+              {(['1W', '1M', '3M', '1Y', 'ALL'] as const).map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => setTimeframe(t)}
+                  className={`h-full px-2.5 sm:px-3 rounded-lg font-bold flex items-center justify-center transition-colors cursor-pointer select-none active:scale-[0.96] ${
+                    timeframe === t
+                      ? 'bg-[#5D17EB]/20 text-purple-600 dark:text-[#A78BFA] border border-[#8B5CF6]/40'
+                      : 'text-neutral-500 hover:text-slate-900 dark:text-neutral-400 dark:hover:text-white'
+                  }`}
+                >
+                  {t}
+                </button>
+              ))}
             </div>
 
-            {/* Timeframe & Action Buttons (Single Unified Row on Mobile) */}
-            <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-3 w-full sm:w-auto flex-nowrap">
-              {/* Horizon / Timeframe Tabs */}
-              <div className="h-8 flex items-center gap-1 sm:gap-1.5 p-1 rounded-xl border text-[11px] sm:text-xs font-mono" style={{ backgroundColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.04)' : 'rgba(0, 0, 0, 0.03)', borderColor: colors.borderDim }}>
-                {(['1W', '1M', '3M', '1Y', 'ALL'] as const).map((t) => (
-                  <button
-                    key={t}
-                    type="button"
-                    onClick={() => setTimeframe(t)}
-                    className={`h-full px-2.5 sm:px-3 rounded-lg font-bold flex items-center justify-center transition-colors cursor-pointer select-none active:scale-[0.96] ${
-                      timeframe === t ? 'bg-[#5D17EB]/20 text-purple-600 dark:text-[#A78BFA] border border-[#8B5CF6]/40' : 'text-neutral-500 hover:text-slate-900 dark:text-neutral-400 dark:hover:text-white'
-                    }`}
-                  >
-                    {t}
-                  </button>
-                ))}
-              </div>
-
-              {/* Action Buttons: Add & Withdraw */}
-              <div className="flex items-center gap-2 flex-shrink-0">
-                <button
-                  type="button"
-                  onClick={() => setDepositOpen(true)}
-                  className="h-8 px-3 rounded-xl font-bold text-xs bg-[#5D17EB] hover:bg-[#6D28D9] text-white shadow-[0_0_12px_rgba(93,23,235,0.35)] transition-all hover:scale-[1.02] active:scale-[0.96] inline-flex items-center gap-1.5 cursor-pointer select-none"
-                  title="Add Funds / Invest"
-                >
-                  <Plus className="w-3.5 h-3.5" strokeWidth={2.5} />
-                  <span>Add</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setWithdrawOpen(true)}
-                  className="h-8 px-3 rounded-xl font-bold text-xs border transition-all active:scale-[0.96] inline-flex items-center gap-1.5 cursor-pointer select-none"
-                  style={{ borderColor: colors.borderDim, color: colors.textPrimary, backgroundColor: themeMode === 'dark' ? 'transparent' : 'rgba(0, 0, 0, 0.03)' }}
-                  title="Withdraw Funds"
-                >
-                  <ArrowUpRight className="w-3.5 h-3.5" strokeWidth={2} />
-                  <span>Withdraw</span>
-                </button>
-              </div>
-            </div>
+            {/* Withdraw Action Button */}
+            <button
+              type="button"
+              onClick={() => setWithdrawOpen(true)}
+              className="h-8 px-3.5 rounded-xl font-bold text-xs border transition-all active:scale-[0.96] inline-flex items-center gap-1.5 cursor-pointer select-none flex-shrink-0"
+              style={{
+                borderColor: colors.borderDim,
+                color: colors.textPrimary,
+                backgroundColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.04)' : 'rgba(0, 0, 0, 0.03)',
+              }}
+              title="Withdraw Funds"
+            >
+              <ArrowUpRight className="w-3.5 h-3.5" strokeWidth={2} />
+              <span>Withdraw</span>
+            </button>
           </div>
         </div>
 
