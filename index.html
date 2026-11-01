@@ -4,6 +4,19 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
     <meta name="theme-color" content="#090A10" />
+    <!-- Immediate System / Device Theme Preference Detection (Prevents FOUT before paint) -->
+    <script>
+      (function() {
+        try {
+          var stored = localStorage.getItem('satmix_theme_mode');
+          var isDark = stored === 'dark' || (!stored && (!window.matchMedia || window.matchMedia('(prefers-color-scheme: dark)').matches));
+          if (stored === 'light') isDark = false;
+          var theme = isDark ? 'dark' : 'light';
+          document.documentElement.classList.toggle('dark', isDark);
+          document.documentElement.style.colorScheme = theme;
+        } catch(e) {}
+      })();
+    </script>
     
     <!-- Primary SEO Meta Tags -->
     <title>Satmix — Automating Digital Wealth from ₹10/Day via UPI AutoPay</title>
@@ -67,7 +80,21 @@
     }
     </script>
   </head>
-  <body class="dark-theme">
+  <body>
+    <script>
+      (function() {
+        try {
+          var stored = localStorage.getItem('satmix_theme_mode');
+          var isDark = stored === 'dark' || (!stored && (!window.matchMedia || window.matchMedia('(prefers-color-scheme: dark)').matches));
+          if (stored === 'light') isDark = false;
+          document.body.className = isDark ? 'dark-theme' : 'light-theme';
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', isDark ? '#090A10' : '#F8FAFC');
+        } catch(e) {
+          document.body.className = 'dark-theme';
+        }
+      })();
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

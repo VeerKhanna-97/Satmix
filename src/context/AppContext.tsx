@@ -126,8 +126,20 @@ const FEEDBACK_DB_KEY = 'satmix_tester_feedbacks_v4';
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // Theme State
+  // Theme Mode: defaults to device preference (dark / light) before manual override
   const [themeMode, setThemeMode] = useState<'dark' | 'light'>(() => {
-    return (localStorage.getItem('satmix_theme_mode') as 'dark' | 'light') || 'dark';
+    try {
+      const saved = localStorage.getItem('satmix_theme_mode') as 'dark' | 'light' | null;
+      if (saved === 'dark' || saved === 'light') {
+        return saved;
+      }
+      if (typeof window !== 'undefined' && window.matchMedia) {
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+    } catch {
+      // fallback safe
+    }
+    return 'dark';
   });
 
   // Device Frame
@@ -415,20 +427,53 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [activeUser?.id, activeUser?.email, activeUser?.phone, prototypeState.habits, prototypeState.activity?.length]);
 
 
-  // Theme Sync
+  // 1. Listen for device/OS preference changes if user has NOT manually set a preference
   useEffect(() => {
-    localStorage.setItem('satmix_theme_mode', themeMode);
+    if (typeof window === 'undefined' || !window.matchMedia) return;
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+    const handleSystemThemeChange = (e: MediaQueryListEvent) => {
+      try {
+        const manualPref = localStorage.getItem('satmix_theme_mode');
+        // Only react to OS switches if user hasn't explicitly chosen manually
+        if (!manualPref) {
+          setThemeMode(e.matches ? 'dark' : 'light');
+        }
+      } catch {}
+    };
+
+    mediaQuery.addEventListener('change', handleSystemThemeChange);
+    return () => mediaQuery.removeEventListener('change', handleSystemThemeChange);
+  }, []);
+
+  // 2. Synchronize DOM classes, documentElement, and meta theme-color with active themeMode
+  useEffect(() => {
     if (themeMode === 'dark') {
       document.body.classList.add('dark-theme');
       document.body.classList.remove('light-theme');
+      document.documentElement.classList.add('dark');
+      document.documentElement.style.colorScheme = 'dark';
     } else {
       document.body.classList.add('light-theme');
       document.body.classList.remove('dark-theme');
+      document.documentElement.classList.remove('dark');
+      document.documentElement.style.colorScheme = 'light';
+    }
+    const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+    if (metaThemeColor) {
+      metaThemeColor.setAttribute('content', themeMode === 'dark' ? '#090A10' : '#F8FAFC');
     }
   }, [themeMode]);
 
+  // 3. Manual toggle: explicitly commits user preference to localStorage so it persists permanently
   const toggleTheme = useCallback(() => {
-    setThemeMode((prev) => (prev === 'dark' ? 'light' : 'dark'));
+    setThemeMode((prev) => {
+      const next = prev === 'dark' ? 'light' : 'dark';
+      try {
+        localStorage.setItem('satmix_theme_mode', next);
+      } catch {}
+      return next;
+    });
   }, []);
 
   // Cookie Consent State
