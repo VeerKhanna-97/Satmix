@@ -296,3 +296,12 @@ input[type='number'] {
 
 
 
+
+/* Hide scrollbar utility across all browsers */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
