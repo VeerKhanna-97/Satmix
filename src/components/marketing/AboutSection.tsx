@@ -59,28 +59,28 @@ export const AboutSection: React.FC = () => {
               >
                 <div>
                   {/* High-Impact Statement */}
-                  <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-white leading-snug">
+                  <h3 className="text-xl sm:text-2xl font-bold tracking-tight leading-snug" style={{ color: colors.textPrimary }}>
                     Most people don’t fail at crypto because they picked the wrong coin.
                   </h3>
 
-                  <p className="text-sm text-neutral-400 leading-relaxed mt-3.5">
+                  <p className="text-sm leading-relaxed mt-3.5" style={{ color: colors.textSecondary }}>
                     They fail because lump-sum investing forces retail users to guess market tops and bottoms. Starting feels expensive, complicated, and anxiety-inducing. Satmix replaces speculative timing with a mathematical daily micro-saving habit.
                   </p>
                 </div>
 
                 {/* 3 Core Invariant Badges */}
-                <div className="grid grid-cols-3 gap-2 sm:gap-3 pt-6 sm:pt-8 border-t border-white/[0.08] mt-6 select-none">
-                  <div className="p-2.5 sm:p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] text-center">
-                    <span className="block text-[11px] sm:text-xs font-bold text-white">No Coin Picking</span>
-                    <span className="block text-[10px] text-neutral-400 mt-0.5">Curated Baskets</span>
+                <div className="grid grid-cols-3 gap-2 sm:gap-3 pt-6 sm:pt-8 border-t mt-6 select-none" style={{ borderColor: colors.borderDim }}>
+                  <div className="p-2.5 sm:p-3 rounded-xl border text-center" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+                    <span className="block text-[11px] sm:text-xs font-bold" style={{ color: colors.textPrimary }}>No Coin Picking</span>
+                    <span className="block text-[10px] mt-0.5" style={{ color: colors.textSecondary }}>Curated Baskets</span>
                   </div>
-                  <div className="p-2.5 sm:p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] text-center">
-                    <span className="block text-[11px] sm:text-xs font-bold text-white">No Market Timing</span>
-                    <span className="block text-[10px] text-neutral-400 mt-0.5">Daily Rupee Cost Avg</span>
+                  <div className="p-2.5 sm:p-3 rounded-xl border text-center" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+                    <span className="block text-[11px] sm:text-xs font-bold" style={{ color: colors.textPrimary }}>No Market Timing</span>
+                    <span className="block text-[10px] mt-0.5" style={{ color: colors.textSecondary }}>Daily Rupee Cost Avg</span>
                   </div>
-                  <div className="p-2.5 sm:p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] text-center">
-                    <span className="block text-[11px] sm:text-xs font-bold text-white">No Chart Anxiety</span>
-                    <span className="block text-[10px] text-neutral-400 mt-0.5">100% Autopilot</span>
+                  <div className="p-2.5 sm:p-3 rounded-xl border text-center" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+                    <span className="block text-[11px] sm:text-xs font-bold" style={{ color: colors.textPrimary }}>No Chart Anxiety</span>
+                    <span className="block text-[10px] mt-0.5" style={{ color: colors.textSecondary }}>100% Autopilot</span>
                   </div>
                 </div>
               </SpotlightCard>
@@ -97,10 +97,10 @@ export const AboutSection: React.FC = () => {
                 }}
               >
                 <div>
-                  <h3 className="text-lg sm:text-xl font-bold tracking-tight text-white mb-2">
+                  <h3 className="text-lg sm:text-xl font-bold tracking-tight mb-2" style={{ color: colors.textPrimary }}>
                     Lump-Sum vs. Daily RCA
                   </h3>
-                  <p className="text-xs text-neutral-400 leading-relaxed mb-4">
+                  <p className="text-xs leading-relaxed mb-4" style={{ color: colors.textSecondary }}>
                     Why buying smaller amounts daily mathematically outperforms trying to time market dips.
                   </p>
                 </div>
@@ -130,7 +130,7 @@ export const AboutSection: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="pt-3.5 mt-2 border-t border-white/[0.06] text-[11px] font-mono text-emerald-400 text-center select-none">
+                <div className="pt-3.5 mt-2 border-t text-[11px] font-mono text-emerald-400 text-center select-none" style={{ borderColor: colors.borderDim }}>
                   Smooths volatility over months & years
                 </div>
               </SpotlightCard>
@@ -154,14 +154,14 @@ export const AboutSection: React.FC = () => {
                   <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 mb-4 select-none">
                     <Zap className="w-5 h-5" />
                   </div>
-                  <h4 className="text-base font-bold text-white mb-2">
+                  <h4 className="text-base font-bold mb-2" style={{ color: colors.textPrimary }}>
                     100% Autopilot Mandates
                   </h4>
-                  <p className="text-xs sm:text-[13px] text-neutral-400 leading-relaxed">
+                  <p className="text-xs sm:text-[13px] leading-relaxed" style={{ color: colors.textSecondary }}>
                     Set up your daily recurring micro-saving once via Google Pay, PhonePe, or Paytm. Executes automatically every morning without daily OTPs or PIN entry.
                   </p>
                 </div>
-                <div className="pt-4 mt-4 border-t border-white/[0.06] text-[11px] font-mono text-purple-400">
+                <div className="pt-4 mt-4 border-t text-[11px] font-mono text-purple-400" style={{ borderColor: colors.borderDim }}>
                   from ₹10/day • 0 daily effort
                 </div>
               </SpotlightCard>
@@ -181,14 +181,14 @@ export const AboutSection: React.FC = () => {
                   <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 mb-4 select-none">
                     <ShieldCheck className="w-5 h-5" />
                   </div>
-                  <h4 className="text-base font-bold text-white mb-2">
+                  <h4 className="text-base font-bold mb-2" style={{ color: colors.textPrimary }}>
                     Zero Tax-Event Rebalancing
                   </h4>
-                  <p className="text-xs sm:text-[13px] text-neutral-400 leading-relaxed">
+                  <p className="text-xs sm:text-[13px] leading-relaxed" style={{ color: colors.textSecondary }}>
                     Portfolio ratios are adjusted exclusively through incoming daily buy proportions. Nothing is ever sold to rebalance, protecting you from India's 30% VDA tax and 1% TDS.
                   </p>
                 </div>
-                <div className="pt-4 mt-4 border-t border-white/[0.06] text-[11px] font-mono text-emerald-400">
+                <div className="pt-4 mt-4 border-t text-[11px] font-mono text-emerald-400" style={{ borderColor: colors.borderDim }}>
                   New buys only • 0 taxable sales
                 </div>
               </SpotlightCard>
@@ -208,14 +208,14 @@ export const AboutSection: React.FC = () => {
                   <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 mb-4 select-none">
                     <Coins className="w-5 h-5" />
                   </div>
-                  <h4 className="text-base font-bold text-white mb-2">
+                  <h4 className="text-base font-bold mb-2" style={{ color: colors.textPrimary }}>
                     24/7 Bank Liquidity
                   </h4>
-                  <p className="text-xs sm:text-[13px] text-neutral-400 leading-relaxed">
+                  <p className="text-xs sm:text-[13px] leading-relaxed" style={{ color: colors.textSecondary }}>
                     Zero lock-ins and zero withdrawal penalties. Convert your holdings back to rupees and withdraw directly to your verified Indian bank account via instant IMPS / UPI anytime.
                   </p>
                 </div>
-                <div className="pt-4 mt-4 border-t border-white/[0.06] text-[11px] font-mono text-amber-400">
+                <div className="pt-4 mt-4 border-t text-[11px] font-mono text-amber-400" style={{ borderColor: colors.borderDim }}>
                   Direct IMPS / UPI • 0 lock-ins
                 </div>
               </SpotlightCard>

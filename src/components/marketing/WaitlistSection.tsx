@@ -317,7 +317,7 @@ export const WaitlistSection: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setViewMode('terms')}
-                      className="hover:underline font-medium text-neutral-300"
+                      className="hover:underline font-medium" style={{ color: colors.textPrimary }}
                     >
                       Terms
                     </button>{' '}
@@ -325,7 +325,7 @@ export const WaitlistSection: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setViewMode('privacy')}
-                      className="hover:underline font-medium text-neutral-300"
+                      className="hover:underline font-medium" style={{ color: colors.textPrimary }}
                     >
                       Privacy Policy
                     </button>
@@ -357,7 +357,7 @@ export const WaitlistSection: React.FC = () => {
                         <div className="font-extrabold text-sm sm:text-base text-emerald-400">
                           You're on the list!
                         </div>
-                        <div className="text-xs text-neutral-300 font-mono mt-0.5">
+                        <div className="text-xs font-mono mt-0.5" style={{ color: isLight ? 'rgba(6, 78, 59, 0.85)' : 'rgba(167, 243, 208, 0.9)' }}>
                           {submittedEmail ? `Invite queued for ${submittedEmail}` : "We'll email your invite before public launch."}
                         </div>
                       </div>

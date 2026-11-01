@@ -583,7 +583,7 @@ export const HowItWorksSection: React.FC = () => {
         {/* 1. Header (Sticky Top) */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full z-10">
           <div className="max-w-2xl">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight" style={{ color: colors.textPrimary }}>
               Four steps, then it runs on habit.
             </h2>
           </div>
@@ -630,13 +630,29 @@ export const HowItWorksSection: React.FC = () => {
                       >
                         {/* Number Indicator Circle */}
                         <span
-                          className={`relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border text-sm font-extrabold font-mono transition-all duration-300 shadow-sm ${
-                            isCurrent
-                              ? 'border-white text-black bg-white shadow-[0_0_15px_rgba(255,255,255,0.4)]'
+                          className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border text-sm font-extrabold font-mono transition-all duration-300 shadow-sm"
+                          style={{
+                            backgroundColor: isCurrent
+                              ? themeMode === 'dark' ? '#FFFFFF' : '#0F172A'
                               : isPast
-                              ? 'border-[#00C99A] text-[#00C99A] bg-[#080909]'
-                              : 'border-white/20 text-neutral-400 bg-[#080909]'
-                          }`}
+                              ? themeMode === 'dark' ? '#080909' : '#F1F5F9'
+                              : themeMode === 'dark' ? '#080909' : '#F8FAFC',
+                            borderColor: isCurrent
+                              ? themeMode === 'dark' ? '#FFFFFF' : '#0F172A'
+                              : isPast
+                              ? '#00C99A'
+                              : colors.borderDim,
+                            color: isCurrent
+                              ? themeMode === 'dark' ? '#000000' : '#FFFFFF'
+                              : isPast
+                              ? '#00C99A'
+                              : colors.textSecondary,
+                            boxShadow: isCurrent
+                              ? themeMode === 'dark'
+                                ? '0 0 15px rgba(255,255,255,0.4)'
+                                : '0 4px 14px rgba(15, 23, 42, 0.2)'
+                              : undefined,
+                          }}
                         >
                           {idx + 1}
                         </span>
@@ -644,13 +660,14 @@ export const HowItWorksSection: React.FC = () => {
                         {/* Title & Body */}
                         <div className="min-w-0 flex-1 pt-1">
                           <span
-                            className={`block text-xl sm:text-2xl font-extrabold tracking-tight transition-colors duration-300 ${
-                              isCurrent
-                                ? 'text-white'
+                            className="block text-xl sm:text-2xl font-extrabold tracking-tight transition-colors duration-300"
+                            style={{
+                              color: isCurrent
+                                ? colors.textPrimary
                                 : isPast
-                                ? 'text-neutral-200 group-hover:text-white'
-                                : 'text-neutral-400 group-hover:text-neutral-200'
-                            }`}
+                                ? colors.textSecondary
+                                : themeMode === 'dark' ? '#6B7280' : '#94A3B8',
+                            }}
                           >
                             {step.title}
                           </span>
@@ -768,7 +785,7 @@ export const HowItWorksSection: React.FC = () => {
 
         {/* Section Heading */}
         <div className="w-full text-center mb-2 xs:mb-3">
-          <h2 className="text-xl xs:text-2xl font-extrabold tracking-tight leading-[1.15] text-white">
+          <h2 className="text-xl xs:text-2xl font-extrabold tracking-tight leading-[1.15]" style={{ color: colors.textPrimary }}>
             Four steps, then it runs on habit.
           </h2>
         </div>
@@ -876,7 +893,7 @@ export const HowItWorksSection: React.FC = () => {
                 key={i}
                 type="button"
                 onClick={() => handleStepClick(i)}
-                className="h-1 flex-1 rounded-full bg-white/15 overflow-hidden cursor-pointer transition-colors"
+                className="h-1 flex-1 rounded-full overflow-hidden cursor-pointer transition-colors" style={{ backgroundColor: themeMode === "dark" ? "rgba(255,255,255,0.15)" : "rgba(15,23,42,0.12)" }}
                 aria-label={`Jump to step ${i + 1}`}
               >
                 <span
@@ -897,11 +914,11 @@ export const HowItWorksSection: React.FC = () => {
               transition={{ duration: 0.16 }}
               className="space-y-0.5 text-left pt-0.5"
             >
-              <h3 className="text-[15px] xs:text-[16px] font-bold tracking-tight text-white flex items-baseline gap-2">
-                <span className="font-mono text-white font-bold">{activeStep + 1}</span>
+              <h3 className="text-[15px] xs:text-[16px] font-bold tracking-tight flex items-baseline gap-2" style={{ color: colors.textPrimary }}>
+                <span className="font-mono font-bold" style={{ color: colors.textPrimary }}>{activeStep + 1}</span>
                 <span>{activeStepData.title}</span>
               </h3>
-              <p className="text-[12px] xs:text-[12.5px] text-neutral-400 leading-snug font-normal line-clamp-2">
+              <p className="text-[12px] xs:text-[12.5px] leading-snug font-normal line-clamp-2" style={{ color: colors.textSecondary }}>
                 {activeStepData.body}
               </p>
             </motion.div>

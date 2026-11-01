@@ -59,7 +59,7 @@ const ASSET_SEGREGATION_DATA: AssetBreakdownItem[] = [
 ];
 
 export const CalculatorSection: React.FC = () => {
-  const { colors, setViewMode, setAuthSubView, isAuthenticated } = useApp();
+  const { colors, themeMode, setViewMode, setAuthSubView, isAuthenticated } = useApp();
 
   // Default to Stable Basket (starts at ₹10)
   const [strategy, setStrategy] = useState<'low' | 'high'>('low');
@@ -181,7 +181,7 @@ export const CalculatorSection: React.FC = () => {
                       aria-selected={strategy === 'low'}
                       onClick={() => handleStrategyChange('low')}
                       className={`relative z-10 flex-1 py-2.5 px-3 rounded-lg flex items-center justify-between text-left transition-colors duration-200 cursor-pointer active:scale-[0.98] ${
-                        strategy === 'low' ? 'text-white' : 'text-neutral-400 hover:text-neutral-200'
+                        strategy === 'low' ? (themeMode === 'dark' ? 'text-white' : 'text-neutral-900') : 'text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200'
                       }`}
                     >
                       <div className="flex items-center gap-2 min-w-0">
@@ -207,7 +207,7 @@ export const CalculatorSection: React.FC = () => {
                       aria-selected={strategy === 'high'}
                       onClick={() => handleStrategyChange('high')}
                       className={`relative z-10 flex-1 py-2.5 px-3 rounded-lg flex items-center justify-between text-left transition-colors duration-200 cursor-pointer active:scale-[0.98] ${
-                        strategy === 'high' ? 'text-white' : 'text-neutral-400 hover:text-neutral-200'
+                        strategy === 'high' ? (themeMode === 'dark' ? 'text-white' : 'text-neutral-900') : 'text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200'
                       }`}
                     >
                       <div className="flex items-center gap-2 min-w-0">
@@ -415,7 +415,7 @@ export const CalculatorSection: React.FC = () => {
                           <div className="min-w-0">
                             <span
                               className={`font-bold text-xs sm:text-[13px] block truncate transition-colors ${
-                                isActive ? 'text-white' : 'text-neutral-400'
+                                isActive ? (themeMode === 'dark' ? 'text-white' : 'text-neutral-900') : (themeMode === 'dark' ? 'text-neutral-400' : 'text-neutral-500')
                               }`}
                             >
                               {asset.name}
@@ -430,7 +430,7 @@ export const CalculatorSection: React.FC = () => {
                         <div className="col-span-4 sm:col-span-5 pr-2">
                           <p
                             className={`text-[11px] sm:text-xs leading-snug transition-colors ${
-                              isActive ? 'text-neutral-300' : 'text-neutral-500'
+                              isActive ? (themeMode === 'dark' ? 'text-neutral-300' : 'text-neutral-700') : (themeMode === 'dark' ? 'text-neutral-500' : 'text-neutral-400')
                             }`}
                           >
                             {asset.whatItIs}
@@ -441,7 +441,7 @@ export const CalculatorSection: React.FC = () => {
                         <div className="col-span-3 sm:col-span-3 flex flex-col items-end justify-center select-none">
                           <span
                             className={`font-mono font-extrabold text-sm sm:text-lg [font-variant-numeric:tabular-nums] transition-colors ${
-                              isActive ? 'text-white' : 'text-neutral-500'
+                              isActive ? (themeMode === 'dark' ? 'text-white' : 'text-neutral-900') : (themeMode === 'dark' ? 'text-neutral-500' : 'text-neutral-400')
                             }`}
                           >
                             {share}%

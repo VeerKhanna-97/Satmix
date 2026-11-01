@@ -6,7 +6,7 @@ import { FadeIn } from '../ui';
 import { motion, AnimatePresence } from 'motion/react';
 
 export const FaqSection: React.FC = () => {
-  const { colors } = useApp();
+  const { colors, themeMode } = useApp();
   // All accordion drawers closed by default as shown in reference design
   const [openIdx, setOpenIdx] = useState<number | null>(null);
 
@@ -39,7 +39,7 @@ export const FaqSection: React.FC = () => {
         </FadeIn>
 
         {/* Minimal Hairline Accordion List */}
-        <div className="border-t border-white/10 divide-y divide-white/10">
+        <div className="border-t divide-y" style={{ borderColor: colors.borderDim }}>
           {FAQ_ITEMS.map((item, idx) => {
             const isOpen = openIdx === idx;
             return (
@@ -54,16 +54,14 @@ export const FaqSection: React.FC = () => {
                     className="w-full py-5 sm:py-6 text-left flex items-center justify-between gap-4 select-none cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500/50"
                   >
                     <span
-                      className={`text-base sm:text-lg font-medium transition-colors duration-200 ${
-                        isOpen ? 'text-white' : 'text-neutral-200 group-hover:text-white'
-                      }`}
+                      className="text-base sm:text-lg font-medium transition-colors duration-200" style={{ color: isOpen ? colors.accent : colors.textPrimary }}
                     >
                       {item.question}
                     </span>
 
                     <span
                       className={`w-7 h-7 flex items-center justify-center flex-shrink-0 transition-transform duration-300 ease-out ${
-                        isOpen ? 'rotate-45 text-emerald-400' : 'text-neutral-400 group-hover:text-white'
+                        isOpen ? 'rotate-45 text-emerald-400' : (themeMode === 'dark' ? 'text-neutral-400 group-hover:text-white' : 'text-neutral-500 group-hover:text-neutral-900')
                       }`}
                     >
                       <Plus className="w-5 h-5 stroke-[1.75]" />
@@ -84,7 +82,7 @@ export const FaqSection: React.FC = () => {
                         transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
                         className="overflow-hidden"
                       >
-                        <div className="pb-6 pt-1 text-sm sm:text-[15px] leading-relaxed text-[#94a3b8] [font-variant-numeric:tabular-nums]">
+                        <div className="pb-6 pt-1 text-sm sm:text-[15px] leading-relaxed [font-variant-numeric:tabular-nums]" style={{ color: colors.textSecondary }}>
                           {item.answer}
                         </div>
                       </motion.div>

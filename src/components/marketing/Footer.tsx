@@ -23,7 +23,7 @@ export const Footer: React.FC = () => {
       <div
         className="w-full h-px mb-12 sm:mb-16 pointer-events-none"
         style={{
-          background: 'linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.08) 30%, rgba(255, 255, 255, 0.08) 70%, transparent 100%)',
+          background: `linear-gradient(90deg, transparent 0%, ${colors.borderDim} 30%, ${colors.borderDim} 70%, transparent 100%)`,
         }}
       />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
