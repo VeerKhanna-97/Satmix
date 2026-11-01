@@ -173,18 +173,18 @@ export const AppShell: React.FC = () => {
       {isMounted &&
         createPortal(
           <nav
-            className="md:hidden fixed bottom-[max(0.75rem,env(safe-area-inset-bottom,12px))] left-1/2 -translate-x-1/2 z-[999] pointer-events-auto max-w-[calc(100vw-16px)]"
+            className="md:hidden fixed bottom-[max(1rem,env(safe-area-inset-bottom,16px))] left-1/2 -translate-x-1/2 z-[999] pointer-events-auto max-w-[calc(100vw-20px)]"
             role="navigation"
             aria-label="Mobile Navigation"
           >
             <div
-              className="flex items-center gap-0.5 p-1 sm:p-1.5 rounded-full border backdrop-blur-2xl transition-all duration-300 shadow-2xl"
+              className="flex items-center gap-1 p-1.5 sm:p-2 rounded-full border backdrop-blur-2xl transition-all duration-300 shadow-2xl"
               style={{
                 backgroundColor: themeMode === 'dark' ? 'rgba(14, 16, 23, 0.94)' : 'rgba(255, 255, 255, 0.94)',
                 borderColor: colors.cardBorder,
                 boxShadow: themeMode === 'dark'
-                  ? '0 12px 36px -4px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.06)'
-                  : '0 12px 36px -4px rgba(15, 23, 42, 0.14), 0 0 0 1px rgba(15, 23, 42, 0.05)',
+                  ? '0 16px 40px -4px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.08)'
+                  : '0 16px 40px -4px rgba(15, 23, 42, 0.16), 0 0 0 1px rgba(15, 23, 42, 0.06)',
               }}
             >
               {tabs.map((tab) => {
@@ -194,7 +194,7 @@ export const AppShell: React.FC = () => {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className="relative flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-full transition-all duration-200 select-none active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50 cursor-pointer"
+                    className="relative flex items-center gap-1.5 px-3 sm:px-3.5 py-2 sm:py-2.5 rounded-full transition-all duration-100 select-none active:scale-[0.96] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50 cursor-pointer"
                     style={{
                       color: isActive ? '#8B5CF6' : colors.textSecondary,
                     }}
@@ -207,9 +207,9 @@ export const AppShell: React.FC = () => {
                         transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
                       />
                     )}
-                    <span className="relative z-10 flex items-center gap-1">
-                      <Icon className="w-4 h-4 flex-shrink-0" strokeWidth={isActive ? 2.5 : 2} />
-                      <span className={`text-[11px] sm:text-[12px] tracking-tight ${isActive ? 'font-bold text-purple-600 dark:text-purple-400 inline' : 'font-semibold hidden sm:inline'}`}>
+                    <span className="relative z-10 flex items-center gap-1.5">
+                      <Icon className="w-[18px] h-[18px] sm:w-5 sm:h-5 flex-shrink-0" strokeWidth={isActive ? 2.5 : 2} />
+                      <span className={`text-xs tracking-tight ${isActive ? 'font-bold text-purple-600 dark:text-purple-400 inline' : 'font-semibold hidden sm:inline'}`}>
                         {tab.label === 'Strategy & Growth' ? 'Growth' : tab.label}
                       </span>
                     </span>
@@ -218,17 +218,17 @@ export const AppShell: React.FC = () => {
               })}
 
               {/* Fused Divider Between Tabs and Feedback */}
-              <div className="w-px h-5 mx-0.5" style={{ backgroundColor: colors.borderDim }} />
+              <div className="w-px h-6 mx-0.5" style={{ backgroundColor: colors.borderDim }} />
 
               {/* Fused Feedback / Reviews Trigger */}
               <button
                 type="button"
                 onClick={() => setFeedbackOpen(true)}
-                className="relative flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-full text-purple-600 dark:text-purple-400 hover:text-purple-500 hover:bg-purple-500/10 active:scale-[0.97] transition-all select-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50"
+                className="relative flex items-center gap-1.5 px-3 sm:px-3.5 py-2 sm:py-2.5 rounded-full text-purple-600 dark:text-purple-400 hover:text-purple-500 hover:bg-purple-500/10 active:scale-[0.96] transition-all duration-100 select-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50"
                 aria-label="Feedback and Reviews"
               >
-                <MessageSquare className="w-4 h-4 flex-shrink-0 text-purple-400" />
-                <span className="text-[11px] sm:text-[12px] font-semibold text-purple-400 hidden min-[390px]:inline">
+                <MessageSquare className="w-[18px] h-[18px] sm:w-5 sm:h-5 flex-shrink-0 text-purple-400" />
+                <span className="text-xs font-semibold text-purple-400 hidden min-[390px]:inline">
                   Feedback
                 </span>
               </button>

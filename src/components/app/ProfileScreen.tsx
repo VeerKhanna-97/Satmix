@@ -68,6 +68,7 @@ export const ProfileScreen: React.FC<{ defaultSection?: SettingsSection }> = ({ 
   const [biometricToggle, setBiometricToggle] = useState(true);
   const [smsAlertsToggle, setSmsAlertsToggle] = useState(true);
   const [inventoryExpanded, setInventoryExpanded] = useState(true);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   // Contact Addition Modal State (Link Email or Mobile Number)
   const [addContactModal, setAddContactModal] = useState<'email' | 'phone' | null>(null);
@@ -221,6 +222,9 @@ export const ProfileScreen: React.FC<{ defaultSection?: SettingsSection }> = ({ 
     { id: 'concierge' as const, label: 'Help & Support', icon: MessageSquare },
   ];
 
+  const activeNavItem = navItems.find((item) => item.id === activeSection) || navItems[0];
+  const ActiveNavIcon = activeNavItem.icon;
+
   return (
     <div className="space-y-6 animate-fade-in max-w-7xl mx-auto pb-12">
       {/* ── TOP HEADER BANNER ─────────────────────────────────── */}
@@ -253,9 +257,119 @@ export const ProfileScreen: React.FC<{ defaultSection?: SettingsSection }> = ({ 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
         {/* Left Sidebar Menu */}
         <div className="md:col-span-4 lg:col-span-3 space-y-2">
-          {/* Mobile horizontal scrolling pill-bar / Desktop vertical stack */}
+          {/* ── MOBILE: TACTILE DROPDOWN CAPSULE (OPTION 2) ────────────────── */}
+          <div className="md:hidden relative">
+            <button
+              type="button"
+              onClick={() => setMobileNavOpen((prev) => !prev)}
+              className="w-full h-12 px-4 rounded-[16px] border flex items-center justify-between text-xs font-semibold shadow-md transition-all active:scale-[0.98] cursor-pointer"
+              style={{
+                backgroundColor: colors.card,
+                borderColor: colors.cardBorder,
+                color: colors.textPrimary,
+              }}
+              aria-expanded={mobileNavOpen}
+              aria-label="Select Account Section"
+            >
+              <div className="flex items-center gap-2.5">
+                <div className="w-7 h-7 rounded-lg bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-400">
+                  <ActiveNavIcon className="w-4 h-4" />
+                </div>
+                <div className="text-left">
+                  <span className="text-[10px] font-mono uppercase tracking-wider block text-neutral-400">
+                    Section
+                  </span>
+                  <span className="font-bold text-sm" style={{ color: colors.textPrimary }}>
+                    {activeNavItem.label}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-1.5">
+                <span className="text-[11px] font-mono text-purple-400 font-semibold">Change</span>
+                <ChevronDown
+                  className={`w-4 h-4 text-neutral-400 transition-transform duration-200 ${
+                    mobileNavOpen ? 'rotate-180 text-purple-400' : ''
+                  }`}
+                />
+              </div>
+            </button>
+
+            {/* Mobile Dropdown Popover Menu */}
+            <AnimatePresence>
+              {mobileNavOpen && (
+                <>
+                  {/* Backdrop for outside-click dismissal */}
+                  <div
+                    className="fixed inset-0 z-30 bg-black/40 backdrop-blur-xs"
+                    onClick={() => setMobileNavOpen(false)}
+                  />
+
+                  <motion.div
+                    initial={{ opacity: 0, y: -6, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -6, scale: 0.98 }}
+                    transition={{ duration: 0.16, ease: [0.16, 1, 0.3, 1] }}
+                    className="absolute left-0 right-0 top-14 z-40 p-2 rounded-[20px] border shadow-2xl space-y-1 backdrop-blur-2xl"
+                    style={{
+                      backgroundColor: themeMode === 'dark' ? 'rgba(18, 20, 29, 0.98)' : 'rgba(255, 255, 255, 0.98)',
+                      borderColor: colors.cardBorder,
+                    }}
+                  >
+                    <div className="px-3 py-1.5 text-[10px] font-mono uppercase font-bold text-neutral-400 border-b mb-1" style={{ borderColor: colors.borderDim }}>
+                      Account Navigation
+                    </div>
+
+                    {navItems.map((item) => {
+                      const Icon = item.icon;
+                      const isActive = activeSection === item.id;
+                      return (
+                        <button
+                          key={item.id}
+                          type="button"
+                          onClick={() => {
+                            setActiveSection(item.id);
+                            setMobileNavOpen(false);
+                          }}
+                          className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 active:scale-[0.98] text-left cursor-pointer ${
+                            isActive
+                              ? 'bg-purple-500/15 text-purple-400 border border-purple-500/30'
+                              : 'text-neutral-300 hover:text-white hover:bg-white/[0.05]'
+                          }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <Icon className={`w-4 h-4 ${isActive ? 'text-purple-400' : 'text-neutral-400'}`} />
+                            <span>{item.label}</span>
+                          </div>
+                          {isActive && (
+                            <span className="w-2 h-2 rounded-full bg-purple-400 shadow-[0_0_8px_rgba(139,92,246,0.9)]" />
+                          )}
+                        </button>
+                      );
+                    })}
+
+                    <div className="h-px w-full my-1 border-t" style={{ borderColor: colors.borderDim }} />
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMobileNavOpen(false);
+                        logout();
+                      }}
+                      className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-rose-400 hover:bg-rose-500/10 active:scale-[0.98] text-left cursor-pointer"
+                    >
+                      <LogOut className="w-4 h-4 text-rose-400" />
+                      <span>Sign Out</span>
+                    </button>
+                  </motion.div>
+                </>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* ── DESKTOP: INSTITUTIONAL VERTICAL SIDEBAR STACK ──────────── */}
           <div
-            className="rounded-[20px] p-2 sm:p-2.5 border flex md:flex-col overflow-x-auto gap-1.5 [-webkit-overflow-scrolling:touch] no-scrollbar"
+            className="hidden md:flex flex-col rounded-[20px] p-2 sm:p-2.5 border gap-1.5"
             style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
           >
             {navItems.map((item) => {
@@ -275,13 +389,13 @@ export const ProfileScreen: React.FC<{ defaultSection?: SettingsSection }> = ({ 
                   <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-purple-400' : 'text-neutral-400'}`} />
                   <span className="flex-1">{item.label}</span>
                   {isActive && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-purple-400 shadow-[0_0_8px_rgba(139,92,246,0.8)] hidden md:block" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-purple-400 shadow-[0_0_8px_rgba(139,92,246,0.8)]" />
                   )}
                 </button>
               );
             })}
 
-            <div className="h-px w-full my-1 border-t hidden md:block" style={{ borderColor: colors.borderDim }} />
+            <div className="h-px w-full my-1 border-t" style={{ borderColor: colors.borderDim }} />
 
             <button
               type="button"

@@ -1,10 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { createPortal } from 'react-dom';
 import {
   Moon,
   Sun,
-  Menu,
-  X,
   ArrowRight,
   Compass,
   Calculator,
@@ -81,31 +78,10 @@ const smoothScrollTo = (targetY: number, onComplete?: () => void) => {
 
 export const Header: React.FC = () => {
   const { themeMode, toggleTheme, colors, isAuthenticated, viewMode, setViewMode, setAuthSubView, user } = useApp();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
   const prevScrolledRef = useRef(false);
   const prevSectionRef = useRef('home');
-
-  const closeMobileMenu = () => {
-    setMobileMenuOpen(false);
-    delete document.body.dataset.mobileMenuOpen;
-    document.body.style.overflow = '';
-    window.dispatchEvent(new CustomEvent('satmix:mobile-menu', { detail: { open: false } }));
-  };
-
-  const toggleMobileMenu = () => {
-    const next = !mobileMenuOpen;
-    setMobileMenuOpen(next);
-    if (next) {
-      document.body.dataset.mobileMenuOpen = 'true';
-      document.body.style.overflow = 'hidden';
-    } else {
-      delete document.body.dataset.mobileMenuOpen;
-      document.body.style.overflow = '';
-    }
-    window.dispatchEvent(new CustomEvent('satmix:mobile-menu', { detail: { open: next } }));
-  };
 
   const handleNavClick = (
     e: React.MouseEvent<HTMLAnchorElement>,
@@ -113,7 +89,6 @@ export const Header: React.FC = () => {
     resetStepOne = false
   ) => {
     e.preventDefault();
-    closeMobileMenu();
 
     const performScroll = () => {
       const el = document.getElementById(sectionId);
@@ -213,26 +188,6 @@ export const Header: React.FC = () => {
     setViewMode('auth');
   };
 
-  // Lock background scroll and dispatch event when mobile fullscreen menu is open
-  useEffect(() => {
-    if (mobileMenuOpen) {
-      document.body.style.overflow = 'hidden';
-      document.body.dataset.mobileMenuOpen = 'true';
-    } else {
-      document.body.style.overflow = '';
-      delete document.body.dataset.mobileMenuOpen;
-    }
-    window.dispatchEvent(
-      new CustomEvent('satmix:mobile-menu', { detail: { open: mobileMenuOpen } })
-    );
-    return () => {
-      document.body.style.overflow = '';
-      delete document.body.dataset.mobileMenuOpen;
-      window.dispatchEvent(
-        new CustomEvent('satmix:mobile-menu', { detail: { open: false } })
-      );
-    };
-  }, [mobileMenuOpen]);
 
   return (
     <>
@@ -412,122 +367,10 @@ export const Header: React.FC = () => {
                 </div>
               )}
 
-              {/* Mobile Menu Toggle */}
-              <button
-                type="button"
-                onClick={toggleMobileMenu}
-                className="md:hidden w-8 h-8 sm:w-9 sm:h-9 rounded-[16px] sm:rounded-[18px] border flex items-center justify-center transition-[transform,background-color,border-color] duration-150 ease-out hover:bg-white/[0.05] active:scale-[0.98] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50 cursor-pointer"
-                style={{ backgroundColor: colors.surface, borderColor: colors.cardBorder, color: colors.textPrimary }}
-                aria-label="Toggle navigation menu"
-              >
-                {mobileMenuOpen ? <X className="w-4 h-4 sm:w-5 sm:h-5" /> : <Menu className="w-4 h-4 sm:w-5 sm:h-5" />}
-              </button>
             </div>
           </div>
         </div>
-
-        {/* ── FULLSCREEN EDITORIAL MOBILE NAVIGATION OVERLAY (Matching Reference) ── */}
-        {mobileMenuOpen && typeof document !== 'undefined' && createPortal(
-          <div
-            className="fixed inset-0 z-[9999] md:hidden bg-[#090A0E] flex flex-col justify-between px-6 pt-5 pb-8 overflow-y-auto pointer-events-auto animate-fade-in"
-            style={{
-              backgroundImage:
-                themeMode === 'dark'
-                  ? 'radial-gradient(circle at 50% 68%, rgba(247, 147, 26, 0.12), transparent 45%), radial-gradient(circle at 20% 75%, rgba(16, 185, 129, 0.10), transparent 40%), radial-gradient(circle at 75% 65%, rgba(99, 102, 241, 0.12), transparent 45%)'
-                  : 'radial-gradient(circle at 50% 68%, rgba(247, 147, 26, 0.08), transparent 45%), radial-gradient(circle at 20% 75%, rgba(16, 185, 129, 0.08), transparent 40%)',
-            }}
-          >
-            {/* 1. Header Bar: Brand Logo on Left, Theme Toggle + Close Button on Right */}
-            <div className="flex items-center justify-between w-full">
-              <div
-                className="flex items-center gap-2.5 cursor-pointer select-none"
-                onClick={() => {
-                  closeMobileMenu();
-                  setViewMode('marketing');
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-                aria-label="Satmix Home"
-              >
-                <div className="w-8 h-8 rounded-[10px] overflow-hidden flex items-center justify-center border border-white/10">
-                  <img src="/assets/images/satmix-logo.jpg" alt="Satmix Logo" className="w-full h-full object-cover" />
-                </div>
-                <span className="font-extrabold tracking-tight lowercase text-xl font-display text-white">
-                  satmix
-                </span>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={toggleTheme}
-                  className="w-10 h-10 rounded-full flex items-center justify-center text-neutral-300 hover:text-white transition-colors cursor-pointer"
-                  aria-label="Toggle Theme"
-                >
-                  {themeMode === 'dark' ? <Sun className="w-5 h-5 stroke-[1.75]" /> : <Moon className="w-5 h-5 stroke-[1.75]" />}
-                </button>
-                <button
-                  type="button"
-                  onClick={closeMobileMenu}
-                  className="w-10 h-10 rounded-full flex items-center justify-center text-neutral-300 hover:text-white transition-colors cursor-pointer"
-                  aria-label="Close navigation menu"
-                >
-                  <X className="w-6 h-6 stroke-[1.75]" />
-                </button>
-              </div>
-            </div>
-
-            {/* 2. Primary Navigation: Large, Bold Editorial Typography */}
-            <nav className="flex flex-col space-y-7 my-auto pt-8 pb-12 select-none">
-              <a
-                href="#steps-animation"
-                onClick={(e) => handleNavClick(e, 'steps-animation', true)}
-                className="text-[32px] sm:text-[36px] font-bold tracking-tight text-white hover:text-neutral-300 transition-colors cursor-pointer font-display"
-              >
-                How it works
-              </a>
-
-              <a
-                href="#calc-section"
-                onClick={(e) => handleNavClick(e, 'calc-section')}
-                className="text-[32px] sm:text-[36px] font-bold tracking-tight text-white hover:text-neutral-300 transition-colors cursor-pointer font-display"
-              >
-                Calculator
-              </a>
-
-              <a
-                href="#about-section"
-                onClick={(e) => handleNavClick(e, 'about-section')}
-                className="text-[32px] sm:text-[36px] font-bold tracking-tight text-white hover:text-neutral-300 transition-colors cursor-pointer font-display"
-              >
-                About us
-              </a>
-
-              <a
-                href="#faq-section"
-                onClick={(e) => handleNavClick(e, 'faq-section')}
-                className="text-[32px] sm:text-[36px] font-bold tracking-tight text-white hover:text-neutral-300 transition-colors cursor-pointer font-display"
-              >
-                FAQ
-              </a>
-            </nav>
-
-            {/* 3. Bottom Action CTA: Dark Translucent Capsule Button */}
-            <div className="w-full pb-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  handleLaunchApp();
-                }}
-                className="w-full h-12 rounded-full border border-white/15 bg-white/[0.08] hover:bg-white/[0.14] text-white font-semibold text-sm flex items-center justify-center transition-all duration-150 active:scale-[0.98] cursor-pointer shadow-lg select-none"
-              >
-                {isAuthenticated ? 'Open Dashboard' : 'Try the prototype'}
-              </button>
-            </div>
-          </div>,
-          document.body
-        )}
-      </header>
+</header>
     </>
   );
 };

@@ -6,16 +6,6 @@ import { motion, AnimatePresence } from 'motion/react';
 export const FloatingActionDock: React.FC = () => {
   const { colors, setViewMode, setAuthSubView, isAuthenticated } = useApp();
   const [visible, setVisible] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const handleMenuChange = (e: Event) => {
-      const customEvent = e as CustomEvent<{ open?: boolean }>;
-      setIsMenuOpen(Boolean(customEvent.detail?.open));
-    };
-    window.addEventListener('satmix:mobile-menu', handleMenuChange);
-    return () => window.removeEventListener('satmix:mobile-menu', handleMenuChange);
-  }, []);
 
   useEffect(() => {
     let ticking = false;
@@ -23,12 +13,7 @@ export const FloatingActionDock: React.FC = () => {
     const handleScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
-          // Do not show if mobile menu is open
-          if (document.body.dataset.mobileMenuOpen === 'true') {
-            setVisible(false);
-            ticking = false;
-            return;
-          }
+          
 
           // Reveal once scrolled past the hero (~380px)
           const pastHero = window.scrollY > 380;
@@ -63,12 +48,9 @@ export const FloatingActionDock: React.FC = () => {
     }
   };
 
-  const isBodyMenuOpen = typeof document !== 'undefined' && document.body?.dataset?.mobileMenuOpen === 'true';
-  const isMenuBlocked = isMenuOpen || isBodyMenuOpen;
-
   return (
     <AnimatePresence>
-      {visible && !isMenuBlocked && (
+      {visible && (
         <>
           {/* ── MOBILE DETACHED FLOATING GLASS CAPSULE (Floats 20px above edge, never covers screen) ── */}
           <motion.div
