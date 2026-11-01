@@ -212,13 +212,13 @@ export const ProfileScreen: React.FC<{ defaultSection?: SettingsSection }> = ({ 
     (isGrowthActive ? growthDailyRate : 0);
 
   const navItems = [
-    { id: 'profile' as const, label: 'Profile', icon: User },
+    { id: 'profile' as const, label: 'Overview', icon: User },
     { id: 'transactions' as const, label: 'Transactions', icon: ArrowLeftRight },
     { id: 'notifications' as const, label: 'Notifications', icon: Bell },
     { id: 'security' as const, label: 'Security', icon: Shield },
-    { id: 'display' as const, label: 'Display', icon: Moon },
-    { id: 'tax' as const, label: 'Tax & Reports', icon: FileText },
-    { id: 'concierge' as const, label: 'Concierge', icon: MessageSquare },
+    { id: 'display' as const, label: 'Appearance', icon: Moon },
+    { id: 'tax' as const, label: 'Statements & Tax', icon: FileText },
+    { id: 'concierge' as const, label: 'Help & Support', icon: MessageSquare },
   ];
 
   return (
@@ -230,7 +230,7 @@ export const ProfileScreen: React.FC<{ defaultSection?: SettingsSection }> = ({ 
             Account & Profile
           </h1>
           <p className="text-xs sm:text-sm mt-0.5" style={{ color: colors.textSecondary }}>
-            Manage your personal profile, transactions, notifications, security credentials, and annual reports
+            Manage your active habits, portfolio balances, transactions, security, and statements
           </p>
         </div>
 
@@ -781,7 +781,7 @@ export const ProfileScreen: React.FC<{ defaultSection?: SettingsSection }> = ({ 
             >
               <div>
                 <h2 className="text-base font-bold" style={{ color: colors.textPrimary }}>
-                  Display & Visual Appearance
+                  Appearance & Theme
                 </h2>
                 <p className="text-xs mt-0.5" style={{ color: colors.textSecondary }}>
                   Customize the interface theme and typography rhythm
@@ -829,7 +829,7 @@ export const ProfileScreen: React.FC<{ defaultSection?: SettingsSection }> = ({ 
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-base font-bold" style={{ color: colors.textPrimary }}>
-                    Tax & Account Statements
+                    Statements & Tax Reports
                   </h2>
                   <p className="text-xs mt-0.5" style={{ color: colors.textSecondary }}>
                     Annual trade summaries, TDS breakdowns, and verified ledgers
@@ -899,7 +899,7 @@ export const ProfileScreen: React.FC<{ defaultSection?: SettingsSection }> = ({ 
             >
               <div>
                 <h2 className="text-base font-bold" style={{ color: colors.textPrimary }}>
-                  Founder Concierge & Community
+                  Help & Founder Support
                 </h2>
                 <p className="text-xs mt-0.5" style={{ color: colors.textSecondary }}>
                   Direct line to Veer Khanna and the Satmix core engineering team
