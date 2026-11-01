@@ -49,7 +49,11 @@ export const BasketsScreen: React.FC = () => {
                 className={`rounded-3xl p-7 sm:p-9 border shadow-xl flex flex-col justify-between transition-all cursor-pointer h-full ${
                   isSelected ? 'scale-[1.01] shadow-[0_8px_30px_rgba(93,23,235,0.2)]' : 'hover:border-slate-700 opacity-95'
                 }`}
-                style={{ backgroundColor: colors.card, borderColor: isSelected ? colors.accent : colors.cardBorder }}
+                style={{
+                  backgroundColor: colors.card,
+                  borderColor: isSelected ? colors.accent : (themeMode === 'light' ? 'rgba(15, 23, 42, 0.12)' : colors.cardBorder),
+                  boxShadow: themeMode === 'light' ? '0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03)' : undefined,
+                }}
               >
                 <div>
                   {/* Habit Active Status Header */}
@@ -112,7 +116,10 @@ export const BasketsScreen: React.FC = () => {
                   )}
 
                   {/* Metrics Grid */}
-                  <div className="grid grid-cols-3 gap-2 p-3 rounded-2xl border mb-6 text-center font-mono text-xs" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+                  <div className="grid grid-cols-3 gap-2 p-3 rounded-2xl border mb-6 text-center font-mono text-xs" style={{
+                      backgroundColor: themeMode === 'light' ? 'rgba(15, 23, 42, 0.02)' : colors.surface,
+                      borderColor: themeMode === 'light' ? 'rgba(15, 23, 42, 0.08)' : colors.borderDim,
+                    }}>
                     <div>
                       <span className="text-[10px] font-sans block" style={{ color: colors.textTertiary }}>Growth Focus</span>
                       <strong style={{ color: colors.textPrimary }}>{basket.historicalCagr}</strong>
