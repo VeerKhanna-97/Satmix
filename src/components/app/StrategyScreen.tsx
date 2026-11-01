@@ -196,8 +196,12 @@ export const StrategyScreen: React.FC = () => {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 font-mono">
         {/* Card 1: Daily Auto-Save */}
         <div
-          className="rounded-[18px] p-5 sm:p-6 border relative overflow-hidden backdrop-blur-md flex flex-col justify-between min-h-[128px]"
-          style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
+          className="rounded-[18px] p-5 sm:p-6 border relative overflow-hidden backdrop-blur-md flex flex-col justify-between min-h-[128px] transition-all duration-300"
+          style={{
+            backgroundColor: colors.card,
+            borderColor: themeMode === 'light' ? 'rgba(15, 23, 42, 0.12)' : colors.cardBorder,
+            boxShadow: themeMode === 'light' ? '0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03)' : undefined,
+          }}
         >
           <img
             src="/icons/daily.png"
@@ -206,24 +210,30 @@ export const StrategyScreen: React.FC = () => {
             className="absolute -right-2 -top-2 w-20 h-20 sm:w-24 sm:h-24 object-contain pointer-events-none select-none opacity-[0.07] invert dark:invert-0"
           />
           <div className="relative z-10">
-            <span className="text-[11px] font-semibold uppercase tracking-wider block text-neutral-400">
+            <span className={`text-[11px] font-bold uppercase tracking-wider block ${
+              themeMode === 'light' ? 'text-slate-500' : 'text-neutral-400'
+            }`}>
               DAILY AUTO-SAVE
             </span>
             <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums" style={{ color: colors.textPrimary }}>
-              ₹{dailyAmount}<span className="text-xs font-normal text-neutral-400">/day</span>
+              ₹{dailyAmount}<span className={`text-xs font-normal ${themeMode === 'light' ? 'text-slate-500' : 'text-neutral-400'}`}>/day</span>
             </div>
           </div>
           <div className="text-[11px] flex items-center gap-1.5 font-sans relative z-10" style={{ color: colors.textSecondary }}>
-            <span>~₹{Math.round(dailyAmount * 30.4).toLocaleString('en-IN')}/mo</span>
+            <span className={themeMode === 'light' ? 'text-slate-600 font-medium' : undefined}>~₹{Math.round(dailyAmount * 30.4).toLocaleString('en-IN')}/mo</span>
             <span className="opacity-40">·</span>
-            <span className="text-purple-400 font-mono font-semibold">UPI AutoPay</span>
+            <span className={`font-mono font-bold ${themeMode === 'light' ? 'text-purple-600' : 'text-purple-400'}`}>UPI AutoPay</span>
           </div>
         </div>
 
-        {/* Card 2: Monthly Commitment (Replaced trader alpha with real budget anchor) */}
+        {/* Card 2: Monthly Commitment */}
         <div
-          className="rounded-[18px] p-5 sm:p-6 border relative overflow-hidden backdrop-blur-md flex flex-col justify-between min-h-[128px]"
-          style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
+          className="rounded-[18px] p-5 sm:p-6 border relative overflow-hidden backdrop-blur-md flex flex-col justify-between min-h-[128px] transition-all duration-300"
+          style={{
+            backgroundColor: colors.card,
+            borderColor: themeMode === 'light' ? 'rgba(15, 23, 42, 0.12)' : colors.cardBorder,
+            boxShadow: themeMode === 'light' ? '0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03)' : undefined,
+          }}
         >
           <img
             src="/icons/rupee.png"
@@ -233,7 +243,9 @@ export const StrategyScreen: React.FC = () => {
           />
           <div className="relative z-10">
             <div className="flex items-center gap-1">
-              <span className="text-[11px] font-semibold uppercase tracking-wider block text-neutral-400">
+              <span className={`text-[11px] font-bold uppercase tracking-wider block ${
+                themeMode === 'light' ? 'text-slate-500' : 'text-neutral-400'
+              }`}>
                 MONTHLY BUDGET
               </span>
               <HelpBadge
@@ -241,20 +253,26 @@ export const StrategyScreen: React.FC = () => {
                 content="Your linked UPI app debits your chosen micro-saving amount every morning at 8:00 AM automatically. You can pause or adjust it anytime."
               />
             </div>
-            <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums text-emerald-400">
+            <div className={`text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums ${
+              themeMode === 'light' ? 'text-emerald-600' : 'text-emerald-400'
+            }`}>
               ₹{Math.round(dailyAmount * 30.4).toLocaleString('en-IN')}
             </div>
           </div>
           <div className="text-[11px] flex items-center gap-1.5 font-sans relative z-10" style={{ color: colors.textSecondary }}>
-            <PiggyBank className="w-3.5 h-3.5 text-emerald-400" />
-            <span>~30 micro-buys every month</span>
+            <PiggyBank className={`w-3.5 h-3.5 ${themeMode === 'light' ? 'text-emerald-600' : 'text-emerald-400'}`} />
+            <span className={themeMode === 'light' ? 'text-slate-600 font-medium' : undefined}>~30 micro-buys every month</span>
           </div>
         </div>
 
         {/* Card 3: Projected Value */}
         <div
-          className="rounded-[18px] p-5 sm:p-6 border relative overflow-hidden backdrop-blur-md flex flex-col justify-between min-h-[128px]"
-          style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
+          className="rounded-[18px] p-5 sm:p-6 border relative overflow-hidden backdrop-blur-md flex flex-col justify-between min-h-[128px] transition-all duration-300"
+          style={{
+            backgroundColor: colors.card,
+            borderColor: themeMode === 'light' ? 'rgba(15, 23, 42, 0.12)' : colors.cardBorder,
+            boxShadow: themeMode === 'light' ? '0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03)' : undefined,
+          }}
         >
           <img
             src="/icons/projected-value.png"
@@ -264,7 +282,9 @@ export const StrategyScreen: React.FC = () => {
           />
           <div className="relative z-10">
             <div className="flex items-center gap-1">
-              <span className="text-[11px] font-semibold uppercase tracking-wider block text-neutral-400">
+              <span className={`text-[11px] font-bold uppercase tracking-wider block ${
+                themeMode === 'light' ? 'text-slate-500' : 'text-neutral-400'
+              }`}>
                 {horizon.label} ESTIMATED VALUE
               </span>
               <HelpBadge
@@ -272,20 +292,26 @@ export const StrategyScreen: React.FC = () => {
                 content="Estimated future value based on consistent daily micro-investing compounded at reference basket growth rates. Past performance is not a guarantee."
               />
             </div>
-            <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums text-purple-400">
+            <div className={`text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums ${
+              themeMode === 'light' ? 'text-purple-600' : 'text-purple-400'
+            }`}>
               <CountUp to={projection.futureValue} prefix="₹" duration={1} />
             </div>
           </div>
           <div className="text-[11px] flex items-center gap-1.5 font-sans relative z-10" style={{ color: colors.textSecondary }}>
-            <span>Compounded at</span>
-            <span className="text-emerald-400 font-mono font-semibold">~{Math.round(activeBasket.growthRate * 100)}% p.a.</span>
+            <span className={themeMode === 'light' ? 'text-slate-600 font-medium' : undefined}>Compounded at</span>
+            <span className={`font-mono font-bold ${themeMode === 'light' ? 'text-emerald-600' : 'text-emerald-400'}`}>~{Math.round(activeBasket.growthRate * 100)}% p.a.</span>
           </div>
         </div>
 
         {/* Card 4: Instant Cashout */}
         <div
-          className="rounded-[18px] p-5 sm:p-6 border relative overflow-hidden backdrop-blur-md flex flex-col justify-between min-h-[128px]"
-          style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
+          className="rounded-[18px] p-5 sm:p-6 border relative overflow-hidden backdrop-blur-md flex flex-col justify-between min-h-[128px] transition-all duration-300"
+          style={{
+            backgroundColor: colors.card,
+            borderColor: themeMode === 'light' ? 'rgba(15, 23, 42, 0.12)' : colors.cardBorder,
+            boxShadow: themeMode === 'light' ? '0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03)' : undefined,
+          }}
         >
           <img
             src="/icons/liquidity.png"
@@ -295,7 +321,9 @@ export const StrategyScreen: React.FC = () => {
           />
           <div className="relative z-10">
             <div className="flex items-center gap-1">
-              <span className="text-[11px] font-semibold uppercase tracking-wider block text-neutral-400">
+              <span className={`text-[11px] font-bold uppercase tracking-wider block ${
+                themeMode === 'light' ? 'text-slate-500' : 'text-neutral-400'
+              }`}>
                 INSTANT CASHOUT
               </span>
               <HelpBadge
@@ -308,8 +336,8 @@ export const StrategyScreen: React.FC = () => {
             </div>
           </div>
           <div className="text-[11px] flex items-center gap-1.5 font-sans relative z-10" style={{ color: colors.textSecondary }}>
-            <Shield className="w-3.5 h-3.5 text-purple-400" />
-            <span>Direct to bank • Zero exit fee</span>
+            <Shield className={`w-3.5 h-3.5 ${themeMode === 'light' ? 'text-purple-600' : 'text-purple-400'}`} />
+            <span className={themeMode === 'light' ? 'text-slate-600 font-medium' : undefined}>Direct to bank • Zero exit fee</span>
           </div>
         </div>
       </div>
@@ -323,18 +351,24 @@ export const StrategyScreen: React.FC = () => {
           <SpotlightCard
             spotlightColor="rgba(93, 23, 235, 0.08)"
             className="rounded-[20px] p-6 border shadow-xl space-y-4"
-            style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
+            style={{
+              backgroundColor: colors.card,
+              borderColor: themeMode === 'light' ? 'rgba(15, 23, 42, 0.12)' : colors.cardBorder,
+              boxShadow: themeMode === 'light' ? '0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03)' : undefined,
+            }}
           >
             <div className="flex items-center justify-between">
               <div>
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-purple-400 block mb-0.5">
+                <span className={`text-[10px] font-mono font-bold uppercase tracking-wider block mb-0.5 ${
+                  themeMode === 'light' ? 'text-purple-600' : 'text-purple-400'
+                }`}>
                   Step 1 · Choose Your Stance
                 </span>
                 <h2 className="text-base font-bold" style={{ color: colors.textPrimary }}>
                   Curated Savings Stance
                 </h2>
               </div>
-              <span className="text-xs font-mono text-neutral-400">
+              <span className={`text-xs font-mono ${themeMode === 'light' ? 'text-slate-500 font-medium' : 'text-neutral-400'}`}>
                 Passive & Hands-Free
               </span>
             </div>
@@ -352,8 +386,12 @@ export const StrategyScreen: React.FC = () => {
                     onClick={() => handleBasketChange(b.id)}
                     className={`p-4 rounded-xl border text-left transition-all duration-150 ease-out active:scale-[0.98] relative cursor-pointer ${
                       isSelected
-                        ? 'border-purple-500/50 bg-purple-500/[0.08] shadow-[0_0_20px_rgba(93,23,235,0.15)]'
-                        : 'border-white/[0.08] hover:border-white/[0.16] hover:bg-white/[0.02]'
+                        ? (themeMode === 'light'
+                            ? 'border-purple-600/40 bg-purple-50/70 shadow-[0_4px_16px_rgba(93,23,235,0.08)]'
+                            : 'border-purple-500/50 bg-purple-500/[0.08] shadow-[0_0_20px_rgba(93,23,235,0.15)]')
+                        : (themeMode === 'light'
+                            ? 'border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50/50'
+                            : 'border-white/[0.08] hover:border-white/[0.16] hover:bg-white/[0.02]')
                     }`}
                     style={{ backgroundColor: isSelected ? undefined : colors.surface }}
                   >
@@ -364,24 +402,38 @@ export const StrategyScreen: React.FC = () => {
                           <span className="font-bold text-sm block" style={{ color: colors.textPrimary }}>
                             {b.name}
                           </span>
-                          <span className="text-[10px] font-mono text-neutral-400">
+                          <span className={`text-[10px] font-mono ${themeMode === 'light' ? 'text-slate-500' : 'text-neutral-400'}`}>
                             {isStable ? 'Capital First' : 'Wealth First'}
                           </span>
                         </div>
                       </div>
                       {isSelected ? (
-                        <div className="w-5 h-5 rounded-full bg-purple-400/20 text-purple-400 flex items-center justify-center border border-purple-400/40">
+                        <div className={`w-5 h-5 rounded-full flex items-center justify-center border ${
+                          themeMode === 'light'
+                            ? 'bg-purple-100 text-purple-700 border-purple-300'
+                            : 'bg-purple-400/20 text-purple-400 border-purple-400/40'
+                        }`}>
                           <Check className="w-3 h-3 stroke-[3]" />
                         </div>
                       ) : (
-                        <span className="text-[10px] font-mono font-bold text-neutral-400 px-2 py-0.5 rounded border border-white/[0.08]">
+                        <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded border ${
+                          themeMode === 'light'
+                            ? 'text-slate-600 bg-slate-100 border-slate-200'
+                            : 'text-neutral-400 border-white/[0.08]'
+                        }`}>
                           From ₹{b.minDailyAmount}/day
                         </span>
                       )}
                     </div>
 
                     {/* Exact Rupee Split Rule */}
-                    <div className="p-2 rounded-lg bg-black/20 border border-white/[0.04] text-[11px] font-mono font-semibold" style={{ color: isStable ? '#10B981' : '#F59E0B' }}>
+                    <div
+                      className={`p-2 rounded-lg border text-[11px] font-mono font-bold ${
+                        isStable
+                          ? (themeMode === 'light' ? 'bg-emerald-50/80 border-emerald-200 text-emerald-700' : 'bg-black/20 border-white/[0.04] text-emerald-400')
+                          : (themeMode === 'light' ? 'bg-amber-50/80 border-amber-200 text-amber-800' : 'bg-black/20 border-white/[0.04] text-amber-400')
+                      }`}
+                    >
                       {isStable ? '₹8.5 Digital USD + ₹1.5 BTC per ₹10' : '₹21 BTC + ₹6 ETH + ₹3 SOL per ₹30'}
                     </div>
 
@@ -399,16 +451,16 @@ export const StrategyScreen: React.FC = () => {
             <div
               className={`p-3.5 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-all duration-200 ${
                 selectedBasketId === 'stable'
-                  ? 'border-emerald-500/25 bg-emerald-500/[0.06]'
-                  : 'border-purple-500/25 bg-purple-500/[0.06]'
+                  ? (themeMode === 'light' ? 'border-emerald-200 bg-emerald-50/70' : 'border-emerald-500/25 bg-emerald-500/[0.06]')
+                  : (themeMode === 'light' ? 'border-purple-200 bg-purple-50/70' : 'border-purple-500/25 bg-purple-500/[0.06]')
               }`}
             >
               <div className="flex items-start sm:items-center gap-2.5">
                 <div
                   className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5 sm:mt-0 ${
                     selectedBasketId === 'stable'
-                      ? 'bg-emerald-500/20 text-emerald-400'
-                      : 'bg-purple-500/20 text-purple-400'
+                      ? (themeMode === 'light' ? 'bg-emerald-100 text-emerald-700' : 'bg-emerald-500/20 text-emerald-400')
+                      : (themeMode === 'light' ? 'bg-purple-100 text-purple-700' : 'bg-purple-500/20 text-purple-400')
                   }`}
                 >
                   <Sparkles className="w-3.5 h-3.5" />
@@ -423,9 +475,13 @@ export const StrategyScreen: React.FC = () => {
                       : 'Every ₹30 is split into ₹21 BTC + ₹6 ETH + ₹3 SOL automatically.'}
                   </div>
                   {dailyAmount > activeBasket.minDailyAmount && (
-                    <div className="text-[11px] font-mono mt-0.5 text-neutral-400">
+                    <div className={`text-[11px] font-mono mt-0.5 ${themeMode === 'light' ? 'text-slate-500' : 'text-neutral-400'}`}>
                       At your selected ₹{dailyAmount}/day:{' '}
-                      <span className={selectedBasketId === 'stable' ? 'text-emerald-400 font-semibold' : 'text-purple-400 font-semibold'}>
+                      <span className={
+                        selectedBasketId === 'stable'
+                          ? (themeMode === 'light' ? 'text-emerald-700 font-bold' : 'text-emerald-400 font-semibold')
+                          : (themeMode === 'light' ? 'text-purple-700 font-bold' : 'text-purple-400 font-semibold')
+                      }>
                         {selectedBasketId === 'stable'
                           ? `₹${(dailyAmount * 0.85).toFixed(1)} Digital USD + ₹${(dailyAmount * 0.15).toFixed(1)} BTC daily`
                           : `₹${(dailyAmount * 0.7).toFixed(1)} BTC + ₹${(dailyAmount * 0.2).toFixed(1)} ETH + ₹${(dailyAmount * 0.1).toFixed(1)} SOL daily`}
@@ -438,8 +494,8 @@ export const StrategyScreen: React.FC = () => {
               <span
                 className={`text-[10px] font-mono font-bold uppercase tracking-wider px-2.5 py-1 rounded-md border shrink-0 self-start sm:self-auto ${
                   selectedBasketId === 'stable'
-                    ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
-                    : 'bg-purple-500/10 text-purple-400 border-purple-500/30'
+                    ? (themeMode === 'light' ? 'bg-emerald-100 text-emerald-700 border-emerald-300' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30')
+                    : (themeMode === 'light' ? 'bg-purple-100 text-purple-700 border-purple-300' : 'bg-purple-500/10 text-purple-400 border-purple-500/30')
                 }`}
               >
                 Daily
@@ -451,11 +507,17 @@ export const StrategyScreen: React.FC = () => {
           <SpotlightCard
             spotlightColor="rgba(93, 23, 235, 0.08)"
             className="rounded-[20px] p-6 border shadow-xl space-y-5"
-            style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
+            style={{
+              backgroundColor: colors.card,
+              borderColor: themeMode === 'light' ? 'rgba(15, 23, 42, 0.12)' : colors.cardBorder,
+              boxShadow: themeMode === 'light' ? '0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03)' : undefined,
+            }}
           >
             <div className="flex items-center justify-between">
               <div>
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-purple-400 block mb-0.5">
+                <span className={`text-[10px] font-mono font-bold uppercase tracking-wider block mb-0.5 ${
+                  themeMode === 'light' ? 'text-purple-600' : 'text-purple-400'
+                }`}>
                   Step 2 · Daily Habit
                 </span>
                 <h2 className="text-base font-bold" style={{ color: colors.textPrimary }}>
@@ -463,10 +525,12 @@ export const StrategyScreen: React.FC = () => {
                 </h2>
               </div>
               <div className="text-right">
-                <span className="text-2xl sm:text-3xl font-extrabold font-mono text-purple-400 tabular-nums">
+                <span className={`text-2xl sm:text-3xl font-extrabold font-mono tabular-nums ${
+                  themeMode === 'light' ? 'text-purple-600' : 'text-purple-400'
+                }`}>
                   ₹{dailyAmount}
                 </span>
-                <span className="text-xs text-neutral-400 ml-1 font-sans">/day</span>
+                <span className={`text-xs ml-1 font-sans ${themeMode === 'light' ? 'text-slate-500' : 'text-neutral-400'}`}>/day</span>
               </div>
             </div>
 
@@ -483,31 +547,33 @@ export const StrategyScreen: React.FC = () => {
                     setDailyAmount(Math.max(minSavings, parseInt(e.target.value, 10) || minSavings))
                   }
                   aria-label="Daily savings amount"
-                  className="w-full h-3 rounded-full appearance-none cursor-pointer focus:outline-none transition-all shadow-inner border border-white/10"
+                  className={`w-full h-3 rounded-full appearance-none cursor-pointer focus:outline-none transition-all shadow-inner border ${
+                    themeMode === 'light' ? 'border-slate-300' : 'border-white/10'
+                  }`}
                   style={{
                     background: `linear-gradient(to right, #8B5CF6 0%, #A855F7 ${sliderPercentage}%, ${
-                      themeMode === 'light' ? 'rgba(0, 0, 0, 0.12)' : 'rgba(255, 255, 255, 0.15)'
+                      themeMode === 'light' ? 'rgba(15, 23, 42, 0.12)' : 'rgba(255, 255, 255, 0.15)'
                     } ${sliderPercentage}%, ${
-                      themeMode === 'light' ? 'rgba(0, 0, 0, 0.12)' : 'rgba(255, 255, 255, 0.15)'
+                      themeMode === 'light' ? 'rgba(15, 23, 42, 0.12)' : 'rgba(255, 255, 255, 0.15)'
                     } 100%)`,
                   }}
                 />
               </div>
-              <div className="flex justify-between text-[11px] font-mono text-neutral-400">
+              <div className={`flex justify-between text-[11px] font-mono ${themeMode === 'light' ? 'text-slate-500 font-medium' : 'text-neutral-400'}`}>
                 <span className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400" />
+                  <span className={`w-1.5 h-1.5 rounded-full ${themeMode === 'light' ? 'bg-purple-600' : 'bg-purple-400'}`} />
                   Min: ₹{minSavings}/day
                 </span>
                 <span className="flex items-center gap-1.5">
                   Max: ₹{maxSavings}/day
-                  <span className="w-1.5 h-1.5 rounded-full bg-neutral-600" />
+                  <span className={`w-1.5 h-1.5 rounded-full ${themeMode === 'light' ? 'bg-slate-400' : 'bg-neutral-600'}`} />
                 </span>
               </div>
             </div>
 
             {/* Quick Preset Chips */}
             <div className="space-y-2">
-              <span className="text-[11px] font-mono text-neutral-400 block">
+              <span className={`text-[11px] font-mono block ${themeMode === 'light' ? 'text-slate-500 font-medium' : 'text-neutral-400'}`}>
                 Quick Selection Chips
               </span>
               <div className="flex items-center gap-2 flex-wrap">
@@ -520,8 +586,12 @@ export const StrategyScreen: React.FC = () => {
                       onClick={() => setDailyAmount(preset)}
                       className={`min-w-[64px] h-9 px-3.5 rounded-xl text-xs font-bold font-mono border transition-all duration-150 ease-out active:scale-[0.96] cursor-pointer ${
                         isSelected
-                          ? 'bg-purple-500/20 border-purple-400 text-purple-300 shadow-[0_0_12px_rgba(93,23,235,0.25)]'
-                          : 'border-white/[0.08] hover:border-white/[0.18] text-neutral-300 hover:bg-white/[0.04]'
+                          ? (themeMode === 'light'
+                              ? 'bg-purple-100 border-purple-400 text-purple-700 shadow-sm'
+                              : 'bg-purple-500/20 border-purple-400 text-purple-300 shadow-[0_0_12px_rgba(93,23,235,0.25)]')
+                          : (themeMode === 'light'
+                              ? 'border-slate-200 hover:border-slate-300 text-slate-700 bg-slate-50 hover:bg-slate-100'
+                              : 'border-white/[0.08] hover:border-white/[0.18] text-neutral-300 hover:bg-white/[0.04]')
                       }`}
                       style={{ backgroundColor: isSelected ? undefined : colors.surface }}
                     >
@@ -533,9 +603,15 @@ export const StrategyScreen: React.FC = () => {
             </div>
 
             {/* Relatable Everyday Spending Equivalent */}
-            <div className="p-3 rounded-xl border flex items-center justify-between text-xs font-sans" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
-              <span className="text-neutral-400">Daily equivalent:</span>
-              <span className="font-semibold text-emerald-400 flex items-center gap-1.5">
+            <div
+              className="p-3 rounded-xl border flex items-center justify-between text-xs font-sans"
+              style={{
+                backgroundColor: themeMode === 'light' ? 'rgba(15, 23, 42, 0.03)' : colors.surface,
+                borderColor: themeMode === 'light' ? 'rgba(15, 23, 42, 0.08)' : colors.borderDim,
+              }}
+            >
+              <span className={themeMode === 'light' ? 'text-slate-500 font-medium' : 'text-neutral-400'}>Daily equivalent:</span>
+              <span className={`font-semibold flex items-center gap-1.5 ${themeMode === 'light' ? 'text-emerald-700' : 'text-emerald-400'}`}>
                 <span>☕</span>
                 <span>{getEverydayComparison(dailyAmount)}</span>
               </span>
@@ -546,11 +622,17 @@ export const StrategyScreen: React.FC = () => {
           <SpotlightCard
             spotlightColor="rgba(93, 23, 235, 0.08)"
             className="rounded-[20px] p-6 border shadow-xl space-y-4"
-            style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
+            style={{
+              backgroundColor: colors.card,
+              borderColor: themeMode === 'light' ? 'rgba(15, 23, 42, 0.12)' : colors.cardBorder,
+              boxShadow: themeMode === 'light' ? '0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03)' : undefined,
+            }}
           >
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-purple-400 block mb-0.5">
+                <span className={`text-[10px] font-mono font-bold uppercase tracking-wider block mb-0.5 ${
+                  themeMode === 'light' ? 'text-purple-600' : 'text-purple-400'
+                }`}>
                   Step 3 · Compounding Reality
                 </span>
                 <h2 className="text-base font-bold" style={{ color: colors.textPrimary }}>
@@ -559,7 +641,13 @@ export const StrategyScreen: React.FC = () => {
               </div>
 
               {/* Horizon Switcher Pills */}
-              <div className="flex items-center p-1 rounded-xl border gap-1 self-start sm:self-auto" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+              <div
+                className="flex items-center p-1 rounded-xl border gap-1 self-start sm:self-auto"
+                style={{
+                  backgroundColor: themeMode === 'light' ? 'rgba(15, 23, 42, 0.04)' : colors.surface,
+                  borderColor: themeMode === 'light' ? 'rgba(15, 23, 42, 0.08)' : colors.borderDim,
+                }}
+              >
                 {HORIZONS.map((h, idx) => (
                   <button
                     key={h.label}
@@ -567,8 +655,12 @@ export const StrategyScreen: React.FC = () => {
                     onClick={() => setHorizonIdx(idx)}
                     className={`px-3 py-1 rounded-lg text-xs font-bold transition-all duration-150 ease-out active:scale-[0.96] cursor-pointer ${
                       horizonIdx === idx
-                        ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30 shadow-sm'
-                        : 'text-neutral-400 hover:text-neutral-200'
+                        ? (themeMode === 'light'
+                            ? 'bg-purple-600 text-white shadow-xs font-bold'
+                            : 'bg-purple-500/20 text-purple-300 border border-purple-500/30 shadow-sm')
+                        : (themeMode === 'light'
+                            ? 'text-slate-600 hover:text-slate-900'
+                            : 'text-neutral-400 hover:text-neutral-200')
                     }`}
                   >
                     {h.label}
@@ -580,42 +672,90 @@ export const StrategyScreen: React.FC = () => {
             {/* Direct Comparison: You Deposit vs Satmix Compounded vs Idle Bank */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
               {/* Box 1: What You Put In */}
-              <div className="p-3.5 rounded-xl border space-y-1 font-mono" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
-                <span className="text-[10px] uppercase text-neutral-400 block font-sans">You Deposit</span>
-                <div className="text-lg font-bold text-white tabular-nums">
+              <div
+                className="p-3.5 rounded-xl border space-y-1 font-mono"
+                style={{
+                  backgroundColor: themeMode === 'light' ? 'rgba(15, 23, 42, 0.02)' : colors.surface,
+                  borderColor: themeMode === 'light' ? 'rgba(15, 23, 42, 0.08)' : colors.borderDim,
+                }}
+              >
+                <span className={`text-[10px] uppercase block font-sans font-semibold ${
+                  themeMode === 'light' ? 'text-slate-500' : 'text-neutral-400'
+                }`}>
+                  You Deposit
+                </span>
+                <div className={`text-lg font-bold tabular-nums ${
+                  themeMode === 'light' ? 'text-slate-900' : 'text-white'
+                }`}>
                   ₹{projection.totalInvested.toLocaleString('en-IN')}
                 </div>
-                <span className="text-[10px] text-neutral-500 block font-sans">
+                <span className={`text-[10px] block font-sans ${
+                  themeMode === 'light' ? 'text-slate-500 font-medium' : 'text-neutral-500'
+                }`}>
                   ₹{dailyAmount}/day × {horizon.years * 365} days
                 </span>
               </div>
 
               {/* Box 2: Satmix Compounded Value */}
-              <div className="p-3.5 rounded-xl border border-purple-500/30 bg-purple-500/[0.06] space-y-1 font-mono">
+              <div className={`p-3.5 rounded-xl border space-y-1 font-mono ${
+                themeMode === 'light'
+                  ? 'border-purple-200 bg-purple-50/70 shadow-xs'
+                  : 'border-purple-500/30 bg-purple-500/[0.06]'
+              }`}>
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] uppercase text-purple-300 font-sans font-semibold">Satmix Value</span>
-                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold">
+                  <span className={`text-[10px] uppercase font-sans font-bold ${
+                    themeMode === 'light' ? 'text-purple-700' : 'text-purple-300'
+                  }`}>
+                    Satmix Value
+                  </span>
+                  <span className={`text-[9px] px-1.5 py-0.5 rounded font-bold ${
+                    themeMode === 'light'
+                      ? 'bg-emerald-100 text-emerald-700 border border-emerald-200'
+                      : 'bg-emerald-500/20 text-emerald-400'
+                  }`}>
                     +₹{projection.totalGains.toLocaleString('en-IN')}
                   </span>
                 </div>
-                <div className="text-lg font-bold text-purple-300 tabular-nums">
+                <div className={`text-lg font-bold tabular-nums ${
+                  themeMode === 'light' ? 'text-purple-700' : 'text-purple-300'
+                }`}>
                   ₹{projection.futureValue.toLocaleString('en-IN')}
                 </div>
-                <span className="text-[10px] text-emerald-400 block font-sans">
+                <span className={`text-[10px] block font-sans font-semibold ${
+                  themeMode === 'light' ? 'text-emerald-700' : 'text-emerald-400'
+                }`}>
                   ~{Math.round(activeBasket.growthRate * 100)}% p.a. reference
                 </span>
               </div>
 
               {/* Box 3: Idle Bank Alternative */}
-              <div className="p-3.5 rounded-xl border space-y-1 font-mono" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+              <div
+                className="p-3.5 rounded-xl border space-y-1 font-mono"
+                style={{
+                  backgroundColor: themeMode === 'light' ? 'rgba(15, 23, 42, 0.02)' : colors.surface,
+                  borderColor: themeMode === 'light' ? 'rgba(15, 23, 42, 0.08)' : colors.borderDim,
+                }}
+              >
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] uppercase text-neutral-400 font-sans">Bank Account</span>
-                  <span className="text-[9px] text-neutral-400 font-mono">3.5% p.a.</span>
+                  <span className={`text-[10px] uppercase font-sans font-semibold ${
+                    themeMode === 'light' ? 'text-slate-500' : 'text-neutral-400'
+                  }`}>
+                    Bank Account
+                  </span>
+                  <span className={`text-[9px] font-mono ${
+                    themeMode === 'light' ? 'text-slate-500' : 'text-neutral-400'
+                  }`}>
+                    3.5% p.a.
+                  </span>
                 </div>
-                <div className="text-lg font-bold text-neutral-400 tabular-nums">
+                <div className={`text-lg font-bold tabular-nums ${
+                  themeMode === 'light' ? 'text-slate-600' : 'text-neutral-400'
+                }`}>
                   ₹{projection.bankValue.toLocaleString('en-IN')}
                 </div>
-                <span className="text-[10px] text-purple-400 block font-sans font-semibold">
+                <span className={`text-[10px] block font-sans font-semibold ${
+                  themeMode === 'light' ? 'text-purple-600' : 'text-purple-400'
+                }`}>
                   Satmix +₹{projection.extraVsBank.toLocaleString('en-IN')} ahead
                 </span>
               </div>
@@ -623,22 +763,29 @@ export const StrategyScreen: React.FC = () => {
 
             {/* Tangible Wealth Milestones */}
             <div className="pt-2">
-              <span className="text-[11px] font-mono text-neutral-400 block mb-2">
+              <span className={`text-[11px] font-mono block mb-2 ${
+                themeMode === 'light' ? 'text-slate-500 font-bold uppercase' : 'text-neutral-400'
+              }`}>
                 Habit Milestones
               </span>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {milestones.map((m) => (
                   <div
                     key={m.id}
-                    className="p-3 rounded-xl border flex flex-col justify-between space-y-1.5"
-                    style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}
+                    className="p-3 rounded-xl border flex flex-col justify-between space-y-1.5 transition-colors"
+                    style={{
+                      backgroundColor: themeMode === 'light' ? 'rgba(15, 23, 42, 0.02)' : colors.surface,
+                      borderColor: themeMode === 'light' ? 'rgba(15, 23, 42, 0.08)' : colors.borderDim,
+                    }}
                   >
                     <div className="flex items-center justify-between">
                       <span className="font-bold text-xs" style={{ color: colors.textPrimary }}>{m.title}</span>
-                      <Target className="w-3.5 h-3.5 text-purple-400" />
+                      <Target className={`w-3.5 h-3.5 ${themeMode === 'light' ? 'text-purple-600' : 'text-purple-400'}`} />
                     </div>
-                    <p className="text-[11px] text-neutral-400">{m.subtext}</p>
-                    <span className="text-[10px] font-mono font-bold text-emerald-400">
+                    <p className={`text-[11px] ${themeMode === 'light' ? 'text-slate-500' : 'text-neutral-400'}`}>{m.subtext}</p>
+                    <span className={`text-[10px] font-mono font-bold ${
+                      themeMode === 'light' ? 'text-emerald-700' : 'text-emerald-400'
+                    }`}>
                       {m.badge}
                     </span>
                   </div>
@@ -655,10 +802,16 @@ export const StrategyScreen: React.FC = () => {
           <SpotlightCard
             spotlightColor="rgba(93, 23, 235, 0.08)"
             className="rounded-[20px] p-6 border shadow-xl space-y-5"
-            style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
+            style={{
+              backgroundColor: colors.card,
+              borderColor: themeMode === 'light' ? 'rgba(15, 23, 42, 0.12)' : colors.cardBorder,
+              boxShadow: themeMode === 'light' ? '0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03)' : undefined,
+            }}
           >
             <div>
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-purple-400 block mb-0.5">
+              <span className={`text-[10px] font-mono font-bold uppercase tracking-wider block mb-0.5 ${
+                themeMode === 'light' ? 'text-purple-600' : 'text-purple-400'
+              }`}>
                 Automated Plan
               </span>
               <h3 className="text-base font-bold" style={{ color: colors.textPrimary }}>
@@ -669,34 +822,40 @@ export const StrategyScreen: React.FC = () => {
             {/* Key Execution Metrics */}
             <div className="divide-y divide-slate-200 dark:divide-white/[0.06] font-mono text-xs">
               <div className="py-2.5 flex justify-between items-center">
-                <span className="font-sans text-neutral-400">Daily Amount</span>
-                <strong className="text-purple-400 font-bold tabular-nums">₹{dailyAmount} / day</strong>
+                <span className={`font-sans ${themeMode === 'light' ? 'text-slate-500' : 'text-neutral-400'}`}>Daily Amount</span>
+                <strong className={`font-bold tabular-nums ${themeMode === 'light' ? 'text-purple-700' : 'text-purple-400'}`}>₹{dailyAmount} / day</strong>
               </div>
               <div className="py-2.5 flex justify-between items-center">
-                <span className="font-sans text-neutral-400">Monthly Budget</span>
-                <strong className="tabular-nums text-white">₹{Math.round(dailyAmount * 30.4).toLocaleString('en-IN')}</strong>
+                <span className={`font-sans ${themeMode === 'light' ? 'text-slate-500' : 'text-neutral-400'}`}>Monthly Budget</span>
+                <strong className={`tabular-nums ${themeMode === 'light' ? 'text-slate-900 font-bold' : 'text-white font-bold'}`}>₹{Math.round(dailyAmount * 30.4).toLocaleString('en-IN')}</strong>
               </div>
               <div className="py-2.5 flex justify-between items-center">
-                <span className="font-sans text-neutral-400">Daily Execution</span>
-                <strong className="text-white">8:00 AM IST Daily</strong>
+                <span className={`font-sans ${themeMode === 'light' ? 'text-slate-500' : 'text-neutral-400'}`}>Daily Execution</span>
+                <strong className={`${themeMode === 'light' ? 'text-slate-900 font-bold' : 'text-white font-bold'}`}>8:00 AM IST Daily</strong>
               </div>
               <div className="py-2.5 flex justify-between items-center">
-                <span className="font-sans text-neutral-400">Lock-in Period</span>
-                <span className="text-emerald-400 font-bold">Zero Days (Withdraw Anytime)</span>
+                <span className={`font-sans ${themeMode === 'light' ? 'text-slate-500' : 'text-neutral-400'}`}>Lock-in Period</span>
+                <span className={`font-bold ${themeMode === 'light' ? 'text-emerald-700' : 'text-emerald-400'}`}>Zero Days (Withdraw Anytime)</span>
               </div>
             </div>
 
             {/* 1% TDS Transparency (Govt Tax Law) */}
-            <div className="p-3.5 rounded-xl border space-y-1.5 font-mono text-xs" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+            <div
+              className="p-3.5 rounded-xl border space-y-1.5 font-mono text-xs"
+              style={{
+                backgroundColor: themeMode === 'light' ? 'rgba(15, 23, 42, 0.02)' : colors.surface,
+                borderColor: themeMode === 'light' ? 'rgba(15, 23, 42, 0.08)' : colors.borderDim,
+              }}
+            >
               <div className="flex items-center justify-between font-sans">
                 <span className="font-semibold" style={{ color: colors.textPrimary }}>Liquidity Guarantee</span>
-                <span className="text-emerald-400 font-bold">99% Net Payout</span>
+                <span className={`font-bold ${themeMode === 'light' ? 'text-emerald-700' : 'text-emerald-400'}`}>99% Net Payout</span>
               </div>
-              <div className="flex justify-between text-[11px] text-neutral-400 pt-1">
+              <div className={`flex justify-between text-[11px] pt-1 ${themeMode === 'light' ? 'text-slate-500' : 'text-neutral-400'}`}>
                 <span>Gross Portfolio Value:</span>
                 <strong className="tabular-nums" style={{ color: colors.textPrimary }}>₹{netLiquidity.grossVal.toLocaleString('en-IN')}</strong>
               </div>
-              <div className="flex justify-between text-[11px] text-neutral-400">
+              <div className={`flex justify-between text-[11px] ${themeMode === 'light' ? 'text-slate-500' : 'text-neutral-400'}`}>
                 <span className="flex items-center gap-1 font-sans">
                   <span>Govt Tax (1% TDS):</span>
                   <HelpBadge
@@ -704,13 +863,17 @@ export const StrategyScreen: React.FC = () => {
                     content="As mandated by the Govt of India, 1% TDS is deducted on sales and deposited directly to the Income Tax Department against your PAN card. You can claim it back when filing taxes. Satmix charges 0% exit fees."
                   />
                 </span>
-                <strong className="text-rose-400 tabular-nums">-₹{netLiquidity.tds1Pct.toLocaleString('en-IN')}</strong>
+                <strong className={`tabular-nums ${themeMode === 'light' ? 'text-rose-600 font-bold' : 'text-rose-400'}`}>-₹{netLiquidity.tds1Pct.toLocaleString('en-IN')}</strong>
               </div>
-              <div className="flex justify-between text-[11px] text-purple-400 pt-1 border-t border-slate-200 dark:border-white/[0.06] font-bold">
+              <div className={`flex justify-between text-[11px] pt-1 border-t font-bold ${
+                themeMode === 'light'
+                  ? 'border-slate-200 text-purple-700'
+                  : 'border-white/[0.06] text-purple-400'
+              }`}>
                 <span>Net Bank Payout:</span>
                 <strong className="tabular-nums">₹{netLiquidity.netPayout.toLocaleString('en-IN')}</strong>
               </div>
-              <p className="text-[10px] text-neutral-400 pt-1 font-sans leading-relaxed">
+              <p className={`text-[10px] pt-1 font-sans leading-relaxed ${themeMode === 'light' ? 'text-slate-500' : 'text-neutral-400'}`}>
                 *1% TDS is deposited directly to the Income Tax Department against your PAN card. Satmix charges zero exit penalties.
               </p>
             </div>

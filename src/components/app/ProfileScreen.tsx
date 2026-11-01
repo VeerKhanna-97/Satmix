@@ -29,6 +29,7 @@ import {
   Phone,
   Eye,
   Sliders,
+  Menu,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { generateTaxStatement, downloadCsvFile } from '../../utils/taxGenerator';
@@ -68,6 +69,7 @@ export const ProfileScreen: React.FC<{ defaultSection?: SettingsSection }> = ({ 
   const [biometricToggle, setBiometricToggle] = useState(true);
   const [smsAlertsToggle, setSmsAlertsToggle] = useState(true);
   const [inventoryExpanded, setInventoryExpanded] = useState(true);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   // Contact Addition Modal State (Link Email or Mobile Number)
   const [addContactModal, setAddContactModal] = useState<'email' | 'phone' | null>(null);
@@ -256,67 +258,157 @@ export const ProfileScreen: React.FC<{ defaultSection?: SettingsSection }> = ({ 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
         {/* Left Sidebar Menu */}
         <div className="md:col-span-4 lg:col-span-3 space-y-2">
-          {/* ── MOBILE: CLEAN EDGE-FADED HORIZONTAL CAROUSEL (OPTION 3) ── */}
-          <div
-            className="md:hidden relative rounded-[18px] border overflow-hidden p-1 shadow-sm"
-            style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
-          >
-            {/* Left Edge Gradient Fade */}
-            <div
-              className="absolute left-0 top-0 bottom-0 w-5 pointer-events-none z-10"
+          {/* ── MOBILE: TACTILE CAPSULE DROPDOWN & HAMBURGER TRIGGER (ZERO HORIZONTAL SCROLL) ── */}
+          <div className="md:hidden relative">
+            <button
+              type="button"
+              onClick={() => setMobileNavOpen((prev) => !prev)}
+              className={`w-full h-13 px-4 rounded-[18px] border flex items-center justify-between transition-all active:scale-[0.98] cursor-pointer ${
+                themeMode === 'light'
+                  ? 'bg-white border-slate-200/90 shadow-[0_4px_20px_-2px_rgba(15,23,42,0.06),0_2px_6px_-1px_rgba(15,23,42,0.03)]'
+                  : 'bg-card border-cardBorder shadow-md'
+              }`}
               style={{
-                background: `linear-gradient(to right, ${colors.card}, transparent)`,
+                backgroundColor: themeMode === 'light' ? '#FFFFFF' : colors.card,
+                borderColor: themeMode === 'light' ? 'rgba(15, 23, 42, 0.12)' : colors.cardBorder,
               }}
-            />
+              aria-expanded={mobileNavOpen}
+              aria-label="Select Account Navigation Section"
+            >
+              <div className="flex items-center gap-3">
+                <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${
+                  themeMode === 'light'
+                    ? 'bg-purple-100 text-purple-700 border border-purple-200'
+                    : 'bg-purple-500/15 border border-purple-500/30 text-purple-400'
+                }`}>
+                  <ActiveNavIcon className="w-4 h-4" />
+                </div>
+                <div className="text-left">
+                  <span className={`text-[10px] font-mono font-bold uppercase tracking-wider block ${
+                    themeMode === 'light' ? 'text-slate-500' : 'text-neutral-400'
+                  }`}>
+                    Account Section
+                  </span>
+                  <span className={`font-bold text-sm block ${
+                    themeMode === 'light' ? 'text-slate-900' : 'text-white'
+                  }`}>
+                    {activeNavItem.label}
+                  </span>
+                </div>
+              </div>
 
-            {/* Right Edge Gradient Fade */}
-            <div
-              className="absolute right-0 top-0 bottom-0 w-8 pointer-events-none z-10"
-              style={{
-                background: `linear-gradient(to left, ${colors.card}, transparent)`,
-              }}
-            />
+              {/* Hamburger Capsule Button */}
+              <div className="flex items-center gap-2">
+                <span className={`text-xs font-mono font-bold ${
+                  themeMode === 'light' ? 'text-purple-700' : 'text-purple-400'
+                }`}>
+                  Menu
+                </span>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center border transition-all duration-200 ${
+                  mobileNavOpen
+                    ? (themeMode === 'light' ? 'bg-purple-600 text-white border-purple-700' : 'bg-purple-500 text-white border-purple-400')
+                    : (themeMode === 'light' ? 'bg-slate-100 text-slate-700 border-slate-200' : 'bg-white/5 text-neutral-300 border-white/10')
+                }`}>
+                  {mobileNavOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4 stroke-[2.2]" />}
+                </div>
+              </div>
+            </button>
 
-            {/* Horizontal Pill Bar with Zero Native Scrollbars */}
-            <div className="flex items-center gap-1.5 overflow-x-auto whitespace-nowrap no-scrollbar py-0.5 px-1 scroll-smooth">
-              {navItems.map((item) => {
-                const Icon = item.icon;
-                const isActive = activeSection === item.id;
-                return (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => setActiveSection(item.id)}
-                    className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all duration-150 ease-out active:scale-[0.96] flex-shrink-0 cursor-pointer ${
-                      isActive
-                        ? 'bg-purple-500/15 text-purple-400 border border-purple-500/30 shadow-xs font-bold'
-                        : 'text-neutral-400 hover:text-white border border-transparent hover:bg-white/[0.04]'
+            {/* Mobile Dropdown Popover Menu */}
+            <AnimatePresence>
+              {mobileNavOpen && (
+                <>
+                  {/* Backdrop for outside-click dismissal */}
+                  <div
+                    className="fixed inset-0 z-30 bg-black/40 backdrop-blur-xs"
+                    onClick={() => setMobileNavOpen(false)}
+                  />
+
+                  <motion.div
+                    initial={{ opacity: 0, y: -6, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -6, scale: 0.98 }}
+                    transition={{ duration: 0.16, ease: [0.16, 1, 0.3, 1] }}
+                    className={`absolute left-0 right-0 top-15 z-40 p-2.5 rounded-[22px] border space-y-1 backdrop-blur-2xl ${
+                      themeMode === 'light'
+                        ? 'bg-white/95 border-slate-200/90 shadow-[0_12px_40px_-4px_rgba(15,23,42,0.15),0_4px_12px_-2px_rgba(15,23,42,0.08)]'
+                        : 'bg-[#12141D]/95 border-white/10 shadow-2xl'
                     }`}
                   >
-                    <Icon className={`w-3.5 h-3.5 flex-shrink-0 ${isActive ? 'text-purple-400' : 'text-neutral-400'}`} />
-                    <span>{item.label}</span>
-                  </button>
-                );
-              })}
+                    <div className={`px-3 py-1.5 text-[10px] font-mono uppercase font-bold border-b mb-1.5 flex items-center justify-between ${
+                      themeMode === 'light' ? 'text-slate-500 border-slate-200' : 'text-neutral-400 border-white/[0.06]'
+                    }`}>
+                      <span>Select View</span>
+                      <span className="text-[9px] font-sans font-normal lowercase opacity-70">tap to switch</span>
+                    </div>
 
-              {/* Fused Sign Out Separator & Action */}
-              <div className="w-px h-5 mx-0.5 flex-shrink-0" style={{ backgroundColor: colors.borderDim }} />
+                    {navItems.map((item) => {
+                      const Icon = item.icon;
+                      const isActive = activeSection === item.id;
+                      return (
+                        <button
+                          key={item.id}
+                          type="button"
+                          onClick={() => {
+                            setActiveSection(item.id);
+                            setMobileNavOpen(false);
+                          }}
+                          className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 active:scale-[0.98] text-left cursor-pointer ${
+                            isActive
+                              ? (themeMode === 'light'
+                                  ? 'bg-purple-50 text-purple-700 border border-purple-200 font-bold shadow-xs'
+                                  : 'bg-purple-500/15 text-purple-400 border border-purple-500/30 font-bold')
+                              : (themeMode === 'light'
+                                  ? 'text-slate-700 hover:text-slate-900 hover:bg-slate-50 border border-transparent'
+                                  : 'text-neutral-300 hover:text-white hover:bg-white/[0.05] border border-transparent')
+                          }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <Icon className={`w-4 h-4 ${
+                              isActive
+                                ? (themeMode === 'light' ? 'text-purple-700' : 'text-purple-400')
+                                : (themeMode === 'light' ? 'text-slate-500' : 'text-neutral-400')
+                            }`} />
+                            <span>{item.label}</span>
+                          </div>
+                          {isActive && (
+                            <span className={`w-2 h-2 rounded-full ${
+                              themeMode === 'light' ? 'bg-purple-600 shadow-[0_0_8px_rgba(139,92,246,0.6)]' : 'bg-purple-400 shadow-[0_0_8px_rgba(139,92,246,0.9)]'
+                            }`} />
+                          )}
+                        </button>
+                      );
+                    })}
 
-              <button
-                type="button"
-                onClick={logout}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-rose-400 hover:bg-rose-500/10 active:scale-[0.96] flex-shrink-0 cursor-pointer"
-              >
-                <LogOut className="w-3.5 h-3.5 flex-shrink-0 text-rose-400" />
-                <span>Sign Out</span>
-              </button>
-            </div>
+                    <div className={`h-px w-full my-1.5 border-t ${themeMode === 'light' ? 'border-slate-200' : 'border-white/[0.06]'}`} />
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMobileNavOpen(false);
+                        logout();
+                      }}
+                      className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-rose-500 hover:bg-rose-500/10 active:scale-[0.98] text-left cursor-pointer ${
+                        themeMode === 'light' ? 'hover:bg-rose-50' : 'hover:bg-rose-500/10'
+                      }`}
+                    >
+                      <LogOut className="w-4 h-4 text-rose-500" />
+                      <span>Sign Out</span>
+                    </button>
+                  </motion.div>
+                </>
+              )}
+            </AnimatePresence>
           </div>
 
           {/* ── DESKTOP: INSTITUTIONAL VERTICAL SIDEBAR STACK ──────────── */}
           <div
-            className="hidden md:flex flex-col rounded-[20px] p-2 sm:p-2.5 border gap-1.5"
-            style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
+            className="hidden md:flex flex-col rounded-[20px] p-2 sm:p-2.5 border gap-1.5 transition-all duration-300"
+            style={{
+              backgroundColor: colors.card,
+              borderColor: themeMode === 'light' ? 'rgba(15, 23, 42, 0.12)' : colors.cardBorder,
+              boxShadow: themeMode === 'light' ? '0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03)' : undefined,
+            }}
           >
             {navItems.map((item) => {
               const Icon = item.icon;
@@ -328,27 +420,39 @@ export const ProfileScreen: React.FC<{ defaultSection?: SettingsSection }> = ({ 
                   onClick={() => setActiveSection(item.id)}
                   className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 ease-out active:scale-[0.98] text-left cursor-pointer whitespace-nowrap ${
                     isActive
-                      ? 'bg-purple-500/10 text-purple-400 border border-purple-500/25 shadow-sm'
-                      : 'text-neutral-400 hover:text-neutral-200 hover:bg-white/[0.04]'
+                      ? (themeMode === 'light'
+                          ? 'bg-purple-50 text-purple-700 border border-purple-200 font-bold shadow-xs'
+                          : 'bg-purple-500/10 text-purple-400 border border-purple-500/25 shadow-sm')
+                      : (themeMode === 'light'
+                          ? 'text-slate-600 hover:text-slate-900 hover:bg-slate-50 border border-transparent'
+                          : 'text-neutral-400 hover:text-neutral-200 hover:bg-white/[0.04] border border-transparent')
                   }`}
                 >
-                  <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-purple-400' : 'text-neutral-400'}`} />
+                  <Icon className={`w-4 h-4 flex-shrink-0 ${
+                    isActive
+                      ? (themeMode === 'light' ? 'text-purple-700' : 'text-purple-400')
+                      : (themeMode === 'light' ? 'text-slate-500' : 'text-neutral-400')
+                  }`} />
                   <span className="flex-1">{item.label}</span>
                   {isActive && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-purple-400 shadow-[0_0_8px_rgba(139,92,246,0.8)]" />
+                    <span className={`w-1.5 h-1.5 rounded-full ${
+                      themeMode === 'light' ? 'bg-purple-600 shadow-[0_0_8px_rgba(139,92,246,0.6)]' : 'bg-purple-400 shadow-[0_0_8px_rgba(139,92,246,0.8)]'
+                    }`} />
                   )}
                 </button>
               );
             })}
 
-            <div className="h-px w-full my-1 border-t" style={{ borderColor: colors.borderDim }} />
+            <div className="h-px w-full my-1 border-t" style={{ borderColor: themeMode === 'light' ? 'rgba(15, 23, 42, 0.08)' : colors.borderDim }} />
 
             <button
               type="button"
               onClick={logout}
-              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 transition-all active:scale-[0.98] text-left cursor-pointer whitespace-nowrap"
+              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-rose-500 transition-all active:scale-[0.98] text-left cursor-pointer whitespace-nowrap ${
+                themeMode === 'light' ? 'hover:bg-rose-50' : 'hover:bg-rose-500/10 hover:text-rose-300'
+              }`}
             >
-              <LogOut className="w-4 h-4 flex-shrink-0 text-rose-400" />
+              <LogOut className="w-4 h-4 flex-shrink-0 text-rose-500" />
               <span className="flex-1">Sign Out</span>
             </button>
           </div>
@@ -440,19 +544,35 @@ export const ProfileScreen: React.FC<{ defaultSection?: SettingsSection }> = ({ 
                 {/* Form Fields Grid matching Image 5 */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-6">
                   {/* Full Name */}
-                  <div className="p-4 rounded-xl border space-y-1.5" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
-                    <label className="text-[11px] font-mono font-medium block" style={{ color: colors.textSecondary }}>
+                  <div
+                    className="p-4 rounded-xl border space-y-1.5 transition-all"
+                    style={{
+                      backgroundColor: themeMode === 'light' ? 'rgba(15, 23, 42, 0.02)' : colors.surface,
+                      borderColor: themeMode === 'light' ? 'rgba(15, 23, 42, 0.08)' : colors.borderDim,
+                    }}
+                  >
+                    <label className={`text-[10px] font-mono font-bold uppercase tracking-wider block ${
+                      themeMode === 'light' ? 'text-slate-500' : 'text-neutral-400'
+                    }`}>
                       Full Legal Name
                     </label>
-                    <div className="font-semibold text-sm" style={{ color: colors.textPrimary }}>
+                    <div className={`font-bold text-sm ${themeMode === 'light' ? 'text-slate-900' : 'text-white'}`}>
                       {user?.name || 'Veer Khanna'}
                     </div>
                   </div>
 
                   {/* Email Address */}
-                  <div className="p-4 rounded-xl border space-y-1.5" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+                  <div
+                    className="p-4 rounded-xl border space-y-1.5 transition-all"
+                    style={{
+                      backgroundColor: themeMode === 'light' ? 'rgba(15, 23, 42, 0.02)' : colors.surface,
+                      borderColor: themeMode === 'light' ? 'rgba(15, 23, 42, 0.08)' : colors.borderDim,
+                    }}
+                  >
                     <div className="flex items-center justify-between">
-                      <label className="text-[11px] font-mono font-medium" style={{ color: colors.textSecondary }}>
+                      <label className={`text-[10px] font-mono font-bold uppercase tracking-wider ${
+                        themeMode === 'light' ? 'text-slate-500' : 'text-neutral-400'
+                      }`}>
                         Email Address
                       </label>
                       {!hasEmail && (
@@ -464,22 +584,33 @@ export const ProfileScreen: React.FC<{ defaultSection?: SettingsSection }> = ({ 
                             setContactSuccessMsg('');
                             setAddContactModal('email');
                           }}
-                          className="text-[11px] font-bold hover:underline cursor-pointer"
-                          style={{ color: colors.accent }}
+                          className={`text-[11px] font-bold hover:underline cursor-pointer ${
+                            themeMode === 'light' ? 'text-purple-600' : 'text-purple-400'
+                          }`}
                         >
                           + Add Email
                         </button>
                       )}
                     </div>
-                    <div className="font-semibold text-sm truncate" style={{ color: colors.textPrimary }}>
-                      {hasEmail ? user?.email : <span className="text-neutral-500 font-normal italic">No email linked</span>}
+                    <div className={`font-bold text-sm truncate ${
+                      hasEmail ? (themeMode === 'light' ? 'text-slate-900' : 'text-white') : 'text-neutral-500 font-normal italic'
+                    }`}>
+                      {hasEmail ? user?.email : 'No email linked'}
                     </div>
                   </div>
 
                   {/* Mobile Number */}
-                  <div className="p-4 rounded-xl border space-y-1.5" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+                  <div
+                    className="p-4 rounded-xl border space-y-1.5 transition-all"
+                    style={{
+                      backgroundColor: themeMode === 'light' ? 'rgba(15, 23, 42, 0.02)' : colors.surface,
+                      borderColor: themeMode === 'light' ? 'rgba(15, 23, 42, 0.08)' : colors.borderDim,
+                    }}
+                  >
                     <div className="flex items-center justify-between">
-                      <label className="text-[11px] font-mono font-medium" style={{ color: colors.textSecondary }}>
+                      <label className={`text-[10px] font-mono font-bold uppercase tracking-wider ${
+                        themeMode === 'light' ? 'text-slate-500' : 'text-neutral-400'
+                      }`}>
                         Phone Number
                       </label>
                       {!hasPhone && (
@@ -491,30 +622,45 @@ export const ProfileScreen: React.FC<{ defaultSection?: SettingsSection }> = ({ 
                             setContactSuccessMsg('');
                             setAddContactModal('phone');
                           }}
-                          className="text-[11px] font-bold hover:underline cursor-pointer"
-                          style={{ color: colors.accent }}
+                          className={`text-[11px] font-bold hover:underline cursor-pointer ${
+                            themeMode === 'light' ? 'text-purple-600' : 'text-purple-400'
+                          }`}
                         >
                           + Add Mobile
                         </button>
                       )}
                     </div>
-                    <div className="font-semibold text-sm font-mono tabular-nums" style={{ color: colors.textPrimary }}>
-                      {hasPhone ? user?.phone : <span className="text-neutral-500 font-normal italic font-sans">No phone linked</span>}
+                    <div className={`font-bold text-sm font-mono tabular-nums ${
+                      hasPhone ? (themeMode === 'light' ? 'text-slate-900' : 'text-white') : 'text-neutral-500 font-normal italic font-sans'
+                    }`}>
+                      {hasPhone ? user?.phone : 'No phone linked'}
                     </div>
                   </div>
 
                   {/* KYC Verification Status */}
-                  <div className="p-4 rounded-xl border space-y-1.5" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
-                    <label className="text-[11px] font-mono font-medium block" style={{ color: colors.textSecondary }}>
+                  <div
+                    className="p-4 rounded-xl border space-y-1.5 transition-all"
+                    style={{
+                      backgroundColor: themeMode === 'light' ? 'rgba(15, 23, 42, 0.02)' : colors.surface,
+                      borderColor: themeMode === 'light' ? 'rgba(15, 23, 42, 0.08)' : colors.borderDim,
+                    }}
+                  >
+                    <label className={`text-[10px] font-mono font-bold uppercase tracking-wider block ${
+                      themeMode === 'light' ? 'text-slate-500' : 'text-neutral-400'
+                    }`}>
                       Identity Verification (KYC)
                     </label>
                     <div className="flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-amber-400" />
-                      <span className="text-xs font-bold" style={{ color: colors.textPrimary }}>
+                      <span className={`text-xs font-bold ${
+                        themeMode === 'light' ? 'text-slate-900' : 'text-white'
+                      }`}>
                         Early Access Tier
                       </span>
                     </div>
-                    <p className="text-[10px] font-mono leading-tight mt-1" style={{ color: colors.textTertiary }}>
+                    <p className={`text-[10px] font-mono leading-tight mt-1 ${
+                      themeMode === 'light' ? 'text-slate-500' : 'text-neutral-400'
+                    }`}>
                       Full KYC verification will be conducted via Digilocker/UIDAI upon official public launch.
                     </p>
                   </div>
@@ -525,16 +671,20 @@ export const ProfileScreen: React.FC<{ defaultSection?: SettingsSection }> = ({ 
               <SpotlightCard
                 spotlightColor="rgba(93, 23, 235, 0.08)"
                 className="rounded-[22px] p-6 border shadow-xl space-y-4"
-                style={{ backgroundColor: colors.card, borderColor: colors.cardBorder }}
+                style={{
+                  backgroundColor: colors.card,
+                  borderColor: themeMode === 'light' ? 'rgba(15, 23, 42, 0.12)' : colors.cardBorder,
+                  boxShadow: themeMode === 'light' ? '0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03)' : undefined,
+                }}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
-                    <Zap className="w-4 h-4 text-purple-400" />
+                    <Zap className={`w-4 h-4 ${themeMode === 'light' ? 'text-purple-600' : 'text-purple-400'}`} />
                     <div>
                       <h3 className="font-bold text-sm" style={{ color: colors.textPrimary }}>
                         Active Investment Habits
                       </h3>
-                      <p className="text-xs" style={{ color: colors.textSecondary }}>
+                      <p className={`text-xs ${themeMode === 'light' ? 'text-slate-500' : 'text-neutral-400'}`}>
                         AutoPay SIP schedules executing daily at 8:00 AM IST
                       </p>
                     </div>
@@ -542,8 +692,11 @@ export const ProfileScreen: React.FC<{ defaultSection?: SettingsSection }> = ({ 
 
                   <button
                     onClick={() => setActiveTab('invest')}
-                    className="text-xs font-bold font-mono px-3 py-1.5 rounded-xl border transition-all active:scale-[0.96] hover:bg-white/[0.04]"
-                    style={{ backgroundColor: colors.surface, borderColor: colors.borderDim, color: colors.accent }}
+                    className={`text-xs font-bold font-mono px-3 py-1.5 rounded-xl border transition-all active:scale-[0.96] ${
+                      themeMode === 'light'
+                        ? 'bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100'
+                        : 'border-white/10 text-purple-400 hover:bg-white/[0.04]'
+                    }`}
                   >
                     + Setup New →
                   </button>
@@ -551,26 +704,46 @@ export const ProfileScreen: React.FC<{ defaultSection?: SettingsSection }> = ({ 
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
                   {/* Stable Basket */}
-                  <div className="p-4 rounded-2xl border flex flex-col justify-between" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+                  <div
+                    className="p-4 rounded-2xl border flex flex-col justify-between transition-all"
+                    style={{
+                      backgroundColor: themeMode === 'light' ? 'rgba(15, 23, 42, 0.02)' : colors.surface,
+                      borderColor: themeMode === 'light' ? 'rgba(15, 23, 42, 0.08)' : colors.borderDim,
+                    }}
+                  >
                     <div>
                       <div className="flex items-center justify-between mb-1.5">
                         <div className="flex items-center gap-2">
                           <BasketCurrencyIcons basketId="stable" size="sm" />
-                          <span className="font-bold text-xs" style={{ color: colors.textPrimary }}>Stable Basket</span>
+                          <span className={`font-bold text-xs ${themeMode === 'light' ? 'text-slate-900' : 'text-white'}`}>Stable Basket</span>
                         </div>
                         <span
                           className="text-[10px] px-2 py-0.5 rounded font-bold uppercase font-mono"
                           style={{
-                            backgroundColor: !isStableConfigured ? colors.card : isStableActive ? 'rgba(16, 185, 129, 0.12)' : 'rgba(245, 158, 11, 0.12)',
-                            color: !isStableConfigured ? colors.textTertiary : isStableActive ? '#10B981' : '#F59E0B',
-                            border: `1px solid ${!isStableConfigured ? colors.borderDim : isStableActive ? 'rgba(16, 185, 129, 0.3)' : 'rgba(245, 158, 11, 0.3)'}`,
+                            backgroundColor: !isStableConfigured
+                              ? (themeMode === 'light' ? 'rgba(15, 23, 42, 0.06)' : colors.card)
+                              : isStableActive
+                              ? (themeMode === 'light' ? '#ECFDF5' : 'rgba(16, 185, 129, 0.12)')
+                              : (themeMode === 'light' ? '#FFFBEB' : 'rgba(245, 158, 11, 0.12)'),
+                            color: !isStableConfigured
+                              ? (themeMode === 'light' ? '#64748B' : colors.textTertiary)
+                              : isStableActive
+                              ? (themeMode === 'light' ? '#047857' : '#10B981')
+                              : (themeMode === 'light' ? '#B45309' : '#F59E0B'),
+                            border: `1px solid ${
+                              !isStableConfigured
+                                ? (themeMode === 'light' ? 'rgba(15, 23, 42, 0.12)' : colors.borderDim)
+                                : isStableActive
+                                ? (themeMode === 'light' ? '#A7F3D0' : 'rgba(16, 185, 129, 0.3)')
+                                : (themeMode === 'light' ? '#FDE68A' : 'rgba(245, 158, 11, 0.3)')
+                            }`,
                           }}
                         >
                           {!isStableConfigured ? 'NOT CONFIGURED' : isStableActive ? 'ACTIVE' : 'PAUSED'}
                         </span>
                       </div>
-                      <p className="text-[11px] leading-relaxed" style={{ color: colors.textSecondary }}>
-                        85% USDT / 15% BTC · {isStableConfigured ? <>Daily SIP: <strong style={{ color: colors.textPrimary }}>₹{stableDailyRate}/day</strong></> : 'Min: ₹10/day'}
+                      <p className={`text-[11px] leading-relaxed ${themeMode === 'light' ? 'text-slate-600' : 'text-neutral-400'}`}>
+                        85% USDT / 15% BTC · {isStableConfigured ? <>Daily SIP: <strong className={themeMode === 'light' ? 'text-slate-900 font-bold' : 'text-white'}>₹{stableDailyRate}/day</strong></> : 'Min: ₹10/day'}
                       </p>
                     </div>
 
@@ -579,12 +752,11 @@ export const ProfileScreen: React.FC<{ defaultSection?: SettingsSection }> = ({ 
                         <>
                           <button
                             onClick={() => toggleHabitPause('stable')}
-                            className="flex-1 h-8 px-3 rounded-xl text-xs font-bold border transition-all active:scale-[0.98]"
-                            style={{
-                              backgroundColor: isStableActive ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)',
-                              borderColor: isStableActive ? 'rgba(239, 68, 68, 0.3)' : 'rgba(16, 185, 129, 0.3)',
-                              color: isStableActive ? colors.semanticDanger : colors.semanticSuccess,
-                            }}
+                            className={`flex-1 h-8 px-3 rounded-xl text-xs font-bold border transition-all active:scale-[0.98] ${
+                              themeMode === 'light'
+                                ? (isStableActive ? 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100' : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100')
+                                : (isStableActive ? 'bg-rose-500/10 text-rose-400 border-rose-500/30' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30')
+                            }`}
                           >
                             {isStableActive ? 'Pause' : 'Resume'}
                           </button>
@@ -593,8 +765,11 @@ export const ProfileScreen: React.FC<{ defaultSection?: SettingsSection }> = ({ 
                               setSelectedBasketId('stable');
                               setActiveTab('invest');
                             }}
-                            className="h-8 px-3 rounded-xl text-xs font-bold border transition-all active:scale-[0.98]"
-                            style={{ backgroundColor: colors.accentTint, color: colors.accent, borderColor: colors.borderAccent }}
+                            className={`h-8 px-3 rounded-xl text-xs font-bold border transition-all active:scale-[0.98] ${
+                              themeMode === 'light'
+                                ? 'bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100'
+                                : 'bg-purple-500/10 text-purple-400 border-purple-500/30'
+                            }`}
                           >
                             Adjust
                           </button>
@@ -605,8 +780,7 @@ export const ProfileScreen: React.FC<{ defaultSection?: SettingsSection }> = ({ 
                             setSelectedBasketId('stable');
                             setActiveTab('invest');
                           }}
-                          className="w-full h-8 px-3 rounded-xl text-xs font-bold shadow-sm transition-all active:scale-[0.98]"
-                          style={{ backgroundColor: colors.primary, color: colors.primaryText }}
+                          className="w-full h-8 px-3 rounded-xl text-xs font-bold shadow-sm transition-all active:scale-[0.98] bg-[#5D17EB] text-white"
                         >
                           + Setup Habit
                         </button>
@@ -615,26 +789,46 @@ export const ProfileScreen: React.FC<{ defaultSection?: SettingsSection }> = ({ 
                   </div>
 
                   {/* Growth Basket */}
-                  <div className="p-4 rounded-2xl border flex flex-col justify-between" style={{ backgroundColor: colors.surface, borderColor: colors.borderDim }}>
+                  <div
+                    className="p-4 rounded-2xl border flex flex-col justify-between transition-all"
+                    style={{
+                      backgroundColor: themeMode === 'light' ? 'rgba(15, 23, 42, 0.02)' : colors.surface,
+                      borderColor: themeMode === 'light' ? 'rgba(15, 23, 42, 0.08)' : colors.borderDim,
+                    }}
+                  >
                     <div>
                       <div className="flex items-center justify-between mb-1.5">
                         <div className="flex items-center gap-2">
                           <BasketCurrencyIcons basketId="growth" size="sm" />
-                          <span className="font-bold text-xs" style={{ color: colors.textPrimary }}>Growth Basket</span>
+                          <span className={`font-bold text-xs ${themeMode === 'light' ? 'text-slate-900' : 'text-white'}`}>Growth Basket</span>
                         </div>
                         <span
                           className="text-[10px] px-2 py-0.5 rounded font-bold uppercase font-mono"
                           style={{
-                            backgroundColor: !isGrowthConfigured ? colors.card : isGrowthActive ? 'rgba(93, 23, 235, 0.12)' : 'rgba(245, 158, 11, 0.12)',
-                            color: !isGrowthConfigured ? colors.textTertiary : isGrowthActive ? '#8B5CF6' : '#F59E0B',
-                            border: `1px solid ${!isGrowthConfigured ? colors.borderDim : isGrowthActive ? 'rgba(93, 23, 235, 0.3)' : 'rgba(245, 158, 11, 0.3)'}`,
+                            backgroundColor: !isGrowthConfigured
+                              ? (themeMode === 'light' ? 'rgba(15, 23, 42, 0.06)' : colors.card)
+                              : isGrowthActive
+                              ? (themeMode === 'light' ? '#F5F3FF' : 'rgba(93, 23, 235, 0.12)')
+                              : (themeMode === 'light' ? '#FFFBEB' : 'rgba(245, 158, 11, 0.12)'),
+                            color: !isGrowthConfigured
+                              ? (themeMode === 'light' ? '#64748B' : colors.textTertiary)
+                              : isGrowthActive
+                              ? (themeMode === 'light' ? '#6D28D9' : '#8B5CF6')
+                              : (themeMode === 'light' ? '#B45309' : '#F59E0B'),
+                            border: `1px solid ${
+                              !isGrowthConfigured
+                                ? (themeMode === 'light' ? 'rgba(15, 23, 42, 0.12)' : colors.borderDim)
+                                : isGrowthActive
+                                ? (themeMode === 'light' ? '#DDD6FE' : 'rgba(93, 23, 235, 0.3)')
+                                : (themeMode === 'light' ? '#FDE68A' : 'rgba(245, 158, 11, 0.3)')
+                            }`,
                           }}
                         >
                           {!isGrowthConfigured ? 'NOT CONFIGURED' : isGrowthActive ? 'ACTIVE' : 'PAUSED'}
                         </span>
                       </div>
-                      <p className="text-[11px] leading-relaxed" style={{ color: colors.textSecondary }}>
-                        70% BTC / 20% ETH / 10% SOL · {isGrowthConfigured ? <>Daily SIP: <strong style={{ color: colors.textPrimary }}>₹{growthDailyRate}/day</strong></> : 'Min: ₹30/day'}
+                      <p className={`text-[11px] leading-relaxed ${themeMode === 'light' ? 'text-slate-600' : 'text-neutral-400'}`}>
+                        70% BTC / 20% ETH / 10% SOL · {isGrowthConfigured ? <>Daily SIP: <strong className={themeMode === 'light' ? 'text-slate-900 font-bold' : 'text-white'}>₹{growthDailyRate}/day</strong></> : 'Min: ₹30/day'}
                       </p>
                     </div>
 
@@ -643,12 +837,11 @@ export const ProfileScreen: React.FC<{ defaultSection?: SettingsSection }> = ({ 
                         <>
                           <button
                             onClick={() => toggleHabitPause('growth')}
-                            className="flex-1 h-8 px-3 rounded-xl text-xs font-bold border transition-all active:scale-[0.98]"
-                            style={{
-                              backgroundColor: isGrowthActive ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)',
-                              borderColor: isGrowthActive ? 'rgba(239, 68, 68, 0.3)' : 'rgba(16, 185, 129, 0.3)',
-                              color: isGrowthActive ? colors.semanticDanger : colors.semanticSuccess,
-                            }}
+                            className={`flex-1 h-8 px-3 rounded-xl text-xs font-bold border transition-all active:scale-[0.98] ${
+                              themeMode === 'light'
+                                ? (isGrowthActive ? 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100' : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100')
+                                : (isGrowthActive ? 'bg-rose-500/10 text-rose-400 border-rose-500/30' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30')
+                            }`}
                           >
                             {isGrowthActive ? 'Pause' : 'Resume'}
                           </button>
@@ -657,8 +850,11 @@ export const ProfileScreen: React.FC<{ defaultSection?: SettingsSection }> = ({ 
                               setSelectedBasketId('growth');
                               setActiveTab('invest');
                             }}
-                            className="h-8 px-3 rounded-xl text-xs font-bold border transition-all active:scale-[0.98]"
-                            style={{ backgroundColor: colors.accentTint, color: colors.accent, borderColor: colors.borderAccent }}
+                            className={`h-8 px-3 rounded-xl text-xs font-bold border transition-all active:scale-[0.98] ${
+                              themeMode === 'light'
+                                ? 'bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100'
+                                : 'bg-purple-500/10 text-purple-400 border-purple-500/30'
+                            }`}
                           >
                             Adjust
                           </button>
@@ -669,8 +865,7 @@ export const ProfileScreen: React.FC<{ defaultSection?: SettingsSection }> = ({ 
                             setSelectedBasketId('growth');
                             setActiveTab('invest');
                           }}
-                          className="w-full h-8 px-3 rounded-xl text-xs font-bold shadow-sm transition-all active:scale-[0.98]"
-                          style={{ backgroundColor: colors.primary, color: colors.primaryText }}
+                          className="w-full h-8 px-3 rounded-xl text-xs font-bold shadow-sm transition-all active:scale-[0.98] bg-[#5D17EB] text-white"
                         >
                           + Setup Habit
                         </button>

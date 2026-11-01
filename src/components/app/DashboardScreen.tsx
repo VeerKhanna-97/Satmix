@@ -318,14 +318,19 @@ export const DashboardScreen: React.FC = () => {
         className="sm:hidden relative overflow-hidden rounded-[20px] border transition-all duration-300 font-sans shadow-lg"
         style={{
           backgroundColor: themeMode === 'dark' ? '#0B0F15' : '#FFFFFF',
-          borderColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
+          borderColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(15, 23, 42, 0.12)',
+          boxShadow: themeMode === 'light' ? '0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03)' : undefined,
         }}
       >
         {/* Primary Hero Section: Total Balance */}
         <div className="relative p-5 pb-4">
-          <IndianRupee className="absolute top-2 right-2 w-16 h-16 opacity-[0.08] pointer-events-none select-none text-neutral-400 dark:text-white" strokeWidth={1.5} />
+          <IndianRupee className={`absolute top-2 right-2 w-16 h-16 pointer-events-none select-none ${
+            themeMode === 'light' ? 'opacity-[0.05] text-slate-800' : 'opacity-[0.08] text-white'
+          }`} strokeWidth={1.5} />
           <div className="relative z-10">
-            <span className="text-[10px] font-bold uppercase tracking-wider block font-mono text-neutral-400">
+            <span className={`text-[10px] font-bold uppercase tracking-wider block font-mono ${
+              themeMode === 'light' ? 'text-slate-500' : 'text-neutral-400'
+            }`}>
               Total Balance
             </span>
             <div className="text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums" style={{ color: colors.textPrimary }}>
@@ -337,29 +342,33 @@ export const DashboardScreen: React.FC = () => {
             </div>
             <div
               className={`inline-flex items-center gap-1 text-[11px] font-bold font-mono mt-1.5 ${
-                displayedDeltaPercentage >= 0 ? 'text-emerald-400' : 'text-rose-400'
+                displayedDeltaPercentage >= 0
+                  ? (themeMode === 'light' ? 'text-emerald-600' : 'text-emerald-400')
+                  : (themeMode === 'light' ? 'text-rose-600' : 'text-rose-400')
               }`}
             >
               <span>{displayedDeltaPercentage >= 0 ? '↗ +' : '↘ -'}{Math.abs(displayedDeltaPercentage).toFixed(2)}%</span>
-              <span className="text-neutral-400 font-normal">vs last month</span>
+              <span className={themeMode === 'light' ? 'text-slate-500 font-medium' : 'text-neutral-400 font-normal'}>vs last month</span>
             </div>
           </div>
         </div>
 
         {/* Hairline Divider */}
-        <div className="w-full h-px" style={{ backgroundColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.06)' }} />
+        <div className="w-full h-px" style={{ backgroundColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.06)' : 'rgba(15, 23, 42, 0.06)' }} />
 
         {/* Secondary Sub-Metrics: 2-Column Split */}
         <div
           className="grid grid-cols-2 divide-x p-3.5 sm:p-4"
           style={{
-            backgroundColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.015)' : 'rgba(0, 0, 0, 0.015)',
-            borderColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.06)',
+            backgroundColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.015)' : 'rgba(15, 23, 42, 0.02)',
+            borderColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.06)' : 'rgba(15, 23, 42, 0.06)',
           }}
         >
           {/* Sub-Metric 1: Today's P&L */}
           <div className="pr-3 flex flex-col justify-between">
-            <span className="text-[10px] font-semibold uppercase tracking-wider font-mono text-neutral-400">
+            <span className={`text-[10px] font-bold uppercase tracking-wider font-mono ${
+              themeMode === 'light' ? 'text-slate-500' : 'text-neutral-400'
+            }`}>
               Today's Return
             </span>
             <div
@@ -370,7 +379,9 @@ export const DashboardScreen: React.FC = () => {
             </div>
             <div
               className={`inline-flex items-center gap-0.5 text-[10px] font-bold font-mono mt-0.5 ${
-                isPositiveGain ? 'text-emerald-400' : 'text-rose-400'
+                isPositiveGain
+                  ? (themeMode === 'light' ? 'text-emerald-600' : 'text-emerald-400')
+                  : (themeMode === 'light' ? 'text-rose-600' : 'text-rose-400')
               }`}
             >
               <span>{isPositiveGain ? '↗ +' : '↘ -'}{Math.abs(tabMetrics.netDeltaPercentage * 0.12).toFixed(2)}%</span>
@@ -379,7 +390,9 @@ export const DashboardScreen: React.FC = () => {
 
           {/* Sub-Metric 2: Total Return */}
           <div className="pl-3.5 flex flex-col justify-between">
-            <span className="text-[10px] font-semibold uppercase tracking-wider font-mono text-neutral-400">
+            <span className={`text-[10px] font-bold uppercase tracking-wider font-mono ${
+              themeMode === 'light' ? 'text-slate-500' : 'text-neutral-400'
+            }`}>
               Total Return
             </span>
             <div className="text-lg font-extrabold font-mono tracking-tight mt-1 tabular-nums" style={{ color: colors.textPrimary }}>
@@ -387,7 +400,9 @@ export const DashboardScreen: React.FC = () => {
             </div>
             <div
               className={`inline-flex items-center gap-0.5 text-[10px] font-bold font-mono mt-0.5 ${
-                tabMetrics.netDeltaPercentage >= 0 ? 'text-emerald-400' : 'text-rose-400'
+                tabMetrics.netDeltaPercentage >= 0
+                  ? (themeMode === 'light' ? 'text-emerald-600' : 'text-emerald-400')
+                  : (themeMode === 'light' ? 'text-rose-600' : 'text-rose-400')
               }`}
             >
               <span>{tabMetrics.netDeltaPercentage >= 0 ? '↗ +' : '↘ -'}{Math.abs(tabMetrics.netDeltaPercentage).toFixed(1)}%</span>
@@ -403,12 +418,17 @@ export const DashboardScreen: React.FC = () => {
           className="relative overflow-hidden p-5 sm:p-6 lg:p-7 rounded-[18px] border transition-all duration-300 flex flex-col justify-between min-h-[128px]"
           style={{
             backgroundColor: themeMode === 'dark' ? '#0B0F15' : '#FFFFFF',
-            borderColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
+            borderColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(15, 23, 42, 0.12)',
+            boxShadow: themeMode === 'light' ? '0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03)' : undefined,
           }}
         >
-          <IndianRupee className="absolute -top-1 -right-1 w-16 h-16 sm:w-20 sm:h-20 opacity-[0.08] pointer-events-none select-none text-neutral-400 dark:text-white" strokeWidth={1.5} />
+          <IndianRupee className={`absolute -top-1 -right-1 w-16 h-16 sm:w-20 sm:h-20 pointer-events-none select-none ${
+            themeMode === 'light' ? 'opacity-[0.05] text-slate-800' : 'opacity-[0.08] text-white'
+          }`} strokeWidth={1.5} />
           <div className="relative z-10">
-            <span className="text-[11px] font-semibold uppercase tracking-wider block font-mono text-neutral-400">
+            <span className={`text-[11px] font-bold uppercase tracking-wider block font-mono ${
+              themeMode === 'light' ? 'text-slate-500' : 'text-neutral-400'
+            }`}>
               Total Balance
             </span>
             <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums" style={{ color: colors.textPrimary }}>
@@ -421,11 +441,13 @@ export const DashboardScreen: React.FC = () => {
           </div>
           <div
             className={`inline-flex items-center gap-1 w-fit text-[11px] font-bold font-mono relative z-10 ${
-              displayedDeltaPercentage >= 0 ? 'text-emerald-400' : 'text-rose-400'
+              displayedDeltaPercentage >= 0
+                ? (themeMode === 'light' ? 'text-emerald-600' : 'text-emerald-400')
+                : (themeMode === 'light' ? 'text-rose-600' : 'text-rose-400')
             }`}
           >
             <span>{displayedDeltaPercentage >= 0 ? '↗ +' : '↘ -'}{Math.abs(displayedDeltaPercentage).toFixed(2)}%</span>
-            <span className="text-neutral-400 font-normal">vs last month</span>
+            <span className={themeMode === 'light' ? 'text-slate-500 font-medium' : 'text-neutral-400 font-normal'}>vs last month</span>
           </div>
         </div>
 
@@ -434,16 +456,23 @@ export const DashboardScreen: React.FC = () => {
           className="relative overflow-hidden p-5 sm:p-6 lg:p-7 rounded-[18px] border transition-all duration-300 flex flex-col justify-between min-h-[128px]"
           style={{
             backgroundColor: themeMode === 'dark' ? '#0B0F15' : '#FFFFFF',
-            borderColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
+            borderColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(15, 23, 42, 0.12)',
+            boxShadow: themeMode === 'light' ? '0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03)' : undefined,
           }}
         >
           {isPositiveGain ? (
-            <TrendingUp className="absolute -top-1 -right-1 w-16 h-16 sm:w-20 sm:h-20 opacity-[0.08] pointer-events-none select-none text-emerald-400" strokeWidth={1.5} />
+            <TrendingUp className={`absolute -top-1 -right-1 w-16 h-16 sm:w-20 sm:h-20 pointer-events-none select-none ${
+              themeMode === 'light' ? 'opacity-[0.08] text-emerald-600' : 'opacity-[0.08] text-emerald-400'
+            }`} strokeWidth={1.5} />
           ) : (
-            <TrendingDown className="absolute -top-1 -right-1 w-16 h-16 sm:w-20 sm:h-20 opacity-[0.08] pointer-events-none select-none text-rose-400" strokeWidth={1.5} />
+            <TrendingDown className={`absolute -top-1 -right-1 w-16 h-16 sm:w-20 sm:h-20 pointer-events-none select-none ${
+              themeMode === 'light' ? 'opacity-[0.08] text-rose-600' : 'opacity-[0.08] text-rose-400'
+            }`} strokeWidth={1.5} />
           )}
           <div className="relative z-10">
-            <span className="text-[11px] font-semibold uppercase tracking-wider block font-mono text-neutral-400">
+            <span className={`text-[11px] font-bold uppercase tracking-wider block font-mono ${
+              themeMode === 'light' ? 'text-slate-500' : 'text-neutral-400'
+            }`}>
               Today's Return
             </span>
             <div
@@ -455,11 +484,13 @@ export const DashboardScreen: React.FC = () => {
           </div>
           <div
             className={`inline-flex items-center gap-1 w-fit text-[11px] font-bold font-mono relative z-10 ${
-              isPositiveGain ? 'text-emerald-400' : 'text-rose-400'
+              isPositiveGain
+                ? (themeMode === 'light' ? 'text-emerald-600' : 'text-emerald-400')
+                : (themeMode === 'light' ? 'text-rose-600' : 'text-rose-400')
             }`}
           >
             <span>{isPositiveGain ? '↗ +' : '↘ -'}{Math.abs(tabMetrics.netDeltaPercentage * 0.12).toFixed(2)}%</span>
-            <span className="text-neutral-400 font-normal">vs last month</span>
+            <span className={themeMode === 'light' ? 'text-slate-500 font-medium' : 'text-neutral-400 font-normal'}>vs last month</span>
           </div>
         </div>
 
@@ -468,16 +499,23 @@ export const DashboardScreen: React.FC = () => {
           className="relative overflow-hidden p-5 sm:p-6 lg:p-7 rounded-[18px] border transition-all duration-300 flex flex-col justify-between min-h-[128px]"
           style={{
             backgroundColor: themeMode === 'dark' ? '#0B0F15' : '#FFFFFF',
-            borderColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
+            borderColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(15, 23, 42, 0.12)',
+            boxShadow: themeMode === 'light' ? '0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03)' : undefined,
           }}
         >
           {tabMetrics.netDeltaPercentage >= 0 ? (
-            <ArrowUpRight className="absolute -top-1 -right-1 w-16 h-16 sm:w-20 sm:h-20 opacity-[0.08] pointer-events-none select-none text-emerald-400" strokeWidth={1.5} />
+            <ArrowUpRight className={`absolute -top-1 -right-1 w-16 h-16 sm:w-20 sm:h-20 pointer-events-none select-none ${
+              themeMode === 'light' ? 'opacity-[0.08] text-emerald-600' : 'opacity-[0.08] text-emerald-400'
+            }`} strokeWidth={1.5} />
           ) : (
-            <ArrowDownRight className="absolute -top-1 -right-1 w-16 h-16 sm:w-20 sm:h-20 opacity-[0.08] pointer-events-none select-none text-rose-400" strokeWidth={1.5} />
+            <ArrowDownRight className={`absolute -top-1 -right-1 w-16 h-16 sm:w-20 sm:h-20 pointer-events-none select-none ${
+              themeMode === 'light' ? 'opacity-[0.08] text-rose-600' : 'opacity-[0.08] text-rose-400'
+            }`} strokeWidth={1.5} />
           )}
           <div className="relative z-10">
-            <span className="text-[11px] font-semibold uppercase tracking-wider block font-mono text-neutral-400">
+            <span className={`text-[11px] font-bold uppercase tracking-wider block font-mono ${
+              themeMode === 'light' ? 'text-slate-500' : 'text-neutral-400'
+            }`}>
               Total Return
             </span>
             <div className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight mt-1 tabular-nums" style={{ color: colors.textPrimary }}>
@@ -486,11 +524,13 @@ export const DashboardScreen: React.FC = () => {
           </div>
           <div
             className={`inline-flex items-center gap-1 w-fit text-[11px] font-bold font-mono relative z-10 ${
-              tabMetrics.netDeltaPercentage >= 0 ? 'text-emerald-400' : 'text-rose-400'
+              tabMetrics.netDeltaPercentage >= 0
+                ? (themeMode === 'light' ? 'text-emerald-600' : 'text-emerald-400')
+                : (themeMode === 'light' ? 'text-rose-600' : 'text-rose-400')
             }`}
           >
             <span>{tabMetrics.netDeltaPercentage >= 0 ? '↗ +' : '↘ -'}{Math.abs(tabMetrics.netDeltaPercentage).toFixed(1)}%</span>
-            <span className="text-neutral-400 font-normal">vs last month</span>
+            <span className={themeMode === 'light' ? 'text-slate-500 font-medium' : 'text-neutral-400 font-normal'}>vs last month</span>
           </div>
         </div>
       </div>
@@ -499,10 +539,11 @@ export const DashboardScreen: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6">
         {/* Left Card (~68% width): Portfolio Value Trajectory */}
         <div
-          className="lg:col-span-8 p-6 sm:p-7 rounded-[20px] border flex flex-col justify-between min-h-[460px]"
+          className="lg:col-span-8 p-6 sm:p-7 rounded-[20px] border flex flex-col justify-between min-h-[460px] transition-all duration-300"
           style={{
             backgroundColor: themeMode === 'dark' ? '#0B0F15' : '#FFFFFF',
-            borderColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
+            borderColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(15, 23, 42, 0.12)',
+            boxShadow: themeMode === 'light' ? '0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03)' : undefined,
           }}
         >
           <div>
@@ -629,10 +670,11 @@ export const DashboardScreen: React.FC = () => {
 
         {/* Right Card (~32% width): Asset Allocation (Donut Chart & Legend) */}
         <div
-          className="lg:col-span-4 p-6 sm:p-7 rounded-[20px] border flex flex-col justify-between min-h-[460px]"
+          className="lg:col-span-4 p-6 sm:p-7 rounded-[20px] border flex flex-col justify-between min-h-[460px] transition-all duration-300"
           style={{
             backgroundColor: themeMode === 'dark' ? '#0B0F15' : '#FFFFFF',
-            borderColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)',
+            borderColor: themeMode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(15, 23, 42, 0.12)',
+            boxShadow: themeMode === 'light' ? '0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03)' : undefined,
           }}
         >
           <div>
