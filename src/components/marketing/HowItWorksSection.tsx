@@ -113,6 +113,8 @@ interface ScreenProps {
    PHONE SCREEN 1: 5-Question Interactive Risk Quiz
    ───────────────────────────────────────────────────────────── */
 const QuizScreen: React.FC<ScreenProps> = ({ active, onNext }) => {
+  const { themeMode } = useApp();
+  const isLight = themeMode === 'light';
   const [currentIdx, setCurrentIdx] = useState(0);
   const [answers, setAnswers] = useState<Record<number, number>>({ 0: 2 }); // Initial reference: question 1 option 3 pre-selected
 
@@ -139,7 +141,11 @@ const QuizScreen: React.FC<ScreenProps> = ({ active, onNext }) => {
   };
 
   return (
-    <div className="relative h-full w-full flex flex-col justify-between text-white select-none p-3.5 xs:p-4 bg-[#080909]">
+    <div
+      className={`relative h-full w-full flex flex-col justify-between select-none p-3.5 xs:p-4 transition-colors duration-200 ${
+        isLight ? 'bg-white text-slate-900' : 'bg-[#080909] text-white'
+      }`}
+    >
       <div>
         {/* In-app navigation header */}
         <div className="flex items-center justify-between text-[11px] font-mono text-neutral-400 mb-1.5">
@@ -147,7 +153,11 @@ const QuizScreen: React.FC<ScreenProps> = ({ active, onNext }) => {
             type="button"
             onClick={handlePrev}
             disabled={currentIdx === 0}
-            className={`p-1 -ml-1 transition-opacity ${currentIdx === 0 ? 'opacity-20 cursor-default' : 'text-[#00C99A] cursor-pointer hover:opacity-80'}`}
+            className={`p-1 -ml-1 transition-opacity ${
+              currentIdx === 0
+                ? 'opacity-20 cursor-default'
+                : 'text-[#00C99A] cursor-pointer hover:opacity-80'
+            }`}
             aria-label="Previous question"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -161,12 +171,20 @@ const QuizScreen: React.FC<ScreenProps> = ({ active, onNext }) => {
         </p>
 
         {/* Question heading */}
-        <h4 className="font-extrabold leading-[1.2] tracking-tight text-[16px] xs:text-[17.5px] text-[#DADADA] mt-1">
+        <h4
+          className={`font-extrabold leading-[1.2] tracking-tight text-[16px] xs:text-[17.5px] mt-1 ${
+            isLight ? 'text-slate-900' : 'text-[#DADADA]'
+          }`}
+        >
           {currentQ.question}
         </h4>
 
         {/* Supporting text */}
-        <p className="leading-snug text-neutral-400 text-[11.5px] xs:text-[12px] mt-1 mb-3">
+        <p
+          className={`leading-snug text-[11.5px] xs:text-[12px] mt-1 mb-3 ${
+            isLight ? 'text-slate-500' : 'text-neutral-400'
+          }`}
+        >
           {currentQ.supporting}
         </p>
 
@@ -182,14 +200,20 @@ const QuizScreen: React.FC<ScreenProps> = ({ active, onNext }) => {
                 transition={{ duration: 0.2 }}
                 className={`flex items-center justify-between rounded-xl border px-3.5 transition-all duration-200 h-[42px] xs:h-[45px] text-[12.5px] xs:text-[13px] cursor-pointer select-none ${
                   isPicked
-                    ? 'border-[#00C99A] bg-[#00C99A]/10 text-white font-semibold'
+                    ? `border-[#00C99A] bg-[#00C99A]/10 font-semibold ${isLight ? 'text-slate-900 shadow-xs' : 'text-white'}`
+                    : isLight
+                    ? 'border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-300'
                     : 'border-white/10 bg-[#101212] text-neutral-300 hover:border-white/20'
                 }`}
               >
                 <span>{opt}</span>
                 <span
                   className={`flex h-4 w-4 items-center justify-center rounded-full border-2 transition-colors duration-200 ${
-                    isPicked ? 'border-[#00C99A] bg-[#00C99A]' : 'border-white/20'
+                    isPicked
+                      ? 'border-[#00C99A] bg-[#00C99A]'
+                      : isLight
+                      ? 'border-slate-300 bg-white'
+                      : 'border-white/20'
                   }`}
                 >
                   {isPicked && <Check className="w-2.5 h-2.5 text-[#090A0E] stroke-[3]" />}
@@ -208,6 +232,8 @@ const QuizScreen: React.FC<ScreenProps> = ({ active, onNext }) => {
         className={`w-full rounded-xl font-bold tracking-wide transition-all duration-200 flex items-center justify-center h-10 text-[12.5px] select-none ${
           selectedOption !== null
             ? 'bg-[#00C99A] text-[#090A0E] shadow-md shadow-[#00C99A]/20 active:scale-[0.98] cursor-pointer hover:opacity-95'
+            : isLight
+            ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
             : 'bg-white/10 text-neutral-500 cursor-not-allowed'
         }`}
       >
@@ -221,6 +247,8 @@ const QuizScreen: React.FC<ScreenProps> = ({ active, onNext }) => {
    PHONE SCREEN 2: Pick a Basket (Screenshot 2 Reference)
    ───────────────────────────────────────────────────────────── */
 const BasketScreen: React.FC<ScreenProps> = ({ onNext, onBack }) => {
+  const { themeMode } = useApp();
+  const isLight = themeMode === 'light';
   const [selectedBasket, setSelectedBasket] = useState<number>(1); // Default Growth mix selected
 
   const baskets = [
@@ -248,7 +276,11 @@ const BasketScreen: React.FC<ScreenProps> = ({ onNext, onBack }) => {
   ];
 
   return (
-    <div className="relative h-full w-full flex flex-col justify-between text-white select-none p-3.5 xs:p-4 bg-[#080909]">
+    <div
+      className={`relative h-full w-full flex flex-col justify-between select-none p-3.5 xs:p-4 transition-colors duration-200 ${
+        isLight ? 'bg-white text-slate-900' : 'bg-[#080909] text-white'
+      }`}
+    >
       <div>
         <div className="flex items-center justify-between text-[11px] font-mono text-neutral-400 mb-1">
           <button
@@ -262,10 +294,18 @@ const BasketScreen: React.FC<ScreenProps> = ({ onNext, onBack }) => {
           <span className="text-[#00C99A] font-bold text-xs">--</span>
         </div>
 
-        <h4 className="font-extrabold leading-[1.18] tracking-tight text-[17px] xs:text-[18px] text-white mt-0.5">
+        <h4
+          className={`font-extrabold leading-[1.18] tracking-tight text-[17px] xs:text-[18px] mt-0.5 ${
+            isLight ? 'text-slate-900' : 'text-white'
+          }`}
+        >
           Pick a basket
         </h4>
-        <p className="text-neutral-400 leading-tight text-[11.5px] xs:text-[12px] mt-0.5 mb-2.5">
+        <p
+          className={`leading-tight text-[11.5px] xs:text-[12px] mt-0.5 mb-2.5 ${
+            isLight ? 'text-slate-500' : 'text-neutral-400'
+          }`}
+        >
           You choose the mix. Never the coins, never the timing.
         </p>
 
@@ -279,19 +319,23 @@ const BasketScreen: React.FC<ScreenProps> = ({ onNext, onBack }) => {
                 onClick={() => setSelectedBasket(i)}
                 className={`rounded-xl border transition-all duration-200 p-2.5 xs:p-3 cursor-pointer select-none ${
                   isPicked
-                    ? 'border-[#00C99A] bg-[#00C99A]/10 shadow-sm'
+                    ? `border-[#00C99A] bg-[#00C99A]/10 shadow-sm ${isLight ? 'shadow-slate-200' : ''}`
+                    : isLight
+                    ? 'border-slate-200 bg-slate-50 hover:border-slate-300'
                     : 'border-white/10 bg-[#101212] hover:border-white/20'
                 }`}
               >
                 <div className="flex items-start justify-between">
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="font-extrabold text-[14px] text-white">{b.name}</span>
-                      <span className="text-[10px] font-mono text-neutral-400">
+                      <span className={`font-extrabold text-[14px] ${isLight ? 'text-slate-900' : 'text-white'}`}>
+                        {b.name}
+                      </span>
+                      <span className={`text-[10px] font-mono ${isLight ? 'text-slate-500' : 'text-neutral-400'}`}>
                         from ₹{b.min}/day
                       </span>
                     </div>
-                    <p className="mt-0.5 text-[10.5px] text-neutral-400 leading-tight">
+                    <p className={`mt-0.5 text-[10.5px] leading-tight ${isLight ? 'text-slate-500' : 'text-neutral-400'}`}>
                       {b.subtitle}
                     </p>
                   </div>
@@ -299,7 +343,7 @@ const BasketScreen: React.FC<ScreenProps> = ({ onNext, onBack }) => {
                 </div>
 
                 {/* Split Asset Proportion Bar */}
-                <div className="mt-2 flex h-2 gap-1 overflow-hidden rounded-full bg-white/10">
+                <div className={`mt-2 flex h-2 gap-1 overflow-hidden rounded-full ${isLight ? 'bg-slate-200' : 'bg-white/10'}`}>
                   {b.bars.map((bar) => (
                     <div
                       key={bar.asset}
@@ -310,7 +354,7 @@ const BasketScreen: React.FC<ScreenProps> = ({ onNext, onBack }) => {
                 </div>
 
                 {/* Asset Legend */}
-                <div className="mt-1.5 flex items-center gap-2.5 text-[9.5px] font-mono text-neutral-400">
+                <div className={`mt-1.5 flex items-center gap-2.5 text-[9.5px] font-mono ${isLight ? 'text-slate-600' : 'text-neutral-400'}`}>
                   {b.bars.map((bar) => (
                     <span key={bar.asset} className="flex items-center gap-1">
                       <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: bar.color }} />
@@ -339,11 +383,17 @@ const BasketScreen: React.FC<ScreenProps> = ({ onNext, onBack }) => {
    PHONE SCREEN 3: Set Daily Amount (Screenshot 3 Reference)
    ───────────────────────────────────────────────────────────── */
 const AmountScreen: React.FC<ScreenProps> = ({ onNext, onBack }) => {
+  const { themeMode } = useApp();
+  const isLight = themeMode === 'light';
   const [amount, setAmount] = useState(30);
   const chips = [10, 30, 50, 100];
 
   return (
-    <div className="relative h-full w-full flex flex-col justify-between text-white select-none p-3.5 xs:p-4 bg-[#080909]">
+    <div
+      className={`relative h-full w-full flex flex-col justify-between select-none p-3.5 xs:p-4 transition-colors duration-200 ${
+        isLight ? 'bg-white text-slate-900' : 'bg-[#080909] text-white'
+      }`}
+    >
       <div>
         <div className="flex items-center justify-between text-[11px] font-mono text-neutral-400 mb-1">
           <button
@@ -357,19 +407,35 @@ const AmountScreen: React.FC<ScreenProps> = ({ onNext, onBack }) => {
           <span className="text-[#00C99A] font-bold text-xs">--</span>
         </div>
 
-        <h4 className="font-extrabold leading-[1.18] tracking-tight text-[17px] xs:text-[18px] text-white mt-0.5">
+        <h4
+          className={`font-extrabold leading-[1.18] tracking-tight text-[17px] xs:text-[18px] mt-0.5 ${
+            isLight ? 'text-slate-900' : 'text-white'
+          }`}
+        >
           How much each day?
         </h4>
-        <p className="text-neutral-400 text-[11.5px] xs:text-[12px] mt-0.5">
+        <p
+          className={`text-[11.5px] xs:text-[12px] mt-0.5 ${
+            isLight ? 'text-slate-500' : 'text-neutral-400'
+          }`}
+        >
           From ₹10 a day on Stable, or ₹30 on Growth. Pause or change it whenever you like.
         </p>
 
         {/* Big centered amount display */}
         <div className="text-center my-3">
-          <div className="font-mono font-extrabold tracking-tight text-white text-4xl">
+          <div
+            className={`font-mono font-extrabold tracking-tight text-4xl ${
+              isLight ? 'text-slate-900' : 'text-white'
+            }`}
+          >
             ₹{amount}
           </div>
-          <p className="mt-0.5 text-[11px] text-neutral-400 font-mono">
+          <p
+            className={`mt-0.5 text-[11px] font-mono ${
+              isLight ? 'text-slate-500' : 'text-neutral-400'
+            }`}
+          >
             every day
           </p>
         </div>
@@ -386,6 +452,8 @@ const AmountScreen: React.FC<ScreenProps> = ({ onNext, onBack }) => {
                 className={`flex items-center justify-center rounded-xl border font-mono font-semibold transition-all duration-200 h-9 px-3.5 text-[12px] cursor-pointer ${
                   isPicked
                     ? 'border-[#00C99A] bg-[#00C99A] text-[#090A0E] font-bold shadow-sm shadow-[#00C99A]/20'
+                    : isLight
+                    ? 'border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-300'
                     : 'border-white/10 bg-[#101212] text-neutral-300 hover:border-white/20'
                 }`}
               >
@@ -396,12 +464,16 @@ const AmountScreen: React.FC<ScreenProps> = ({ onNext, onBack }) => {
         </div>
 
         {/* Fee breakdown card */}
-        <div className="rounded-xl border border-white/10 bg-[#101212] p-2.5 text-[10.5px] font-mono mt-3 space-y-1">
-          <div className="flex justify-between text-neutral-400">
+        <div
+          className={`rounded-xl border p-2.5 text-[10.5px] font-mono mt-3 space-y-1 ${
+            isLight ? 'border-slate-200 bg-slate-50' : 'border-white/10 bg-[#101212]'
+          }`}
+        >
+          <div className={`flex justify-between ${isLight ? 'text-slate-500' : 'text-neutral-400'}`}>
             <span>Fee per buy, incl. GST:</span>
-            <span className="text-white font-semibold">₹0.35</span>
+            <span className={`font-semibold ${isLight ? 'text-slate-900' : 'text-white'}`}>₹0.35</span>
           </div>
-          <div className="flex justify-between text-neutral-400">
+          <div className={`flex justify-between ${isLight ? 'text-slate-500' : 'text-neutral-400'}`}>
             <span>Shown before every buy:</span>
             <span className="text-[#00C99A] font-semibold">Always</span>
           </div>
@@ -423,6 +495,8 @@ const AmountScreen: React.FC<ScreenProps> = ({ onNext, onBack }) => {
    PHONE SCREEN 4: Watch It Build / Receipt (Screenshot 4 Reference)
    ───────────────────────────────────────────────────────────── */
 const ReceiptScreen: React.FC<ScreenProps> = ({ onBack }) => {
+  const { themeMode } = useApp();
+  const isLight = themeMode === 'light';
   const receiptItems = [
     ['You paid', '₹30.00'],
     ['Satmix fee', '₹0.30'],
@@ -432,7 +506,11 @@ const ReceiptScreen: React.FC<ScreenProps> = ({ onBack }) => {
   ];
 
   return (
-    <div className="relative h-full w-full flex flex-col justify-between text-white select-none p-3.5 xs:p-4 bg-[#080909]">
+    <div
+      className={`relative h-full w-full flex flex-col justify-between select-none p-3.5 xs:p-4 transition-colors duration-200 ${
+        isLight ? 'bg-white text-slate-900' : 'bg-[#080909] text-white'
+      }`}
+    >
       <div>
         {/* Receipt header with back arrow */}
         <div className="flex items-center justify-between text-[11px] font-mono text-neutral-400 mb-1">
@@ -444,7 +522,7 @@ const ReceiptScreen: React.FC<ScreenProps> = ({ onBack }) => {
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
-          <span className="font-bold text-xs text-white">Receipt</span>
+          <span className={`font-bold text-xs ${isLight ? 'text-slate-900' : 'text-white'}`}>Receipt</span>
           <div className="w-4" />
         </div>
 
@@ -453,29 +531,43 @@ const ReceiptScreen: React.FC<ScreenProps> = ({ onBack }) => {
           <span className="mx-auto flex items-center justify-center rounded-full bg-[#00C99A]/15 border border-[#00C99A]/30 h-10 w-10">
             <Check className="w-5 h-5 text-[#00C99A] stroke-[3]" />
           </span>
-          <p className="font-extrabold font-mono tracking-tight text-white mt-1.5 text-xl">
+          <p
+            className={`font-extrabold font-mono tracking-tight mt-1.5 text-xl ${
+              isLight ? 'text-slate-900' : 'text-white'
+            }`}
+          >
             ₹30 to BTC
           </p>
-          <p className="text-[10.5px] text-neutral-400 font-mono mt-0.5">Today, 9:41 am</p>
+          <p className={`text-[10.5px] font-mono mt-0.5 ${isLight ? 'text-slate-500' : 'text-neutral-400'}`}>
+            Today, 9:41 am
+          </p>
         </div>
 
         {/* Notice badge */}
-        <div className="rounded-xl bg-white/[0.04] leading-snug text-neutral-300 border border-white/10 mt-2.5 p-2 text-[11px]">
+        <div
+          className={`rounded-xl leading-snug border mt-2.5 p-2 text-[11px] ${
+            isLight
+              ? 'bg-slate-100 text-slate-700 border-slate-200'
+              : 'bg-white/[0.04] text-neutral-300 border-white/10'
+          }`}
+        >
           Today's ₹30 went to BTC to keep your mix on target.
         </div>
 
         {/* Itemized receipt table matching Screenshot 4 */}
-        <dl className="divide-y divide-white/5 font-mono mt-2.5 text-[11.5px]">
+        <dl className={`divide-y font-mono mt-2.5 text-[11.5px] ${isLight ? 'divide-slate-200' : 'divide-white/5'}`}>
           {receiptItems.map(([label, val]) => (
             <div key={label} className="flex justify-between py-1.5">
-              <dt className="text-neutral-400">{label}</dt>
-              <dd className="tabular-nums text-white font-semibold">{val}</dd>
+              <dt className={isLight ? 'text-slate-500' : 'text-neutral-400'}>{label}</dt>
+              <dd className={`tabular-nums font-semibold ${isLight ? 'text-slate-900' : 'text-white'}`}>
+                {val}
+              </dd>
             </div>
           ))}
         </dl>
       </div>
 
-      <p className="text-[10px] text-center text-neutral-500 font-mono">
+      <p className={`text-[10px] text-center font-mono ${isLight ? 'text-slate-400' : 'text-neutral-500'}`}>
         Held in your own [Partner] account.
       </p>
     </div>
@@ -713,9 +805,25 @@ export const HowItWorksSection: React.FC = () => {
               >
                 <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-[240px] h-10 rounded-[50%] bg-black/60 blur-xl pointer-events-none" />
 
-                <div className="relative w-[310px] h-[580px] rounded-[50px] p-[9px] bg-gradient-to-b from-[#3E414B] via-[#20222D] to-[#12131A] shadow-[0_30px_70px_-15px_rgba(0,0,0,0.95),0_0_0_1px_rgba(255,255,255,0.18)]">
-                  <div className="relative w-full h-full rounded-[42px] bg-black p-[2px] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)] overflow-hidden">
-                    <div className="relative w-full h-full rounded-[40px] bg-[#080909] flex flex-col justify-between overflow-hidden">
+                <div
+                  className={`relative w-[310px] h-[580px] rounded-[50px] p-[9px] transition-all duration-300 ${
+                    themeMode === 'light'
+                      ? 'bg-gradient-to-b from-[#E2E8F0] via-[#CBD5E1] to-[#94A3B8] shadow-[0_32px_75px_-15px_rgba(15,23,42,0.22),0_12px_24px_-6px_rgba(15,23,42,0.12),0_0_0_1px_rgba(255,255,255,0.9)]'
+                      : 'bg-gradient-to-b from-[#3E414B] via-[#20222D] to-[#12131A] shadow-[0_30px_70px_-15px_rgba(0,0,0,0.95),0_0_0_1px_rgba(255,255,255,0.18)]'
+                  }`}
+                >
+                  <div
+                    className={`relative w-full h-full rounded-[42px] p-[2px] transition-colors duration-300 overflow-hidden ${
+                      themeMode === 'light'
+                        ? 'bg-[#CBD5E1] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.8)]'
+                        : 'bg-black shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)]'
+                    }`}
+                  >
+                    <div
+                      className={`relative w-full h-full rounded-[40px] flex flex-col justify-between overflow-hidden transition-colors duration-300 ${
+                        themeMode === 'light' ? 'bg-white' : 'bg-[#080909]'
+                      }`}
+                    >
                       
                       {/* Dynamic Island Notch */}
                       <div className="absolute top-2.5 left-1/2 -translate-x-1/2 z-50 flex items-center justify-center pointer-events-none">
@@ -759,7 +867,11 @@ export const HowItWorksSection: React.FC = () => {
                         </AnimatePresence>
                       </div>
 
-                      <div className="w-28 h-1 rounded-full bg-white/20 mx-auto mb-2 pointer-events-none z-50" />
+                      <div
+                        className={`w-28 h-1 rounded-full mx-auto mb-2 pointer-events-none z-50 transition-colors duration-300 ${
+                          themeMode === 'light' ? 'bg-slate-300' : 'bg-white/20'
+                        }`}
+                      />
                     </div>
                   </div>
                 </div>
@@ -795,26 +907,55 @@ export const HowItWorksSection: React.FC = () => {
           <div className="relative select-none flex items-center justify-center">
             
             {/* Left Hardware Buttons */}
-            <div className="absolute -left-[3.5px] top-[74px] w-[3.5px] h-[28px] rounded-l-xs bg-[#2F323A] border-l border-y border-white/10" />
-            <div className="absolute -left-[3.5px] top-[110px] w-[3.5px] h-[28px] rounded-l-xs bg-[#2F323A] border-l border-y border-white/10" />
+            <div className={`absolute -left-[3.5px] top-[74px] w-[3.5px] h-[28px] rounded-l-xs border-l border-y ${
+              themeMode === 'light' ? 'bg-[#CBD5E1] border-slate-300' : 'bg-[#2F323A] border-white/10'
+            }`} />
+            <div className={`absolute -left-[3.5px] top-[110px] w-[3.5px] h-[28px] rounded-l-xs border-l border-y ${
+              themeMode === 'light' ? 'bg-[#CBD5E1] border-slate-300' : 'bg-[#2F323A] border-white/10'
+            }`} />
             {/* Right Hardware Button: Sleep/Wake */}
-            <div className="absolute -right-[3.5px] top-[88px] w-[3.5px] h-[44px] rounded-r-xs bg-[#2F323A] border-r border-y border-white/10" />
+            <div className={`absolute -right-[3.5px] top-[88px] w-[3.5px] h-[44px] rounded-r-xs border-r border-y ${
+              themeMode === 'light' ? 'bg-[#CBD5E1] border-slate-300' : 'bg-[#2F323A] border-white/10'
+            }`} />
 
             {/* Outer Phone Chassis */}
             <div
-              className="relative w-[280px] xs:w-[305px] sm:w-[325px] h-[425px] xs:h-[455px] sm:h-[485px] rounded-[44px] p-[7.5px] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.92),0_0_0_1px_rgba(255,255,255,0.16)]"
+              className={`relative w-[280px] xs:w-[305px] sm:w-[325px] h-[425px] xs:h-[455px] sm:h-[485px] rounded-[44px] p-[7.5px] transition-all duration-300 ${
+                themeMode === 'light'
+                  ? 'shadow-[0_25px_60px_-12px_rgba(15,23,42,0.20),0_0_0_1px_rgba(255,255,255,0.9)]'
+                  : 'shadow-[0_20px_50px_-12px_rgba(0,0,0,0.92),0_0_0_1px_rgba(255,255,255,0.16)]'
+              }`}
               style={{
-                background: 'linear-gradient(180deg, #3A3D48 0%, #20222B 40%, #121319 100%)',
+                background:
+                  themeMode === 'light'
+                    ? 'linear-gradient(180deg, #E2E8F0 0%, #CBD5E1 45%, #94A3B8 100%)'
+                    : 'linear-gradient(180deg, #3A3D48 0%, #20222B 40%, #121319 100%)',
               }}
             >
               {/* Thin Inner Metallic Rim */}
-              <div className="relative w-full h-full rounded-[38px] p-[1.5px] bg-gradient-to-b from-white/15 via-white/5 to-white/10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)]">
+              <div
+                className={`relative w-full h-full rounded-[38px] p-[1.5px] transition-all duration-300 ${
+                  themeMode === 'light'
+                    ? 'bg-gradient-to-b from-white/90 via-white/50 to-slate-300 shadow-[inset_0_1px_1px_rgba(255,255,255,0.9)]'
+                    : 'bg-gradient-to-b from-white/15 via-white/5 to-white/10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)]'
+                }`}
+              >
                 
-                {/* Concentric OLED Screen Container */}
-                <div className="relative w-full h-full rounded-[36px] bg-[#080909] flex flex-col justify-between overflow-hidden shadow-[inset_0_0_0_1px_rgba(0,0,0,0.8)]">
+                {/* Concentric Screen Container */}
+                <div
+                  className={`relative w-full h-full rounded-[36px] flex flex-col justify-between overflow-hidden transition-colors duration-300 ${
+                    themeMode === 'light'
+                      ? 'bg-white shadow-[inset_0_0_0_1px_rgba(15,23,42,0.06)]'
+                      : 'bg-[#080909] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.8)]'
+                  }`}
+                >
                   
                   {/* iOS Status Bar & Dynamic Island */}
-                  <div className="relative w-full h-7 px-4 pt-1.5 flex items-center justify-between text-[11px] font-semibold text-white/90 z-50 pointer-events-none">
+                  <div
+                    className={`relative w-full h-7 px-4 pt-1.5 flex items-center justify-between text-[11px] font-semibold z-50 pointer-events-none transition-colors duration-300 ${
+                      themeMode === 'light' ? 'text-slate-800' : 'text-white/90'
+                    }`}
+                  >
                     <span className="font-semibold tracking-tight text-[11px] pl-0.5">9:41</span>
 
                     <div className="absolute left-1/2 -translate-x-1/2 top-1.5 h-4 w-24 rounded-full bg-black border border-white/5 flex items-center justify-between px-2.5 shadow-sm">
@@ -830,15 +971,23 @@ export const HowItWorksSection: React.FC = () => {
                         <rect x="13.5" y="0" width="2.5" height="12" rx="0.5" />
                       </svg>
 
-                      <div className="w-3.5 h-2 rounded-[2px] border border-white/80 p-[0.5px] flex items-center">
-                        <div className="h-full w-full bg-white rounded-[0.5px]" />
+                      <div
+                        className={`w-3.5 h-2 rounded-[2px] border p-[0.5px] flex items-center ${
+                          themeMode === 'light' ? 'border-slate-800' : 'border-white/80'
+                        }`}
+                      >
+                        <div className={`h-full w-full rounded-[0.5px] ${themeMode === 'light' ? 'bg-slate-800' : 'bg-white'}`} />
                       </div>
                     </div>
                   </div>
 
                   {/* Centered In-App Browser URL Bar */}
-                  <div className="w-full flex items-center justify-center gap-1 text-[8.5px] font-mono text-neutral-400 py-0.5 opacity-70 pointer-events-none z-40">
-                    <Lock className="w-2.5 h-2.5 text-neutral-400" />
+                  <div
+                    className={`w-full flex items-center justify-center gap-1 text-[8.5px] font-mono py-0.5 opacity-70 pointer-events-none z-40 ${
+                      themeMode === 'light' ? 'text-slate-500' : 'text-neutral-400'
+                    }`}
+                  >
+                    <Lock className={`w-2.5 h-2.5 ${themeMode === 'light' ? 'text-slate-500' : 'text-neutral-400'}`} />
                     <span>satmix.in/app</span>
                   </div>
 
@@ -877,7 +1026,9 @@ export const HowItWorksSection: React.FC = () => {
                   </div>
 
                   {/* Home Indicator Bar */}
-                  <div className="w-24 h-1 rounded-full bg-white/30 mx-auto mb-1.5 pointer-events-none z-50 flex-shrink-0" />
+                  <div className={`w-24 h-1 rounded-full mx-auto mb-1.5 pointer-events-none z-50 flex-shrink-0 ${
+                    themeMode === 'light' ? 'bg-slate-300' : 'bg-white/30'
+                  }`} />
                 </div>
               </div>
             </div>
