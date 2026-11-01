@@ -325,7 +325,7 @@ export const DashboardScreen: React.FC = () => {
         {/* Primary Hero Section: Total Balance */}
         <div className="relative p-5 pb-4">
           <IndianRupee className={`absolute top-2 right-2 w-16 h-16 pointer-events-none select-none ${
-            themeMode === 'light' ? 'opacity-[0.05] text-slate-800' : 'opacity-[0.08] text-white'
+            themeMode === 'light' ? 'opacity-[0.16] text-slate-800' : 'opacity-[0.15] text-white'
           }`} strokeWidth={1.5} />
           <div className="relative z-10">
             <span className={`text-[10px] font-bold uppercase tracking-wider block font-mono ${
@@ -423,7 +423,7 @@ export const DashboardScreen: React.FC = () => {
           }}
         >
           <IndianRupee className={`absolute -top-1 -right-1 w-16 h-16 sm:w-20 sm:h-20 pointer-events-none select-none ${
-            themeMode === 'light' ? 'opacity-[0.05] text-slate-800' : 'opacity-[0.08] text-white'
+            themeMode === 'light' ? 'opacity-[0.16] text-slate-800' : 'opacity-[0.15] text-white'
           }`} strokeWidth={1.5} />
           <div className="relative z-10">
             <span className={`text-[11px] font-bold uppercase tracking-wider block font-mono ${
@@ -462,11 +462,11 @@ export const DashboardScreen: React.FC = () => {
         >
           {isPositiveGain ? (
             <TrendingUp className={`absolute -top-1 -right-1 w-16 h-16 sm:w-20 sm:h-20 pointer-events-none select-none ${
-              themeMode === 'light' ? 'opacity-[0.08] text-emerald-600' : 'opacity-[0.08] text-emerald-400'
+              themeMode === 'light' ? 'opacity-[0.18] text-emerald-600' : 'opacity-[0.16] text-emerald-400'
             }`} strokeWidth={1.5} />
           ) : (
             <TrendingDown className={`absolute -top-1 -right-1 w-16 h-16 sm:w-20 sm:h-20 pointer-events-none select-none ${
-              themeMode === 'light' ? 'opacity-[0.08] text-rose-600' : 'opacity-[0.08] text-rose-400'
+              themeMode === 'light' ? 'opacity-[0.18] text-rose-600' : 'opacity-[0.16] text-rose-400'
             }`} strokeWidth={1.5} />
           )}
           <div className="relative z-10">
@@ -505,11 +505,11 @@ export const DashboardScreen: React.FC = () => {
         >
           {tabMetrics.netDeltaPercentage >= 0 ? (
             <ArrowUpRight className={`absolute -top-1 -right-1 w-16 h-16 sm:w-20 sm:h-20 pointer-events-none select-none ${
-              themeMode === 'light' ? 'opacity-[0.08] text-emerald-600' : 'opacity-[0.08] text-emerald-400'
+              themeMode === 'light' ? 'opacity-[0.18] text-emerald-600' : 'opacity-[0.16] text-emerald-400'
             }`} strokeWidth={1.5} />
           ) : (
             <ArrowDownRight className={`absolute -top-1 -right-1 w-16 h-16 sm:w-20 sm:h-20 pointer-events-none select-none ${
-              themeMode === 'light' ? 'opacity-[0.08] text-rose-600' : 'opacity-[0.08] text-rose-400'
+              themeMode === 'light' ? 'opacity-[0.18] text-rose-600' : 'opacity-[0.16] text-rose-400'
             }`} strokeWidth={1.5} />
           )}
           <div className="relative z-10">

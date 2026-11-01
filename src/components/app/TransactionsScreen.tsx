@@ -47,7 +47,7 @@ export const TransactionsScreen: React.FC = () => {
             boxShadow: !isDark ? '0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03)' : undefined,
           }}
         >
-          <span className="absolute top-4 right-4 text-3xl font-mono opacity-5 pointer-events-none select-none text-slate-900 dark:text-white font-bold">₹</span>
+          <span className={`absolute top-3 right-4 text-4xl font-mono pointer-events-none select-none font-bold ${!isDark ? 'opacity-[0.16] text-slate-800' : 'opacity-[0.15] text-white'}`}>₹</span>
           <span className={`text-[11px] font-bold uppercase tracking-wider block font-mono ${
             !isDark ? 'text-slate-500' : 'text-neutral-400'
           }`}>
@@ -74,7 +74,7 @@ export const TransactionsScreen: React.FC = () => {
             boxShadow: !isDark ? '0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03)' : undefined,
           }}
         >
-          <Receipt className="absolute top-4 right-4 w-12 h-12 opacity-5 pointer-events-none text-slate-900 dark:text-white" />
+          <Receipt className={`absolute top-4 right-4 w-12 h-12 pointer-events-none select-none ${!isDark ? 'opacity-[0.16] text-slate-800' : 'opacity-[0.15] text-white'}`} />
           <span className={`text-[11px] font-bold uppercase tracking-wider block font-mono ${
             !isDark ? 'text-slate-500' : 'text-neutral-400'
           }`}>
@@ -101,7 +101,7 @@ export const TransactionsScreen: React.FC = () => {
             boxShadow: !isDark ? '0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03)' : undefined,
           }}
         >
-          <Calendar className="absolute top-4 right-4 w-12 h-12 opacity-5 pointer-events-none text-slate-900 dark:text-white" />
+          <Calendar className={`absolute top-4 right-4 w-12 h-12 pointer-events-none select-none ${!isDark ? 'opacity-[0.16] text-slate-800' : 'opacity-[0.15] text-white'}`} />
           <span className={`text-[11px] font-bold uppercase tracking-wider block font-mono ${
             !isDark ? 'text-slate-500' : 'text-neutral-400'
           }`}>
@@ -128,7 +128,7 @@ export const TransactionsScreen: React.FC = () => {
             boxShadow: !isDark ? '0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03)' : undefined,
           }}
         >
-          <Layers className="absolute top-4 right-4 w-12 h-12 opacity-5 pointer-events-none text-slate-900 dark:text-white" />
+          <Layers className={`absolute top-4 right-4 w-12 h-12 pointer-events-none select-none ${!isDark ? 'opacity-[0.16] text-slate-800' : 'opacity-[0.15] text-white'}`} />
           <span className={`text-[11px] font-bold uppercase tracking-wider block font-mono ${
             !isDark ? 'text-slate-500' : 'text-neutral-400'
           }`}>

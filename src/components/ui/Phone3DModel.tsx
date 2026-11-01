@@ -161,7 +161,7 @@ export const Phone3DModel: React.FC<Phone3DModelProps> = ({ className = '', onOp
                   {/* Large Indian Rupee Watermark */}
                   <IndianRupee
                     className={`absolute top-2 right-2 w-16 h-16 pointer-events-none select-none ${
-                      isLight ? 'text-slate-900 opacity-[0.05]' : 'text-white opacity-[0.08]'
+                      isLight ? 'text-slate-900 opacity-[0.16]' : 'text-white opacity-[0.15]'
                     }`}
                     strokeWidth={1.5}
                   />

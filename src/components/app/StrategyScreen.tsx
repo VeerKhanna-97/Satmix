@@ -207,7 +207,7 @@ export const StrategyScreen: React.FC = () => {
             src="/icons/daily.png"
             alt=""
             aria-hidden="true"
-            className="absolute -right-2 -top-2 w-20 h-20 sm:w-24 sm:h-24 object-contain pointer-events-none select-none opacity-[0.07] invert dark:invert-0"
+            className={`absolute -right-2 -top-2 w-20 h-20 sm:w-24 sm:h-24 object-contain pointer-events-none select-none ${themeMode === 'light' ? 'opacity-[0.16] invert' : 'opacity-[0.15]'}`}
           />
           <div className="relative z-10">
             <span className={`text-[11px] font-bold uppercase tracking-wider block ${
@@ -239,7 +239,7 @@ export const StrategyScreen: React.FC = () => {
             src="/icons/rupee.png"
             alt=""
             aria-hidden="true"
-            className="absolute -right-1 -top-1 w-20 h-20 sm:w-24 sm:h-24 object-contain pointer-events-none select-none opacity-[0.07] invert dark:invert-0"
+            className={`absolute -right-1 -top-1 w-20 h-20 sm:w-24 sm:h-24 object-contain pointer-events-none select-none ${themeMode === 'light' ? 'opacity-[0.16] invert' : 'opacity-[0.15]'}`}
           />
           <div className="relative z-10">
             <div className="flex items-center gap-1">
@@ -278,7 +278,7 @@ export const StrategyScreen: React.FC = () => {
             src="/icons/projected-value.png"
             alt=""
             aria-hidden="true"
-            className="absolute -right-1 -top-1 w-20 h-20 sm:w-24 sm:h-24 object-contain pointer-events-none select-none opacity-[0.07] invert dark:invert-0"
+            className={`absolute -right-1 -top-1 w-20 h-20 sm:w-24 sm:h-24 object-contain pointer-events-none select-none ${themeMode === 'light' ? 'opacity-[0.16] invert' : 'opacity-[0.15]'}`}
           />
           <div className="relative z-10">
             <div className="flex items-center gap-1">
@@ -317,7 +317,7 @@ export const StrategyScreen: React.FC = () => {
             src="/icons/liquidity.png"
             alt=""
             aria-hidden="true"
-            className="absolute -right-2 -top-2 w-20 h-20 sm:w-24 sm:h-24 object-contain pointer-events-none select-none opacity-[0.07] invert dark:invert-0"
+            className={`absolute -right-2 -top-2 w-20 h-20 sm:w-24 sm:h-24 object-contain pointer-events-none select-none ${themeMode === 'light' ? 'opacity-[0.16] invert' : 'opacity-[0.15]'}`}
           />
           <div className="relative z-10">
             <div className="flex items-center gap-1">
