@@ -180,24 +180,28 @@ export const CalculatorSection: React.FC = () => {
                       role="tab"
                       aria-selected={strategy === 'low'}
                       onClick={() => handleStrategyChange('low')}
-                      className={`relative z-10 flex-1 py-2.5 px-3 rounded-lg flex items-center justify-between text-left transition-colors duration-200 cursor-pointer active:scale-[0.98] ${
+                      className={`relative z-10 flex-1 py-2 sm:py-2.5 px-2 sm:px-3 rounded-lg flex items-center text-left transition-colors duration-200 cursor-pointer active:scale-[0.98] ${
                         strategy === 'low' ? (themeMode === 'dark' ? 'text-white' : 'text-neutral-900') : 'text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200'
                       }`}
                     >
-                      <div className="flex items-center gap-2 min-w-0">
+                      <div className="flex items-center gap-1.5 sm:gap-2.5 min-w-0 w-full">
                         <BasketCurrencyIcons basketId="stable" size="xs" />
-                        <div className="truncate">
-                          <span className="block font-bold text-xs sm:text-sm leading-tight truncate">
-                            Stable
-                          </span>
-                          <span className="block text-[10px] text-neutral-400 font-mono mt-0.5">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center justify-between gap-1">
+                            <span className="font-bold text-xs sm:text-sm leading-tight truncate">
+                              Stable
+                            </span>
+                            <span className={`text-[10px] sm:text-[11px] font-mono font-bold shrink-0 [font-variant-numeric:tabular-nums] ${
+                              themeMode === 'light' ? 'text-emerald-600' : 'text-emerald-400'
+                            }`}>
+                              ~8%
+                            </span>
+                          </div>
+                          <span className="block text-[10px] text-neutral-400 font-mono mt-0.5 truncate">
                             from ₹10/day
                           </span>
                         </div>
                       </div>
-                      <span className="text-[11px] font-mono font-bold text-emerald-400 pl-1 shrink-0 [font-variant-numeric:tabular-nums]">
-                        ~8%
-                      </span>
                     </button>
 
                     {/* Growth Option */}
@@ -206,24 +210,28 @@ export const CalculatorSection: React.FC = () => {
                       role="tab"
                       aria-selected={strategy === 'high'}
                       onClick={() => handleStrategyChange('high')}
-                      className={`relative z-10 flex-1 py-2.5 px-3 rounded-lg flex items-center justify-between text-left transition-colors duration-200 cursor-pointer active:scale-[0.98] ${
+                      className={`relative z-10 flex-1 py-2 sm:py-2.5 px-2 sm:px-3 rounded-lg flex items-center text-left transition-colors duration-200 cursor-pointer active:scale-[0.98] ${
                         strategy === 'high' ? (themeMode === 'dark' ? 'text-white' : 'text-neutral-900') : 'text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200'
                       }`}
                     >
-                      <div className="flex items-center gap-2 min-w-0">
+                      <div className="flex items-center gap-1.5 sm:gap-2.5 min-w-0 w-full">
                         <BasketCurrencyIcons basketId="growth" size="xs" />
-                        <div className="truncate">
-                          <span className="block font-bold text-xs sm:text-sm leading-tight truncate">
-                            Growth
-                          </span>
-                          <span className="block text-[10px] text-neutral-400 font-mono mt-0.5">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center justify-between gap-1">
+                            <span className="font-bold text-xs sm:text-sm leading-tight truncate">
+                              Growth
+                            </span>
+                            <span className={`text-[10px] sm:text-[11px] font-mono font-bold shrink-0 [font-variant-numeric:tabular-nums] ${
+                              themeMode === 'light' ? 'text-emerald-600' : 'text-emerald-400'
+                            }`}>
+                              ~28%
+                            </span>
+                          </div>
+                          <span className="block text-[10px] text-neutral-400 font-mono mt-0.5 truncate">
                             from ₹30/day
                           </span>
                         </div>
                       </div>
-                      <span className="text-[11px] font-mono font-bold text-emerald-400 pl-1 shrink-0 [font-variant-numeric:tabular-nums]">
-                        ~28%
-                      </span>
                     </button>
                   </div>
                 </div>
