@@ -227,7 +227,7 @@ export const ProfileScreen: React.FC<{ defaultSection?: SettingsSection }> = ({ 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b" style={{ borderColor: colors.borderDim }}>
         <div>
           <h1 className="text-2xl font-bold tracking-tight" style={{ color: colors.textPrimary }}>
-            Account Settings
+            Account & Profile
           </h1>
           <p className="text-xs sm:text-sm mt-0.5" style={{ color: colors.textSecondary }}>
             Manage your personal profile, transactions, notifications, security credentials, and annual reports

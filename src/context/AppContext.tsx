@@ -167,7 +167,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           tab = 'invest';
         } else if (sub === 'baskets' || params.get('tab') === 'baskets' || hash.includes('basket')) {
           tab = 'baskets';
-        } else if (sub === 'settings' || sub === 'profile' || params.get('tab') === 'profile' || params.get('tab') === 'settings') {
+        } else if (sub === 'account' || sub === 'settings' || sub === 'profile' || params.get('tab') === 'account' || params.get('tab') === 'profile' || params.get('tab') === 'settings') {
           tab = 'profile';
         } else if (sub === 'transactions' || params.get('tab') === 'transactions') {
           tab = 'transactions';
@@ -197,7 +197,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (view === 'app') {
       if (tab === 'invest') return '/app/growth';
       if (tab === 'baskets') return '/app/baskets';
-      if (tab === 'profile') return '/app/settings';
+      if (tab === 'profile') return '/app/account';
       if (tab === 'transactions') return '/app/transactions';
       return '/app';
     }

@@ -6,6 +6,7 @@ import {
   TrendingUp,
   Layers,
   ArrowLeftRight,
+  User,
   Settings,
   Moon,
   Sun,
@@ -44,7 +45,7 @@ export const AppShell: React.FC = () => {
     { id: 'dashboard' as const, label: 'Portfolio', icon: Wallet },
     { id: 'invest' as const, label: 'Strategy & Growth', icon: TrendingUp },
     { id: 'baskets' as const, label: 'Baskets', icon: Layers },
-    { id: 'profile' as const, label: 'Settings', icon: Settings },
+    { id: 'profile' as const, label: 'Account', icon: User },
   ];
 
   return (
