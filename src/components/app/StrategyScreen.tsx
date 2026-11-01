@@ -38,7 +38,7 @@ const getEverydayComparison = (amount: number) => {
   return 'Less than a weekend movie ticket';
 };
 
-export const InvestScreen: React.FC = () => {
+export const StrategyScreen: React.FC = () => {
   const {
     selectedBasketId,
     setSelectedBasketId,

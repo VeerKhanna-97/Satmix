@@ -1,5 +1,5 @@
 // ============================================================
-// FILE: src/components/marketing/BrowserHabitSection.tsx
+// FILE: src/components/marketing/AppPreviewSection.tsx
 // PURPOSE: "Your crypto habit, in your browser."
 //          - Desktop: Perspective-tilted macOS Chromium browser window
 //            faithfully recreating the official Satmix App desktop dashboard:
@@ -26,7 +26,7 @@ import { useApp } from '../../context/AppContext';
 import { motion, useScroll, useTransform, useSpring } from 'motion/react';
 import { FadeIn } from '../ui';
 
-export const BrowserHabitSection: React.FC = () => {
+export const AppPreviewSection: React.FC = () => {
   const { colors, themeMode, setViewMode, setAuthSubView, isAuthenticated } = useApp();
   const isLight = themeMode === 'light';
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -582,4 +582,4 @@ export const BrowserHabitSection: React.FC = () => {
   );
 };
 
-export default BrowserHabitSection;
+export default AppPreviewSection;

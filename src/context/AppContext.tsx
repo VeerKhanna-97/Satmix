@@ -4,7 +4,7 @@
 //          Coinbase spot prices, dual concurrent habits, and live MTM accounting.
 // ============================================================
 
-import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import confetti from 'canvas-confetti';
 import {
   UserProfile,
@@ -133,25 +133,121 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Device Frame
   const [deviceFrame, setDeviceFrame] = useState<DeviceFrame>('full');
 
-  // Navigation state with URL route auto-detection
-  const [viewMode, setViewMode] = useState<ViewMode>(() => {
+  // ─── UNIFIED BIDIRECTIONAL URL ROUTING ENGINE ──────────────
+  const parseUrlRoute = (): { view: ViewMode; tab: AppTab; auth: 'login' | 'signup' | 'quiz' } => {
     try {
-      const path = window.location.pathname.toLowerCase();
+      if (typeof window === 'undefined') return { view: 'marketing', tab: 'dashboard', auth: 'login' };
+      const rawPath = window.location.pathname.toLowerCase().replace(/\/+$/, '') || '/';
       const params = new URLSearchParams(window.location.search);
-      if (path.includes('privacy') || params.get('view') === 'privacy') return 'privacy';
-      if (path.includes('terms') || params.get('view') === 'terms') return 'terms';
-      if (path.includes('refund') || params.get('view') === 'refund') return 'refund';
-      if (path.includes('cookies') || params.get('view') === 'cookies') return 'cookies';
-      if (path.includes('thank-you') || params.get('view') === 'thank-you') return 'thank-you';
-      if (path.includes('app') || params.get('view') === 'app') return 'app';
-      if (params.get('view') === 'login' || params.get('view') === 'auth') return 'auth';
-      return 'marketing';
+      const hash = window.location.hash.toLowerCase();
+
+      // 1. Legal pages
+      if (rawPath === '/privacy' || params.get('view') === 'privacy') return { view: 'privacy', tab: 'dashboard', auth: 'login' };
+      if (rawPath === '/terms' || params.get('view') === 'terms') return { view: 'terms', tab: 'dashboard', auth: 'login' };
+      if (rawPath === '/refund' || params.get('view') === 'refund') return { view: 'refund', tab: 'dashboard', auth: 'login' };
+      if (rawPath === '/cookies' || params.get('view') === 'cookies') return { view: 'cookies', tab: 'dashboard', auth: 'login' };
+      if (rawPath === '/thank-you' || params.get('view') === 'thank-you') return { view: 'thank-you', tab: 'dashboard', auth: 'login' };
+
+      // 2. Auth routes
+      if (rawPath === '/login' || rawPath === '/auth' || params.get('view') === 'login' || params.get('view') === 'auth') {
+        return { view: 'auth', tab: 'dashboard', auth: 'login' };
+      }
+      if (rawPath === '/signup' || params.get('view') === 'signup') {
+        return { view: 'auth', tab: 'dashboard', auth: 'signup' };
+      }
+      if (rawPath === '/quiz' || params.get('view') === 'quiz') {
+        return { view: 'auth', tab: 'dashboard', auth: 'quiz' };
+      }
+
+      // 3. App / Prototype routes
+      if (rawPath.startsWith('/app') || params.get('view') === 'app') {
+        const sub = rawPath.replace(/^\/app\/?/, '');
+        let tab: AppTab = 'dashboard';
+        if (sub === 'growth' || sub === 'strategy' || sub === 'invest' || params.get('tab') === 'growth' || params.get('tab') === 'invest') {
+          tab = 'invest';
+        } else if (sub === 'baskets' || params.get('tab') === 'baskets' || hash.includes('basket')) {
+          tab = 'baskets';
+        } else if (sub === 'settings' || sub === 'profile' || params.get('tab') === 'profile' || params.get('tab') === 'settings') {
+          tab = 'profile';
+        } else if (sub === 'transactions' || params.get('tab') === 'transactions') {
+          tab = 'transactions';
+        }
+        return { view: 'app', tab, auth: 'login' };
+      }
+
+      // Default: Marketing Landing Page
+      return { view: 'marketing', tab: 'dashboard', auth: 'login' };
     } catch {
-      return 'marketing';
+      return { view: 'marketing', tab: 'dashboard', auth: 'login' };
     }
-  });
-  const [activeTab, setActiveTab] = useState<AppTab>('dashboard');
-  const [authSubView, setAuthSubView] = useState<'login' | 'signup' | 'quiz'>('login');
+  };
+
+  const getTargetRoutePath = (view: ViewMode, tab: AppTab, auth: 'login' | 'signup' | 'quiz'): string => {
+    if (view === 'marketing') return '/';
+    if (view === 'auth') {
+      if (auth === 'signup') return '/signup';
+      if (auth === 'quiz') return '/quiz';
+      return '/login';
+    }
+    if (view === 'privacy') return '/privacy';
+    if (view === 'terms') return '/terms';
+    if (view === 'refund') return '/refund';
+    if (view === 'cookies') return '/cookies';
+    if (view === 'thank-you') return '/thank-you';
+    if (view === 'app') {
+      if (tab === 'invest') return '/app/growth';
+      if (tab === 'baskets') return '/app/baskets';
+      if (tab === 'profile') return '/app/settings';
+      if (tab === 'transactions') return '/app/transactions';
+      return '/app';
+    }
+    return '/';
+  };
+
+  const initialRoute = useMemo(() => parseUrlRoute(), []);
+  const [viewMode, setViewMode] = useState<ViewMode>(initialRoute.view);
+  const [activeTab, setActiveTab] = useState<AppTab>(initialRoute.tab);
+  const [authSubView, setAuthSubView] = useState<'login' | 'signup' | 'quiz'>(initialRoute.auth);
+
+  // Synchronize browser address bar with internal navigation state
+  const isInitialRouteSync = useRef(true);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const targetPath = getTargetRoutePath(viewMode, activeTab, authSubView);
+    const currentPath = window.location.pathname.toLowerCase().replace(/\/+$/, '') || '/';
+    const hasHash = Boolean(window.location.hash);
+
+    if (isInitialRouteSync.current) {
+      isInitialRouteSync.current = false;
+      if (currentPath === targetPath && !hasHash) return;
+    }
+
+    // Push new state and purge any rogue hash (#baskets-section, etc.)
+    if (currentPath !== targetPath || hasHash) {
+      window.history.pushState(
+        { viewMode, activeTab, authSubView },
+        '',
+        targetPath + (window.location.search || '')
+      );
+    }
+  }, [viewMode, activeTab, authSubView]);
+
+  // Handle browser Back / Forward buttons seamlessly
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const handlePopState = () => {
+      const parsed = parseUrlRoute();
+      setViewMode(parsed.view);
+      setActiveTab(parsed.tab);
+      setAuthSubView(parsed.auth);
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   // Canonical Prototype State (v6)
   const [prototypeState, setPrototypeState] = useState<PrototypeState>(() => loadPrototypeState());

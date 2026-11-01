@@ -16,7 +16,7 @@ import { useApp } from '../../context/AppContext';
 import { DashboardScreen } from './DashboardScreen';
 import { TransactionsScreen } from './TransactionsScreen';
 import { BasketsScreen } from './BasketsScreen';
-import { InvestScreen } from './InvestScreen';
+import { StrategyScreen } from './StrategyScreen';
 import { ProfileScreen } from './ProfileScreen';
 import { TutorialModal } from '../auth/TutorialModal';
 import { motion, AnimatePresence } from 'motion/react';
@@ -160,7 +160,7 @@ export const AppShell: React.FC = () => {
             }}
           >
             {activeTab === 'dashboard' && <DashboardScreen />}
-            {(activeTab === 'invest' || (activeTab as string) === 'performance') && <InvestScreen />}
+            {(activeTab === 'invest' || (activeTab as string) === 'performance' || (activeTab as string) === 'growth') && <StrategyScreen />}
             {activeTab === 'baskets' && <BasketsScreen />}
             {activeTab === 'transactions' && <ProfileScreen defaultSection="transactions" />}
             {activeTab === 'profile' && <ProfileScreen />}

@@ -1,5 +1,5 @@
 // ============================================================
-// FILE: src/components/marketing/StepsSection.tsx
+// FILE: src/components/marketing/HowItWorksSection.tsx
 // PURPOSE: "Four steps, then it runs on habit."
 //          Interactive Satmix Onboarding Quiz & 4-Step Design System
 //          - Recreated from Claude Artifact reference (https://claude.ai/artifact/3hqYpJV8vabS67LnGR7aJp)
@@ -485,7 +485,7 @@ const ReceiptScreen: React.FC<ScreenProps> = ({ onBack }) => {
 /* ─────────────────────────────────────────────────────────────
    MAIN COMPONENT: StepsSection
    ───────────────────────────────────────────────────────────── */
-export const StepsSection: React.FC = () => {
+export const HowItWorksSection: React.FC = () => {
   const { colors, themeMode } = useApp();
   const sectionRef = useRef<HTMLDivElement | null>(null);
   const [activeStep, setActiveStep] = useState(0);
@@ -913,4 +913,4 @@ export const StepsSection: React.FC = () => {
   );
 };
 
-export default StepsSection;
+export default HowItWorksSection;

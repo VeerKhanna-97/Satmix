@@ -136,9 +136,19 @@ export const Footer: React.FC = () => {
               Cookie Policy
             </button>
             <span className="opacity-40">•</span>
-            <a href="/#faq-section" onClick={() => setViewMode('marketing')} className="hover:opacity-80 transition-opacity" style={{ color: colors.textSecondary }}>
+            <button
+              type="button"
+              onClick={() => {
+                setViewMode('marketing');
+                window.setTimeout(() => {
+                  document.getElementById('faq-section')?.scrollIntoView({ behavior: 'smooth' });
+                }, 80);
+              }}
+              className="hover:opacity-80 transition-opacity"
+              style={{ color: colors.textSecondary }}
+            >
               FAQ
-            </a>
+            </button>
             <span className="opacity-40">•</span>
             <button
               type="button"

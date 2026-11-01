@@ -83,6 +83,10 @@ export const FloatingActionDock: React.FC = () => {
               {/* Secondary Quick Jump: Calculator */}
               <a
                 href="#calc-section"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById('calc-section')?.scrollIntoView({ behavior: 'smooth' });
+                }}
                 className="h-9 px-3 rounded-full text-neutral-300 hover:text-white font-medium text-xs flex items-center gap-1.5 transition-colors active:scale-[0.96]"
                 aria-label="Jump to Growth Calculator"
               >

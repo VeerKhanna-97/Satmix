@@ -4,8 +4,8 @@ import { Ticker } from './components/marketing/Ticker';
 import { Header } from './components/marketing/Header';
 import { Hero } from './components/marketing/Hero';
 import { TrustStrip } from './components/marketing/TrustStrip';
-import { StepsSection } from './components/marketing/StepsSection';
-import { BrowserHabitSection } from './components/marketing/BrowserHabitSection';
+import { HowItWorksSection } from './components/marketing/HowItWorksSection';
+import { AppPreviewSection } from './components/marketing/AppPreviewSection';
 import { CalculatorSection } from './components/marketing/CalculatorSection';
 import { AboutSection } from './components/marketing/AboutSection';
 import { FaqSection } from './components/marketing/FaqSection';
@@ -43,8 +43,8 @@ export function AppContent() {
               <Hero />
               <TrustStrip />
               <WaitlistSection />
-              <StepsSection />
-              <BrowserHabitSection />
+              <HowItWorksSection />
+              <AppPreviewSection />
               <CalculatorSection />
               <AboutSection />
               <FaqSection />

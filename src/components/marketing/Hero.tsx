@@ -110,6 +110,10 @@ export const Hero: React.FC = () => {
 
                 <a
                   href="#waitlist-section"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById('waitlist-section')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
                   className="w-full sm:w-auto h-12 px-6 rounded-xl font-semibold text-sm transition-[transform,background-color,border-color] duration-150 ease-out hover:bg-white/[0.04] hover:border-white/20 active:scale-[0.96] border inline-flex items-center justify-center gap-2 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50"
                   style={{
                     backgroundColor: colors.surface,
@@ -123,6 +127,10 @@ export const Hero: React.FC = () => {
 
                 <a
                   href="#calc-section"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById('calc-section')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
                   className="w-full sm:w-auto h-12 px-5 rounded-xl font-semibold text-sm transition-[transform,opacity] duration-150 ease-out hover:opacity-80 active:scale-[0.96] inline-flex items-center justify-center gap-1.5 select-none text-xs"
                   style={{
                     color: colors.textSecondary,
