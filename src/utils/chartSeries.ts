@@ -8,7 +8,7 @@ import { Transaction, BasketId, CryptoCoin, PortfolioSummary, ActivityEntry } fr
 import { toDateKey, getStartOfWeek, shiftDateKey, getDaysDifference } from './streakEngine';
 import { HoldingDetail } from './prototypeEngine';
 
-export type ChartTimeframe = '1W' | '1M' | '3M' | '1Y' | 'ALL' | 'CUSTOM';
+export type ChartTimeframe = '1D' | '1W' | '1M' | '3M' | '1Y' | 'ALL' | 'CUSTOM';
 
 export interface ChartCustomRange {
   startDate: string; // YYYY-MM-DD
@@ -206,7 +206,42 @@ export function generateChartSeries(
     let granularity: 'day' | 'week' | 'month' = 'week';
     let targetChunkCount: number | undefined;
 
-    if (timeframe === '1W') {
+    if (timeframe === '1D') {
+      granularity = 'day';
+      const simulatedDailySip = 50;
+      const baseDate = new Date(now);
+      baseDate.setHours(0, 0, 0, 0);
+
+      for (let i = 0; i <= 12; i++) {
+        const hour = i * 2;
+        const dObj = new Date(baseDate);
+        dObj.setHours(hour, 0, 0, 0);
+
+        const progress = i / 12;
+        const simInvested = simulatedDailySip;
+        const intradayGain = simulatedDailySip * dailyRate * progress;
+        const noise = Math.sin(i * 1.5) * 0.15;
+        const simValue = Math.max(0, simInvested + intradayGain + noise);
+
+        const roundedVal = Math.round(simValue * 100) / 100;
+        const roundedInv = Math.round(simInvested * 100) / 100;
+        const gain = Math.round((roundedVal - roundedInv) * 100) / 100;
+        const gainPercentage = roundedInv > 0 ? Number(((gain / roundedInv) * 100).toFixed(2)) : 0;
+
+        const timeStr = `${hour.toString().padStart(2, '0')}:00`;
+
+        points.push({
+          date: timeStr,
+          fullDate: `Today, ${timeStr}`,
+          timestamp: dObj.getTime(),
+          label: timeStr,
+          invested: roundedInv,
+          value: roundedVal,
+          gain,
+          gainPercentage,
+        });
+      }
+    } else if (timeframe === '1W') {
       granularity = 'day';
       const sunday = getStartOfWeek(now);
       const simulatedDailySip = 50;
@@ -363,7 +398,53 @@ export function generateChartSeries(
   let granularity: 'day' | 'week' | 'month' = 'week';
   let targetChunkCount: number | undefined;
 
-  if (timeframe === '1W') {
+  if (timeframe === '1D') {
+    // ── 1-DAY INTRADAY TIMEFRAME (24 HOURS) ───────────────────────
+    granularity = 'day';
+    const numPoints = 13; // Every 2 hours (00:00 to 24:00)
+    const baseDate = new Date(now);
+    baseDate.setHours(0, 0, 0, 0);
+
+    const deltaInr = portfolioSummary.oneDayChangeRupees || 0;
+    const endVal = portfolioSummary.currentValue;
+    const startVal = Math.max(0, endVal - deltaInr);
+    const totalInv = portfolioSummary.totalInvested;
+
+    for (let i = 0; i < numPoints; i++) {
+      const hour = i * 2;
+      const dObj = new Date(baseDate);
+      dObj.setHours(hour, 0, 0, 0);
+
+      const progress = i / (numPoints - 1);
+      // Realistic smooth intraday trajectory using Hermite ease-in-out + subtle market wave
+      const smoothProgress = progress * progress * (3 - 2 * progress);
+      const wave = Math.sin(progress * Math.PI) * (deltaInr !== 0 ? deltaInr * 0.12 : (endVal * 0.002));
+
+      let runningVal = i === numPoints - 1
+        ? endVal
+        : i === 0
+        ? startVal
+        : startVal + deltaInr * smoothProgress + wave;
+
+      const roundedVal = Math.round(runningVal * 100) / 100;
+      const roundedInv = Math.round(totalInv * 100) / 100;
+      const gain = Math.round((roundedVal - roundedInv) * 100) / 100;
+      const gainPercentage = roundedInv > 0 ? Number(((gain / roundedInv) * 100).toFixed(2)) : 0;
+
+      const timeStr = `${hour.toString().padStart(2, '0')}:00`;
+
+      points.push({
+        date: timeStr,
+        fullDate: `Today, ${timeStr}`,
+        timestamp: dObj.getTime(),
+        label: timeStr,
+        invested: roundedInv,
+        value: roundedVal,
+        gain,
+        gainPercentage,
+      });
+    }
+  } else if (timeframe === '1W') {
     // ── FIXED SUNDAY-TO-SATURDAY CALENDAR WEEK (7 DIVISIONS) ───────
     granularity = 'day';
     const sunday = getStartOfWeek(now);
@@ -641,8 +722,12 @@ export function generateChartSeries(
   }
 
   const finalPoint = points[points.length - 1];
-  const horizonGain = lastPt && firstPt ? Math.round((lastPt.value - firstPt.value) * 100) / 100 : (finalPoint?.gain || 0);
-  const horizonGainPercentage = firstPt && firstPt.value > 0 ? Number(((horizonGain / firstPt.value) * 100).toFixed(2)) : (finalPoint?.gainPercentage || 0);
+  const horizonGain = timeframe === '1D'
+    ? (portfolioSummary.oneDayChangeRupees ?? (lastPt && firstPt ? Math.round((lastPt.value - firstPt.value) * 100) / 100 : (finalPoint?.gain || 0)))
+    : lastPt && firstPt ? Math.round((lastPt.value - firstPt.value) * 100) / 100 : (finalPoint?.gain || 0);
+  const horizonGainPercentage = timeframe === '1D'
+    ? (portfolioSummary.oneDayChangePercentage ?? (firstPt && firstPt.value > 0 ? Number(((horizonGain / firstPt.value) * 100).toFixed(2)) : (finalPoint?.gainPercentage || 0)))
+    : firstPt && firstPt.value > 0 ? Number(((horizonGain / firstPt.value) * 100).toFixed(2)) : (finalPoint?.gainPercentage || 0);
 
   const segments = buildChartSegments(points, granularity, targetChunkCount, isProjection);
   const allValues = points.flatMap((p) => [p.value, p.invested]);

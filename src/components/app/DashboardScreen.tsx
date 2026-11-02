@@ -562,7 +562,9 @@ export const DashboardScreen: React.FC = () => {
                     ? 'Last 3 months'
                     : timeframe === '1M'
                     ? 'Last 30 days'
-                    : 'Last 7 days'}
+                    : timeframe === '1W'
+                    ? 'Last 7 days'
+                    : 'Last 24 hours'}
                 </p>
               </div>
 
@@ -609,12 +611,12 @@ export const DashboardScreen: React.FC = () => {
                 borderColor: colors.borderDim,
               }}
             >
-              {(['1W', '1M', '3M', '1Y', 'ALL'] as const).map((t) => (
+              {(['1D', '1W', '1M', '3M', '1Y', 'ALL'] as const).map((t) => (
                 <button
                   key={t}
                   type="button"
                   onClick={() => setTimeframe(t)}
-                  className={`h-full px-2.5 sm:px-3 rounded-lg font-bold flex items-center justify-center transition-colors cursor-pointer select-none active:scale-[0.96] ${
+                  className={`h-full px-2 sm:px-2.5 rounded-lg font-bold flex items-center justify-center transition-colors cursor-pointer select-none active:scale-[0.96] ${
                     timeframe === t
                       ? 'bg-[#5D17EB]/20 text-purple-600 dark:text-[#A78BFA] border border-[#8B5CF6]/40'
                       : 'text-neutral-500 hover:text-slate-900 dark:text-neutral-400 dark:hover:text-white'

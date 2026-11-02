@@ -312,6 +312,7 @@ export const Phone3DModel: React.FC<Phone3DModelProps> = ({ className = '', onOp
                         borderColor: isLight ? 'rgba(15, 23, 42, 0.08)' : 'rgba(255, 255, 255, 0.06)',
                       }}
                     >
+                      <span className={`h-full px-1.5 rounded-md font-bold flex items-center justify-center ${isLight ? 'text-slate-500' : 'text-neutral-400'}`}>1D</span>
                       <span className={`h-full px-1.5 rounded-md font-bold flex items-center justify-center ${isLight ? 'text-slate-500' : 'text-neutral-400'}`}>1W</span>
                       <span className={`h-full px-1.5 rounded-md font-bold flex items-center justify-center ${
                         isLight ? 'bg-purple-100 text-purple-700 border border-purple-300' : 'bg-[#5D17EB]/20 text-[#A78BFA] border border-[#8B5CF6]/40'

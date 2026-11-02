@@ -363,6 +363,7 @@ export const AppPreviewSection: React.FC = () => {
                           isLight ? 'bg-slate-100 text-slate-600 border-slate-200' : 'bg-black/30 text-neutral-400 border-white/5'
                         }`}
                       >
+                        <span className="px-1.5 py-0.5">1D</span>
                         <span className="px-1.5 py-0.5">1W</span>
                         <span className={`font-bold px-2 py-0.5 rounded ${isLight ? 'bg-white text-slate-900 shadow-xs' : 'bg-white/10 text-white'}`}>
                           1M
