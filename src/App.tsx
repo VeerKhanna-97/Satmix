@@ -15,6 +15,7 @@ import { FloatingActionDock } from './components/marketing/FloatingActionDock';
 import { CookieBanner } from './components/common/CookieBanner';
 import { TesterBar } from './components/tester/TesterBar';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
+import { SmoothScrollProvider } from './components/common/SmoothScrollProvider';
 
 // Lazy-loaded dynamic code-split routes (reduces initial marketing bundle payload)
 const AuthModal = React.lazy(() => import('./components/auth/AuthModal').then(m => ({ default: m.AuthModal })));
@@ -34,9 +35,9 @@ export function AppContent() {
     <div className="min-h-screen font-sans selection:bg-white selection:text-black transition-colors relative" style={{ backgroundColor: colors.bg, color: colors.textPrimary }}>
       {/* View Container with Smooth Page Transition */}
       <div key={viewMode} className="animate-fade-in">
-        {/* 1. MARKETING VIEW */}
+        {/* 1. MARKETING VIEW (GSAP 3 + Lenis Hardware-Accelerated Smooth Scroll) */}
         {viewMode === 'marketing' && (
-          <>
+          <SmoothScrollProvider enabled={true}>
             <Ticker />
             <Header />
             <main>
@@ -51,7 +52,7 @@ export function AppContent() {
             </main>
             <Footer />
             <FloatingActionDock />
-          </>
+          </SmoothScrollProvider>
         )}
 
         {/* 2. AUTHENTICATION / APP / LEGAL VIEWS (CODE-SPLIT DYNAMIC CHUNKS) */}
