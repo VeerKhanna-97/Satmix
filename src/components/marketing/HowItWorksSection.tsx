@@ -1,21 +1,12 @@
 // ============================================================
 // FILE: src/components/marketing/HowItWorksSection.tsx
 // PURPOSE: "Four steps, then it runs on habit."
-//          Interactive Satmix Onboarding Quiz & 4-Step Design System
-//          - Recreated from Claude Artifact reference (https://claude.ai/artifact/3hqYpJV8vabS67LnGR7aJp)
-//          - Design Tokens:
-//            * Page Background: #080909
-//            * Elevated Surface: #101212 / #121417
-//            * Primary Turquoise Accent: #00C99A
-//            * Primary Text: #DADADA / #FFFFFF
-//            * Muted Secondary Text: #8E8E93 / #A1A1AA
-//          - Step 1: 5-Question Interactive Risk Quiz (selectable answers, back/continue navigation)
-//          - Step 2: Pick a Basket (Stable 70/30 vs Growth 70/20/10)
-//          - Step 3: Set Daily Amount (₹10, ₹30, ₹50, ₹100 chips + fee transparency)
-//          - Step 4: Watch It Build (Itemized live receipt breakdown)
-//          - Dual Viewport:
-//            * Desktop (lg:flex): 2-column sticky scroll-timeline with 3D tilting titanium chassis
-//            * Mobile (block lg:hidden): Natural flow, centered flagship phone frame, 4-segment progress bar
+//          Interactive Satmix Onboarding Quiz & 4-Step Walkthrough
+//          Orchestrated via GSAP 3 Pinned ScrollTrigger & Lenis
+//          - Desktop: Pinned 2-column layout with 3D tilting titanium chassis
+//            and hardware-accelerated horizontal scrubbed screen carousel
+//          - Mobile: Pinned full-viewport phone frame with synchronized
+//            horizontal screen track, step indicators, and progress pills
 // ============================================================
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -26,7 +17,10 @@ import {
   Lock,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
-import { motion, AnimatePresence, useScroll } from 'motion/react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface StepItem {
   title: string;
@@ -61,7 +55,7 @@ const TILT_ANGLES = [
 ];
 
 /* ─────────────────────────────────────────────────────────────
-   5-QUESTION QUIZ DATA SPECIFICATION (Phase 4)
+   5-QUESTION QUIZ DATA SPECIFICATION
    ───────────────────────────────────────────────────────────── */
 interface QuizQuestion {
   id: number;
@@ -112,7 +106,7 @@ interface ScreenProps {
 /* ─────────────────────────────────────────────────────────────
    PHONE SCREEN 1: 5-Question Interactive Risk Quiz
    ───────────────────────────────────────────────────────────── */
-const QuizScreen: React.FC<ScreenProps> = ({ active, onNext }) => {
+const QuizScreen: React.FC<ScreenProps> = ({ onNext }) => {
   const { themeMode } = useApp();
   const isLight = themeMode === 'light';
   const [currentIdx, setCurrentIdx] = useState(0);
@@ -193,85 +187,93 @@ const QuizScreen: React.FC<ScreenProps> = ({ active, onNext }) => {
           {currentQ.options.map((opt, i) => {
             const isPicked = selectedOption === i;
             return (
-              <motion.div
+              <div
                 key={opt}
                 onClick={() => handleSelectOption(i)}
-                animate={{ scale: isPicked ? [1, 0.99, 1] : 1 }}
-                transition={{ duration: 0.2 }}
-                className={`flex items-center justify-between rounded-xl border px-3.5 transition-all duration-200 h-[42px] xs:h-[45px] text-[12.5px] xs:text-[13px] cursor-pointer select-none ${
+                className={`flex items-center justify-between rounded-xl border transition-all duration-200 p-2.5 xs:p-3 cursor-pointer select-none active:scale-[0.98] ${
                   isPicked
-                    ? `border-[#00C99A] bg-[#00C99A]/10 font-semibold ${isLight ? 'text-slate-900 shadow-xs' : 'text-white'}`
+                    ? `border-[#00C99A] bg-[#00C99A]/10 shadow-sm ${
+                        isLight ? 'shadow-slate-200' : ''
+                      }`
                     : isLight
-                    ? 'border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-300'
-                    : 'border-white/10 bg-[#101212] text-neutral-300 hover:border-white/20'
+                    ? 'border-slate-200 bg-slate-50 hover:border-slate-300'
+                    : 'border-white/10 bg-[#101212] hover:border-white/20'
                 }`}
               >
-                <span>{opt}</span>
                 <span
-                  className={`flex h-4 w-4 items-center justify-center rounded-full border-2 transition-colors duration-200 ${
+                  className={`text-[12.5px] xs:text-[13px] font-semibold ${
                     isPicked
-                      ? 'border-[#00C99A] bg-[#00C99A]'
+                      ? 'text-[#00C99A]'
                       : isLight
-                      ? 'border-slate-300 bg-white'
+                      ? 'text-slate-700'
+                      : 'text-neutral-300'
+                  }`}
+                >
+                  {opt}
+                </span>
+
+                <span
+                  className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full border transition-all ${
+                    isPicked
+                      ? 'border-[#00C99A] bg-[#00C99A] text-black shadow-xs shadow-[#00C99A]/40'
+                      : isLight
+                      ? 'border-slate-300'
                       : 'border-white/20'
                   }`}
                 >
-                  {isPicked && <Check className="w-2.5 h-2.5 text-[#090A0E] stroke-[3]" />}
+                  {isPicked && <Check className="w-2.5 h-2.5 stroke-[3]" />}
                 </span>
-              </motion.div>
+              </div>
             );
           })}
         </div>
       </div>
 
-      {/* Continue Action Button */}
       <button
         type="button"
         onClick={handleContinue}
         disabled={selectedOption === null}
-        className={`w-full rounded-xl font-bold tracking-wide transition-all duration-200 flex items-center justify-center h-10 text-[12.5px] select-none ${
-          selectedOption !== null
-            ? 'bg-[#00C99A] text-[#090A0E] shadow-md shadow-[#00C99A]/20 active:scale-[0.98] cursor-pointer hover:opacity-95'
-            : isLight
-            ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
-            : 'bg-white/10 text-neutral-500 cursor-not-allowed'
+        className={`w-full rounded-xl bg-[#00C99A] font-bold text-[#090A0E] tracking-wide shadow-md shadow-[#00C99A]/20 flex items-center justify-center active:scale-[0.98] h-10 text-[12.5px] transition-all duration-200 select-none ${
+          selectedOption === null
+            ? 'opacity-40 cursor-not-allowed'
+            : 'cursor-pointer hover:opacity-95'
         }`}
       >
-        Continue
+        {currentIdx < QUIZ_QUESTIONS.length - 1 ? 'Continue' : 'Complete Quiz'}
       </button>
     </div>
   );
 };
 
 /* ─────────────────────────────────────────────────────────────
-   PHONE SCREEN 2: Pick a Basket (Screenshot 2 Reference)
+   PHONE SCREEN 2: Pick a Basket
    ───────────────────────────────────────────────────────────── */
 const BasketScreen: React.FC<ScreenProps> = ({ onNext, onBack }) => {
   const { themeMode } = useApp();
   const isLight = themeMode === 'light';
-  const [selectedBasket, setSelectedBasket] = useState<number>(1); // Default Growth mix selected
+  const [selectedBasket, setSelectedBasket] = useState(1); // Default Growth
 
   const baskets = [
     {
       name: 'Stable',
-      subtitle: 'Lower risk than Growth, not risk-free.',
-      min: 10,
+      subtitle: 'Shields savings from large drops',
+      min: '10',
+      dots: '••',
       bars: [
-        { asset: 'USDT', pct: 70, color: '#26A17B' },
+        { asset: 'USDT', pct: 70, color: '#00C99A' },
         { asset: 'BTC', pct: 30, color: '#F7931A' },
       ],
-      dots: '--',
     },
     {
       name: 'Growth',
-      subtitle: 'Long-term crypto, built a little every day.',
-      min: 30,
+      subtitle: 'Upside across top assets for 1+ yr',
+      min: '30',
+      dots: '•••',
       bars: [
         { asset: 'BTC', pct: 70, color: '#F7931A' },
         { asset: 'ETH', pct: 20, color: '#627EEA' },
         { asset: 'SOL', pct: 10, color: '#9945FF' },
       ],
-      dots: '••••',
     },
   ];
 
@@ -380,7 +382,7 @@ const BasketScreen: React.FC<ScreenProps> = ({ onNext, onBack }) => {
 };
 
 /* ─────────────────────────────────────────────────────────────
-   PHONE SCREEN 3: Set Daily Amount (Screenshot 3 Reference)
+   PHONE SCREEN 3: Set Daily Amount
    ───────────────────────────────────────────────────────────── */
 const AmountScreen: React.FC<ScreenProps> = ({ onNext, onBack }) => {
   const { themeMode } = useApp();
@@ -492,7 +494,7 @@ const AmountScreen: React.FC<ScreenProps> = ({ onNext, onBack }) => {
 };
 
 /* ─────────────────────────────────────────────────────────────
-   PHONE SCREEN 4: Watch It Build / Receipt (Screenshot 4 Reference)
+   PHONE SCREEN 4: Watch It Build / Receipt
    ───────────────────────────────────────────────────────────── */
 const ReceiptScreen: React.FC<ScreenProps> = ({ onBack }) => {
   const { themeMode } = useApp();
@@ -554,7 +556,7 @@ const ReceiptScreen: React.FC<ScreenProps> = ({ onBack }) => {
           Today's ₹30 went to BTC to keep your mix on target.
         </div>
 
-        {/* Itemized receipt table matching Screenshot 4 */}
+        {/* Itemized receipt table */}
         <dl className={`divide-y font-mono mt-2.5 text-[11.5px] ${isLight ? 'divide-slate-200' : 'divide-white/5'}`}>
           {receiptItems.map(([label, val]) => (
             <div key={label} className="flex justify-between py-1.5">
@@ -568,58 +570,186 @@ const ReceiptScreen: React.FC<ScreenProps> = ({ onBack }) => {
       </div>
 
       <p className={`text-[10px] text-center font-mono ${isLight ? 'text-slate-400' : 'text-neutral-500'}`}>
-        Held in your own [Partner] account.
+        Held in your own CoinDCX account.
       </p>
     </div>
   );
 };
 
 /* ─────────────────────────────────────────────────────────────
-   MAIN COMPONENT: StepsSection
+   MAIN COMPONENT: HowItWorksSection
    ───────────────────────────────────────────────────────────── */
 export const HowItWorksSection: React.FC = () => {
   const { colors, themeMode } = useApp();
-  const sectionRef = useRef<HTMLDivElement | null>(null);
+  const sectionRef = useRef<HTMLElement | null>(null);
+  
+  // Desktop Refs
+  const desktopPinRef = useRef<HTMLDivElement | null>(null);
+  const desktopPhoneChassisRef = useRef<HTMLDivElement | null>(null);
+  const desktopScreensTrackRef = useRef<HTMLDivElement | null>(null);
+  
+  // Mobile Refs
+  const mobilePinRef = useRef<HTMLDivElement | null>(null);
+  const mobileScreensTrackRef = useRef<HTMLDivElement | null>(null);
+
+  // Synchronized state for step UI highlights
   const [activeStep, setActiveStep] = useState(0);
-  const [direction, setDirection] = useState(1);
+  const [scrollProgress, setScrollProgress] = useState(0);
 
-  // Monitor continuous scroll progress inside desktop section
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ['start start', 'end end'],
-  });
-
+  // ── GSAP 3 PINNED & SCRUBBED SCROLLTRIGGER ORCHESTRATION ──
   useEffect(() => {
-    return scrollYProgress.on('change', (latest) => {
-      // If auto-scroll navigation is in progress, skip updating steps to avoid jank and scroll cancellation
-      if ((window as unknown as { __satmixNavigating?: boolean }).__satmixNavigating) {
-        return;
-      }
+    if (!sectionRef.current) return;
 
-      const stepIndex = Math.max(
-        0,
-        Math.min(STEPS_DATA.length - 1, Math.floor(latest * STEPS_DATA.length))
-      );
-      setActiveStep((prev) => {
-        if (prev !== stepIndex) {
-          setDirection(stepIndex > prev ? 1 : -1);
-        }
-        return stepIndex;
+    const ctx = gsap.context(() => {
+      const mm = gsap.matchMedia();
+
+      // ── DESKTOP SCROLLTIMELINE (>= 1024px) ───────────────────
+      mm.add('(min-width: 1024px)', () => {
+        if (!desktopPinRef.current || !desktopScreensTrackRef.current || !desktopPhoneChassisRef.current) return;
+
+        // Total timeline duration: 7 units (1 dwell + 1 transition per step)
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            id: 'how-it-works-desktop',
+            trigger: sectionRef.current,
+            pin: desktopPinRef.current,
+            start: 'top top',
+            end: '+=2600',
+            scrub: 0.8,
+            anticipatePin: 1,
+            onUpdate: (self) => {
+              const p = self.progress;
+              setScrollProgress(p);
+              // Map continuous progress to active step (0, 1, 2, 3)
+              let step = 0;
+              if (p >= 0.72) step = 3;
+              else if (p >= 0.44) step = 2;
+              else if (p >= 0.18) step = 1;
+              setActiveStep(step);
+            },
+          },
+        });
+
+        // Step 0: Initial state (Quiz)
+        gsap.set(desktopScreensTrackRef.current, { xPercent: 0 });
+        gsap.set(desktopPhoneChassisRef.current, {
+          rotateX: TILT_ANGLES[0].x,
+          rotateY: TILT_ANGLES[0].y,
+        });
+
+        // Step 1 -> Step 2 (Slide from 0% to -25%)
+        tl.to(desktopScreensTrackRef.current, {
+          xPercent: -25,
+          ease: 'power2.inOut',
+          duration: 1,
+        }, 1)
+        .to(desktopPhoneChassisRef.current, {
+          rotateX: TILT_ANGLES[1].x,
+          rotateY: TILT_ANGLES[1].y,
+          ease: 'power1.inOut',
+          duration: 1,
+        }, 1)
+
+        // Step 2 -> Step 3 (Slide from -25% to -50%)
+        .to(desktopScreensTrackRef.current, {
+          xPercent: -50,
+          ease: 'power2.inOut',
+          duration: 1,
+        }, 3)
+        .to(desktopPhoneChassisRef.current, {
+          rotateX: TILT_ANGLES[2].x,
+          rotateY: TILT_ANGLES[2].y,
+          ease: 'power1.inOut',
+          duration: 1,
+        }, 3)
+
+        // Step 3 -> Step 4 (Slide from -50% to -75%)
+        .to(desktopScreensTrackRef.current, {
+          xPercent: -75,
+          ease: 'power2.inOut',
+          duration: 1,
+        }, 5)
+        .to(desktopPhoneChassisRef.current, {
+          rotateX: TILT_ANGLES[3].x,
+          rotateY: TILT_ANGLES[3].y,
+          ease: 'power1.inOut',
+          duration: 1,
+        }, 5);
+
+        // Terminal dwell buffer
+        tl.to({}, { duration: 1 }, 6);
       });
-    });
-  }, [scrollYProgress]);
 
+      // ── MOBILE SCROLLTIMELINE (< 1024px) ─────────────────────
+      mm.add('(max-width: 1023px)', () => {
+        if (!mobilePinRef.current || !mobileScreensTrackRef.current) return;
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            id: 'how-it-works-mobile',
+            trigger: sectionRef.current,
+            pin: mobilePinRef.current,
+            start: 'top top',
+            end: '+=2000',
+            scrub: 0.8,
+            anticipatePin: 1,
+            onUpdate: (self) => {
+              const p = self.progress;
+              setScrollProgress(p);
+              let step = 0;
+              if (p >= 0.72) step = 3;
+              else if (p >= 0.44) step = 2;
+              else if (p >= 0.18) step = 1;
+              setActiveStep(step);
+            },
+          },
+        });
+
+        gsap.set(mobileScreensTrackRef.current, { xPercent: 0 });
+
+        tl.to(mobileScreensTrackRef.current, {
+          xPercent: -25,
+          ease: 'power2.inOut',
+          duration: 1,
+        }, 1)
+        .to(mobileScreensTrackRef.current, {
+          xPercent: -50,
+          ease: 'power2.inOut',
+          duration: 1,
+        }, 3)
+        .to(mobileScreensTrackRef.current, {
+          xPercent: -75,
+          ease: 'power2.inOut',
+          duration: 1,
+        }, 5);
+
+        tl.to({}, { duration: 1 }, 6);
+      });
+    }, sectionRef);
+
+    // Refresh ScrollTrigger to ensure accurate layout metrics
+    ScrollTrigger.refresh();
+
+    return () => ctx.revert();
+  }, []);
+
+  // Programmatic smooth step jump (integrating Lenis when available)
   const handleStepClick = (index: number) => {
-    setDirection(index > activeStep ? 1 : -1);
     setActiveStep(index);
+    const isDesktop = typeof window !== 'undefined' && window.innerWidth >= 1024;
+    const stId = isDesktop ? 'how-it-works-desktop' : 'how-it-works-mobile';
+    const st = ScrollTrigger.getById(stId);
 
-    if (sectionRef.current) {
-      const top = sectionRef.current.getBoundingClientRect().top + window.scrollY;
-      const height = sectionRef.current.offsetHeight - window.innerHeight;
-      window.scrollTo({
-        top: top + height * ((index + 0.5) / STEPS_DATA.length),
-        behavior: 'smooth',
-      });
+    if (st) {
+      // Map step index (0, 1, 2, 3) to the center of its dwell zone
+      const targetFraction = (index * 2 + 0.5) / 7;
+      const targetScroll = st.start + targetFraction * (st.end - st.start);
+
+      if ((window as any).satmixLenis) {
+        (window as any).satmixLenis.scrollTo(targetScroll, { duration: 1.2 });
+      } else {
+        window.scrollTo({ top: targetScroll, behavior: 'smooth' });
+      }
     }
   };
 
@@ -635,14 +765,10 @@ export const HowItWorksSection: React.FC = () => {
     }
   };
 
-  const currentTilt = TILT_ANGLES[activeStep] || TILT_ANGLES[0];
-  const activeStepData = STEPS_DATA[activeStep] || STEPS_DATA[0];
-
-  // Global listener to jump to Step 1 from navbar "How It Works" regardless of current scroll or page
+  // Global listener for navbar "How It Works" click
   useEffect(() => {
     const handleResetToOne = () => {
-      setActiveStep(0);
-      setDirection(-1);
+      handleStepClick(0);
     };
 
     window.addEventListener('satmix:reset-steps-to-one', handleResetToOne);
@@ -653,7 +779,7 @@ export const HowItWorksSection: React.FC = () => {
     <section
       ref={sectionRef}
       id="steps-animation"
-      className="relative h-[360vh]"
+      className="relative"
       style={{ backgroundColor: 'transparent' }}
     >
       {/* Seamless ambient blend connecting from WaitlistSection */}
@@ -666,13 +792,16 @@ export const HowItWorksSection: React.FC = () => {
               : 'radial-gradient(ellipse 70% 100% at 50% 0%, rgba(93, 23, 235, 0.03) 0%, transparent 100%)',
         }}
       />
+
       {/* ==============================================================
           A. DESKTOP VIEWPORT (lg:flex, hidden on mobile)
-          2-Column Sticky Scroll-Driven Timeline + 3D Tilting Phone Frame
+          GSAP Pinned 2-Column ScrollTrigger Timeline + 3D Tilting Phone Frame
           ============================================================== */}
-      <div className="hidden lg:flex sticky top-0 h-[100dvh] flex-col justify-between w-full pt-20 sm:pt-24 pb-8 sm:pb-12 overflow-hidden">
-        
-        {/* 1. Header (Sticky Top) */}
+      <div
+        ref={desktopPinRef}
+        className="hidden lg:flex h-screen flex-col justify-between w-full pt-20 sm:pt-24 pb-8 sm:pb-12 overflow-hidden relative z-10"
+      >
+        {/* 1. Header */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full z-10">
           <div className="max-w-2xl">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight" style={{ color: colors.textPrimary }}>
@@ -681,7 +810,7 @@ export const HowItWorksSection: React.FC = () => {
           </div>
         </div>
 
-        {/* 2. Main Desktop Sticky Grid */}
+        {/* 2. Main Desktop Grid */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex-1 flex items-center z-10">
           <div className="grid grid-cols-12 gap-14 items-center w-full">
             
@@ -706,9 +835,9 @@ export const HowItWorksSection: React.FC = () => {
                           }}
                         >
                           <div
-                            className="w-full bg-[#00C99A] origin-top transition-transform duration-500 rounded-full"
+                            className="w-full bg-[#00C99A] origin-top transition-transform duration-300 rounded-full"
                             style={{
-                              transform: idx < activeStep ? 'scaleY(1)' : 'scaleY(0)',
+                              transform: idx < activeStep ? 'scaleY(1)' : isCurrent ? `scaleY(${Math.max(0, (scrollProgress * 4 - idx))})` : 'scaleY(0)',
                               height: '100%',
                             }}
                           />
@@ -741,8 +870,8 @@ export const HowItWorksSection: React.FC = () => {
                               : colors.textSecondary,
                             boxShadow: isCurrent
                               ? themeMode === 'dark'
-                                ? '0 0 15px rgba(255,255,255,0.4)'
-                                : '0 4px 14px rgba(15, 23, 42, 0.2)'
+                                ? '0 0 18px rgba(255,255,255,0.45)'
+                                : '0 4px 14px rgba(15, 23, 42, 0.25)'
                               : undefined,
                           }}
                         >
@@ -764,21 +893,16 @@ export const HowItWorksSection: React.FC = () => {
                             {step.title}
                           </span>
 
-                          <AnimatePresence initial={false}>
-                            {isCurrent && (
-                              <motion.div
-                                initial={{ height: 0, opacity: 0 }}
-                                animate={{ height: 'auto', opacity: 1 }}
-                                exit={{ height: 0, opacity: 0 }}
-                                transition={{ type: 'spring', stiffness: 280, damping: 30 }}
-                                className="overflow-hidden"
-                              >
-                                <p className="pt-2 text-sm leading-relaxed max-w-md font-medium text-neutral-400">
-                                  {step.body}
-                                </p>
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
+                          {/* Smooth expanding description accordion */}
+                          <div
+                            className={`transition-all duration-300 ease-out overflow-hidden ${
+                              isCurrent ? 'max-h-28 opacity-100 mt-2' : 'max-h-0 opacity-0'
+                            }`}
+                          >
+                            <p className="text-sm leading-relaxed max-w-md font-medium text-neutral-400">
+                              {step.body}
+                            </p>
+                          </div>
                         </div>
                       </button>
                     </li>
@@ -787,21 +911,17 @@ export const HowItWorksSection: React.FC = () => {
               </ol>
             </div>
 
-            {/* Right Column: 3D Titanium Phone Chassis */}
+            {/* Right Column: 3D Titanium Phone Chassis with Hardware Scrub Track */}
             <div className="col-span-6 flex items-center justify-center relative">
               <div
                 className="absolute w-[340px] h-[480px] rounded-full blur-[100px] opacity-25 pointer-events-none"
                 style={{ background: '#00C99A' }}
               />
 
-              <motion.div
-                animate={{
-                  rotateX: currentTilt.x,
-                  rotateY: currentTilt.y,
-                }}
-                transition={{ type: 'spring', stiffness: 100, damping: 22 }}
+              <div
+                ref={desktopPhoneChassisRef}
                 style={{ perspective: 1400 }}
-                className="relative select-none"
+                className="relative select-none will-change-transform"
               >
                 <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-[240px] h-10 rounded-[50%] bg-black/60 blur-xl pointer-events-none" />
 
@@ -824,7 +944,6 @@ export const HowItWorksSection: React.FC = () => {
                         themeMode === 'light' ? 'bg-white' : 'bg-[#080909]'
                       }`}
                     >
-                      
                       {/* Dynamic Island Notch */}
                       <div className="absolute top-2.5 left-1/2 -translate-x-1/2 z-50 flex items-center justify-center pointer-events-none">
                         <div className="w-24 h-5 rounded-full bg-black flex items-center justify-between px-3 shadow-sm border border-white/5">
@@ -833,40 +952,28 @@ export const HowItWorksSection: React.FC = () => {
                         </div>
                       </div>
 
-                      {/* Screen Switcher */}
+                      {/* Continuous Scrubbed Horizontal Screen Carousel */}
                       <div className="relative flex-1 pt-7 overflow-hidden">
-                        <AnimatePresence custom={direction} initial={false} mode="wait">
-                          <motion.div
-                            key={activeStep}
-                            custom={direction}
-                            variants={{
-                              enter: (dir: number) => ({
-                                x: dir > 0 ? '100%' : '-30%',
-                                opacity: 0,
-                              }),
-                              center: {
-                                x: '0%',
-                                opacity: 1,
-                              },
-                              exit: (dir: number) => ({
-                                x: dir > 0 ? '-30%' : '100%',
-                                opacity: 0,
-                              }),
-                            }}
-                            initial="enter"
-                            animate="center"
-                            exit="exit"
-                            transition={{ type: 'spring', stiffness: 300, damping: 32 }}
-                            className="absolute inset-0 h-full w-full"
-                          >
-                            {activeStep === 0 && <QuizScreen active={activeStep === 0} onNext={handleNextStep} />}
-                            {activeStep === 1 && <BasketScreen active={activeStep === 1} onNext={handleNextStep} onBack={handlePrevStep} />}
-                            {activeStep === 2 && <AmountScreen active={activeStep === 2} onNext={handleNextStep} onBack={handlePrevStep} />}
-                            {activeStep === 3 && <ReceiptScreen active={activeStep === 3} onBack={handlePrevStep} />}
-                          </motion.div>
-                        </AnimatePresence>
+                        <div
+                          ref={desktopScreensTrackRef}
+                          className="flex h-full w-[400%] will-change-transform"
+                        >
+                          <div className="w-1/4 h-full flex-shrink-0 relative overflow-hidden">
+                            <QuizScreen active={activeStep === 0} onNext={handleNextStep} />
+                          </div>
+                          <div className="w-1/4 h-full flex-shrink-0 relative overflow-hidden">
+                            <BasketScreen active={activeStep === 1} onNext={handleNextStep} onBack={handlePrevStep} />
+                          </div>
+                          <div className="w-1/4 h-full flex-shrink-0 relative overflow-hidden">
+                            <AmountScreen active={activeStep === 2} onNext={handleNextStep} onBack={handlePrevStep} />
+                          </div>
+                          <div className="w-1/4 h-full flex-shrink-0 relative overflow-hidden">
+                            <ReceiptScreen active={activeStep === 3} onBack={handlePrevStep} />
+                          </div>
+                        </div>
                       </div>
 
+                      {/* Home Indicator Bar */}
                       <div
                         className={`w-28 h-1 rounded-full mx-auto mb-2 pointer-events-none z-50 transition-colors duration-300 ${
                           themeMode === 'light' ? 'bg-slate-300' : 'bg-white/20'
@@ -875,20 +982,21 @@ export const HowItWorksSection: React.FC = () => {
                     </div>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             </div>
 
           </div>
         </div>
-
       </div>
 
       {/* ==============================================================
           B. MOBILE VIEWPORT (flex lg:hidden)
-          Sticky Full-Screen Container Driving 4 Steps on Scroll
+          GSAP Pinned Full-Viewport Container Driving 4 Steps on Scrub
           ============================================================== */}
-      <div className="flex lg:hidden sticky top-0 h-[100dvh] flex-col justify-center items-center w-full px-4 pt-16 pb-12 xs:pb-14 select-none box-border overflow-hidden z-10">
-        
+      <div
+        ref={mobilePinRef}
+        className="flex lg:hidden h-screen flex-col justify-center items-center w-full px-4 pt-16 pb-12 xs:pb-14 select-none box-border overflow-hidden z-10 relative"
+      >
         {/* Mobile Ambient Glow */}
         <div
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[400px] rounded-full blur-[80px] opacity-15 pointer-events-none"
@@ -902,7 +1010,7 @@ export const HowItWorksSection: React.FC = () => {
           </h2>
         </div>
 
-        {/* Realistic Mobile Phone Frame (Proportional to 100dvh mobile viewport) */}
+        {/* Realistic Mobile Phone Frame */}
         <div className="w-full flex items-center justify-center relative select-none mb-2.5 xs:mb-3">
           <div className="relative select-none flex items-center justify-center">
             
@@ -932,7 +1040,7 @@ export const HowItWorksSection: React.FC = () => {
                     : 'linear-gradient(180deg, #3A3D48 0%, #20222B 40%, #121319 100%)',
               }}
             >
-              {/* Thin Inner Metallic Rim */}
+              {/* Inner Metallic Rim */}
               <div
                 className={`relative w-full h-full rounded-[38px] p-[1.5px] transition-all duration-300 ${
                   themeMode === 'light'
@@ -940,8 +1048,7 @@ export const HowItWorksSection: React.FC = () => {
                     : 'bg-gradient-to-b from-white/15 via-white/5 to-white/10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)]'
                 }`}
               >
-                
-                {/* Concentric Screen Container */}
+                {/* Screen Viewport */}
                 <div
                   className={`relative w-full h-full rounded-[36px] flex flex-col justify-between overflow-hidden transition-colors duration-300 ${
                     themeMode === 'light'
@@ -949,8 +1056,7 @@ export const HowItWorksSection: React.FC = () => {
                       : 'bg-[#080909] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.8)]'
                   }`}
                 >
-                  
-                  {/* iOS Status Bar & Dynamic Island */}
+                  {/* Status Bar & Dynamic Island */}
                   <div
                     className={`relative w-full h-7 px-4 pt-1.5 flex items-center justify-between text-[11px] font-semibold z-50 pointer-events-none transition-colors duration-300 ${
                       themeMode === 'light' ? 'text-slate-800' : 'text-white/90'
@@ -970,7 +1076,6 @@ export const HowItWorksSection: React.FC = () => {
                         <rect x="9" y="3" width="2.5" height="9" rx="0.5" />
                         <rect x="13.5" y="0" width="2.5" height="12" rx="0.5" />
                       </svg>
-
                       <div
                         className={`w-3.5 h-2 rounded-[2px] border p-[0.5px] flex items-center ${
                           themeMode === 'light' ? 'border-slate-800' : 'border-white/80'
@@ -981,7 +1086,7 @@ export const HowItWorksSection: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Centered In-App Browser URL Bar */}
+                  {/* Centered URL Bar */}
                   <div
                     className={`w-full flex items-center justify-center gap-1 text-[8.5px] font-mono py-0.5 opacity-70 pointer-events-none z-40 ${
                       themeMode === 'light' ? 'text-slate-500' : 'text-neutral-400'
@@ -991,38 +1096,25 @@ export const HowItWorksSection: React.FC = () => {
                     <span>satmix.in/app</span>
                   </div>
 
-                  {/* Reactive Screen Container with Animated Swapping */}
+                  {/* Mobile Scrubbed Horizontal Screen Carousel */}
                   <div className="relative flex-1 overflow-hidden">
-                    <AnimatePresence custom={direction} initial={false} mode="wait">
-                      <motion.div
-                        key={activeStep}
-                        custom={direction}
-                        variants={{
-                          enter: (dir: number) => ({
-                            x: dir > 0 ? '100%' : '-30%',
-                            opacity: 0,
-                          }),
-                          center: {
-                            x: '0%',
-                            opacity: 1,
-                          },
-                          exit: (dir: number) => ({
-                            x: dir > 0 ? '-30%' : '100%',
-                            opacity: 0,
-                          }),
-                        }}
-                        initial="enter"
-                        animate="center"
-                        exit="exit"
-                        transition={{ type: 'spring', stiffness: 320, damping: 32 }}
-                        className="absolute inset-0 h-full w-full"
-                      >
-                        {activeStep === 0 && <QuizScreen active={activeStep === 0} onNext={handleNextStep} />}
-                        {activeStep === 1 && <BasketScreen active={activeStep === 1} onNext={handleNextStep} onBack={handlePrevStep} />}
-                        {activeStep === 2 && <AmountScreen active={activeStep === 2} onNext={handleNextStep} onBack={handlePrevStep} />}
-                        {activeStep === 3 && <ReceiptScreen active={activeStep === 3} onBack={handlePrevStep} />}
-                      </motion.div>
-                    </AnimatePresence>
+                    <div
+                      ref={mobileScreensTrackRef}
+                      className="flex h-full w-[400%] will-change-transform"
+                    >
+                      <div className="w-1/4 h-full flex-shrink-0 relative overflow-hidden">
+                        <QuizScreen active={activeStep === 0} onNext={handleNextStep} />
+                      </div>
+                      <div className="w-1/4 h-full flex-shrink-0 relative overflow-hidden">
+                        <BasketScreen active={activeStep === 1} onNext={handleNextStep} onBack={handlePrevStep} />
+                      </div>
+                      <div className="w-1/4 h-full flex-shrink-0 relative overflow-hidden">
+                        <AmountScreen active={activeStep === 2} onNext={handleNextStep} onBack={handlePrevStep} />
+                      </div>
+                      <div className="w-1/4 h-full flex-shrink-0 relative overflow-hidden">
+                        <ReceiptScreen active={activeStep === 3} onBack={handlePrevStep} />
+                      </div>
+                    </div>
                   </div>
 
                   {/* Home Indicator Bar */}
@@ -1044,38 +1136,41 @@ export const HowItWorksSection: React.FC = () => {
                 key={i}
                 type="button"
                 onClick={() => handleStepClick(i)}
-                className="h-1 flex-1 rounded-full overflow-hidden cursor-pointer transition-colors" style={{ backgroundColor: themeMode === "dark" ? "rgba(255,255,255,0.15)" : "rgba(15,23,42,0.12)" }}
+                className="h-1 flex-1 rounded-full overflow-hidden cursor-pointer transition-colors"
+                style={{
+                  backgroundColor:
+                    themeMode === 'dark' ? 'rgba(255,255,255,0.15)' : 'rgba(15,23,42,0.12)',
+                }}
                 aria-label={`Jump to step ${i + 1}`}
               >
-                <span
-                  className="block h-full bg-[#00C99A] transition-transform duration-300 origin-left"
-                  style={{ transform: `scaleX(${i <= activeStep ? 1 : 0})` }}
+                <div
+                  className="h-full bg-[#00C99A] transition-all duration-200 origin-left"
+                  style={{
+                    width:
+                      i < activeStep
+                        ? '100%'
+                        : i === activeStep
+                        ? `${Math.min(100, Math.max(0, (scrollProgress * 4 - i) * 100))}%`
+                        : '0%',
+                  }}
                 />
               </button>
             ))}
           </div>
 
-          {/* Synchronized Step Number & Title */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeStep}
-              initial={{ opacity: 0, y: 2 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -2 }}
-              transition={{ duration: 0.16 }}
-              className="space-y-0.5 text-left pt-0.5"
-            >
-              <h3 className="text-[15px] xs:text-[16px] font-bold tracking-tight flex items-baseline gap-2" style={{ color: colors.textPrimary }}>
-                <span className="font-mono font-bold" style={{ color: colors.textPrimary }}>{activeStep + 1}</span>
-                <span>{activeStepData.title}</span>
-              </h3>
-              <p className="text-[12px] xs:text-[12.5px] leading-snug font-normal line-clamp-2" style={{ color: colors.textSecondary }}>
-                {activeStepData.body}
-              </p>
-            </motion.div>
-          </AnimatePresence>
+          {/* Dynamic Step Text */}
+          <div className="pt-0.5 text-center">
+            <span className="text-[10px] font-mono font-bold tracking-wider uppercase text-[#00C99A]">
+              Step {activeStep + 1} of 4
+            </span>
+            <h4 className="text-sm font-extrabold tracking-tight mt-0.5" style={{ color: colors.textPrimary }}>
+              {STEPS_DATA[activeStep]?.title}
+            </h4>
+            <p className="text-[11px] leading-tight text-neutral-400 mt-0.5 line-clamp-2">
+              {STEPS_DATA[activeStep]?.body}
+            </p>
+          </div>
         </div>
-
       </div>
     </section>
   );
