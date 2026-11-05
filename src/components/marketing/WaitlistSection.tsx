@@ -16,9 +16,15 @@ import {
   MessageSquare,
   Sparkles,
   Loader2,
+  UserPlus,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
-import { initReferralCapture, getStoredReferralCode } from '../../utils/referral';
+import {
+  initReferralCapture,
+  getStoredReferralCode,
+  extractReferralFromUrl,
+  setStoredReferralCode,
+} from '../../utils/referral';
 import { FadeIn } from '../ui';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -35,17 +41,30 @@ export const WaitlistSection: React.FC = () => {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [referralCode, setReferralCode] = useState('');
+  const [showReferralInput, setShowReferralInput] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submittedEmail, setSubmittedEmail] = useState('');
+  const [submittedRef, setSubmittedRef] = useState('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    // Check referral code from URL
-    const code = initReferralCapture();
-    if (code) setReferralCode(code);
+    // 1. Detect if referral code is explicitly in the current URL query (?ref=...)
+    const urlReferral = extractReferralFromUrl();
+    const activeCode = initReferralCapture();
+    if (activeCode) {
+      setReferralCode(activeCode);
+    }
 
-    // Check existing waitlist membership in local storage
+    // 2. If the user explicitly arrived via a referral link, NEVER lock them out
+    // with stale local storage from a prior registration on this device.
+    // They are here to sign up under this referral link!
+    if (urlReferral) {
+      setIsSubmitted(false);
+      return;
+    }
+
+    // 3. For returning visitors without a referral link in URL, check prior submission in local storage
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored && EMAIL_REGEX.test(stored)) {
@@ -54,6 +73,14 @@ export const WaitlistSection: React.FC = () => {
       }
     } catch {}
   }, []);
+
+  const handleResetForm = () => {
+    setName('');
+    setEmail('');
+    setPhone('');
+    setErrorMessage(null);
+    setIsSubmitted(false);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -112,6 +139,7 @@ export const WaitlistSection: React.FC = () => {
       } catch {}
 
       setSubmittedEmail(cleanEmail);
+      if (activeRef) setSubmittedRef(activeRef);
       setIsSubmitted(true);
       triggerConfetti();
     } catch (err: any) {
@@ -124,12 +152,14 @@ export const WaitlistSection: React.FC = () => {
           name: cleanName,
           email: cleanEmail,
           phone: cleanPhone,
+          referralCode: referralCode.trim() || undefined,
           timestamp: new Date().toISOString(),
         });
         localStorage.setItem('satmix_waitlist_offline', JSON.stringify(offlineDB));
         localStorage.setItem(STORAGE_KEY, cleanEmail);
         localStorage.setItem(STORAGE_NAME_KEY, cleanName);
         setSubmittedEmail(cleanEmail);
+        if (referralCode.trim()) setSubmittedRef(referralCode.trim());
         setIsSubmitted(true);
         triggerConfetti();
         return;
@@ -196,6 +226,77 @@ export const WaitlistSection: React.FC = () => {
                       borderColor: colors.cardBorder,
                     }}
                   >
+                    {/* Active Referral Pill or Toggle */}
+                    {referralCode ? (
+                      <div
+                        className="flex items-center justify-between px-3 py-1.5 rounded-xl border text-xs font-medium"
+                        style={{
+                          backgroundColor: isLight ? 'rgba(93, 23, 235, 0.05)' : 'rgba(93, 23, 235, 0.12)',
+                          borderColor: isLight ? 'rgba(93, 23, 235, 0.2)' : 'rgba(93, 23, 235, 0.35)',
+                        }}
+                      >
+                        <div className="flex items-center gap-1.5 truncate">
+                          <Sparkles className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" />
+                          <span style={{ color: colors.textPrimary }} className="truncate">
+                            Referral invite applied:{' '}
+                            <span className="font-bold font-mono tracking-wider text-purple-400">
+                              {referralCode}
+                            </span>
+                          </span>
+                        </div>
+                        <span className="text-[11px] text-emerald-400 font-semibold flex items-center gap-1 flex-shrink-0">
+                          <CheckCircle2 className="w-3 h-3" /> Priority Access
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-end">
+                        {!showReferralInput ? (
+                          <button
+                            type="button"
+                            onClick={() => setShowReferralInput(true)}
+                            className="text-[11.5px] text-neutral-400 hover:text-purple-400 transition-colors flex items-center gap-1 cursor-pointer select-none"
+                          >
+                            <Sparkles className="w-3 h-3 text-purple-400/80" />
+                            <span>Have a referral code?</span>
+                          </button>
+                        ) : (
+                          <div
+                            className="w-full flex items-center gap-2 px-3 py-1.5 rounded-xl border transition-colors focus-within:border-purple-500/60"
+                            style={{
+                              backgroundColor: isLight ? '#f9fafb' : 'rgba(255, 255, 255, 0.03)',
+                              borderColor: colors.borderDim,
+                            }}
+                          >
+                            <Sparkles className="w-3.5 h-3.5 text-purple-400 flex-shrink-0" />
+                            <input
+                              type="text"
+                              placeholder="REFERRAL CODE (E.G. RAGHAV)"
+                              value={referralCode}
+                              onChange={(e) => {
+                                const clean = e.target.value.toUpperCase().replace(/[^A-Z0-9_-]/g, '');
+                                setReferralCode(clean);
+                                if (clean) setStoredReferralCode(clean);
+                              }}
+                              className="w-full bg-transparent text-xs font-mono tracking-wider outline-none placeholder:text-neutral-500 uppercase font-semibold"
+                              style={{ color: colors.textPrimary }}
+                            />
+                            {referralCode && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setReferralCode('');
+                                  setShowReferralInput(false);
+                                }}
+                                className="text-[10px] text-neutral-400 hover:text-rose-400 uppercase font-mono px-1 cursor-pointer"
+                              >
+                                Clear
+                              </button>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
                     {/* Input Grid: Name (Req) & Email (Req) */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-2.5">
                       {/* Name Input */}
@@ -317,7 +418,8 @@ export const WaitlistSection: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setViewMode('terms')}
-                      className="hover:underline font-medium" style={{ color: colors.textPrimary }}
+                      className="hover:underline font-medium cursor-pointer"
+                      style={{ color: colors.textPrimary }}
                     >
                       Terms
                     </button>{' '}
@@ -325,7 +427,8 @@ export const WaitlistSection: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setViewMode('privacy')}
-                      className="hover:underline font-medium" style={{ color: colors.textPrimary }}
+                      className="hover:underline font-medium cursor-pointer"
+                      style={{ color: colors.textPrimary }}
                     >
                       Privacy Policy
                     </button>
@@ -339,25 +442,33 @@ export const WaitlistSection: React.FC = () => {
                   initial={{ opacity: 0, scale: 0.96 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.35, ease: 'easeOut' }}
-                  className="space-y-4"
+                  className="space-y-3"
                 >
                   {/* Verified Success Card */}
                   <div
-                    className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 sm:p-5 rounded-2xl border shadow-xl backdrop-blur-md"
+                    className="flex flex-col sm:flex-row items-center justify-between gap-3.5 p-4 sm:p-5 rounded-2xl border shadow-xl backdrop-blur-md"
                     style={{
                       backgroundColor: isLight ? 'rgba(236, 253, 245, 0.9)' : 'rgba(6, 40, 30, 0.85)',
                       borderColor: 'rgba(16, 185, 129, 0.35)',
                     }}
                   >
-                    <div className="flex items-center gap-3 text-left">
+                    <div className="flex items-center gap-3 text-left w-full sm:w-auto">
                       <div className="w-10 h-10 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center flex-shrink-0 text-emerald-400">
                         <CheckCircle2 className="w-5 h-5" />
                       </div>
-                      <div>
-                        <div className="font-extrabold text-sm sm:text-base text-emerald-400">
-                          You're on the list!
+                      <div className="min-w-0 flex-1">
+                        <div className="font-extrabold text-sm sm:text-base text-emerald-400 flex items-center gap-2 flex-wrap">
+                          <span>You're on the list!</span>
+                          {(submittedRef || referralCode) && (
+                            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/20 border border-emerald-500/40 text-emerald-300">
+                              Ref: {submittedRef || referralCode}
+                            </span>
+                          )}
                         </div>
-                        <div className="text-xs font-mono mt-0.5" style={{ color: isLight ? 'rgba(6, 78, 59, 0.85)' : 'rgba(167, 243, 208, 0.9)' }}>
+                        <div
+                          className="text-xs font-mono mt-0.5 truncate"
+                          style={{ color: isLight ? 'rgba(6, 78, 59, 0.85)' : 'rgba(167, 243, 208, 0.9)' }}
+                        >
                           {submittedEmail ? `Invite queued for ${submittedEmail}` : "We'll email your invite before public launch."}
                         </div>
                       </div>
@@ -367,7 +478,7 @@ export const WaitlistSection: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => setViewMode('app')}
-                        className="w-full sm:w-auto h-9 px-4 rounded-xl font-bold text-xs shadow-sm transition-all active:scale-[0.96] flex items-center justify-center gap-1.5"
+                        className="flex-1 sm:flex-initial h-9 px-4 rounded-xl font-bold text-xs shadow-sm transition-all active:scale-[0.96] flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap"
                         style={{
                           backgroundColor: colors.primary,
                           color: colors.primaryText,
@@ -381,7 +492,7 @@ export const WaitlistSection: React.FC = () => {
                         href="https://chat.whatsapp.com/KWW9pIYhZOF3GlcsNvs7Jw"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-full sm:w-auto h-9 px-3.5 rounded-xl font-semibold text-xs border transition-all active:scale-[0.96] flex items-center justify-center gap-1.5 text-neutral-300 hover:text-white"
+                        className="flex-1 sm:flex-initial h-9 px-3.5 rounded-xl font-semibold text-xs border transition-all active:scale-[0.96] flex items-center justify-center gap-1.5 text-neutral-300 hover:text-white cursor-pointer whitespace-nowrap"
                         style={{
                           backgroundColor: isLight ? '#ffffff' : '#141620',
                           borderColor: 'rgba(255, 255, 255, 0.1)',
@@ -391,6 +502,18 @@ export const WaitlistSection: React.FC = () => {
                         <span>Community</span>
                       </a>
                     </div>
+                  </div>
+
+                  {/* Register another person / switch email CTA */}
+                  <div className="flex items-center justify-center pt-1">
+                    <button
+                      type="button"
+                      onClick={handleResetForm}
+                      className="text-xs font-medium text-neutral-400 hover:text-white transition-colors flex items-center gap-1.5 py-1.5 px-3 rounded-lg hover:bg-white/5 cursor-pointer active:scale-[0.97]"
+                    >
+                      <UserPlus className="w-3.5 h-3.5 text-purple-400" />
+                      <span>Register another person or use a different email</span>
+                    </button>
                   </div>
                 </motion.div>
               )}
